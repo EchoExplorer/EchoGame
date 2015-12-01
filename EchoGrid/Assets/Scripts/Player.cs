@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.UI;	//Allows us to use UI.
 
 //Player inherits from MovingObject, our base class for objects that can move, Enemy also inherits from this.
@@ -21,6 +22,8 @@ public class Player : MovingObject {
 	public AudioClip echo7m;
 	public AudioClip wallHit;
 
+	private int lastMoveDirection = -1;
+
 	//public bool soundPlaying = false;
 	protected override void Start ()
 	{
@@ -35,31 +38,31 @@ public class Player : MovingObject {
 		switch (xPos) 
 		{
 			
-			case 0:
+			case 7:
 				SoundManager.instance.PlaySingle(echo7m);
 				Debug.Log ("7m");
 				break;
-			case 1:
+			case 6:
 				SoundManager.instance.PlaySingle(echo6m);
 				Debug.Log ("6m");
 				break;
-			case 2:
+			case 5:
 				SoundManager.instance.PlaySingle(echo5m);
 				Debug.Log ("5m");
 				break;
-			case 3:
+			case 4:
 				SoundManager.instance.PlaySingle(echo4m);
 				Debug.Log ("4m");
 				break;
-			case 4:
+			case 3:
 				SoundManager.instance.PlaySingle(echo3m);
 				Debug.Log ("3m");
 				break;
-			case 5:
+			case 2:
 				SoundManager.instance.PlaySingle(echo2m);
 				Debug.Log ("2m");
 				break;
-			case 6:
+			case 1:
 				SoundManager.instance.PlaySingle(echo1m);
 				Debug.Log ("1m");
 				break;
@@ -146,27 +149,99 @@ public class Player : MovingObject {
 					//If x is greater than zero, set horizontal to 1, otherwise set it to -1
 					horizontal = x > 0 ? 1 : -1;
 					Debug.Log ("X direction swipe");
+					//Set the last moved direction to right or left
+					lastMoveDirection = x > 0 ? 1 : 2;
 				}
 				else if (Mathf.Abs(y) > Mathf.Abs(x) && Mathf.Abs(y) >= minSwipeDist) {
 					//If y is greater than zero, set horizontal to 1, otherwise set it to -1
 					vertical = y > 0 ? 1 : -1;
 					Debug.Log ("Y direction swipe");
+					//Set the last moved direction to up or down
+					lastMoveDirection = y > 0 ? 4 : 3;
 				}
 				else if (Mathf.Abs(Time.time - touchTime) > 0.25) {
 					Vector2 curPosition = transform.position;
-					int xPos = (int) Mathf.Ceil(curPosition.x);
-					PlayEcho(xPos);
+					//int xPos = (int) Mathf.Ceil(curPosition.x);
+					PlayEcho(echoDist());
 				}
 
 			}
 		}
-		
+
 		#endif //End of mobile platform dependendent compilation section started above with #elif
 		//Check if we have a non-zero value for horizontal or vertical
 
 		if(horizontal != 0 || vertical != 0)
 		{
 			AttemptMove<Wall> (horizontal, vertical);
+		}
+	}
+
+	private int echoDist() {
+		//Get all walls on the grid
+		GameObject[] wallsArray = GameObject.FindGameObjectsWithTag ("Wall");
+		List <Vector3> wallPositions = new List<Vector3>();
+		foreach (GameObject wall in wallsArray) {
+			wallPositions.Add(wall.transform.localPosition);
+		}
+		//Get the player object
+		GameObject player = GameObject.Find("Player");
+		int dist = 1;
+		switch (lastMoveDirection) {
+			case 1:
+				//Last moved to the right
+				for (int i = (int) player.transform.localPosition.x+1; i < 8; i++) {
+					Vector3 tPos = new Vector3(i, player.transform.localPosition.y, 0);
+					if (wallPositions.Contains(tPos)) {
+						return dist;
+					}
+					dist++;
+				}
+				return dist;
+				break;
+			case 2:
+				//Last moved to the left
+				for (int i = (int) player.transform.localPosition.x-1; i > -1; i--) {
+					Vector3 tPos = new Vector3(i, player.transform.localPosition.y, 0);
+					if (wallPositions.Contains(tPos)) {
+						return dist;
+					}
+					dist++;
+				}
+				return dist;
+				break;
+			case 3:
+				//Last moved up
+				for (int i = (int) player.transform.localPosition.y-1; i > -1; i--) {
+					Vector3 tPos = new Vector3(player.transform.localPosition.x, i, 0);
+					if (wallPositions.Contains(tPos)) {
+						return dist;
+					}
+					dist++;
+				}
+				return dist;
+				break;
+			case 4:
+				//Last moved down
+				for (int i = (int) player.transform.localPosition.y+1; i < 8; i++) {
+					Vector3 tPos = new Vector3(player.transform.localPosition.x, i, 0);
+					if (wallPositions.Contains(tPos)) {
+						return dist;
+					}
+					dist++;
+				}
+				return dist;
+				break;
+			case -1:
+				//No last movement registered yet
+				//Calculate max dist in each direction and use that
+				//Or default to 7m for now
+				return 7;
+				break;
+			default:
+				//default case
+				return 7;
+				break;
 		}
 	}
 
