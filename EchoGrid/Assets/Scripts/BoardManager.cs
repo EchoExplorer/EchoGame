@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using Random = UnityEngine.Random;
 
@@ -26,13 +25,12 @@ public class BoardManager : MonoBehaviour {
 	public GameObject[] floorTiles;
 	public GameObject[] wallTiles;
 	public GameObject[] outerWallTiles;
-	public GameObject exit;											//Prefab to spawn for exit.
 	public Count wallCount = new Count (5, 9);	//Lower and upper limit for our random number of walls per level.
+	public GameObject exit;
 
 	private Transform boardHolder;
 	private List <Vector3> gridPositions = new List<Vector3>();
-	private List <Vector3> wallPositions = new List<Vector3>();
-
+	public List <Vector3> wallPositions = new List<Vector3>();
 	public List <Vector3> pathPositions = new List<Vector3>();
 
 	//Clears our list gridPositions and prepares it to generate a new board.
@@ -86,11 +84,10 @@ public class BoardManager : MonoBehaviour {
 	/* Returns a vector of the location where the exit tile will be placed.
 	 * Determined randomly from path locations excluding starting position */
 	private Vector3 getRandomVector(List<Vector3> positions) {
-		int index = Random.Range (0, positions.Count());
+		int index = Random.Range (0, positions.Count);
 		return positions [index];
 	}
 
-	//Straight path
 	void Level1Walls ()
 	{
 		//Clear our list gridPositions.
@@ -109,7 +106,6 @@ public class BoardManager : MonoBehaviour {
 
 		for(int i = 0; i < wallPositions.Count; i++)
 		{
-			Debug.Log(i);
 			Vector3 position = wallPositions[i];
 			
 			//Choose a random tile from tileArray and assign it to tileChoice
@@ -124,12 +120,15 @@ public class BoardManager : MonoBehaviour {
 		for (int i = 0; i < columns-1; i++) {
 			pathPositions.Add(new Vector3(i, 0, 0));
 		}
+		Vector3 exitPos = new Vector3 (columns - 2, 0f, 0f);
+		Instantiate (exit, exitPos, Quaternion.identity);
+		pathPositions.Remove (exitPos);
+
 		Vector3 randomPlayerPos = getRandomVector (pathPositions);
 		GameObject player = GameObject.Find("Player");
 		player.transform.localPosition = randomPlayerPos;
 
-		//Instantiate the exit tile at the end of the straight corridor
-		//Instantiate (exit, new Vector3 (columns - 1, rows - 1, 0f), Quaternion.identity);
+
 	}
 
 	//Straight and left turn
@@ -158,7 +157,7 @@ public class BoardManager : MonoBehaviour {
 		
 		for(int i = 0; i < wallPositions.Count; i++)
 		{
-			Debug.Log(i);
+
 			Vector3 position = wallPositions[i];
 			
 			//Choose a random tile from tileArray and assign it to tileChoice
@@ -168,20 +167,22 @@ public class BoardManager : MonoBehaviour {
 			//Instantiate tileChoice at the position returned by RandomPosition with no change in rotation
 			Instantiate(tileChoice, position, Quaternion.identity);
 		}
-
+		
 		//Determine a random position for the player on the path
 		pathPositions.Clear ();
 		for (int i = 0; i < columns-1; i++) {
 			pathPositions.Add(new Vector3(i, 0, 0));
 			pathPositions.Add(new Vector3(7, i, 0));
 		}
+		Vector3 exitPos = new Vector3 (columns - 1, rows - 1, 0f);
+		Instantiate (exit, exitPos, Quaternion.identity);
+		pathPositions.Remove (exitPos); // player shouldn't be place immediately on the exit sign 
+
 		pathPositions.Add (new Vector3 (7, 0, 0));
 		Vector3 randomPlayerPos = getRandomVector (pathPositions);
 		GameObject player = GameObject.Find("Player");
 		player.transform.localPosition = randomPlayerPos;
-		
 	}
-	
 	//Straight and right turn
 	void Level3Walls ()
 	{
@@ -208,7 +209,6 @@ public class BoardManager : MonoBehaviour {
 		
 		for(int i = 0; i < wallPositions.Count; i++)
 		{
-			Debug.Log(i);
 			Vector3 position = wallPositions[i];
 			
 			//Choose a random tile from tileArray and assign it to tileChoice
@@ -217,7 +217,7 @@ public class BoardManager : MonoBehaviour {
 			//Instantiate tileChoice at the position returned by RandomPosition with no change in rotation
 			Instantiate(tileChoice, position, Quaternion.identity);
 		}
-
+		
 		//Determine a random position for the player on the path
 		pathPositions.Clear ();
 		for (int i = 0; i < columns-1; i++) {
@@ -225,88 +225,15 @@ public class BoardManager : MonoBehaviour {
 			pathPositions.Add(new Vector3(0, i, 0));
 		}
 		pathPositions.Add (new Vector3 (0, 7, 0));
+
+		Vector3 exitPos = new Vector3 (0f, 0f, 0f);
+		Instantiate (exit, exitPos, Quaternion.identity);
+		pathPositions.Remove (exitPos); // player shouldn't be place immediately on the exit sign 
+
 		Vector3 randomPlayerPos = getRandomVector (pathPositions);
 		GameObject player = GameObject.Find("Player");
 		player.transform.localPosition = randomPlayerPos;
 		
-	}
-	
-	//Spiral maze towards center
-	void Level4Walls ()
-	{
-		//Clear our list gridPositions.
-		wallPositions.Clear ();
-		
-		wallPositions.Add (new Vector3 (1f, 6f, 0f));
-		wallPositions.Add (new Vector3 (2f, 6f, 0f));
-		wallPositions.Add (new Vector3 (3f, 6f, 0f));
-		wallPositions.Add (new Vector3 (4f, 6f, 0f));
-		wallPositions.Add (new Vector3 (5f, 6f, 0f));
-		
-		wallPositions.Add (new Vector3 (1f, 0f, 0f));
-		wallPositions.Add (new Vector3 (1f, 1f, 0f));
-		wallPositions.Add (new Vector3 (1f, 2f, 0f));
-		wallPositions.Add (new Vector3 (1f, 3f, 0f));
-		wallPositions.Add (new Vector3 (1f, 4f, 0f));
-		wallPositions.Add (new Vector3 (1f, 5f, 0f));
-		wallPositions.Add (new Vector3 (1f, 6f, 0f));
-		
-		wallPositions.Add (new Vector3 (7f, 0f, 0f));
-		wallPositions.Add (new Vector3 (7f, 1f, 0f));
-		wallPositions.Add (new Vector3 (7f, 2f, 0f));
-		wallPositions.Add (new Vector3 (7f, 3f, 0f));
-		wallPositions.Add (new Vector3 (7f, 4f, 0f));
-		wallPositions.Add (new Vector3 (7f, 5f, 0f));
-		wallPositions.Add (new Vector3 (7f, 6f, 0f));
-		wallPositions.Add (new Vector3 (7f, 7f, 0f));
-		
-		wallPositions.Add (new Vector3 (2f, 0f, 0f));
-		wallPositions.Add (new Vector3 (3f, 0f, 0f));
-		wallPositions.Add (new Vector3 (4f, 0f, 0f));
-		wallPositions.Add (new Vector3 (5f, 0f, 0f));
-		wallPositions.Add (new Vector3 (6f, 0f, 0f));
-		
-		wallPositions.Add (new Vector3 (5f, 2f, 0f));
-		wallPositions.Add (new Vector3 (5f, 3f, 0f));
-		wallPositions.Add (new Vector3 (5f, 4f, 0f));
-		wallPositions.Add (new Vector3 (5f, 5f, 0f));
-		
-		wallPositions.Add (new Vector3 (3f, 2f, 0f));
-		wallPositions.Add (new Vector3 (4f, 2f, 0f));
-		
-		wallPositions.Add (new Vector3 (3f, 3f, 0f));
-		wallPositions.Add (new Vector3 (3f, 4f, 0f));
-		
-		
-		for(int i = 0; i < wallPositions.Count; i++)
-		{
-			Debug.Log(i);
-			Vector3 position = wallPositions[i];
-			
-			//Choose a random tile from tileArray and assign it to tileChoice
-			GameObject tileChoice = wallTiles[0];
-			tileChoice.gameObject.tag = "Wall";
-
-			
-			//Instantiate tileChoice at the position returned by RandomPosition with no change in rotation
-			Instantiate(tileChoice, position, Quaternion.identity);
-		}
-
-		//Determine a random position for the player on the path
-		pathPositions.Clear ();
-		for (int i = 0; i < rows; i++) {
-			for (int j = 0; j < columns; j++) {
-				Vector3 pathP = new Vector3(i, j, 0);
-				if (!wallPositions.Contains(pathP)) {
-					pathPositions.Add(pathP);
-				}
-			}
-		}
-		pathPositions.Remove (new Vector3 (4, 3, 0));
-		Vector3 randomPlayerPos = getRandomVector (pathPositions);
-		GameObject player = GameObject.Find("Player");
-		player.transform.localPosition = randomPlayerPos;
-
 	}
 
 	//RandomPosition returns a random position from our list gridPositions.
@@ -346,21 +273,30 @@ public class BoardManager : MonoBehaviour {
 		}
 	}
 	
+	
 	//SetupScene initializes our level and calls the previous functions to lay out the game board
 	public void SetupScene (int level)
 	{
 		//Creates the outer walls and floor.
 		BoardSetup ();
-		
 		//Reset our list of gridpositions.
 		InitialiseList ();
-		
-		//Instantiate a random number of wall tiles based on minimum and maximum, at randomized positions.
-		//LayoutObjectAtRandom (wallTiles, wallCount.minimum, wallCount.maximum);
-		Level4Walls ();
-
-		//Instantiate (exit, new Vector3 (columns - 1, rows - 1, 0f), Quaternion.identity);
-
+		level = (int) Mathf.Floor(GameManager.instance.level / 3.0f);
+		switch (level) 
+		{
+			case 0:
+				Level1Walls();
+				break;
+			case 1:
+				Level2Walls();
+				break;
+			case 2:
+				Level3Walls();
+				break;
+			default:
+				Level1Walls();
+				break;
+		}
 	}
 
 }

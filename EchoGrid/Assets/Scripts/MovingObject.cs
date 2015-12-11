@@ -95,6 +95,9 @@ public abstract class MovingObject : MonoBehaviour
 		
 		//Set canMove to true if Move was successful, false if failed.
 		bool canMove = Move (xDir, yDir, out hit);
+		if (canMove) {
+			OnMove();
+		}
 		
 		//Check if nothing was hit by linecast
 		if(hit.transform == null)
@@ -116,5 +119,7 @@ public abstract class MovingObject : MonoBehaviour
 	//OnCantMove will be overriden by functions in the inheriting classes.
 	protected abstract void OnCantMove <T> (T component)
 		where T : Component;
+
+	protected abstract void OnMove();
 
 }

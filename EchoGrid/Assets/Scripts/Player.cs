@@ -1,18 +1,25 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine.UI;	//Allows us to use UI.
+using System.Collections.Generic;
 
 //Player inherits from MovingObject, our base class for objects that can move, Enemy also inherits from this.
 public class Player : MovingObject {
 
-	public float restartLevelDelay = 1f;		//Delay time in seconds to restart level.
+	public float restartLevelDelay = 3.0f;		//Delay time in seconds to restart level.
 	private Animator animator;					//Used to store a reference to the Player's animator component.
 	private Vector2 touchOrigin = -Vector2.one;
 
 	private float touchTime = 0f;
 	private float minSwipeDist = 100f;
+	private bool restarted = false;
+	private int curLevel;
+	private const int right = 1;
+	private const int left = 2;
+	private const int up = 3;
+	private const int down = 4;
 
+	
 	public AudioClip echo1m;
 	public AudioClip echo2m;
 	public AudioClip echo3m;
@@ -21,7 +28,8 @@ public class Player : MovingObject {
 	public AudioClip echo6m;
 	public AudioClip echo7m;
 	public AudioClip wallHit;
-
+	public AudioClip winSound;
+	public AudioClip walking;
 	private int lastMoveDirection = -1;
 
 	//public bool soundPlaying = false;
@@ -29,45 +37,47 @@ public class Player : MovingObject {
 	{
 		//Get a component reference to the Player's animator component
 		animator = GetComponent<Animator>();
+		curLevel = GameManager.instance.level;
 
 		//Call the Start function of the MovingObject base class.
 		base.Start ();
 	}
 
-	private void PlayEcho(int xPos) {
-		switch (xPos) 
+	private void PlayEcho(int dist) {
+		Debug.Log ("YOOOOO " + dist);
+		switch (dist) 
 		{
-			
-			case 7:
-				SoundManager.instance.PlaySingle(echo7m);
-				Debug.Log ("7m");
-				break;
-			case 6:
-				SoundManager.instance.PlaySingle(echo6m);
-				Debug.Log ("6m");
-				break;
-			case 5:
-				SoundManager.instance.PlaySingle(echo5m);
-				Debug.Log ("5m");
-				break;
-			case 4:
-				SoundManager.instance.PlaySingle(echo4m);
-				Debug.Log ("4m");
-				break;
-			case 3:
-				SoundManager.instance.PlaySingle(echo3m);
-				Debug.Log ("3m");
+			case 0:
+			case 1:
+				SoundManager.instance.PlaySingle(echo1m);
+				Debug.Log ("1m");
 				break;
 			case 2:
 				SoundManager.instance.PlaySingle(echo2m);
 				Debug.Log ("2m");
 				break;
-			case 1:
-				SoundManager.instance.PlaySingle(echo1m);
-				Debug.Log ("1m");
+			case 3:
+				SoundManager.instance.PlaySingle(echo3m);
+				Debug.Log ("3m");
+				break;
+			case 4:
+				SoundManager.instance.PlaySingle(echo4m);
+				Debug.Log ("4m");
+				break;
+			case 5:
+				SoundManager.instance.PlaySingle(echo5m);
+				Debug.Log ("5m");
+				break;
+			case 6:
+				SoundManager.instance.PlaySingle(echo6m);
+				Debug.Log ("6m");
+				break;
+			case 7:
+				SoundManager.instance.PlaySingle(echo7m);
+				Debug.Log ("7m");
 				break;
 			default:
-				SoundManager.instance.PlaySingle(echo1m);
+				SoundManager.instance.PlaySingle(echo7m);
 				break;
 			
 		}
@@ -94,20 +104,20 @@ public class Player : MovingObject {
 		if(horizontal != 0)
 		{
 			vertical = 0;
+			lastMoveDirection = horizontal > 0 ? right : left;
+		} else if (vertical != 0) {
+			//Debug.Log ("HORIZONTAL" + horizontal);
+			horizontal = 0;
+			lastMoveDirection = vertical > 0 ? up : down;
 		}
 
-		if (Input.GetKeyDown("f")) {
-			Debug.Log ("time down");
-			Debug.Log (Time.time);
-		}
 
 		if (Input.GetKeyUp("f")) {
 			
 			Vector2 curPosition = transform.position;
-			int xPos = (int) Mathf.Ceil(curPosition.x);
-			PlayEcho(xPos);
-			Debug.Log ("time UP");
-			Debug.Log (Time.time);	
+			//int xPos = (int) Mathf.Ceil(curPosition.x);
+			//PlayEcho(xPos);
+			PlayEcho(echoDist());
 		}
 
 		//Check if we are running on iOS, Android, Windows Phone 8 or Unity iPhone
@@ -147,27 +157,26 @@ public class Player : MovingObject {
 				if (Mathf.Abs(x) > Mathf.Abs(y) && Mathf.Abs(x) >= minSwipeDist)
 				{
 					//If x is greater than zero, set horizontal to 1, otherwise set it to -1
+					vertical = 0;
 					horizontal = x > 0 ? 1 : -1;
-					Debug.Log ("X direction swipe");
 					//Set the last moved direction to right or left
-					lastMoveDirection = x > 0 ? 1 : 2;
+					lastMoveDirection = horizontal > 0 ? right : left;
 				}
 				else if (Mathf.Abs(y) > Mathf.Abs(x) && Mathf.Abs(y) >= minSwipeDist) {
 					//If y is greater than zero, set horizontal to 1, otherwise set it to -1
+					horizontal = 0;
 					vertical = y > 0 ? 1 : -1;
-					Debug.Log ("Y direction swipe");
 					//Set the last moved direction to up or down
-					lastMoveDirection = y > 0 ? 4 : 3;
+					lastMoveDirection = vertical > 0 ? up : down;
 				}
-				else if (Mathf.Abs(Time.time - touchTime) > 0.25) {
+				else if (Mathf.Abs(Time.time - touchTime) > 0.20) {
 					Vector2 curPosition = transform.position;
-					//int xPos = (int) Mathf.Ceil(curPosition.x);
 					PlayEcho(echoDist());
 				}
 
 			}
 		}
-
+		
 		#endif //End of mobile platform dependendent compilation section started above with #elif
 		//Check if we have a non-zero value for horizontal or vertical
 
@@ -184,51 +193,56 @@ public class Player : MovingObject {
 		foreach (GameObject wall in wallsArray) {
 			wallPositions.Add(wall.transform.localPosition);
 		}
-		//Get the player object
+		int dist = 7;
+		int minDistance = 10;
 		GameObject player = GameObject.Find("Player");
-		int dist = 1;
+		int personX = (int) Mathf.Ceil(player.transform.localPosition.x);
+		int personY = (int)Mathf.Ceil (player.transform.localPosition.y);
 		switch (lastMoveDirection) {
-			case 1:
+			case right:
 				//Last moved to the right
-				for (int i = (int) player.transform.localPosition.x+1; i < 8; i++) {
-					Vector3 tPos = new Vector3(i, player.transform.localPosition.y, 0);
+				for (int i = 0; i < 8; i++) {
+					int wallX = personX + i;
+					Vector3 tPos = new Vector3(wallX, personY, 0);
 					if (wallPositions.Contains(tPos)) {
-						return dist;
+						dist = Mathf.Abs(wallX - personX);
+						minDistance = Mathf.Min(minDistance, dist);;
 					}
-					dist++;
 				}
 				return dist;
-				break;
-			case 2:
+			case left:
 				//Last moved to the left
-				for (int i = (int) player.transform.localPosition.x-1; i > -1; i--) {
-					Vector3 tPos = new Vector3(i, player.transform.localPosition.y, 0);
+				for (int i = 1; i < 8; i++) {
+					int wallX = personX - i;
+					Vector3 tPos = new Vector3(wallX, personY, 0);
 					if (wallPositions.Contains(tPos)) {
-						return dist;
+						dist = Mathf.Abs(wallX - personX);
+						minDistance = Mathf.Min(minDistance, dist);
 					}
-					dist++;
 				}
 				return dist;
 				break;
-			case 3:
-				//Last moved up
-				for (int i = (int) player.transform.localPosition.y-1; i > -1; i--) {
-					Vector3 tPos = new Vector3(player.transform.localPosition.x, i, 0);
+			case up:
+				for (int i = 1; i < 8; i++) {
+					int wallY = personY + i;
+					Vector3 tPos = new Vector3(personX, wallY, 0);
 					if (wallPositions.Contains(tPos)) {
-						return dist;
+						dist = Mathf.Abs(wallY - personY);
+						minDistance = Mathf.Min(minDistance, dist);
 					}
-					dist++;
 				}
 				return dist;
 				break;
-			case 4:
+			case down:
 				//Last moved down
-				for (int i = (int) player.transform.localPosition.y+1; i < 8; i++) {
-					Vector3 tPos = new Vector3(player.transform.localPosition.x, i, 0);
+				for (int i = 1; i < 8; i++) {
+					int wallY = personY - i;
+					Vector3 tPos = new Vector3(personX, wallY, 0);
 					if (wallPositions.Contains(tPos)) {
-						return dist;
+						dist = Mathf.Abs(wallY - personY);
+						minDistance = Mathf.Min(minDistance, dist);
+
 					}
-					dist++;
 				}
 				return dist;
 				break;
@@ -254,6 +268,8 @@ public class Player : MovingObject {
 		//Hit allows us to reference the result of the Linecast done in Move.
 		RaycastHit2D hit;
 
+		//GameManager.instance.playersTurn = false;
+
 	}
 
 	protected override void OnCantMove <T> (T component)
@@ -263,12 +279,37 @@ public class Player : MovingObject {
 		Debug.Log ("Hit the wall");
 		SoundManager.instance.PlaySingle(wallHit);
 	}
+
+	protected override void OnMove () 
+	{
+	}
+
+	private void OnTriggerEnter2D (Collider2D other)
+	{
+		//Check if the tag of the trigger collided with is Exit.
+		if (other.tag == "Exit" && restarted == false) {
+			//Invoke the Restart function to start the next level with a delay of restartLevelDelay (default 1 second).
+			restarted = true;
+			Invoke ("Restart", restartLevelDelay);
+			//Disable the player object since level is over.
+			enabled = false;
+			SoundManager.instance.PlaySingle(winSound);
+		}
+	}
+
+	private void OnDisable ()
+	{
+		//When Player object is disabled, store the current local food total in the GameManager so it can be re-loaded in next level.
+		int nextLevel = curLevel + 1;
+		GameManager.instance.level = nextLevel;
+	}
 		
 	//Restart reloads the scene when called.
 	private void Restart ()
 	{
 		//Load the last scene loaded, in this case Main, the only scene in the game.
 		Application.LoadLevel (Application.loadedLevel);
+		restarted = false;
 	}
 }
 
