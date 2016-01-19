@@ -87,7 +87,7 @@ public abstract class MovingObject : MonoBehaviour
 	
 	//The virtual keyword means AttemptMove can be overridden by inheriting classes using the override keyword.
 	//AttemptMove takes a generic parameter T to specify the type of component we expect our unit to interact with if blocked (Player for Enemies, Wall for Player).
-	protected virtual void AttemptMove <T> (int xDir, int yDir)
+	protected virtual bool AttemptMove <T> (int xDir, int yDir)
 		where T : Component
 	{
 		//Hit will store whatever our linecast hits when Move is called.
@@ -102,7 +102,7 @@ public abstract class MovingObject : MonoBehaviour
 		//Check if nothing was hit by linecast
 		if(hit.transform == null)
 			//If nothing was hit, return and don't execute further code.
-			return;
+			return true;
 		
 		//Get a component reference to the component of type T attached to the object that was hit
 		T hitComponent = hit.transform.GetComponent <T> ();
@@ -112,6 +112,7 @@ public abstract class MovingObject : MonoBehaviour
 			
 			//Call the OnCantMove function and pass it hitComponent as a parameter.
 			OnCantMove (hitComponent);
+		return canMove;
 	}
 	
 	

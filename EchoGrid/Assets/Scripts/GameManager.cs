@@ -29,6 +29,7 @@ public class GameManager : MonoBehaviour {
 	//Initializes the game for each level.
 	void InitGame()
 	{
+		Screen.orientation = ScreenOrientation.Landscape;
 		doingSetup = true;
 		levelImage = GameObject.Find("LevelImage");
 		levelText = GameObject.Find("LevelText").GetComponent<Text>();

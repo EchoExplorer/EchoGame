@@ -124,7 +124,9 @@ public class Player : MovingObject {
 		#elif UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
 		
 		//Check if Input has registered more than zero touches
-		if (Input.touchCount > 0)
+		int numTouches = Input.touchCount;
+
+		if (numTouches > 0)
 		{
 			//Store the first touch detected.
 			Touch myTouch = Input.touches[0];
@@ -169,9 +171,24 @@ public class Player : MovingObject {
 					//Set the last moved direction to up or down
 					lastMoveDirection = vertical > 0 ? up : down;
 				}
-				else if (Mathf.Abs(Time.time - touchTime) > 0.20) {
-					Vector2 curPosition = transform.position;
-					PlayEcho(echoDist());
+				else if (Mathf.Abs(Time.time - touchTime) > 0.05) {
+					if (numTouches == 2) {
+						GameObject exitSign = GameObject.FindGameObjectWithTag("Exit");
+						if (transform.localPosition == exitSign.transform.localPosition) {
+							//Invoke the Restart function to start the next level with a delay of restartLevelDelay (default 1 second).
+							restarted = true;
+							Invoke ("Restart", restartLevelDelay);
+							//Disable the player object since level is over.
+							enabled = false;
+							AudioSource.PlayClipAtPoint(winSound, transform.localPosition, 0.3f);
+						}
+					}
+					else {
+						Vector2 curPosition = transform.position;
+						PlayEcho(echoDist());
+					}
+
+
 				}
 
 			}
@@ -260,16 +277,21 @@ public class Player : MovingObject {
 	}
 
 
-	protected override void AttemptMove <T> (int xDir, int yDir)
+	protected override bool AttemptMove <T> (int xDir, int yDir)
 	{	
 		//Call the AttemptMove method of the base class, passing in the component T (in this case Wall) and x and y direction to move.
-		base.AttemptMove <T> (xDir, yDir);
+		bool canMove = base.AttemptMove <T> (xDir, yDir);
+
+		//If player could not move to that location, play the crash sound
+		if (!canMove) {
+			SoundManager.instance.PlaySingle(wallHit);
+		}
 		
 		//Hit allows us to reference the result of the Linecast done in Move.
 		RaycastHit2D hit;
 
 		//GameManager.instance.playersTurn = false;
-
+		return canMove;
 	}
 
 	protected override void OnCantMove <T> (T component)
@@ -287,14 +309,14 @@ public class Player : MovingObject {
 	private void OnTriggerEnter2D (Collider2D other)
 	{
 		//Check if the tag of the trigger collided with is Exit.
-		if (other.tag == "Exit" && restarted == false) {
+		/*if (other.tag == "Exit" && restarted == false) {
 			//Invoke the Restart function to start the next level with a delay of restartLevelDelay (default 1 second).
 			restarted = true;
 			Invoke ("Restart", restartLevelDelay);
 			//Disable the player object since level is over.
 			enabled = false;
-			SoundManager.instance.PlaySingle(winSound);
-		}
+			AudioSource.PlayClipAtPoint(winSound, transform.localPosition, 0.3f);
+		}*/
 	}
 
 	private void OnDisable ()
