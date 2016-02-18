@@ -100,7 +100,7 @@ public abstract class MovingObject : MonoBehaviour
 		}
 		
 		//Check if nothing was hit by linecast
-		if(hit.transform == null)
+		if (hit.transform == null)
 			//If nothing was hit, return and don't execute further code.
 			return true;
 		

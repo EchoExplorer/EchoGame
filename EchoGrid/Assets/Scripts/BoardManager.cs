@@ -31,7 +31,6 @@ public class BoardManager : MonoBehaviour {
 	private Transform boardHolder;
 	private List <Vector3> gridPositions = new List<Vector3>();
 	public List <Vector3> wallPositions = new List<Vector3>();
-	public List <Vector3> pathPositions = new List<Vector3>();
 
 	//Clears our list gridPositions and prepares it to generate a new board.
 	void InitialiseList ()
@@ -115,20 +114,13 @@ public class BoardManager : MonoBehaviour {
 			Instantiate(tileChoice, position, Quaternion.identity);
 		}
 
-		//Determine a random position for the player on the path
-		pathPositions.Clear ();
-		for (int i = 0; i < columns-1; i++) {
-			pathPositions.Add(new Vector3(i, 0, 0));
-		}
 		Vector3 exitPos = new Vector3 (columns - 2, 0f, 0f);
 		Instantiate (exit, exitPos, Quaternion.identity);
-		pathPositions.Remove (exitPos);
 
-		Vector3 randomPlayerPos = getRandomVector (pathPositions);
+		//Determine a random position for the player on the path
+		int randomDelta = Random.Range (0, 4);
 		GameObject player = GameObject.Find("Player");
-		player.transform.localPosition = randomPlayerPos;
-
-
+		player.transform.localPosition = new Vector3(randomDelta, 0, 0);
 	}
 
 	//Straight and left turn
@@ -167,22 +159,16 @@ public class BoardManager : MonoBehaviour {
 			//Instantiate tileChoice at the position returned by RandomPosition with no change in rotation
 			Instantiate(tileChoice, position, Quaternion.identity);
 		}
-		
-		//Determine a random position for the player on the path
-		pathPositions.Clear ();
-		for (int i = 0; i < columns-1; i++) {
-			pathPositions.Add(new Vector3(i, 0, 0));
-			pathPositions.Add(new Vector3(7, i, 0));
-		}
+
 		Vector3 exitPos = new Vector3 (columns - 1, rows - 1, 0f);
 		Instantiate (exit, exitPos, Quaternion.identity);
-		pathPositions.Remove (exitPos); // player shouldn't be place immediately on the exit sign 
 
-		pathPositions.Add (new Vector3 (7, 0, 0));
-		Vector3 randomPlayerPos = getRandomVector (pathPositions);
+		//Determine a random position for the player on the path
+		int randomDelta = Random.Range (0, 4);
 		GameObject player = GameObject.Find("Player");
-		player.transform.localPosition = randomPlayerPos;
+		player.transform.localPosition = new Vector3(randomDelta, 0, 0);
 	}
+
 	//Straight and right turn
 	void Level3Walls ()
 	{
@@ -217,23 +203,14 @@ public class BoardManager : MonoBehaviour {
 			//Instantiate tileChoice at the position returned by RandomPosition with no change in rotation
 			Instantiate(tileChoice, position, Quaternion.identity);
 		}
-		
-		//Determine a random position for the player on the path
-		pathPositions.Clear ();
-		for (int i = 0; i < columns-1; i++) {
-			pathPositions.Add(new Vector3(i, 7, 0));
-			pathPositions.Add(new Vector3(0, i, 0));
-		}
-		pathPositions.Add (new Vector3 (0, 7, 0));
 
 		Vector3 exitPos = new Vector3 (0f, 0f, 0f);
 		Instantiate (exit, exitPos, Quaternion.identity);
-		pathPositions.Remove (exitPos); // player shouldn't be place immediately on the exit sign 
 
-		Vector3 randomPlayerPos = getRandomVector (pathPositions);
+		//Determine a random position for the player on the path
+		int randomDelta = Random.Range (0, 4);
 		GameObject player = GameObject.Find("Player");
-		player.transform.localPosition = randomPlayerPos;
-		
+		player.transform.localPosition = new Vector3(randomDelta, 0, 0);
 	}
 
 	//RandomPosition returns a random position from our list gridPositions.
