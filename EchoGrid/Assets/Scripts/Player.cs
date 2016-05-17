@@ -33,6 +33,9 @@ public class Player : MovingObject {
 	public AudioClip wallHit;
 	public AudioClip winSound;
 	public AudioClip walking;
+	public AudioClip swipeAhead;
+	public AudioClip swipeRight;
+	public AudioClip swipeLeft;
 
 	public Sprite upSprite;
 	public Sprite downSprite; 
@@ -203,12 +206,16 @@ public class Player : MovingObject {
 		//Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
 		if (Input.GetKeyUp(KeyCode.RightArrow)) {
 			horizontal = 1;
+			SoundManager.instance.PlaySingle(swipeRight);
 		} else if (Input.GetKeyUp(KeyCode.LeftArrow)) {
 			horizontal = -1;
+			SoundManager.instance.PlaySingle(swipeLeft);
 		} else if (Input.GetKeyUp(KeyCode.UpArrow)) {
 			vertical = 1;
+			SoundManager.instance.PlaySingle(swipeAhead);
 		} else if (Input.GetKeyUp(KeyCode.DownArrow)) {
 			vertical = -1;
+			SoundManager.instance.PlaySingle(swipeAhead);
 		}
 
 		if (Input.GetKeyUp("f")) {
@@ -257,16 +264,20 @@ public class Player : MovingObject {
 					vertical = 0;
 					if (x > 0) {
 						horizontal = 1;
+						SoundManager.instance.PlaySingle(swipeRight);
 					} else {
 						horizontal = -1;
+						SoundManager.instance.PlaySingle(swipeLeft);
 					}
 				} else if (Mathf.Abs(y) > Mathf.Abs(x) && Mathf.Abs(y) >= minSwipeDist) {
 					//If y is greater than zero, set vertical to 1, otherwise set it to -1
 					horizontal = 0;
 					if (y > 0) {
 						vertical = 1;
+						SoundManager.instance.PlaySingle(swipeAhead);
 					} else {
 						vertical = -1;
+						SoundManager.instance.PlaySingle(swipeAhead);
 					}
 				} else if (Mathf.Abs(Time.time - touchTime) > 0.05) {
 					if (numTouches == 2) {
@@ -294,7 +305,7 @@ public class Player : MovingObject {
 		int personX = (int) Mathf.Ceil(player.transform.localPosition.x);
 		int personY = (int) Mathf.Ceil (player.transform.localPosition.y);
 		switch (curDirection) {
-		case right:
+			case right:
 				Debug.Log ("echoDist right");
 					//We're currrently facing right
 				for (int i = 0; i < 8; i++) {

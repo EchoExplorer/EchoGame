@@ -154,7 +154,6 @@ public class BoardManager : MonoBehaviour {
 			
 			//Choose a random tile from tileArray and assign it to tileChoice
 			GameObject tileChoice = wallTiles[0];
-			//tileChoice.tag = "Wall";
 			
 			//Instantiate tileChoice at the position returned by RandomPosition with no change in rotation
 			Instantiate(tileChoice, position, Quaternion.identity);
@@ -210,7 +209,7 @@ public class BoardManager : MonoBehaviour {
 		//Determine a random position for the player on the path
 		int randomDelta = Random.Range (0, 4);
 		GameObject player = GameObject.Find("Player");
-		player.transform.localPosition = new Vector3(randomDelta, 0, 0);
+		player.transform.localPosition = new Vector3(randomDelta, columns - 1, 0);
 	}
 
 	//RandomPosition returns a random position from our list gridPositions.
