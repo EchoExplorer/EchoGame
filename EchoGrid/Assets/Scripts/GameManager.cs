@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour {
 	public Text levelText;
 	public GameObject levelImage;
 	private bool doingSetup = true;
+	public DbAccess db;
 
 	void Awake() {
 		if (instance == null)
@@ -30,6 +31,13 @@ public class GameManager : MonoBehaviour {
 	void InitGame()
 	{
 		Screen.orientation = ScreenOrientation.Landscape;
+
+		//Setup database for the first time
+		db = new DbAccess("data source=LocalDataBase.db");
+		//db.CreateTable("PlayerInfo",new string[]{"id","name","high_score"}, new string[]{"integer","text","integer"});
+		//db.CreateTable("AudioFiles",new string[]{"id","echo name","file_path", "game_level"}, new string[]{"integer","text","text", "integer"});
+		//db.CloseSqlConnection();
+
 		doingSetup = true;
 		levelImage = GameObject.Find("LevelImage");
 		levelText = GameObject.Find("LevelText").GetComponent<Text>();

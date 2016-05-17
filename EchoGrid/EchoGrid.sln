@@ -1,6 +1,8 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2008
 
+Project("{B31C92CB-20B5-C376-2B8B-58AF252621F7}") = "EchoGrid", "Assembly-CSharp-firstpass.csproj", "{847AA95A-3D99-9FA8-BCCB-789CF9574E3A}"
+EndProject
 Project("{B31C92CB-20B5-C376-2B8B-58AF252621F7}") = "EchoGrid", "Assembly-CSharp.csproj", "{FD09721F-6CEE-840C-46DA-0CAA5C77A1BC}"
 EndProject
 Global
@@ -9,6 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{847AA95A-3D99-9FA8-BCCB-789CF9574E3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{847AA95A-3D99-9FA8-BCCB-789CF9574E3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{847AA95A-3D99-9FA8-BCCB-789CF9574E3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{847AA95A-3D99-9FA8-BCCB-789CF9574E3A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FD09721F-6CEE-840C-46DA-0CAA5C77A1BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FD09721F-6CEE-840C-46DA-0CAA5C77A1BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD09721F-6CEE-840C-46DA-0CAA5C77A1BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
