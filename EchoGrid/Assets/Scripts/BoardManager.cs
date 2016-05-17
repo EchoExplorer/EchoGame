@@ -87,6 +87,8 @@ public class BoardManager : MonoBehaviour {
 		return positions [index];
 	}
 
+	/*TODO(agotsis/wenyuw1) I have a python script that generates random mazes. That's the idea you want to use 
+	 * so that there's no hardcoding */
 	void Level1Walls ()
 	{
 		//Clear our list gridPositions.

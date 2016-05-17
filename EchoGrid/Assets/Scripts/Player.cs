@@ -27,7 +27,8 @@ public class Player : MovingObject {
 	private int curDirection = right;
 	private bool changedDir = false;
 	private bool movingForward = true;
-	
+
+	//TODO(agotsis/wenyuw1) This needs to be integrated with the local database so these are not hardcoded 
 	public AudioClip echo1m;
 	public AudioClip echo2m;
 	public AudioClip echo3m;
@@ -35,10 +36,12 @@ public class Player : MovingObject {
 	public AudioClip echo5m;
 	public AudioClip echo6m;
 	public AudioClip echo7m;
+
 	public AudioClip wallHit;
 	public AudioClip winSound;
 	public AudioClip walking;
-	
+
+	//TODO(agotsis/wenyuw1) This volume of these sounds may need to go down 
     public AudioClip swipeAhead;
 	public AudioClip swipeRight;
 	public AudioClip swipeLeft;
@@ -51,7 +54,9 @@ public class Player : MovingObject {
 	
 	private int numCrashes; //Keep track of number of times user crashed into wall
 	private int numSteps;   //Keep track of number of steps taken per level
-	
+
+	/*TODO(agotsis/wenyuw1) Similar to the comment above: this needs to be integrated with the local 
+	 * database so these are not hardcoded */
 	//Track number of times each echo was played
 	private int numEcho1;
 	private int numEcho2;
@@ -78,7 +83,8 @@ public class Player : MovingObject {
 		//Initialize data collection variables
 		numCrashes = 0;
 		numSteps = 0;
-		
+
+		//TODO(agotsis/wenyuw1) Once the local database is integrated this hardcoding will go away. 
 		numEcho1 = 0;
 		numEcho2 = 0;
 		numEcho3 = 0;
@@ -143,21 +149,7 @@ public class Player : MovingObject {
 			
 		}
 	}
-	
-	void printDir() {
-		if (curDirection == left) {
-			UnityEngine.Debug.Log ("I left");
-		} else if (curDirection == right) {
-			UnityEngine.Debug.Log ("I right");
-		} else if (curDirection == up) {
-			UnityEngine.Debug.Log ("I up");
-		} else if (curDirection == down) {
-			UnityEngine.Debug.Log ("I down");
-		} else {
-			UnityEngine.Debug.Log ("No direction match");
-		}
-	}
-	
+
 	void ChangeSprite()
 	{
 		switch(curDirection) {
@@ -345,6 +337,7 @@ public class Player : MovingObject {
 	//Creates a comma delimited string containing all the echo file names used in the level
 	//and the corresponding number of times the echo was played
 	private string getEchoNames() {
+		//TODO(agotsis/wenyuw1) Once the local database is integrated, this hardcoding will go away. 
 		string allNames = "";
 		allNames = allNames + echo1m.name + ":" + numEcho1.ToString() + ",";
 		allNames = allNames + echo2m.name + ":" + numEcho2.ToString() + ",";
@@ -488,7 +481,6 @@ public class Player : MovingObject {
 		int personY = (int) Mathf.Ceil (player.transform.localPosition.y);
 		switch (curDirection) {
 			case right:
-				UnityEngine.Debug.Log ("echoDist right");
 					//We're currrently facing right
 				for (int i = 0; i < 8; i++) {
 					int wallX = personX + i;
@@ -499,10 +491,8 @@ public class Player : MovingObject {
 						;
 					}
 			}
-			UnityEngine.Debug.Log ("Echo_dist " + minDistance);
 			return minDistance;
 		case left:
-			UnityEngine.Debug.Log ("echoDist left");
 			//We're currrently facing left
 			for (int i = 1; i < 8; i++) {
 				int wallX = personX - i;
@@ -512,26 +502,20 @@ public class Player : MovingObject {
 					minDistance = Mathf.Min(minDistance, dist);
 				}
 			}
-			UnityEngine.Debug.Log ("Echo_dist " + minDistance);
 			return minDistance;
 		case up:
-			UnityEngine.Debug.Log ("echoDist up");
 			//We're currrently facing up
 			for (int i = 1; i < 8; i++) {
 				int wallY = personY + i;
 				Vector3 tPos = new Vector3(personX, wallY, 0);
 				//Debug.Log("possible wall_Y " + wallY + " x pos " + personX);
 				if (wallPositions.Contains(tPos)) {
-					UnityEngine.Debug.Log("wall_Y exists " + wallY);
 					dist = Mathf.Abs(wallY - personY);
-					UnityEngine.Debug.Log("dist " + dist);
 					minDistance = Mathf.Min(minDistance, dist);
 				}
 			}
-			UnityEngine.Debug.Log ("Echo_dist " + minDistance);
 			return minDistance;
 		case down:
-			UnityEngine.Debug.Log ("echoDist down");
 			//We're currrently facing down
 			for (int i = 1; i < 8; i++) {
 				int wallY = personY - i;
@@ -542,10 +526,8 @@ public class Player : MovingObject {
 					
 				}
 			}
-			UnityEngine.Debug.Log ("Echo_dist " + minDistance);
 			return minDistance;
 		default:
-			UnityEngine.Debug.Log ("echoDist defualt");
 			//default case, should never get here
 			return 7;
 		}
@@ -663,6 +645,7 @@ public class Player : MovingObject {
 		if ((xLoc == (int)exitSign.transform.localPosition.x) & (yLoc == (int)exitSign.transform.localPosition.y)) {
 			return "Crashed while on the Exit Sign";
 		}
+		//TODO(agotsis/wenyuw1) This hardcoding needs to go away. Mainly here to test the database.  
 		//For the x direction
 		if ((distXUp == 7) & (distXDown == 1) & (distYUp == 1) & (distYDown == 1)) {
 			return "Start of the Corridor";
