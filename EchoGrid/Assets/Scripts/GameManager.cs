@@ -28,8 +28,7 @@ public class GameManager : MonoBehaviour {
 	}
 	
 	//Initializes the game for each level.
-	void InitGame()
-	{
+	void InitGame(){
 		Screen.orientation = ScreenOrientation.Landscape;
 
 		//Setup database for the first time
@@ -51,13 +50,14 @@ public class GameManager : MonoBehaviour {
 		Invoke("HideLevelImage", levelStartDelay);
 		
 		//Call the SetupScene function of the BoardManager script, pass it current level number.
+		boardScript.max_level = boardScript.get_level_count("GameData/levels");
+		UnityEngine.Debug.Log ("max level is");
+		UnityEngine.Debug.Log (boardScript.max_level);
 		boardScript.SetupScene(level);
-		
 	}
 
 	//Hides black image used between levels
-	void HideLevelImage()
-	{
+	void HideLevelImage(){
 		//Disable the levelImage gameObject.
 		levelImage.SetActive(false);
 		
@@ -66,24 +66,19 @@ public class GameManager : MonoBehaviour {
 	}
 
 	//This is called each time a scene is loaded.
-	void OnLevelWasLoaded(int index)
-	{
-
+	void OnLevelWasLoaded(int index){
 		//Call InitGame to initialize our level.
 		InitGame();
 	}
 
 
-	public void GameOver() 
-	{
+	public void GameOver() {
 		enabled = false;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if (playersTurn || doingSetup) {
+		if (playersTurn || doingSetup)
 			return;
-		}
-	
 	}
 }
