@@ -170,7 +170,7 @@ def convertToPrintable(maze):
         curRow = ""
         for col in range(cols):
             tile = maze[row][col]
-            symbol = 'w' if tile == 0 or tile == '-' else '-'
+            symbol = '-' if tile == 0 or tile == '-' else 'w'
             if tile == 's': symbol = 's'
             elif tile == 'e': symbol = 'e'
             curRow += symbol
