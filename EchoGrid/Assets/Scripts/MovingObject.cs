@@ -30,11 +30,13 @@ public abstract class MovingObject : MonoBehaviour
 	//Move takes parameters for x direction, y direction and a RaycastHit2D to check collision.
 	protected bool Move (int xDir, int yDir, out RaycastHit2D hit)
 	{
+		float scale = (float)Utilities.SCALE_REF / (float)Utilities.MAZE_SIZE;
+
 		//Store start position to move from, based on objects current transform position.
 		Vector2 start = transform.position;
 		
 		// Calculate end position based on the direction parameters passed in when calling Move.
-		Vector2 end = start + new Vector2 (xDir, yDir);
+		Vector2 end = start + new Vector2 (xDir*scale, yDir*scale);
 		
 		//Disable the boxCollider so that linecast doesn't hit this object's own collider.
 		boxCollider.enabled = false;
@@ -44,7 +46,7 @@ public abstract class MovingObject : MonoBehaviour
 		
 		//Re-enable boxCollider after linecast
 		boxCollider.enabled = true;
-		
+
 		//Check if anything was hit
 		if(hit.transform == null)
 		{
@@ -54,7 +56,6 @@ public abstract class MovingObject : MonoBehaviour
 			//Return true to say that Move was successful
 			return true;
 		}
-		
 		//If something was hit, return false, Move was unsuccesful.
 		return false;
 	}

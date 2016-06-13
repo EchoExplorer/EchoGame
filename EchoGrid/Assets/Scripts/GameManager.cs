@@ -51,8 +51,6 @@ public class GameManager : MonoBehaviour {
 		
 		//Call the SetupScene function of the BoardManager script, pass it current level number.
 		boardScript.max_level = boardScript.get_level_count("GameData/levels");
-		UnityEngine.Debug.Log ("max level is");
-		UnityEngine.Debug.Log (boardScript.max_level);
 		boardScript.SetupScene(level);
 	}
 

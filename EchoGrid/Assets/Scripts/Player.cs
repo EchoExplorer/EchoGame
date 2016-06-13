@@ -84,14 +84,33 @@ public class Player : MovingObject {
 		//Initialize list of crash locations
 		crashLocs = "";
 
+		//Adjust player scale
+		Vector3 new_scale = transform.localScale;
+		new_scale *= (float)Utilities.SCALE_REF / (float)Utilities.MAZE_SIZE;
+		transform.localScale = new_scale;
+
 		//Start the time for the game level
 		stopWatch = new Stopwatch();
 		stopWatch.Start ();
 		
 		base.Start ();
 	}
-	
-	private void PlayEcho(int dist) {
+
+	private void PlayEcho() {
+
+		BoardManager.echoDistData data = 
+			GameManager.instance.boardScript.getEchoDistData(transform.position, get_player_dir("FRONT"), get_player_dir("LEFT"));
+
+		String filename;
+		filename = "Front: " + data.front.ToString () + "; Back: " + data.back.ToString () +
+			"; Left: " + data.left.ToString () + "; Right: " + data.right.ToString ();
+
+		UnityEngine.Debug.Log (filename);
+		UnityEngine.Debug.Log (data.all_jun_to_string());
+
+		//TODO HJKJHJK
+
+		/*
 		switch (dist) 
 		{
 		case 0:
@@ -135,21 +154,22 @@ public class Player : MovingObject {
 			numEcho7++;
 			break;
 			
-		}
+		}*/
 	}
 
 	//due to the chaotic coord system
 	//return the relative direction
 	Vector3 get_player_dir(string dir){
 		if (dir == "FRONT")
-			return transform.right;
+			return transform.right.normalized;
 		else if (dir == "BACK")
-			return -transform.right;
+			return -transform.right.normalized;
 		else if (dir == "LEFT")
-			return transform.up;
+			return transform.up.normalized;
 		else if (dir == "RIGHT")
-			return -transform.up;
+			return -transform.up.normalized;
 
+		UnityEngine.Debug.Log ("INVALID direction string");
 		return Vector3.zero;
 	}
 
@@ -198,9 +218,10 @@ public class Player : MovingObject {
 			numSteps--;
 
 			//Add the crash location details
-			string loc = transform.localPosition.x.ToString() + "," + transform.localPosition.y.ToString();
-			string crashPos = getCrashDescription((int) transform.localPosition.x, (int) transform.localPosition.y);
-			loc = loc + "," + crashPos;
+			string loc = transform.position.x.ToString() + "," + transform.position.y.ToString();
+			//TODO put those two lines back
+			//string crashPos = getCrashDescription((int) transform.position.x, (int) transform.position.y);
+			//loc = loc + "," + crashPos;
 			if (crashLocs.Equals("")) {
 				crashLocs = loc;
 			}
@@ -358,6 +379,8 @@ public class Player : MovingObject {
 	}
 	
 	private void Update () {
+		//UnityEngine.Debug.DrawLine (transform.position, transform.position+get_player_dir("FRONT"), Color.green);
+		//UnityEngine.Debug.DrawLine (transform.position, transform.position+get_player_dir("LEFT"), Color.yellow);
 		//If it's not the player's turn, exit the function.
 		if(!GameManager.instance.playersTurn) return;
 
@@ -382,7 +405,7 @@ public class Player : MovingObject {
 		}
 		
 		if (Input.GetKeyUp("f"))
-			PlayEcho(echoDist());
+			PlayEcho();
 		else if (Input.GetKeyUp("e"))
 			attemptExitFromLevel();
 		
@@ -452,9 +475,13 @@ public class Player : MovingObject {
 		#endif //End of mobile platform dependendent compilation section started above with #elif
 		calculateMove(dir);
 	}
-	
+
+
+	//no longer used
 	private int echoDist() {
+
 		//Get all the walls on the grid
+		/*
 		GameObject[] wallsArray = GameObject.FindGameObjectsWithTag("Wall");
 		List <Vector3> wallPositions = new List<Vector3>();
 		foreach (GameObject wall in wallsArray) {
@@ -463,17 +490,20 @@ public class Player : MovingObject {
 		int dist;
 		int minDistance = 7;
 		float threshhold = 0.01f;
+		float scale = (float)Utilities.SCALE_REF / (float)Utilities.MAZE_SIZE;
 
-		for (int i = 1; i < 8; i++) {
-			Vector3 tPos = transform.position + get_player_dir ("FRONT") * i;
+		for (int i = 1; i < Utilities.MAZE_SIZE; i++) {
+			Vector3 tPos = transform.position + get_player_dir ("FRONT") * i*scale;
 			for (int j = 0; j < wallPositions.Count; ++j) {
 				if ((wallPositions [j] - tPos).magnitude <= threshhold) {
-					dist = (int)((tPos - transform.position).magnitude);
+					dist = (int)((tPos - transform.position).magnitude/scale);
 					minDistance = Mathf.Min (minDistance, dist);
 				}
 			}
 		}
 		return minDistance;
+		*/
+		return 0;
 	}
 
 	//Returns a description of the location of the crash (for analysis)
@@ -492,41 +522,47 @@ public class Player : MovingObject {
 			positions.Add(new Vector3(wall.transform.position.x, wall.transform.position.y, 0f));
 		}
 
-		int distXUp = 0;
-		int distXDown = 0;
-		int distYUp = 0;
-		int distYDown = 0;
+		float distXUp = 0;
+		float distXDown = 0;
+		float distYUp = 0;
+		float distYDown = 0;
+		float scale = (float)Utilities.SCALE_REF / (float)Utilities.MAZE_SIZE;
+		float threshhold = 0.01f;
 
 		while (true) {
-			distXUp = distXUp + 1;
+			distXUp = distXUp + 1*scale;
 			Vector3 currPos = new Vector3(xLoc + distXUp, yLoc, 0f);
-			if (positions.Contains(currPos)) {
-				//Found a wall
-				break;
+			for (int j = 0; j < positions.Count; ++j) {
+				if ((positions [j] - currPos).magnitude <= threshhold) {
+					break;
+				}
 			}
 		}
 		while (true) {
-			distXDown = distXDown + 1;
+			distXDown = distXDown + 1*scale;
 			Vector3 currPos = new Vector3(xLoc - distXDown, yLoc, 0f);
-			if (positions.Contains(currPos)) {
-				//Found a wall
-				break;
+			for (int j = 0; j < positions.Count; ++j) {
+				if ((positions [j] - currPos).magnitude <= threshhold) {
+					break;
+				}
 			}
 		}
 		while (true) {
-			distYUp = distYUp + 1;
+			distYUp = distYUp + 1*scale;
 			Vector3 currPos = new Vector3(xLoc, yLoc + distYUp, 0f);
-			if (positions.Contains(currPos)) {
-				//Found a wall
-				break;
+			for (int j = 0; j < positions.Count; ++j) {
+				if ((positions [j] - currPos).magnitude <= threshhold) {
+					break;
+				}
 			}
 		}
 		while (true) {
-			distYDown = distYDown + 1;
+			distYDown = distYDown + 1*scale;
 			Vector3 currPos = new Vector3(xLoc, yLoc - distYDown, 0f);
-			if (positions.Contains(currPos)) {
-				//Found a wall
-				break;
+			for (int j = 0; j < positions.Count; ++j) {
+				if ((positions [j] - currPos).magnitude <= threshhold) {
+					break;
+				}
 			}
 		}
 

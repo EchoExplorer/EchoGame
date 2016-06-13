@@ -60,8 +60,10 @@
      <Compile Include="Assets\Scripts\MovingObject.cs" />
      <Compile Include="Assets\Scripts\Player.cs" />
      <Compile Include="Assets\Scripts\SoundManager.cs" />
+     <Compile Include="Assets\Scripts\Utilities.cs" />
      <Compile Include="Assets\Scripts\Wall.cs" />
      <None Include="Assets\Fonts\OFL.txt" />
+     <None Include="Assets\Resources\GameData\test.txt" />
      <None Include="Assets\Resources\GameData\levels.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>D:/Games/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
