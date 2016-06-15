@@ -3,9 +3,9 @@ using System.Collections;
 
 public class Wall : MonoBehaviour {
 
-	private SpriteRenderer spriteRenderer;
+	//private SpriteRenderer spriteRenderer;
 	// Use this for initialization
 	void Awake () {
-		spriteRenderer = GetComponent<SpriteRenderer> ();
+		//spriteRenderer = GetComponent<SpriteRenderer> ();
 	}
 }

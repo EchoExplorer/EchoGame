@@ -17,16 +17,8 @@ public class Player : MovingObject {
 	
 	private float touchTime = 0f;
 	private float minSwipeDist = 100f;
-	private bool restarted = false;
+	bool restarted = false;
 	private int curLevel;
-	
-	private const int right = 0;
-	private const int left = 180;
-	private const int up = 90;
-	private const int down = 270;
-	private int curDirection = right;
-	private bool changedDir = false;
-	private bool movingForward = true;
 
 	//TODO(agotsis/wenyuw1) This needs to be integrated with the local database so these are not hardcoded 
 	public AudioClip echo1m;
@@ -46,11 +38,7 @@ public class Player : MovingObject {
 	public AudioClip swipeRight;
 	public AudioClip swipeLeft;
 
-	public Sprite upSprite;
-	public Sprite downSprite; 
-	public Sprite leftSprite; 
-	public Sprite rightSprite;
-	private SpriteRenderer spriteRenderer; 
+	//private SpriteRenderer spriteRenderer; 
 	
 	private int numCrashes; //Keep track of number of times user crashed into wall
 	private int numSteps;   //Keep track of number of steps taken per level
@@ -78,7 +66,7 @@ public class Player : MovingObject {
 		//Get a component reference to the Player's animator component
 		animator = GetComponent<Animator>();
 		curLevel = GameManager.instance.level;
-		spriteRenderer = GetComponent<SpriteRenderer>();
+		//spriteRenderer = GetComponent<SpriteRenderer>();
 		
 		//Initialize data collection variables
 		numCrashes = 0;
@@ -96,14 +84,33 @@ public class Player : MovingObject {
 		//Initialize list of crash locations
 		crashLocs = "";
 
+		//Adjust player scale
+		Vector3 new_scale = transform.localScale;
+		new_scale *= (float)Utilities.SCALE_REF / (float)Utilities.MAZE_SIZE;
+		transform.localScale = new_scale;
+
 		//Start the time for the game level
 		stopWatch = new Stopwatch();
 		stopWatch.Start ();
 		
 		base.Start ();
 	}
-	
-	private void PlayEcho(int dist) {
+
+	private void PlayEcho() {
+
+		BoardManager.echoDistData data = 
+			GameManager.instance.boardScript.getEchoDistData(transform.position, get_player_dir("FRONT"), get_player_dir("LEFT"));
+
+		String filename;
+		filename = "Front: " + data.front.ToString () + "; Back: " + data.back.ToString () +
+			"; Left: " + data.left.ToString () + "; Right: " + data.right.ToString ();
+
+		UnityEngine.Debug.Log (filename);
+		UnityEngine.Debug.Log (data.all_jun_to_string());
+
+		//TODO HJKJHJK
+
+		/*
 		switch (dist) 
 		{
 		case 0:
@@ -147,87 +154,92 @@ public class Player : MovingObject {
 			numEcho7++;
 			break;
 			
-		}
+		}*/
 	}
 
-	void ChangeSprite()
-	{
-		switch(curDirection) {
-		case left:
-			spriteRenderer.sprite = leftSprite;
-			break;
-		case right:
-			spriteRenderer.sprite = rightSprite;
-			break;
-		case up:
-			spriteRenderer.sprite = upSprite;
-			break;
-		case down:
-			spriteRenderer.sprite = downSprite;
-			break;
-		}
+	//due to the chaotic coord system
+	//return the relative direction
+	Vector3 get_player_dir(string dir){
+		if (dir == "FRONT")
+			return transform.right.normalized;
+		else if (dir == "BACK")
+			return -transform.right.normalized;
+		else if (dir == "LEFT")
+			return transform.up.normalized;
+		else if (dir == "RIGHT")
+			return -transform.up.normalized;
+
+		UnityEngine.Debug.Log ("INVALID direction string");
+		return Vector3.zero;
 	}
-	
-	private void calculateMove(int horizontal, int vertical) {
-		if(horizontal != 0)
-		{
-			// when user presses the right/left arrow keys, the direction of the player is changed
-			vertical = 0;
-			if (horizontal > 0) {
-				// a swipe to the right was made
-				curDirection = (curDirection - 90);
-				if (curDirection < 0) {
-					curDirection = 360 + curDirection;
-				}
-			} else {
-				// a swipe to the left was made, a left corresponds to a 90 counterclockwise turn
-				curDirection = (curDirection + 90) % 360;
-			}
+
+	//please call this function to rotate player
+	//use this with get_player_dir("SOMETHING")
+	void rotateplayer(Vector3 dir){
+		if (dir == get_player_dir ("FRONT"))
+			return;
+		else if (dir == get_player_dir ("BACK"))
+			return;
+		else if (dir == get_player_dir("LEFT"))
+			transform.Rotate (new Vector3(0,0,90));
+		else if(dir == get_player_dir("RIGHT"))
+			transform.Rotate (new Vector3(0,0,-90));
+	}
+
+	private void calculateMove(Vector3 dir) {
+		if (dir.magnitude == 0)
+			return;
+
+		bool changedDir = false;
+		//print (dir);
+
+		if ((dir != get_player_dir("FRONT")) && (dir != get_player_dir("BACK"))) {
 			changedDir = true;
-			ChangeSprite();
-		} else if (vertical != 0) {
-			// when the user presses the up-down arrow keys, the player moves in the direction the
-			// player currently faces
-			horizontal = 0;
-			if (vertical < 0) {
-				movingForward = false;
-			} else {
-				movingForward = true;
-			}
-			changedDir = false;
+			rotateplayer (dir);
 		}
 		
-		if((horizontal != 0 || vertical != 0) && !changedDir)
-		{
-			switch(curDirection) {
-			case left:
-				horizontal = -1;
-				vertical = 0;
-				break;
-			case right:
-				horizontal = 1;
-				vertical = 0;
-				break;
-			case up:
-				horizontal = 0;
-				vertical = 1;
-				break;
-			case down:
-				horizontal = 0;
-				vertical = -1;
-				break;
+		dir.Normalize();
+
+		if(!changedDir)
+			AttemptMove<Wall> ((int)dir.x, (int)dir.y);
+	}
+
+	protected override bool AttemptMove <T> (int xDir, int yDir)
+	{	
+		//Call the AttemptMove method of the base class, passing in the component T (in this case Wall) and x and y direction to move.
+		bool canMove = base.AttemptMove <T> (xDir, yDir);
+
+		//If player could not move to that location, play the crash sound
+		if (!canMove) {
+			SoundManager.instance.PlaySingle(wallHit);
+			//Increment the crash count
+			numCrashes++;
+			//Decrement the step count (as no successful step was made)
+			numSteps--;
+
+			//Add the crash location details
+			string loc = transform.position.x.ToString() + "," + transform.position.y.ToString();
+			//TODO put those two lines back
+			//string crashPos = getCrashDescription((int) transform.position.x, (int) transform.position.y);
+			//loc = loc + "," + crashPos;
+			if (crashLocs.Equals("")) {
+				crashLocs = loc;
 			}
-			if (!movingForward) {
-				horizontal *= -1;
-				vertical *= -1;
+			else {
+				crashLocs = crashLocs + ";" + loc;
 			}
-			AttemptMove<Wall> (horizontal, vertical);
 		}
+
+		//Hit allows us to reference the result of the Linecast done in Move.
+		//RaycastHit2D hit;
+
+		//GameManager.instance.playersTurn = false;
+		return canMove;
 	}
 	
 	private void attemptExitFromLevel() {
 		GameObject exitSign = GameObject.FindGameObjectWithTag("Exit");
-		Vector2 distFromExit = transform.localPosition - exitSign.transform.localPosition;
+		Vector2 distFromExit = transform.position - exitSign.transform.position;
 		if (Vector2.SqrMagnitude(distFromExit) < 0.25) {
 			//Calculate time elapsed during the game level
 			stopWatch.Stop();
@@ -367,50 +379,50 @@ public class Player : MovingObject {
 	}
 	
 	private void Update () {
+		//UnityEngine.Debug.DrawLine (transform.position, transform.position+get_player_dir("FRONT"), Color.green);
+		//UnityEngine.Debug.DrawLine (transform.position, transform.position+get_player_dir("LEFT"), Color.yellow);
 		//If it's not the player's turn, exit the function.
 		if(!GameManager.instance.playersTurn) return;
-		
-		int horizontal = 0;
-		int vertical = 0;
-		
+
+		Vector3 dir = Vector3.zero;
+
 		//Check if we are running either in the Unity editor or in a standalone build.
 		#if UNITY_STANDALONE || UNITY_WEBPLAYER
 		
 		//Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
 		if (Input.GetKeyUp(KeyCode.RightArrow)) {
-			horizontal = 1;
+			dir = -transform.up;
 			SoundManager.instance.PlaySingle(swipeRight);
 		} else if (Input.GetKeyUp(KeyCode.LeftArrow)) {
-			horizontal = -1;
+			dir = transform.up;
 			SoundManager.instance.PlaySingle(swipeLeft);
 		} else if (Input.GetKeyUp(KeyCode.UpArrow)) {
-			vertical = 1;
+			dir = transform.right;
 			SoundManager.instance.PlaySingle(swipeAhead);
 		} else if (Input.GetKeyUp(KeyCode.DownArrow)) {
-			vertical = -1;
+			dir = -transform.right;
 			SoundManager.instance.PlaySingle(swipeAhead);
 		}
 		
-		if (Input.GetKeyUp("f")) {
-			PlayEcho(echoDist());
-		} else if (Input.GetKeyUp("e")) {
+		if (Input.GetKeyUp("f"))
+			PlayEcho();
+		else if (Input.GetKeyUp("e"))
 			attemptExitFromLevel();
-		}
 		
 		//Check if we are running on iOS, Android, Windows Phone 8 or Unity iPhone
 		#elif UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
-		
+
+		float TOUCH_TIME = 0.05f;
+
 		//Check if Input has registered more than zero touches
 		int numTouches = Input.touchCount;
 		
 		if (numTouches > 0) {
 			//Store the first touch detected.
 			Touch myTouch = Input.touches[0];
-			
-			
+
 			//Check if the phase of that touch equals Began
-			if (myTouch.phase == TouchPhase.Began)
-			{
+			if (myTouch.phase == TouchPhase.Began){
 				//If so, set touchOrigin to the position of that touch
 				touchOrigin = myTouch.position;
 				touchTime = Time.time;
@@ -434,139 +446,65 @@ public class Player : MovingObject {
 				if (Mathf.Abs(x) > Mathf.Abs(y) && Mathf.Abs(x) >= minSwipeDist)
 				{
 					//If x is greater than zero, set horizontal to 1, otherwise set it to -1
-					vertical = 0;
 					if (x > 0) {
-						horizontal = 1;
+						dir = get_player_dir("RIGHT");
 						SoundManager.instance.PlaySingle(swipeRight);
 					} else {
-						horizontal = -1;
+						dir = get_player_dir("LEFT");
 						SoundManager.instance.PlaySingle(swipeLeft);
 					}
 				} else if (Mathf.Abs(y) > Mathf.Abs(x) && Mathf.Abs(y) >= minSwipeDist) {
 					//If y is greater than zero, set vertical to 1, otherwise set it to -1
-					horizontal = 0;
 					if (y > 0) {
-						vertical = 1;
+						dir = get_player_dir("FRONT");
 						SoundManager.instance.PlaySingle(swipeAhead);
 					} else {
-						vertical = -1;
+						dir = get_player_dir("BACK");
 						SoundManager.instance.PlaySingle(swipeAhead);
 					}
 					//Increment step count
 					numSteps++;
-				} else if (Mathf.Abs(Time.time - touchTime) > 0.05) {
-					if (numTouches == 2) {
+				} else if (Mathf.Abs(Time.time - touchTime) > TOUCH_TIME) {
+					if (numTouches == 2)
 						attemptExitFromLevel();
-					} else {
+					else
 						PlayEcho(echoDist());
-					}
 				}
 			}
 		}
 		#endif //End of mobile platform dependendent compilation section started above with #elif
-		calculateMove(horizontal, vertical);
+		calculateMove(dir);
 	}
-	
+
+
+	//no longer used
 	private int echoDist() {
+
 		//Get all the walls on the grid
+		/*
 		GameObject[] wallsArray = GameObject.FindGameObjectsWithTag("Wall");
 		List <Vector3> wallPositions = new List<Vector3>();
 		foreach (GameObject wall in wallsArray) {
-			wallPositions.Add(wall.transform.localPosition);
+			wallPositions.Add(wall.transform.position);
 		}
 		int dist;
 		int minDistance = 7;
-		GameObject player = GameObject.Find("Player");
-		int personX = (int) Mathf.Ceil(player.transform.localPosition.x);
-		int personY = (int) Mathf.Ceil (player.transform.localPosition.y);
-		switch (curDirection) {
-			case right:
-					//We're currrently facing right
-				for (int i = 0; i < 8; i++) {
-					int wallX = personX + i;
-					Vector3 tPos = new Vector3 (wallX, personY, 0);
-					if (wallPositions.Contains (tPos)) {
-						dist = Mathf.Abs (wallX - personX);
-						minDistance = Mathf.Min (minDistance, dist);
-						;
-					}
-			}
-			return minDistance;
-		case left:
-			//We're currrently facing left
-			for (int i = 1; i < 8; i++) {
-				int wallX = personX - i;
-				Vector3 tPos = new Vector3(wallX, personY, 0);
-				if (wallPositions.Contains(tPos)) {
-					dist = Mathf.Abs(wallX - personX);
-					minDistance = Mathf.Min(minDistance, dist);
-				}
-			}
-			return minDistance;
-		case up:
-			//We're currrently facing up
-			for (int i = 1; i < 8; i++) {
-				int wallY = personY + i;
-				Vector3 tPos = new Vector3(personX, wallY, 0);
-				//Debug.Log("possible wall_Y " + wallY + " x pos " + personX);
-				if (wallPositions.Contains(tPos)) {
-					dist = Mathf.Abs(wallY - personY);
-					minDistance = Mathf.Min(minDistance, dist);
-				}
-			}
-			return minDistance;
-		case down:
-			//We're currrently facing down
-			for (int i = 1; i < 8; i++) {
-				int wallY = personY - i;
-				Vector3 tPos = new Vector3(personX, wallY, 0);
-				if (wallPositions.Contains(tPos)) {
-					dist = Mathf.Abs(wallY - personY);
-					minDistance = Mathf.Min(minDistance, dist);
-					
-				}
-			}
-			return minDistance;
-		default:
-			//default case, should never get here
-			return 7;
-		}
-	}
-	
-	
-	protected override bool AttemptMove <T> (int xDir, int yDir)
-	{	
-		//Call the AttemptMove method of the base class, passing in the component T (in this case Wall) and x and y direction to move.
-		bool canMove = base.AttemptMove <T> (xDir, yDir);
-		
-		//If player could not move to that location, play the crash sound
-		if (!canMove) {
-			SoundManager.instance.PlaySingle(wallHit);
-			//Increment the crash count
-			numCrashes++;
-			//Decrement the step count (as no successful step was made)
-			numSteps--;
+		float threshhold = 0.01f;
+		float scale = (float)Utilities.SCALE_REF / (float)Utilities.MAZE_SIZE;
 
-			//Add the crash location details
-			GameObject player = GameObject.Find("Player");
-			string loc = player.transform.localPosition.x.ToString() + "," + player.transform.localPosition.y.ToString();
-			string crashPos = getCrashDescription((int) player.transform.localPosition.x, (int) player.transform.localPosition.y);
-			loc = loc + "," + crashPos;
-			if (crashLocs.Equals("")) {
-				crashLocs = loc;
-			}
-			else {
-				crashLocs = crashLocs + ";" + loc;
+		for (int i = 1; i < Utilities.MAZE_SIZE; i++) {
+			Vector3 tPos = transform.position + get_player_dir ("FRONT") * i*scale;
+			for (int j = 0; j < wallPositions.Count; ++j) {
+				if ((wallPositions [j] - tPos).magnitude <= threshhold) {
+					dist = (int)((tPos - transform.position).magnitude/scale);
+					minDistance = Mathf.Min (minDistance, dist);
+				}
 			}
 		}
-		
-		//Hit allows us to reference the result of the Linecast done in Move.
-		RaycastHit2D hit;
-		
-		//GameManager.instance.playersTurn = false;
-		return canMove;
+		return minDistance;
+		*/
+		return 0;
 	}
-
 
 	//Returns a description of the location of the crash (for analysis)
 	//Currently, the ouput is from the following list of options
@@ -581,44 +519,50 @@ public class Player : MovingObject {
 
 		//Go through all the walls
 		foreach (var wall in walls) {
-			positions.Add(new Vector3(wall.transform.localPosition.x, wall.transform.localPosition.y, 0f));
+			positions.Add(new Vector3(wall.transform.position.x, wall.transform.position.y, 0f));
 		}
 
-		int distXUp = 0;
-		int distXDown = 0;
-		int distYUp = 0;
-		int distYDown = 0;
+		float distXUp = 0;
+		float distXDown = 0;
+		float distYUp = 0;
+		float distYDown = 0;
+		float scale = (float)Utilities.SCALE_REF / (float)Utilities.MAZE_SIZE;
+		float threshhold = 0.01f;
 
 		while (true) {
-			distXUp = distXUp + 1;
+			distXUp = distXUp + 1*scale;
 			Vector3 currPos = new Vector3(xLoc + distXUp, yLoc, 0f);
-			if (positions.Contains(currPos)) {
-				//Found a wall
-				break;
+			for (int j = 0; j < positions.Count; ++j) {
+				if ((positions [j] - currPos).magnitude <= threshhold) {
+					break;
+				}
 			}
 		}
 		while (true) {
-			distXDown = distXDown + 1;
+			distXDown = distXDown + 1*scale;
 			Vector3 currPos = new Vector3(xLoc - distXDown, yLoc, 0f);
-			if (positions.Contains(currPos)) {
-				//Found a wall
-				break;
+			for (int j = 0; j < positions.Count; ++j) {
+				if ((positions [j] - currPos).magnitude <= threshhold) {
+					break;
+				}
 			}
 		}
 		while (true) {
-			distYUp = distYUp + 1;
+			distYUp = distYUp + 1*scale;
 			Vector3 currPos = new Vector3(xLoc, yLoc + distYUp, 0f);
-			if (positions.Contains(currPos)) {
-				//Found a wall
-				break;
+			for (int j = 0; j < positions.Count; ++j) {
+				if ((positions [j] - currPos).magnitude <= threshhold) {
+					break;
+				}
 			}
 		}
 		while (true) {
-			distYDown = distYDown + 1;
+			distYDown = distYDown + 1*scale;
 			Vector3 currPos = new Vector3(xLoc, yLoc - distYDown, 0f);
-			if (positions.Contains(currPos)) {
-				//Found a wall
-				break;
+			for (int j = 0; j < positions.Count; ++j) {
+				if ((positions [j] - currPos).magnitude <= threshhold) {
+					break;
+				}
 			}
 		}
 
@@ -642,7 +586,7 @@ public class Player : MovingObject {
 
 		//If Crash happened while on the Exit Sign
 		GameObject exitSign = GameObject.FindGameObjectWithTag("Exit");
-		if ((xLoc == (int)exitSign.transform.localPosition.x) & (yLoc == (int)exitSign.transform.localPosition.y)) {
+		if ((xLoc == (int)exitSign.transform.position.x) & (yLoc == (int)exitSign.transform.position.y)) {
 			return "Crashed while on the Exit Sign";
 		}
 		//TODO(agotsis/wenyuw1) This hardcoding needs to go away. Mainly here to test the database.  
