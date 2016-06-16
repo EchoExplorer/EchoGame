@@ -7,6 +7,8 @@ using System.IO;
 
 public class BoardManager : MonoBehaviour {
 
+	public static float tileSize = 1.5f; // in meters. I don't know if this should go here.
+
 	[Serializable]
 	public class Count{
 		public int minimum;
@@ -35,8 +37,19 @@ public class BoardManager : MonoBehaviour {
 	}
 
 	public struct echoDistData{
-		public int front, back, left, right;
+		public int front, back, left, right; //in blocks
+		public float frontDist, backDist, leftDist, rightDist; //in meters
 		public JunctionType fType, bType, lType, rType;
+
+		//TODO Weynu, is this a bad design choice? Call method to calcuate distances.
+		public void updateDistances(){
+			float halfSize = BoardManager.tileSize / 2;
+
+			frontDist = halfSize + (front - 1) * BoardManager.tileSize;
+			backDist = halfSize + (back - 1) * BoardManager.tileSize;
+			leftDist = halfSize + (left - 1) * BoardManager.tileSize;
+			rightDist = halfSize + (right - 1) * BoardManager.tileSize;
+		}
 
 		public string all_jun_to_string(){
 			string juns;
@@ -49,13 +62,13 @@ public class BoardManager : MonoBehaviour {
 			if (jun ==  JunctionType.INVALID)
 				return "Invalid";
 			else if (jun ==  JunctionType.DEADEND)
-				return "Deadend";
+				return "D";  //deadend
 			else if (jun ==  JunctionType.T)
-				return "T-Junction";
+				return "T";  //T
 			else if (jun ==  JunctionType.LL)
-				return "Left L";
+				return "EL"; //elbow left
 			else if (jun ==  JunctionType.RL)
-				return "Right L";
+				return "ER"; //elbow right
 			else if (jun ==  JunctionType.CROSS)
 				return "Cross";
 
@@ -259,6 +272,8 @@ public class BoardManager : MonoBehaviour {
 		gridTemp = _getDist (gridIdx, -playerLeft);
 		result.right = (int)(gridTemp - gridIdx).magnitude;
 		result.rType = getJunctionType (gridTemp + new Vector2(playerLeft.x, playerLeft.y), gridIdx);
+
+		result.updateDistances();
 
 		return result;
 	}

@@ -1,0 +1,16 @@
+/Users/agotsis/EchoGame/EchoGrid/Temp/bin/Debug/UnityEngine.dll
+/Users/agotsis/EchoGame/EchoGrid/Temp/bin/Debug/UnityEditor.dll
+/Users/agotsis/EchoGame/EchoGrid/Temp/bin/Debug/UnityEngine.Networking.dll
+/Users/agotsis/EchoGame/EchoGrid/Temp/bin/Debug/UnityEngine.UI.dll
+/Users/agotsis/EchoGame/EchoGrid/Temp/bin/Debug/Mono.Data.Sqlite.dll
+/Users/agotsis/EchoGame/EchoGrid/Temp/bin/Debug/Assembly-CSharp-firstpass.dll
+/Users/agotsis/EchoGame/EchoGrid/Temp/bin/Debug/Assembly-CSharp-firstpass.dll.mdb
+/Users/agotsis/EchoGame/EchoGrid/Temp/bin/Debug/Mono.Cecil.dll
+/Users/agotsis/EchoGame/EchoGrid/Temp/bin/Debug/Unity.SerializationLogic.dll
+/Users/agotsis/EchoGame/EchoGrid/Temp/bin/Debug/Unity.DataContract.dll
+/Users/agotsis/EchoGame/EchoGrid/Temp/bin/Debug/ICSharpCode.NRefactory.dll
+/Users/agotsis/EchoGame/EchoGrid/Temp/bin/Debug/Unity.UNetWeaver.dll
+/Users/agotsis/EchoGame/EchoGrid/Temp/bin/Debug/Unity.UNetWeaver.dll.mdb
+/Users/agotsis/EchoGame/EchoGrid/Temp/bin/Debug/Unity.CecilTools.dll
+/Users/agotsis/EchoGame/EchoGrid/Temp/bin/Debug/Mono.Cecil.Pdb.dll
+/Users/agotsis/EchoGame/EchoGrid/Temp/bin/Debug/Mono.Cecil.Mdb.dll

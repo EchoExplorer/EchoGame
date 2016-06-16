@@ -72,6 +72,7 @@ public class Player : MovingObject {
 		numCrashes = 0;
 		numSteps = 0;
 
+		/*
 		//TODO(agotsis/wenyuw1) Once the local database is integrated this hardcoding will go away. 
 		numEcho1 = 0;
 		numEcho2 = 0;
@@ -80,6 +81,7 @@ public class Player : MovingObject {
 		numEcho5 = 0;
 		numEcho6 = 0;
 		numEcho7 = 0;
+		*/
 
 		//Initialize list of crash locations
 		crashLocs = "";
@@ -101,12 +103,21 @@ public class Player : MovingObject {
 		BoardManager.echoDistData data = 
 			GameManager.instance.boardScript.getEchoDistData(transform.position, get_player_dir("FRONT"), get_player_dir("LEFT"));
 
+		String prefix = "15-0"; //Should be a variable somewhere. Hard for now.
+
 		String filename;
-		filename = "Front: " + data.front.ToString () + "; Back: " + data.back.ToString () +
-			"; Left: " + data.left.ToString () + "; Right: " + data.right.ToString ();
+		//filename = "Front: " + data.front.ToString () + "; Back: " + data.back.ToString () +
+		//	"; Left: " + data.left.ToString () + "; Right: " + data.right.ToString ();
+
+		filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix, 
+			data.frontDist, data.jun_to_string (data.fType), data.backDist, data.jun_to_string (data.bType),
+			data.leftDist, data.jun_to_string (data.lType), data.rightDist, data.jun_to_string (data.rType));
 
 		UnityEngine.Debug.Log (filename);
 		UnityEngine.Debug.Log (data.all_jun_to_string());
+
+		AudioClip echo = Resources.Load("echoes/" + filename) as AudioClip;
+		SoundManager.instance.PlaySingle(echo);
 
 		//TODO HJKJHJK
 
