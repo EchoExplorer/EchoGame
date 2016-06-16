@@ -109,9 +109,16 @@ public class Player : MovingObject {
 		//filename = "Front: " + data.front.ToString () + "; Back: " + data.back.ToString () +
 		//	"; Left: " + data.left.ToString () + "; Right: " + data.right.ToString ();
 
+		/*
 		filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix, 
 			data.frontDist, data.jun_to_string (data.fType), data.backDist, data.jun_to_string (data.bType),
 			data.leftDist, data.jun_to_string (data.lType), data.rightDist, data.jun_to_string (data.rType));
+		*/
+
+		filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix, 
+			data.frontDist, data.jun_to_string (data.fType), data.backDist, "D",
+			data.leftDist, data.jun_to_string (data.lType), data.rightDist, data.jun_to_string (data.rType));
+		//assume a deadend is behind you always
 
 		UnityEngine.Debug.Log (filename);
 		UnityEngine.Debug.Log (data.all_jun_to_string());
