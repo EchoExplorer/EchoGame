@@ -72,7 +72,7 @@ public class BoardManager : MonoBehaviour {
 			else if (jun ==  JunctionType.CROSS)
 				return "Cross";
 
-			return "opps an error";
+			return "oops an error";
 		}
 	}
 
@@ -154,8 +154,7 @@ public class BoardManager : MonoBehaviour {
 		return positions [index];
 	}
 
-	/*TODO(agotsis/wenyuw1) I have a python script that generates random mazes. That's the idea you want to use 
-	 * so that there's no hardcoding */
+	/*TODO(agotsis) I will rewrite my Python Code in C#, for these purposes.*/
 	void setup_level (int level){
 		//Clear our list gridPositions.
 		wallPositions.Clear ();
@@ -461,80 +460,6 @@ public class BoardManager : MonoBehaviour {
 				}
 			}
 		}
-			
 		return level_count;
 	}
-
 }
-
-//archive
-/*
-switch(level){
-case 1:
-			wallPositions.Add (new Vector3 (0f, 1f, 0f));
-			wallPositions.Add (new Vector3 (1f, 1f, 0f));
-			wallPositions.Add (new Vector3 (2f, 1f, 0f));
-			wallPositions.Add (new Vector3 (3f, 1f, 0f));
-			wallPositions.Add (new Vector3 (4f, 1f, 0f));
-			wallPositions.Add (new Vector3 (5f, 1f, 0f));
-			wallPositions.Add (new Vector3 (6f, 1f, 0f));
-			wallPositions.Add (new Vector3 (7f, 1f, 0f));
-			wallPositions.Add (new Vector3 (7f, 0f, 0f));
-			exitPos = new Vector3 (6f, 0f, 0f);
-	player.transform.position = new Vector3(randomDelta, 0, 0);
-	break;
-case 2:
-
-			wallPositions.Add (new Vector3 (0f, 1f, 0f));
-			wallPositions.Add (new Vector3 (1f, 1f, 0f));
-			wallPositions.Add (new Vector3 (2f, 1f, 0f));
-			wallPositions.Add (new Vector3 (3f, 1f, 0f));
-			wallPositions.Add (new Vector3 (4f, 1f, 0f));
-			wallPositions.Add (new Vector3 (5f, 1f, 0f));
-			wallPositions.Add (new Vector3 (6f, 1f, 0f));
-
-			wallPositions.Add (new Vector3 (6f, 1f, 0f));
-			wallPositions.Add (new Vector3 (6f, 2f, 0f));
-			wallPositions.Add (new Vector3 (6f, 3f, 0f));
-			wallPositions.Add (new Vector3 (6f, 4f, 0f));
-			wallPositions.Add (new Vector3 (6f, 5f, 0f));
-			wallPositions.Add (new Vector3 (6f, 6f, 0f));
-			wallPositions.Add (new Vector3 (6f, 7f, 0f));
-			exitPos = new Vector3 (7f, 7f, 0f);
-
-	player.transform.position = new Vector3(randomDelta, 0, 0);
-	break;
-case 3:
-	wallPositions.Add (new Vector3 (1f, 6f, 0f));
-	wallPositions.Add (new Vector3 (2f, 6f, 0f));
-	wallPositions.Add (new Vector3 (3f, 6f, 0f));
-	wallPositions.Add (new Vector3 (4f, 6f, 0f));
-	wallPositions.Add (new Vector3 (5f, 6f, 0f));
-	wallPositions.Add (new Vector3 (6f, 6f, 0f));
-	wallPositions.Add (new Vector3 (7f, 6f, 0f));
-
-	wallPositions.Add (new Vector3 (1f, 0f, 0f));
-	wallPositions.Add (new Vector3 (1f, 1f, 0f));
-	wallPositions.Add (new Vector3 (1f, 2f, 0f));
-	wallPositions.Add (new Vector3 (1f, 3f, 0f));
-	wallPositions.Add (new Vector3 (1f, 4f, 0f));
-	wallPositions.Add (new Vector3 (1f, 5f, 0f));
-	wallPositions.Add (new Vector3 (1f, 6f, 0f));
-	exitPos = new Vector3 (0f, 0f, 0f);
-	player.transform.position = new Vector3(randomDelta, 7, 0);
-	break;
-default:
-	wallPositions.Add (new Vector3 (0f, 1f, 0f));
-	wallPositions.Add (new Vector3 (1f, 1f, 0f));
-	wallPositions.Add (new Vector3 (2f, 1f, 0f));
-	wallPositions.Add (new Vector3 (3f, 1f, 0f));
-	wallPositions.Add (new Vector3 (4f, 1f, 0f));
-	wallPositions.Add (new Vector3 (5f, 1f, 0f));
-	wallPositions.Add (new Vector3 (6f, 1f, 0f));
-	wallPositions.Add (new Vector3 (7f, 1f, 0f));
-	wallPositions.Add (new Vector3 (7f, 0f, 0f));
-	exitPos = new Vector3 (6f, 0f, 0f);
-	player.transform.position = new Vector3(randomDelta, 0, 0);
-	break;
-}
-*/

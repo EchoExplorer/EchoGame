@@ -28,6 +28,7 @@ public class GameManager : MonoBehaviour {
 	}
 	
 	//Initializes the game for each level.
+	//TODO(agotsis) Analyze database
 	void InitGame(){
 		Screen.orientation = ScreenOrientation.Landscape;
 
@@ -43,7 +44,7 @@ public class GameManager : MonoBehaviour {
 		//Set the text of levelText to the string "Day" and append the current level number.;
 		levelText.text = "Loading level";
 		
-		//Set levelImage to active blocking player's view of the game board during setup.
+		//Set levelImage to block player's view of the game board during setup.
 		levelImage.SetActive(true);
 		
 		//Call the HideLevelImage function with a delay in seconds of levelStartDelay.

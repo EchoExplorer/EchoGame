@@ -125,54 +125,6 @@ public class Player : MovingObject {
 
 		AudioClip echo = Resources.Load("echoes/" + filename) as AudioClip;
 		SoundManager.instance.PlaySingle(echo);
-
-		//TODO HJKJHJK
-
-		/*
-		switch (dist) 
-		{
-		case 0:
-		case 1:
-			SoundManager.instance.PlaySingle(echo1m);
-			numEcho1++;
-			UnityEngine.Debug.Log ("1m");
-			break;
-		case 2:
-			SoundManager.instance.PlaySingle(echo2m);
-			numEcho2++;
-			UnityEngine.Debug.Log ("2m");
-			break;
-		case 3:
-			SoundManager.instance.PlaySingle(echo3m);
-			numEcho3++;
-			UnityEngine.Debug.Log ("3m");
-			break;
-		case 4:
-			SoundManager.instance.PlaySingle(echo4m);
-			numEcho4++;
-			UnityEngine.Debug.Log ("4m");
-			break;
-		case 5:
-			SoundManager.instance.PlaySingle(echo5m);
-			numEcho5++;
-			UnityEngine.Debug.Log ("5m");
-			break;
-		case 6:
-			SoundManager.instance.PlaySingle(echo6m);
-			numEcho6++;
-			UnityEngine.Debug.Log ("6m");
-			break;
-		case 7:
-			SoundManager.instance.PlaySingle(echo7m);
-			numEcho7++;
-			UnityEngine.Debug.Log ("7m");
-			break;
-		default:
-			SoundManager.instance.PlaySingle(echo7m);
-			numEcho7++;
-			break;
-			
-		}*/
 	}
 
 	//due to the chaotic coord system
@@ -287,7 +239,7 @@ public class Player : MovingObject {
 			//and calculate the number of steps 
 
 
-
+			//TODO(agotsis) understand this. Reimplement.
 			//Send the crash count data and level information to server
 			//string dataEndpoint = "http://cmuecholocation.herokuapp.com/storeGameLevelData";
 			string dataEndpoint = "http://128.237.139.120:8000/storeGameLevelData";
