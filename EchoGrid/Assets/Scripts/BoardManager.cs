@@ -79,6 +79,7 @@ public class BoardManager : MonoBehaviour {
 	int columns = Utilities.MAZE_SIZE;
 	int rows = Utilities.MAZE_SIZE;
 	public int max_level;
+	public int min_level;
 
 	// number of walls and such
 	public GameObject[] floorTiles;
@@ -173,14 +174,14 @@ public class BoardManager : MonoBehaviour {
 		GameObject player = GameObject.Find("Player");
 
 		//return to level 1 if the index is not correct
-		if ((level <= 0) || (level > max_level))
-			level = 1;
+		if ((level < min_level) || (level > max_level))
+			level = min_level;
 			
 		load_level_from_file ("GameData/levels", level);
 		int randomDelta = Random.Range (0, playerPositions.Count);
 		if (randomDelta == playerPositions.Count)
-			randomDelta = playerPositions.Count - 1;
-			
+			randomDelta = playerPositions.Count-1;
+
 		player.transform.position = playerPositions[randomDelta];
 
 		for(int i = 0; i < wallPositions.Count; i++){
@@ -385,7 +386,7 @@ public class BoardManager : MonoBehaviour {
 		BoardSetup ();
 		float repeat = 1f;
 		level = (int) Mathf.Floor(GameManager.instance.level / repeat);
-		setup_level (level+1);
+		setup_level (level);
 	}
 
 	public bool load_level_from_file(string filename, int level_wanted = 1){
@@ -428,9 +429,10 @@ public class BoardManager : MonoBehaviour {
 			if (line.Length >= 7) {
 				if (line.Substring (0, 6) == "LEVEL_") {
 					//get the current level we are reading
-					int level_reading = Int32.Parse (line.Substring (6, 1));
+					int remain_length = line.Length - 6;
+					int level_reading = Int32.Parse (line.Substring (6, remain_length));
 					if (level_reading == level_wanted)//we found the level we want
-									reading_level = true;
+						reading_level = true;
 				}
 			}
 		}

@@ -24,6 +24,12 @@ public class GameManager : MonoBehaviour {
 			Destroy (gameObject);
 		DontDestroyOnLoad (gameObject);
 		boardScript = GetComponent<BoardManager> ();
+
+		if (GameObject.Find ("GameMode").GetComponent<GameMode> ().get_mode () == GameMode.Game_Mode.MAIN)//MAIN
+			level = 11;
+		else if (GameObject.Find ("GameMode").GetComponent<GameMode> ().get_mode () == GameMode.Game_Mode.TUTORIAL)//TUTORIAL
+			level = 1;
+
 		InitGame ();
 	}
 	
@@ -51,8 +57,15 @@ public class GameManager : MonoBehaviour {
 		Invoke("HideLevelImage", levelStartDelay);
 		
 		//Call the SetupScene function of the BoardManager script, pass it current level number.
-		boardScript.max_level = boardScript.get_level_count("GameData/levels");
-		boardScript.SetupScene(level);
+		if (GameObject.Find ("GameMode").GetComponent<GameMode> ().get_mode () == GameMode.Game_Mode.MAIN) {//MAIN
+			boardScript.max_level = boardScript.get_level_count ("GameData/levels");
+			boardScript.min_level = 11;
+		}else if (GameObject.Find ("GameMode").GetComponent<GameMode> ().get_mode () == GameMode.Game_Mode.TUTORIAL) {//TUTORIAL
+			boardScript.max_level = 10;
+			boardScript.min_level = 1;
+		}
+
+		boardScript.SetupScene (level);
 	}
 
 	//Hides black image used between levels

@@ -438,7 +438,7 @@ public class Player : MovingObject {
 					if (numTouches == 2)
 						attemptExitFromLevel();
 					else
-						PlayEcho(echoDist());
+						PlayEcho();
 				}
 			}
 		}
