@@ -95,6 +95,11 @@ public class BoardManager : MonoBehaviour {
 	private List<Vector3> playerPositions = new List<Vector3> ();
 	Vector3 exitPos;
 
+	//audios
+	int cur_clip = 1;
+	int total_clip = 11;
+	AudioClip[] clips;
+
 	//Clears our list gridPositions and prepares it to generate a new board.
 	void InitialiseList (){
 		//Clear our list gridPositions.
@@ -112,7 +117,31 @@ public class BoardManager : MonoBehaviour {
 		}
 	}
 		
-	
+	void LoadAudio(){
+		//one level can have one clip of instruction
+		cur_clip = 0;
+		clips = new AudioClip[total_clip];
+		clips [0] = Resources.Load ("instructions/Welcome to the tutorial") as AudioClip;
+		clips [1] = Resources.Load ("instructions/In this level you'll learn how to exit the current level and go on to the next one") as AudioClip;
+		clips [2] = Resources.Load ("instructions/In this level you'll learn how to navigate a right turn") as AudioClip;
+	}
+
+	void play_audio(){
+		if (cur_clip >= total_clip)
+			return;
+
+		if (!SoundManager.instance.isBusy ()) {
+			SoundManager.instance.PlaySingle (clips [cur_clip]);
+			//play only once
+			cur_clip = total_clip + 1;
+		}
+	}
+
+	//loop during the game
+	void Update(){
+		play_audio ();
+	}
+
 	//Sets up the outer walls and floor (background) of the game board.
 	void BoardSetup (){
 		//Instantiate Board and set boardHolder to its transform.
@@ -176,7 +205,11 @@ public class BoardManager : MonoBehaviour {
 		//return to level 1 if the index is not correct
 		if ((level < min_level) || (level > max_level))
 			level = min_level;
+
+		//give the right instruction to play
+		cur_clip = level;
 			
+		//build level
 		load_level_from_file ("GameData/levels", level);
 		int randomDelta = Random.Range (0, playerPositions.Count);
 		if (randomDelta == playerPositions.Count)
@@ -380,6 +413,9 @@ public class BoardManager : MonoBehaviour {
 	
 	//SetupScene initializes our level and calls the previous functions to lay out the game board
 	public void SetupScene (int level){
+		//load audio
+		LoadAudio();
+		//SoundManager.instance.PlaySingle (clips[cur_clip]);
 		//Reset our list of gridpositions.
 		InitialiseList ();
 		//Creates the outer walls and floor.
@@ -387,6 +423,28 @@ public class BoardManager : MonoBehaviour {
 		float repeat = 1f;
 		level = (int) Mathf.Floor(GameManager.instance.level / repeat);
 		setup_level (level);
+		if( (GameMode.instance.get_mode() == GameMode.Game_Mode.MAIN)||
+			(GameMode.instance.get_mode() == GameMode.Game_Mode.CONTINUE) )
+			write_save (level);
+	}
+
+	bool write_save (int lv){
+		string filename = Application.persistentDataPath + "echosaved";
+		System.IO.File.WriteAllText (filename, lv.ToString ());
+
+		/*
+		string filename = "Saved/saved";
+		TextAsset svdata = Resources.Load (filename)as TextAsset;
+		if (svdata == null) {
+			UnityEngine.Debug.Log ("Cannot open file at:");
+			UnityEngine.Debug.Log (filename);
+			return false;
+		}
+
+		string level_tobe_written = lv.ToString ();
+		svdata.text = level_tobe_written;
+*/
+		return true;
 	}
 
 	public bool load_level_from_file(string filename, int level_wanted = 1){

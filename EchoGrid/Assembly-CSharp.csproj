@@ -55,6 +55,7 @@
      <Compile Include="Assets\Completed\Scripts\Wall.cs" />
      <Compile Include="Assets\Database\DbAccess.cs" />
      <Compile Include="Assets\Scripts\BoardManager.cs" />
+     <Compile Include="Assets\Scripts\GM_main_pre.cs" />
      <Compile Include="Assets\Scripts\GM_title.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
      <Compile Include="Assets\Scripts\GameMode.cs" />

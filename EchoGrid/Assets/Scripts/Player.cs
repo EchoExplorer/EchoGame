@@ -103,7 +103,8 @@ public class Player : MovingObject {
 		BoardManager.echoDistData data = 
 			GameManager.instance.boardScript.getEchoDistData(transform.position, get_player_dir("FRONT"), get_player_dir("LEFT"));
 
-		String prefix = "15-0"; //Should be a variable somewhere. Hard for now.
+		//String prefix = "15-0"; //Should be a variable somewhere. Hard for now.
+		String prefix = "C01-3";
 
 		String filename;
 		//filename = "Front: " + data.front.ToString () + "; Back: " + data.back.ToString () +
@@ -124,7 +125,8 @@ public class Player : MovingObject {
 		UnityEngine.Debug.Log (data.all_jun_to_string());
 
 		AudioClip echo = Resources.Load("echoes/" + filename) as AudioClip;
-		SoundManager.instance.PlaySingle(echo);
+		if (!SoundManager.instance.isBusy ())
+			SoundManager.instance.PlaySingle(echo);
 	}
 
 	//due to the chaotic coord system
@@ -181,7 +183,8 @@ public class Player : MovingObject {
 
 		//If player could not move to that location, play the crash sound
 		if (!canMove) {
-			SoundManager.instance.PlaySingle(wallHit);
+			if (!SoundManager.instance.isBusy ())
+				SoundManager.instance.PlaySingle(wallHit);
 			//Increment the crash count
 			numCrashes++;
 			//Decrement the step count (as no successful step was made)
@@ -362,16 +365,20 @@ public class Player : MovingObject {
 		//Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
 		if (Input.GetKeyUp(KeyCode.RightArrow)) {
 			dir = -transform.up;
-			SoundManager.instance.PlaySingle(swipeRight);
+			if (!SoundManager.instance.isBusy ())
+				SoundManager.instance.PlaySingle(swipeRight);
 		} else if (Input.GetKeyUp(KeyCode.LeftArrow)) {
 			dir = transform.up;
-			SoundManager.instance.PlaySingle(swipeLeft);
+			if (!SoundManager.instance.isBusy ())
+				SoundManager.instance.PlaySingle(swipeLeft);
 		} else if (Input.GetKeyUp(KeyCode.UpArrow)) {
 			dir = transform.right;
-			SoundManager.instance.PlaySingle(swipeAhead);
+			if (!SoundManager.instance.isBusy ())
+				SoundManager.instance.PlaySingle(swipeAhead);
 		} else if (Input.GetKeyUp(KeyCode.DownArrow)) {
 			dir = -transform.right;
-			SoundManager.instance.PlaySingle(swipeAhead);
+			if (!SoundManager.instance.isBusy ())
+				SoundManager.instance.PlaySingle(swipeAhead);
 		}
 		
 		if (Input.GetKeyUp("f"))
@@ -418,19 +425,23 @@ public class Player : MovingObject {
 					//If x is greater than zero, set horizontal to 1, otherwise set it to -1
 					if (x > 0) {
 						dir = get_player_dir("RIGHT");
-						SoundManager.instance.PlaySingle(swipeRight);
+						if (!SoundManager.instance.isBusy ())
+							SoundManager.instance.PlaySingle(swipeRight);
 					} else {
 						dir = get_player_dir("LEFT");
-						SoundManager.instance.PlaySingle(swipeLeft);
+						if (!SoundManager.instance.isBusy ())
+							SoundManager.instance.PlaySingle(swipeLeft);
 					}
 				} else if (Mathf.Abs(y) > Mathf.Abs(x) && Mathf.Abs(y) >= minSwipeDist) {
 					//If y is greater than zero, set vertical to 1, otherwise set it to -1
 					if (y > 0) {
 						dir = get_player_dir("FRONT");
-						SoundManager.instance.PlaySingle(swipeAhead);
+						if (!SoundManager.instance.isBusy ())
+							SoundManager.instance.PlaySingle(swipeAhead);
 					} else {
 						dir = get_player_dir("BACK");
-						SoundManager.instance.PlaySingle(swipeAhead);
+						if (!SoundManager.instance.isBusy ())
+							SoundManager.instance.PlaySingle(swipeAhead);
 					}
 					//Increment step count
 					numSteps++;
@@ -606,7 +617,8 @@ public class Player : MovingObject {
 	{
 		//Set hitWall to equal the component passed in as a parameter.
 		Wall hitWall = component as Wall;
-		SoundManager.instance.PlaySingle(wallHit);
+		if (!SoundManager.instance.isBusy ())
+			SoundManager.instance.PlaySingle(wallHit);
 	}
 	
 	protected override void OnMove () 
