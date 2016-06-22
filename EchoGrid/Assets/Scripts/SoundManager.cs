@@ -17,6 +17,7 @@ public class SoundManager : MonoBehaviour {
 			Destroy (gameObject);
 		
 		//Set SoundManager to DontDestroyOnLoad so that it won't be destroyed when reloading our scene.
+		efxSource = GetComponent<AudioSource>();
 		DontDestroyOnLoad (gameObject);
 	}
 	
@@ -29,6 +30,11 @@ public class SoundManager : MonoBehaviour {
 		
 		//Play the clip.
 		efxSource.Play ();
+	}
+
+	public bool isBusy()
+	{
+		return efxSource.isPlaying;
 	}
 	
 }

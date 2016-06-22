@@ -56,7 +56,7 @@
  <HintPath>D:/Games/Unity/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
  </Reference>
  <Reference Include="Mono.Data.Sqlite">
- <HintPath>D:/Work/summer2016/EchoGame_wenyu/EchoGrid/Assets/Database/Mono.Data.Sqlite.dll</HintPath>
+ <HintPath>D:/Work/summer2016/summer16_branch/EchoGrid/Assets/Database/Mono.Data.Sqlite.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

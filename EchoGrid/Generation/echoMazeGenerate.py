@@ -1,7 +1,7 @@
 #echoMazeGenerate.py
 #agotsis
 
-# a command line script to generate mazes for Echolocaiton Project
+# a command line script to generate mazes for the Echolocaiton Project
 
 import random
 import math
@@ -13,11 +13,20 @@ MAZESIZE = 9 # must be an odd number, in this implementation
 ISLANDS = (MAZESIZE + 1)//2 #maze size is 2*ISLANDS -1
 DEBUG = False
 MINDIST = 8 #minimum distance between entry and exit
+APLUSDEADENDS = 2 #maximum number of extra dead ends to have
+
+WALL = 'w'
+PATH = '-'
+START = 's'
+EXIT = 'e'
+STAIR = 'q' #pick a stair code...
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('aLevels', 
         type=int, help="The number of A levels to generate.")
+    parser.add_argument('aPlusLevels', 
+        type=int, help="The number of APlus levels to generate.")
     parser.add_argument('bLevels', 
         type=int, help="The number of B levels to generate.")
     parser.add_argument('cLevels', 
@@ -27,6 +36,7 @@ def main():
     args = parser.parse_args()
 
     numALevels = args.aLevels
+    numAPlusLevels = args.aPlusLevels
     numBLevels = args.bLevels
     numCLevels = args.cLevels
     filename = os.path.dirname(os.path.realpath(__file__))+os.sep+args.filename 
@@ -41,14 +51,19 @@ def main():
         maze = makeLevelAMaze()
         contents += levelize(maze, lvlCounter)
 
+    for aPlus in range(numAPlusLevels):
+        lvlCounter += 1
+        maze = makeLevelAPlusMaze()
+        contents += levelize(maze, lvlCounter)
+
     for b in range(numBLevels):
         lvlCounter += 1
         maze, discard = makeLevelBMaze()
         contents += levelize(maze, lvlCounter)
 
-    for c in range(numALevels):
+    for c in range(numCLevels):
         lvlCounter += 1
-        maze = makeLevelCMaze()
+        maze, discard = makeLevelCMaze()
         contents += levelize(maze, lvlCounter)
 
     with open(filename, "wt") as f:
@@ -93,7 +108,7 @@ def print2dList(a):
 def createBoard(islands):
     if DEBUG: print("HEY", len(islands), len(islands[0]))
     rows,cols = 2*len(islands) - 1, 2*len(islands[0]) - 1
-    board = [['-']*cols for row in range(rows)]
+    board = [[PATH]*cols for row in range(rows)]
     for row in range(len(islands)):
         for col in range(len(islands[0])):
             island = islands[row][col]
@@ -170,9 +185,9 @@ def convertToPrintable(maze):
         curRow = ""
         for col in range(cols):
             tile = maze[row][col]
-            symbol = '-' if tile == 0 or tile == '-' else 'w'
-            if tile == 's': symbol = 's'
-            elif tile == 'e': symbol = 'e'
+            symbol = PATH if tile == 0 or tile == PATH else WALL
+            if tile == START: symbol = START
+            elif tile == EXIT: symbol = EXIT
             curRow += symbol
         result += curRow + '\n'
     return result
@@ -191,22 +206,49 @@ def standardizeMaze(maze):
     for row in range(rows):
         for col in range(cols):
             tile = maze[row][col]
-            symbol = 'w' if tile == 0 or tile == '-' else '-'
+            symbol = WALL if tile == 0 or tile == PATH else PATH
             standard[row][col] = symbol
     return standard
 
-def makeLevelCMaze():
+def makeBaseMaze():
     maze = makeBlankMaze(ISLANDS, ISLANDS)
+
     if DEBUG: 
         print("The maze at the beginning.")
         print2dList(maze)
+
     connectIslands(maze)
     maze = standardizeMaze(createBoard(maze))
-    if DEBUG: print2dList(maze)
     return maze
 
+def makeLevelCMaze():
+    maze = makeBaseMaze()
+
+    empties = findEmptyLocations(maze)
+
+    solution = None
+    mazeComplete = False
+    while(not mazeComplete):
+        start = random.choice(empties)
+        empties.remove(start)
+        end = random.choice(empties)
+        empties.remove(end)
+        startRow, startCol = start
+        endRow, endCol = end
+        solution = findSolution(maze, startRow, startCol, endRow, endCol)
+        if len(solution) >= MINDIST:
+            mazeComplete = True
+            maze[startRow][startCol] = START
+            maze[endRow][endCol] = EXIT
+        else:
+            empties.append(start)
+            empties.append(end)
+
+    if DEBUG: print2dList(maze)
+    return maze, solution
+
 def makeLevelBMaze():
-    maze = makeLevelCMaze()
+    maze = makeBaseMaze()
     deadEnds = findDeadEnds(maze)
 
     solution = None
@@ -221,22 +263,69 @@ def makeLevelBMaze():
         solution = findSolution(maze, startRow, startCol, endRow, endCol)
         if len(solution) >= MINDIST:
             mazeComplete = True
-            maze[startRow][startCol] = 's'
-            maze[endRow][endCol] = 'e'
+            maze[startRow][startCol] = START
+            maze[endRow][endCol] = EXIT
+        else:
+            deadEnds.append(start)
+            deadEnds.append(end)
+
     if DEBUG: print2dList(maze)
     if DEBUG: print(solution)
     return maze, solution
 
+def makeLevelAPlusMaze():
+    maze, solution = makeLevelBMaze()
+    deadEnds = findDeadEnds(maze)
+
+    mazeComplete = False
+    while(not mazeComplete):
+        start = random.choice(deadEnds)
+        deadEnds.remove(start)
+        end = random.choice(deadEnds)
+        deadEnds.remove(end)
+        startRow, startCol = start
+        endRow, endCol = end
+        tempSolution = findSolution(maze, startRow, startCol, endRow, endCol)
+        if solution.intersection(tempSolution): #true if intersection not empty
+            mazeComplete = True
+            solution = solution | tempSolution
+            # maze[startRow][startCol] = STAIR
+            # maze[endRow][endCol] = STAIR
+        else:
+            deadEnds.append(start)
+            deadEnds.append(end)
+    
+    maze = wallifyMaze(maze, solution)
+
+    if DEBUG: print2dList(maze)
+    return maze
+
 def makeLevelAMaze():
     maze, solution = makeLevelBMaze()
+    maze = wallifyMaze(maze, solution)
+    if DEBUG: print2dList(maze)
+    return maze
+
+def wallifyMaze(maze, dontWall):
     rows, cols = len(maze),len(maze[0])
     for row in range(rows):
         for col in range(cols):
             tile = maze[row][col]
-            if tile == '-' and (row, col) not in solution:
-                maze[row][col] = 'w'
-    if DEBUG: print2dList(maze)
+            if tile == PATH and (row, col) not in dontWall:
+                maze[row][col] = WALL
     return maze
+
+
+def findEmptyLocations(maze):
+    #returns a list of tuples of empty spaces
+    rows, cols = len(maze),len(maze[0])
+    empties = []
+    for row in range(rows):
+        for col in range(cols):
+            tile = maze[row][col]
+            if tile != WALL: empties.append((row, col))
+    if DEBUG: print(empties)
+    return empties
 
 def findDeadEnds(maze):
     #returns a list of tuples of dead ends
@@ -246,7 +335,7 @@ def findDeadEnds(maze):
     for row in range(rows):
         for col in range(cols):
             tile = maze[row][col]
-            if tile == 'w': continue #walls aren't dead ends
+            if tile == WALL: continue #walls aren't dead ends
             deadEnd = True
             numPaths = 0
             for drow, dcol in dirs:
@@ -276,7 +365,7 @@ def findSolution(maze, startRow, startCol, endRow, endCol):
         # recursive case
         for drow, dcol in [(-1, 0), ( 0, -1), ( 0, +1), (+1, 0)]:
             if not ((row < 0) or (row >= rows) or (col < 0) or 
-                (col >= cols) or (maze[row][col] == 'w')):
+                (col >= cols) or (maze[row][col] == WALL)):
                 if solve(row + drow, col + dcol): return True
         visited.remove((row,col))
         return False

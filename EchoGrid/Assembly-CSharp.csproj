@@ -55,7 +55,10 @@
      <Compile Include="Assets\Completed\Scripts\Wall.cs" />
      <Compile Include="Assets\Database\DbAccess.cs" />
      <Compile Include="Assets\Scripts\BoardManager.cs" />
+     <Compile Include="Assets\Scripts\GM_main_pre.cs" />
+     <Compile Include="Assets\Scripts\GM_title.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
+     <Compile Include="Assets\Scripts\GameMode.cs" />
      <Compile Include="Assets\Scripts\Loader.cs" />
      <Compile Include="Assets\Scripts\MovingObject.cs" />
      <Compile Include="Assets\Scripts\Player.cs" />
@@ -72,7 +75,7 @@
  <HintPath>D:/Games/Unity/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
  </Reference>
  <Reference Include="Mono.Data.Sqlite">
- <HintPath>D:/Work/summer2016/EchoGame_wenyu/EchoGrid/Assets/Database/Mono.Data.Sqlite.dll</HintPath>
+ <HintPath>D:/Work/summer2016/summer16_branch/EchoGrid/Assets/Database/Mono.Data.Sqlite.dll</HintPath>
  </Reference>
   </ItemGroup>
   <ItemGroup>

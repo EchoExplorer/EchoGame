@@ -7,6 +7,8 @@ using System.IO;
 
 public class BoardManager : MonoBehaviour {
 
+	public static float tileSize = 1.5f; // in meters. I don't know if this should go here.
+
 	[Serializable]
 	public class Count{
 		public int minimum;
@@ -34,9 +36,22 @@ public class BoardManager : MonoBehaviour {
 		RIGHT
 	}
 
+	public string asciiLevelRep; //should probably make a different type choice here. I don't know what would be better
+
 	public struct echoDistData{
-		public int front, back, left, right;
+		public int front, back, left, right; //in blocks
+		public float frontDist, backDist, leftDist, rightDist; //in meters
 		public JunctionType fType, bType, lType, rType;
+
+		//TODO Weynu, is this a bad design choice? Call method to calcuate distances.
+		public void updateDistances(){
+			float halfSize = BoardManager.tileSize / 2;
+
+			frontDist = halfSize + (front - 1) * BoardManager.tileSize;
+			backDist = halfSize + (back - 1) * BoardManager.tileSize;
+			leftDist = halfSize + (left - 1) * BoardManager.tileSize;
+			rightDist = halfSize + (right - 1) * BoardManager.tileSize;
+		}
 
 		public string all_jun_to_string(){
 			string juns;
@@ -49,23 +64,24 @@ public class BoardManager : MonoBehaviour {
 			if (jun ==  JunctionType.INVALID)
 				return "Invalid";
 			else if (jun ==  JunctionType.DEADEND)
-				return "Deadend";
+				return "D";  //deadend
 			else if (jun ==  JunctionType.T)
-				return "T-Junction";
+				return "T";  //T
 			else if (jun ==  JunctionType.LL)
-				return "Left L";
+				return "EL"; //elbow left
 			else if (jun ==  JunctionType.RL)
-				return "Right L";
+				return "ER"; //elbow right
 			else if (jun ==  JunctionType.CROSS)
 				return "Cross";
 
-			return "opps an error";
+			return "oops an error";
 		}
 	}
 
 	int columns = Utilities.MAZE_SIZE;
 	int rows = Utilities.MAZE_SIZE;
 	public int max_level;
+	public int min_level;
 
 	// number of walls and such
 	public GameObject[] floorTiles;
@@ -80,6 +96,11 @@ public class BoardManager : MonoBehaviour {
 	public List <Vector3> wallPositions = new List<Vector3> ();
 	private List<Vector3> playerPositions = new List<Vector3> ();
 	Vector3 exitPos;
+
+	//audios
+	int cur_clip = 1;
+	int total_clip = 11;
+	AudioClip[] clips;
 
 	//Clears our list gridPositions and prepares it to generate a new board.
 	void InitialiseList (){
@@ -98,7 +119,31 @@ public class BoardManager : MonoBehaviour {
 		}
 	}
 		
-	
+	void LoadAudio(){
+		//one level can have one clip of instruction
+		cur_clip = 0;
+		clips = new AudioClip[total_clip];
+		clips [0] = Resources.Load ("instructions/Welcome to the tutorial") as AudioClip;
+		clips [1] = Resources.Load ("instructions/In this level you'll learn how to exit the current level and go on to the next one") as AudioClip;
+		clips [2] = Resources.Load ("instructions/In this level you'll learn how to navigate a right turn") as AudioClip;
+	}
+
+	void play_audio(){
+		if (cur_clip >= total_clip)
+			return;
+
+		if (!SoundManager.instance.isBusy ()) {
+			SoundManager.instance.PlaySingle (clips [cur_clip]);
+			//play only once
+			cur_clip = total_clip + 1;
+		}
+	}
+
+	//loop during the game
+	void Update(){
+		play_audio ();
+	}
+
 	//Sets up the outer walls and floor (background) of the game board.
 	void BoardSetup (){
 		//Instantiate Board and set boardHolder to its transform.
@@ -141,8 +186,7 @@ public class BoardManager : MonoBehaviour {
 		return positions [index];
 	}
 
-	/*TODO(agotsis/wenyuw1) I have a python script that generates random mazes. That's the idea you want to use 
-	 * so that there's no hardcoding */
+	/*TODO(agotsis) I will rewrite my Python Code in C#, for these purposes.*/
 	void setup_level (int level){
 		//Clear our list gridPositions.
 		wallPositions.Clear ();
@@ -161,14 +205,18 @@ public class BoardManager : MonoBehaviour {
 		GameObject player = GameObject.Find("Player");
 
 		//return to level 1 if the index is not correct
-		if ((level <= 0) || (level > max_level))
-			level = 1;
+		if ((level < min_level) || (level > max_level))
+			level = min_level;
+
+		//give the right instruction to play
+		cur_clip = level;
 			
+		//build level
 		load_level_from_file ("GameData/levels", level);
 		int randomDelta = Random.Range (0, playerPositions.Count);
 		if (randomDelta == playerPositions.Count)
-			randomDelta = playerPositions.Count - 1;
-			
+			randomDelta = playerPositions.Count-1;
+
 		player.transform.position = playerPositions[randomDelta];
 
 		for(int i = 0; i < wallPositions.Count; i++){
@@ -259,6 +307,8 @@ public class BoardManager : MonoBehaviour {
 		gridTemp = _getDist (gridIdx, -playerLeft);
 		result.right = (int)(gridTemp - gridIdx).magnitude;
 		result.rType = getJunctionType (gridTemp + new Vector2(playerLeft.x, playerLeft.y), gridIdx);
+
+		result.updateDistances();
 
 		return result;
 	}
@@ -365,13 +415,38 @@ public class BoardManager : MonoBehaviour {
 	
 	//SetupScene initializes our level and calls the previous functions to lay out the game board
 	public void SetupScene (int level){
+		//load audio
+		LoadAudio();
+		//SoundManager.instance.PlaySingle (clips[cur_clip]);
 		//Reset our list of gridpositions.
 		InitialiseList ();
 		//Creates the outer walls and floor.
 		BoardSetup ();
 		float repeat = 1f;
 		level = (int) Mathf.Floor(GameManager.instance.level / repeat);
-		setup_level (level+1);
+		setup_level (level);
+		if( (GameMode.instance.get_mode() == GameMode.Game_Mode.MAIN)||
+			(GameMode.instance.get_mode() == GameMode.Game_Mode.CONTINUE) )
+			write_save (level);
+	}
+
+	bool write_save (int lv){
+		string filename = Application.persistentDataPath + "echosaved";
+		System.IO.File.WriteAllText (filename, lv.ToString ());
+
+		/*
+		string filename = "Saved/saved";
+		TextAsset svdata = Resources.Load (filename)as TextAsset;
+		if (svdata == null) {
+			UnityEngine.Debug.Log ("Cannot open file at:");
+			UnityEngine.Debug.Log (filename);
+			return false;
+		}
+
+		string level_tobe_written = lv.ToString ();
+		svdata.text = level_tobe_written;
+*/
+		return true;
 	}
 
 	public bool load_level_from_file(string filename, int level_wanted = 1){
@@ -386,6 +461,8 @@ public class BoardManager : MonoBehaviour {
 		int cur_y = Utilities.MAZE_SIZE-1;//start from top left corner
 		float scale = (float)Utilities.SCALE_REF / (float)Utilities.MAZE_SIZE;
 
+		asciiLevelRep = "";
+
 		//read through the file until desired level is found
 		foreach (string line in lvldata_split) {
 			if (line == "END")//reach end of a level layout
@@ -393,6 +470,7 @@ public class BoardManager : MonoBehaviour {
 
 			if (reading_level) {//actually loading layout
 				//check for valid index
+				asciiLevelRep += line;
 				if (cur_y >= 0) {
 					//do things
 					for (int i = 0; i < line.Length; ++i) {
@@ -414,9 +492,10 @@ public class BoardManager : MonoBehaviour {
 			if (line.Length >= 7) {
 				if (line.Substring (0, 6) == "LEVEL_") {
 					//get the current level we are reading
-					int level_reading = Int32.Parse (line.Substring (6, 1));
+					int remain_length = line.Length - 6;
+					int level_reading = Int32.Parse (line.Substring (6, remain_length));
 					if (level_reading == level_wanted)//we found the level we want
-									reading_level = true;
+						reading_level = true;
 				}
 			}
 		}
@@ -446,80 +525,6 @@ public class BoardManager : MonoBehaviour {
 				}
 			}
 		}
-			
 		return level_count;
 	}
-
 }
-
-//archive
-/*
-switch(level){
-case 1:
-			wallPositions.Add (new Vector3 (0f, 1f, 0f));
-			wallPositions.Add (new Vector3 (1f, 1f, 0f));
-			wallPositions.Add (new Vector3 (2f, 1f, 0f));
-			wallPositions.Add (new Vector3 (3f, 1f, 0f));
-			wallPositions.Add (new Vector3 (4f, 1f, 0f));
-			wallPositions.Add (new Vector3 (5f, 1f, 0f));
-			wallPositions.Add (new Vector3 (6f, 1f, 0f));
-			wallPositions.Add (new Vector3 (7f, 1f, 0f));
-			wallPositions.Add (new Vector3 (7f, 0f, 0f));
-			exitPos = new Vector3 (6f, 0f, 0f);
-	player.transform.position = new Vector3(randomDelta, 0, 0);
-	break;
-case 2:
-
-			wallPositions.Add (new Vector3 (0f, 1f, 0f));
-			wallPositions.Add (new Vector3 (1f, 1f, 0f));
-			wallPositions.Add (new Vector3 (2f, 1f, 0f));
-			wallPositions.Add (new Vector3 (3f, 1f, 0f));
-			wallPositions.Add (new Vector3 (4f, 1f, 0f));
-			wallPositions.Add (new Vector3 (5f, 1f, 0f));
-			wallPositions.Add (new Vector3 (6f, 1f, 0f));
-
-			wallPositions.Add (new Vector3 (6f, 1f, 0f));
-			wallPositions.Add (new Vector3 (6f, 2f, 0f));
-			wallPositions.Add (new Vector3 (6f, 3f, 0f));
-			wallPositions.Add (new Vector3 (6f, 4f, 0f));
-			wallPositions.Add (new Vector3 (6f, 5f, 0f));
-			wallPositions.Add (new Vector3 (6f, 6f, 0f));
-			wallPositions.Add (new Vector3 (6f, 7f, 0f));
-			exitPos = new Vector3 (7f, 7f, 0f);
-
-	player.transform.position = new Vector3(randomDelta, 0, 0);
-	break;
-case 3:
-	wallPositions.Add (new Vector3 (1f, 6f, 0f));
-	wallPositions.Add (new Vector3 (2f, 6f, 0f));
-	wallPositions.Add (new Vector3 (3f, 6f, 0f));
-	wallPositions.Add (new Vector3 (4f, 6f, 0f));
-	wallPositions.Add (new Vector3 (5f, 6f, 0f));
-	wallPositions.Add (new Vector3 (6f, 6f, 0f));
-	wallPositions.Add (new Vector3 (7f, 6f, 0f));
-
-	wallPositions.Add (new Vector3 (1f, 0f, 0f));
-	wallPositions.Add (new Vector3 (1f, 1f, 0f));
-	wallPositions.Add (new Vector3 (1f, 2f, 0f));
-	wallPositions.Add (new Vector3 (1f, 3f, 0f));
-	wallPositions.Add (new Vector3 (1f, 4f, 0f));
-	wallPositions.Add (new Vector3 (1f, 5f, 0f));
-	wallPositions.Add (new Vector3 (1f, 6f, 0f));
-	exitPos = new Vector3 (0f, 0f, 0f);
-	player.transform.position = new Vector3(randomDelta, 7, 0);
-	break;
-default:
-	wallPositions.Add (new Vector3 (0f, 1f, 0f));
-	wallPositions.Add (new Vector3 (1f, 1f, 0f));
-	wallPositions.Add (new Vector3 (2f, 1f, 0f));
-	wallPositions.Add (new Vector3 (3f, 1f, 0f));
-	wallPositions.Add (new Vector3 (4f, 1f, 0f));
-	wallPositions.Add (new Vector3 (5f, 1f, 0f));
-	wallPositions.Add (new Vector3 (6f, 1f, 0f));
-	wallPositions.Add (new Vector3 (7f, 1f, 0f));
-	wallPositions.Add (new Vector3 (7f, 0f, 0f));
-	exitPos = new Vector3 (6f, 0f, 0f);
-	player.transform.position = new Vector3(randomDelta, 0, 0);
-	break;
-}
-*/
