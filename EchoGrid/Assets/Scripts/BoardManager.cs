@@ -36,6 +36,8 @@ public class BoardManager : MonoBehaviour {
 		RIGHT
 	}
 
+	public string asciiLevelRep; //should probably make a different type choice here. I don't know what would be better
+
 	public struct echoDistData{
 		public int front, back, left, right; //in blocks
 		public float frontDist, backDist, leftDist, rightDist; //in meters
@@ -401,6 +403,8 @@ public class BoardManager : MonoBehaviour {
 		int cur_y = Utilities.MAZE_SIZE-1;//start from top left corner
 		float scale = (float)Utilities.SCALE_REF / (float)Utilities.MAZE_SIZE;
 
+		asciiLevelRep = "";
+
 		//read through the file until desired level is found
 		foreach (string line in lvldata_split) {
 			if (line == "END")//reach end of a level layout
@@ -408,6 +412,7 @@ public class BoardManager : MonoBehaviour {
 
 			if (reading_level) {//actually loading layout
 				//check for valid index
+				asciiLevelRep += line;
 				if (cur_y >= 0) {
 					//do things
 					for (int i = 0; i < line.Length; ++i) {

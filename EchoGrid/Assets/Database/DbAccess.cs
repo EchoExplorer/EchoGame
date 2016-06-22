@@ -27,7 +27,7 @@ public class DbAccess
 			
 			dbConnection.Open ();
 			
-			Debug.Log ("Connected to db");
+			//Debug.Log ("Connected to db");
 		}
 		catch(Exception e)
 		{
