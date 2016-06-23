@@ -167,7 +167,7 @@ public class Player : MovingObject {
 		numSteps++;
 		//If player could not move to that location, play the crash sound
 		if (!canMove) {
-			if(!SoundManager.instance.isBusy())
+			//if(!SoundManager.instance.isBusy())
 				SoundManager.instance.PlaySingle(wallHit);
 			//Increment the crash count
 			numCrashes++;
@@ -238,7 +238,7 @@ public class Player : MovingObject {
 		//Send the crash count data and level information to server
 		//string dataEndpoint = "http://cmuecholocation.herokuapp.com/storeGameLevelData";
 		//string dataEndpoint = "http://128.237.139.120:8000/storeGameLevelData";
-		string dataEndpoint = "http://merichar-dev.eberly.cmu.edu:81/cgi-bin/stuff.py";
+		string dataEndpoint = "http://merichar-dev.eberly.cmu.edu:81/cgi-bin/acceptLevelData.py";
 
 		WWWForm form = new WWWForm();
 		form.AddField("userName", SystemInfo.deviceUniqueIdentifier);
@@ -615,7 +615,7 @@ public class Player : MovingObject {
 	{
 		//Set hitWall to equal the component passed in as a parameter.
 		Wall hitWall = component as Wall;
-		if(!SoundManager.instance.isBusy())
+		//if(!SoundManager.instance.isBusy())
 			SoundManager.instance.PlaySingle(wallHit);
 	}
 
