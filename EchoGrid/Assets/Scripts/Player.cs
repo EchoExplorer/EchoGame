@@ -46,6 +46,20 @@ public class Player : MovingObject {
 	private DateTime startTime;
 	private DateTime endTime;
 
+	public struct lv_1_flag{
+		public bool echo_played;
+		public bool moved;
+		public bool at_exit;
+
+		public void init(){
+			echo_played = false;
+			moved = false;
+			at_exit = false;
+		}
+	}
+
+	public lv_1_flag lv_1_f;
+
 	//public bool soundPlaying = false;
 	protected override void Start () {
 		//Get a component reference to the Player's animator component
@@ -81,11 +95,13 @@ public class Player : MovingObject {
 		stopWatch.Start ();
 		startTime = System.DateTime.Now;
 
+		lv_1_f.init ();
+
 		base.Start ();
 	}
 
 	private void PlayEcho() {
-
+		lv_1_f.echo_played = true;
 		BoardManager.echoDistData data = 
 			GameManager.instance.boardScript.getEchoDistData(transform.position, get_player_dir("FRONT"), get_player_dir("LEFT"));
 
@@ -156,8 +172,10 @@ public class Player : MovingObject {
 
 		dir.Normalize();
 
-		if(!changedDir)
-			AttemptMove<Wall> ((int)dir.x, (int)dir.y);
+		if(!changedDir){
+			if (AttemptMove<Wall> ((int)dir.x, (int)dir.y))
+				lv_1_f.moved = true;
+		}
 	}
 
 	protected override bool AttemptMove <T> (int xDir, int yDir)
@@ -355,6 +373,14 @@ public class Player : MovingObject {
 		//UnityEngine.Debug.DrawLine (transform.position, transform.position+get_player_dir("LEFT"), Color.yellow);
 		//If it's not the player's turn, exit the function.
 		if(!GameManager.instance.playersTurn) return;
+
+		GameObject exitSign = GameObject.FindGameObjectWithTag("Exit");
+		Vector2 distFromExit = transform.position - exitSign.transform.position;
+		if (Vector2.SqrMagnitude (distFromExit) < 0.25) {
+			//Calculate time elapsed during the game level
+			lv_1_f.at_exit = true;
+		} else
+			lv_1_f.at_exit = false;
 
 		Vector3 dir = Vector3.zero;
 

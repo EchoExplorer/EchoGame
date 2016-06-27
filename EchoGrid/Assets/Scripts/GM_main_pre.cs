@@ -10,9 +10,14 @@ public class GM_main_pre : MonoBehaviour {
 	AudioClip swipeRight;
 	AudioClip swipeLeft;
 	AudioClip[] clips;
+	AudioClip[] confirm_list;
+	AudioClip continue_game, new_game;
 	int cur_clip = 0;
 	int total_clip = 1;
+	int total_confirm_clip = 2;
 	float time_interval = 2.0f;
+	bool at_confirm = false;
+	bool reset_audio = false;
 
 	// Use this for initialization
 	void Start () {
@@ -20,18 +25,35 @@ public class GM_main_pre : MonoBehaviour {
 		//load instruction clips
 		clips = new AudioClip[total_clip];
 		clips[0] = Resources.Load ("instructions/Swipe right to continue from last time or double tap to start a new game") as AudioClip;
-
+		confirm_list = new AudioClip[total_confirm_clip];
+		confirm_list [0] = Resources.Load ("instructions/Are you sure you want to start a new game, this will overwrite existing saves") as AudioClip;
+		confirm_list [1] = Resources.Load ("instructions/Swipe left to confirm or double tap to cancel") as AudioClip;
 		swipeAhead = Resources.Load("fx/swipe-ahead") as AudioClip;
 		swipeRight = Resources.Load("fx/swipe-right") as AudioClip;
 		swipeLeft = Resources.Load("fx/swipe-left") as AudioClip;
+		continue_game = Resources.Load ("instructions/Loaded saved game") as AudioClip;
+		new_game = Resources.Load ("instructions/New game started") as AudioClip;
+		at_confirm = false;
+		reset_audio = false;
 	}
 
 	void play_audio(){
-		if (!SoundManager.instance.isBusy ()) {
-			SoundManager.instance.PlaySingle (clips[cur_clip]);
-			cur_clip += 1;
-			if (cur_clip >= total_clip)
-				cur_clip = 0;
+		if (!at_confirm) {
+			if (!SoundManager.instance.isBusy () || reset_audio) {
+				reset_audio = false;
+				SoundManager.instance.PlaySingle (clips [cur_clip]);
+				cur_clip += 1;
+				if (cur_clip >= total_clip)
+					cur_clip = 0;
+			}
+		} else {
+			if (!SoundManager.instance.isBusy () || reset_audio) {
+				reset_audio = false;
+				SoundManager.instance.PlaySingle (confirm_list [cur_clip]);
+				cur_clip += 1;
+				if (cur_clip >= total_confirm_clip)
+					cur_clip = 0;
+			}
 		}
 	}
 
@@ -44,17 +66,33 @@ public class GM_main_pre : MonoBehaviour {
 
 		//Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
 		if (Input.GetKeyUp(KeyCode.RightArrow)) {
-			GameMode.gamemode = GameMode.Game_Mode.CONTINUE;
-			SceneManager.LoadScene("Main");
+			if(!at_confirm){
+				GameMode.gamemode = GameMode.Game_Mode.CONTINUE;
+				SoundManager.instance.PlaySingle(continue_game);
+				SceneManager.LoadScene("Main");
+			}
 			//SoundManager.instance.PlaySingle(swipeRight);
 		} else if (Input.GetKeyUp(KeyCode.LeftArrow)) {
+			if(at_confirm){
+				GameMode.gamemode = GameMode.Game_Mode.MAIN;
+				SoundManager.instance.PlaySingle(new_game);
+				SceneManager.LoadScene("Main");
+			}
 			//SoundManager.instance.PlaySingle(swipeLeft);
 		} else if (Input.GetKeyUp("f")) {
 			//SceneManager.LoadScene("Main");
 			//SoundManager.instance.PlaySingle(swipeAhead);
 		} else if (Input.GetKeyUp("e")) {
-			GameMode.gamemode = GameMode.Game_Mode.MAIN;
-			SceneManager.LoadScene("Main");
+			if(!at_confirm){
+				at_confirm = true;
+				cur_clip = 0;
+				reset_audio = true;
+			}
+			else{
+				at_confirm = false;
+				cur_clip = 0;
+				reset_audio = true;
+			}
 			//SoundManager.instance.PlaySingle(swipeAhead);
 		}
 
@@ -96,11 +134,19 @@ public class GM_main_pre : MonoBehaviour {
 		{
 		//If x is greater than zero, set horizontal to 1, otherwise set it to -1
 		if (x > 0) {//RIGHT
-						GameMode.gamemode = GameMode.Game_Mode.CONTINUE;
-						SceneManager.LoadScene("Main");
-						//SoundManager.instance.PlaySingle(swipeRight);
+			if(!at_confirm){
+				GameMode.gamemode = GameMode.Game_Mode.CONTINUE;
+				SoundManager.instance.PlaySingle(continue_game);
+				SceneManager.LoadScene("Main");
+			}
+			//SoundManager.instance.PlaySingle(swipeRight);
 		} else {//LEFT
-						//SoundManager.instance.PlaySingle(swipeLeft);
+			if(at_confirm){
+				GameMode.gamemode = GameMode.Game_Mode.MAIN;
+				SoundManager.instance.PlaySingle(new_game);
+				SceneManager.LoadScene("Main");
+			}
+			//SoundManager.instance.PlaySingle(swipeLeft);
 		}
 		} else if (Mathf.Abs(y) > Mathf.Abs(x) && Mathf.Abs(y) >= minSwipeDist) {
 		//If y is greater than zero, set vertical to 1, otherwise set it to -1
@@ -111,9 +157,17 @@ public class GM_main_pre : MonoBehaviour {
 		}
 		} else if (Mathf.Abs(Time.time - touchTime) > TOUCH_TIME) {
 		if (numTouches == 2){
-						GameMode.gamemode = GameMode.Game_Mode.MAIN;
-						SceneManager.LoadScene("Main");
-						//SoundManager.instance.PlaySingle(swipeAhead);
+			if(!at_confirm){
+				at_confirm = true;
+				cur_clip = 0;
+				reset_audio = true;
+			}
+			else{
+				at_confirm = false;
+				cur_clip = 0;
+				reset_audio = true;
+			}
+			//SoundManager.instance.PlaySingle(swipeAhead);
 		}
 		else{}
 		}

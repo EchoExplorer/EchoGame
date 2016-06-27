@@ -99,8 +99,10 @@ public class BoardManager : MonoBehaviour {
 
 	//audios
 	int cur_clip = 1;
+	int cur_level = 0;
 	int total_clip = 11;
 	AudioClip[] clips;
+	AudioClip lv_1_move, lv_1_exit;
 
 	//Clears our list gridPositions and prepares it to generate a new board.
 	void InitialiseList (){
@@ -123,12 +125,32 @@ public class BoardManager : MonoBehaviour {
 		//one level can have one clip of instruction
 		cur_clip = 0;
 		clips = new AudioClip[total_clip];
+		lv_1_move = Resources.Load ("instructions/movement instruction") as AudioClip;
+		lv_1_exit = Resources.Load ("instructions/Use two finger double tap to exit") as AudioClip;
 		clips [0] = Resources.Load ("instructions/Welcome to the tutorial") as AudioClip;
-		clips [1] = Resources.Load ("instructions/In this level you'll learn how to exit the current level and go on to the next one") as AudioClip;
+		clips [1] = Resources.Load ("instructions/Tap once to hear an echo") as AudioClip;
 		clips [2] = Resources.Load ("instructions/In this level you'll learn how to navigate a right turn") as AudioClip;
+		clips [3] = Resources.Load ("instructions/In this level you'll learn how to navigate a left turn") as AudioClip;
+		clips [4] = Resources.Load ("instructions/In this level you'll learn how to navigate at T hall") as AudioClip;
+		clips [5] = Resources.Load ("instructions/In this level you'll learn to distinguish between the exit and a dead end") as AudioClip;
+		//clips [6] = Resources.Load ("instructions/In this level you'll learn to distinguish between the exit and a dead end") as AudioClip;
 	}
 
 	void play_audio(){
+		if (cur_level == 1) {
+			GameObject player = GameObject.Find ("Player");
+			Player.lv_1_flag temp_f = player.GetComponent<Player> ().lv_1_f;
+			if (temp_f.at_exit) {
+				if (!SoundManager.instance.isBusy ()) {
+					SoundManager.instance.PlaySingle (lv_1_exit);
+				}
+			} else if (temp_f.echo_played && !temp_f.moved) {
+				if (!SoundManager.instance.isBusy ()) {
+					SoundManager.instance.PlaySingle (lv_1_move);
+				}
+			}
+		}
+
 		if (cur_clip >= total_clip)
 			return;
 
@@ -210,6 +232,7 @@ public class BoardManager : MonoBehaviour {
 
 		//give the right instruction to play
 		cur_clip = level;
+		cur_level = level;
 			
 		//build level
 		load_level_from_file ("GameData/levels", level);
