@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using System;
 using System.Text;
 using System.Diagnostics;
+using UnityEngine.SceneManagement;
 
 //Player inherits from MovingObject, our base class for objects that can move, Enemy also inherits from this.
 public class Player : MovingObject {
@@ -31,6 +32,11 @@ public class Player : MovingObject {
 	public AudioClip swipeRight;
 	public AudioClip swipeLeft;
 
+	AudioClip[] quit_confirm;
+	int cur_clip = 0;
+	int max_quit_clip = 2;
+	bool reset_audio;
+
 	//private SpriteRenderer spriteRenderer; 
 
 	// variables to implement data collection
@@ -45,6 +51,7 @@ public class Player : MovingObject {
 	private Stopwatch stopWatch;
 	private DateTime startTime;
 	private DateTime endTime;
+	bool want_exit;
 
 	public struct lv_1_flag{
 		public bool echo_played;
@@ -96,6 +103,13 @@ public class Player : MovingObject {
 		startTime = System.DateTime.Now;
 
 		lv_1_f.init ();
+		want_exit = false;
+		reset_audio = false;
+
+		//load audio
+		quit_confirm = new AudioClip[max_quit_clip];
+		quit_confirm[0] = Resources.Load ("instructions/Are you sure you want to quit") as AudioClip;
+		quit_confirm[1] = Resources.Load ("instructions/Swipe left to confirm or double tap to cancel") as AudioClip;
 
 		base.Start ();
 	}
@@ -116,10 +130,15 @@ public class Player : MovingObject {
 			data.leftDist, data.jun_to_string (data.lType), data.rightDist, data.jun_to_string (data.rType));
 		*/ //replace this to check what is behind you
 
-		filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix, 
+		//this is the full filename, deadend behind
+		/*filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix, 
 			data.frontDist, data.jun_to_string (data.fType), data.backDist, "D",
-			data.leftDist, data.jun_to_string (data.lType), data.rightDist, data.jun_to_string (data.rType));
+			data.leftDist, data.jun_to_string (data.lType), data.rightDist, data.jun_to_string (data.rType));*/
+
 		//assume a deadend is behind you always
+		filename = String.Format("{0}_F-{1:F2}-{2}_L-{3:F2}-{4}_R-{5:F2}-{6}", prefix, 
+			data.frontDist, data.jun_to_string (data.fType),
+			data.leftDist, data.jun_to_string (data.lType), data.rightDist, data.jun_to_string (data.rType));
 
 		UnityEngine.Debug.Log (filename);
 		UnityEngine.Debug.Log (data.all_jun_to_string());
@@ -368,7 +387,20 @@ public class Player : MovingObject {
 		}
 	}
 
+	void play_audio(){
+		if (want_exit) {
+			if (!SoundManager.instance.isBusy () || reset_audio) {
+				reset_audio = false;
+				SoundManager.instance.PlaySingle (quit_confirm [cur_clip]);
+				cur_clip += 1;
+				if (cur_clip >= max_quit_clip)
+					cur_clip = 0;
+			}
+		} 
+	}
+
 	private void Update () {
+		play_audio ();
 		//UnityEngine.Debug.DrawLine (transform.position, transform.position+get_player_dir("FRONT"), Color.green);
 		//UnityEngine.Debug.DrawLine (transform.position, transform.position+get_player_dir("LEFT"), Color.yellow);
 		//If it's not the player's turn, exit the function.
@@ -393,9 +425,15 @@ public class Player : MovingObject {
 			if(!SoundManager.instance.isBusy())
 				SoundManager.instance.PlaySingle(swipeRight);
 		} else if (Input.GetKeyUp(KeyCode.LeftArrow)) {
-			dir = transform.up;
-			if(!SoundManager.instance.isBusy())
-				SoundManager.instance.PlaySingle(swipeLeft);
+			if(!want_exit){
+				dir = get_player_dir("LEFT");
+				if(!SoundManager.instance.isBusy())
+					SoundManager.instance.PlaySingle(swipeLeft);
+			}else{
+				//SceneManager.UnloadScene("Main");
+				Destroy(GameObject.Find("GameManager"));
+				SceneManager.LoadScene("Title_Screen");
+			}
 		} else if (Input.GetKeyUp(KeyCode.UpArrow)) {
 			dir = transform.right;
 			if(!SoundManager.instance.isBusy())
@@ -408,75 +446,98 @@ public class Player : MovingObject {
 
 		if (Input.GetKeyUp("f"))
 			PlayEcho();
-		else if (Input.GetKeyUp("e"))
-			attemptExitFromLevel();
+		else if (Input.GetKeyUp("e")){
+			if(!want_exit)
+				attemptExitFromLevel();
+			else
+				want_exit = false;
+		} else if (Input.GetKeyUp("r")){
+			want_exit = true;
+			reset_audio = true;
+		}
 
 		//Check if we are running on iOS, Android, Windows Phone 8 or Unity iPhone
 		#elif UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
 
 		float TOUCH_TIME = 0.05f;
+		float TOUCH_EXIT_TIME = Utilities.exit_touch_time;
 
 		//Check if Input has registered more than zero touches
 		int numTouches = Input.touchCount;
 
 		if (numTouches > 0) {
-		//Store the first touch detected.
-		Touch myTouch = Input.touches[0];
+			//Store the first touch detected.
+			Touch myTouch = Input.touches[0];
 
-		//Check if the phase of that touch equals Began
-		if (myTouch.phase == TouchPhase.Began){
-		//If so, set touchOrigin to the position of that touch
-		touchOrigin = myTouch.position;
-		touchTime = Time.time;
-		}
+			//Check if the phase of that touch equals Began
+			if (myTouch.phase == TouchPhase.Began){
+				//If so, set touchOrigin to the position of that touch
+				touchOrigin = myTouch.position;
+				touchTime = Time.time;
+			}
 
-		//If the touch phase is not Began, and instead is equal to Ended and the x of touchOrigin is greater or equal to zero:
-		else if (myTouch.phase == TouchPhase.Ended && touchOrigin.x >= 0) {
-		//Set touchEnd to equal the position of this touch
-		Vector2 touchEnd = myTouch.position;
+			//If the touch phase is not Began, and instead is equal to Ended and the x of touchOrigin is greater or equal to zero:
+			else if (myTouch.phase == TouchPhase.Ended && touchOrigin.x >= 0) {
+				//Set touchEnd to equal the position of this touch
+				Vector2 touchEnd = myTouch.position;
 
-		//Calculate the difference between the beginning and end of the touch on the x axis.
-		float x = touchEnd.x - touchOrigin.x;
+				//Calculate the difference between the beginning and end of the touch on the x axis.
+				float x = touchEnd.x - touchOrigin.x;
 
-		//Calculate the difference between the beginning and end of the touch on the y axis.
-		float y = touchEnd.y - touchOrigin.y;
+				//Calculate the difference between the beginning and end of the touch on the y axis.
+				float y = touchEnd.y - touchOrigin.y;
 
-		//Set touchOrigin.x to -1 so that our else if statement will evaluate false and not repeat immediately.
-		touchOrigin.x = -1;
+				//Set touchOrigin.x to -1 so that our else if statement will evaluate false and not repeat immediately.
+				touchOrigin.x = -1;
 
-		//Check if the difference along the x axis is greater than the difference along the y axis.
-		if (Mathf.Abs(x) > Mathf.Abs(y) && Mathf.Abs(x) >= minSwipeDist)
-		{
-		//If x is greater than zero, set horizontal to 1, otherwise set it to -1
-		if (x > 0) {
-		dir = get_player_dir("RIGHT");
-		if(!SoundManager.instance.isBusy())
-			SoundManager.instance.PlaySingle(swipeRight);
-		} else {
-		dir = get_player_dir("LEFT");
-		if(!SoundManager.instance.isBusy())
-			SoundManager.instance.PlaySingle(swipeLeft);
-		}
-		} else if (Mathf.Abs(y) > Mathf.Abs(x) && Mathf.Abs(y) >= minSwipeDist) {
-		//If y is greater than zero, set vertical to 1, otherwise set it to -1
-		if (y > 0) {
-		dir = get_player_dir("FRONT");
-		if(!SoundManager.instance.isBusy())
-			SoundManager.instance.PlaySingle(swipeAhead);
-		} else {
-		dir = get_player_dir("BACK");
-		if(!SoundManager.instance.isBusy())
-			SoundManager.instance.PlaySingle(swipeAhead);
-		}
-		//Increment step count
-		numSteps++;
-		} else if (Mathf.Abs(Time.time - touchTime) > TOUCH_TIME) {
-		if (numTouches == 2)
-		attemptExitFromLevel();
-		else
-		PlayEcho();
-		}
-		}
+				//check about exit game first
+				if(!want_exit){
+					if (Mathf.Abs(Time.time - touchTime) > TOUCH_EXIT_TIME) {
+						want_exit = true;
+						reset_audio = true;
+					}
+				}
+
+				//Check if the difference along the x axis is greater than the difference along the y axis.
+				if (Mathf.Abs(x) > Mathf.Abs(y) && Mathf.Abs(x) >= minSwipeDist)
+				{
+					if (x > 0) {
+						dir = get_player_dir("RIGHT");
+						if(!SoundManager.instance.isBusy())
+							SoundManager.instance.PlaySingle(swipeRight);
+					} else {
+						if(!want_exit){
+							dir = get_player_dir("LEFT");
+							if(!SoundManager.instance.isBusy())
+								SoundManager.instance.PlaySingle(swipeLeft);
+						}else{
+							//SceneManager.UnloadScene("Main");
+							Destroy(GameObject.Find("GameManager"));
+							SceneManager.LoadScene("Title_Screen");
+						}
+					}
+				} else if (Mathf.Abs(y) > Mathf.Abs(x) && Mathf.Abs(y) >= minSwipeDist) {
+					if (y > 0) {
+						dir = get_player_dir("FRONT");
+						if(!SoundManager.instance.isBusy())
+							SoundManager.instance.PlaySingle(swipeAhead);
+					} else {
+						dir = get_player_dir("BACK");
+						if(!SoundManager.instance.isBusy())
+							SoundManager.instance.PlaySingle(swipeAhead);
+					}
+					//Increment step count
+					numSteps++;
+				} else if (Mathf.Abs(Time.time - touchTime) > TOUCH_TIME) {
+					if (numTouches == 2){
+						if(!want_exit)
+							attemptExitFromLevel();
+						else
+							want_exit = false;
+					} else
+						PlayEcho();
+				}
+			}
 		}
 		#endif //End of mobile platform dependendent compilation section started above with #elif
 		calculateMove(dir);
