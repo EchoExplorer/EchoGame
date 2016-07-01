@@ -33,8 +33,7 @@ public class GM_title : MonoBehaviour {
 	}
 
 	void play_audio(){
-		if (!SoundManager.instance.isBusy ()) {
-			SoundManager.instance.PlaySingle (clips[cur_clip]);
+		if (SoundManager.instance.PlayVoice (clips[cur_clip])) {
 			cur_clip += 1;
 			if (cur_clip >= total_clip)
 				cur_clip = 0;
@@ -52,12 +51,12 @@ public class GM_title : MonoBehaviour {
 		if (Input.GetKeyUp(KeyCode.RightArrow)) {
 			GameMode.gamemode = GameMode.Game_Mode.CONTINUE;
 			SceneManager.LoadScene("Main_pre");
-			SoundManager.instance.PlaySingle(to_main);
+			SoundManager.instance.PlayVoice(to_main, true);
 			//SoundManager.instance.PlaySingle(swipeRight);
 		} else if (Input.GetKeyUp(KeyCode.LeftArrow)) {
 			GameMode.gamemode = GameMode.Game_Mode.TUTORIAL;
 			SceneManager.LoadScene("Main");
-			SoundManager.instance.PlaySingle(to_tutorial);
+			SoundManager.instance.PlayVoice(to_tutorial, true);
 			//SoundManager.instance.PlaySingle(swipeLeft);
 		} else if (Input.GetKeyUp("f")) {
 			//SceneManager.LoadScene("Main");
@@ -104,12 +103,12 @@ public class GM_title : MonoBehaviour {
 					if (x > 0) {//RIGHT
 						GameMode.gamemode = GameMode.Game_Mode.CONTINUE;
 						SceneManager.LoadScene("Main_pre");
-						SoundManager.instance.PlaySingle(to_main);
+						SoundManager.instance.PlayVoice(to_main, true);
 						//SoundManager.instance.PlaySingle(swipeRight);
 					} else {//LEFT
 						GameMode.gamemode = GameMode.Game_Mode.TUTORIAL;
 						SceneManager.LoadScene("Main");
-						SoundManager.instance.PlaySingle(to_tutorial);
+						SoundManager.instance.PlayVoice(to_tutorial, true);
 					}
 				} else if (Mathf.Abs(y) > Mathf.Abs(x) && Mathf.Abs(y) >= minSwipeDist) {
 					//If y is greater than zero, set vertical to 1, otherwise set it to -1

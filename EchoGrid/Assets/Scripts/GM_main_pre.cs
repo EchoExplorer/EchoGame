@@ -39,17 +39,13 @@ public class GM_main_pre : MonoBehaviour {
 
 	void play_audio(){
 		if (!at_confirm) {
-			if (!SoundManager.instance.isBusy () || reset_audio) {
-				reset_audio = false;
-				SoundManager.instance.PlaySingle (clips [cur_clip]);
+			if (SoundManager.instance.PlayVoice (clips [cur_clip])) {
 				cur_clip += 1;
 				if (cur_clip >= total_clip)
 					cur_clip = 0;
 			}
 		} else {
-			if (!SoundManager.instance.isBusy () || reset_audio) {
-				reset_audio = false;
-				SoundManager.instance.PlaySingle (confirm_list [cur_clip]);
+			if (SoundManager.instance.PlayVoice (confirm_list [cur_clip])) {
 				cur_clip += 1;
 				if (cur_clip >= total_confirm_clip)
 					cur_clip = 0;
@@ -68,14 +64,14 @@ public class GM_main_pre : MonoBehaviour {
 		if (Input.GetKeyUp(KeyCode.RightArrow)) {
 			if(!at_confirm){
 				GameMode.gamemode = GameMode.Game_Mode.CONTINUE;
-				SoundManager.instance.PlaySingle(continue_game);
+				SoundManager.instance.PlayVoice(continue_game, true);
 				SceneManager.LoadScene("Main");
 			}
 			//SoundManager.instance.PlaySingle(swipeRight);
 		} else if (Input.GetKeyUp(KeyCode.LeftArrow)) {
 			if(at_confirm){
 				GameMode.gamemode = GameMode.Game_Mode.MAIN;
-				SoundManager.instance.PlaySingle(new_game);
+				SoundManager.instance.PlayVoice(new_game, true);
 				SceneManager.LoadScene("Main");
 			}
 			//SoundManager.instance.PlaySingle(swipeLeft);
@@ -136,14 +132,14 @@ public class GM_main_pre : MonoBehaviour {
 		if (x > 0) {//RIGHT
 			if(!at_confirm){
 				GameMode.gamemode = GameMode.Game_Mode.CONTINUE;
-				SoundManager.instance.PlaySingle(continue_game);
+				SoundManager.instance.PlayVoice(continue_game, true);
 				SceneManager.LoadScene("Main");
 			}
 			//SoundManager.instance.PlaySingle(swipeRight);
 		} else {//LEFT
 			if(at_confirm){
 				GameMode.gamemode = GameMode.Game_Mode.MAIN;
-				SoundManager.instance.PlaySingle(new_game);
+				SoundManager.instance.PlayVoice(new_game, true);
 				SceneManager.LoadScene("Main");
 			}
 			//SoundManager.instance.PlaySingle(swipeLeft);
