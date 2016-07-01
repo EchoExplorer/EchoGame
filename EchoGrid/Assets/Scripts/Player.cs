@@ -51,6 +51,7 @@ public class Player : MovingObject {
 	private Stopwatch stopWatch;
 	private DateTime startTime;
 	private DateTime endTime;
+
 	bool want_exit;
 
 	public struct lv_1_flag{
@@ -68,6 +69,13 @@ public class Player : MovingObject {
 	public lv_1_flag lv_1_f;
 
 	//public bool soundPlaying = false;
+
+	private void initData() {
+		numCrashes = 0;
+		numSteps = 0;
+		crashLocs = "";
+	}
+
 	protected override void Start () {
 		//Get a component reference to the Player's animator component
 		animator = GetComponent<Animator>();
@@ -75,8 +83,7 @@ public class Player : MovingObject {
 		//spriteRenderer = GetComponent<SpriteRenderer>();
 
 		//Initialize data collection variables
-		numCrashes = 0;
-		numSteps = 0;
+		initData();
 
 		/*
 		//TODO(agotsis/wenyuw1) Once the local database is integrated this hardcoding will go away. 
@@ -232,6 +239,7 @@ public class Player : MovingObject {
 	}
 
 	private void attemptExitFromLevel() {
+		exitAttempts++;
 		GameObject exitSign = GameObject.FindGameObjectWithTag("Exit");
 		Vector2 distFromExit = transform.position - exitSign.transform.position;
 		if (Vector2.SqrMagnitude(distFromExit) < 0.25) {
@@ -285,6 +293,7 @@ public class Player : MovingObject {
 		form.AddField("startTime", startTime.ToString());
 		form.AddField("endTime", endTime.ToString());
 		form.AddField("timeElapsed", accurateElapsed.ToString("F3"));
+		form.AddField("exitAttempts", exitAttempts.ToString());
 		//form.AddField("asciiLevelRep", BoardManager.asciiLevelRep);
 
 		UnityEngine.Debug.Log(System.Text.Encoding.ASCII.GetString(form.data));
@@ -345,8 +354,13 @@ public class Player : MovingObject {
 		enabled = false;
 		AudioSource.PlayClipAtPoint(winSound, transform.localPosition, 0.3f);
 
-		//Reset the crash count
+		//Reset extra data.
+		resetData();
+	}
+
+	private void resetData(){
 		numCrashes = 0;
+		exitAttempts = 0;
 	}
 
 	public static string Base64Encode(string plainText) {
