@@ -13,7 +13,7 @@ cursor.execute("DROP TABLE IF EXISTS LevelData")
 cursor.execute('''
             CREATE TABLE LevelData(id INTEGER PRIMARY KEY, userName TEXT,        
             currentLevel INTEGER, crashCount INTEGER, stepCount INTEGER,        
-            timeElapsed FLOAT, startTime TEXT, endTime TEXT,                    
+            timeElapsed FLOAT, startTime TEXT, endTime TEXT, asciiLevelRep TEXT,                   
             dateTimeStamp TIMESTAMP)''')
 
 cursor.execute("DROP TABLE IF EXISTS EchoData")
