@@ -2,31 +2,35 @@
 
 import sqlite3, cgi, cgitb
 
-# Create instance of FieldStorage
-form = cgi.FieldStorage()
+dbName = "gameData"
 
-db = sqlite3.connect('data/gameData')
+db = sqlite3.connect('/srv/sqlite/data/' + dbName)
 cursor = db.cursor()
 
-userName = form.getvalue('userName')
-currentLevel = int(form.getvalue('currentLevel'))
-crashCount = int(form.getvalue('crashCount'))
-stepCount = int(form.getvalue('stepCount'))
-timeElapsed = float(form.getvalue('timeElapsed'))
-startTime = form.getvalue('startTime')
-endTime = form.getvalue('endTime')
+# Create instance of FieldStorage
+levelForm = cgi.FieldStorage()
 
-cursor.execute('''INSERT INTO GameData(userName, currentLevel,crashCount,
-stepCount, timeElapsed, startTime, endTime, dateTimeStamp) 
-VALUES(?,?,?,?,?,?,?,CURRENT_TIMESTAMP)''', (userName,
-currentLevel,crashCount, stepCount, timeElapsed, startTime, endTime))
+userName = levelForm.getvalue('userName')
+currentLevel = int(levelForm.getvalue('currentLevel'))
+crashCount = int(levelForm.getvalue('crashCount'))
+stepCount = int(levelForm.getvalue('stepCount'))
+timeElapsed = float(levelForm.getvalue('timeElapsed'))
+startTime = levelForm.getvalue('startTime')
+endTime = levelForm.getvalue('endTime')
+asciiLevelRep = levelForm.getvalue('asciiLevelRep')
+
+cursor.execute('''INSERT INTO LevelData(userName, currentLevel, crashCount,
+stepCount, timeElapsed,startTime, endTime, asciiLevelRep, dateTimeStamp) 
+VALUES(?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP)''', (userName,
+currentLevel, crashCount, stepCount, timeElapsed, startTime, endTime, 
+asciiLevelRep))
 
 db.commit() #changes are committed to database
 db.close()
 
 print "Content-type:text/json\r\n\r\n"
 print "{",
-keys = form.keys()
+keys = levelForm.keys()
 for key in keys:
-    print key, ":\"", form[key].value, "\"", ",",
+    print key, ":\"", levelForm[key].value, "\"", ",",
 print "}"
