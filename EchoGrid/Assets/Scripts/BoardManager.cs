@@ -484,8 +484,9 @@ public class BoardManager : MonoBehaviour {
 
 		//read through the file until desired level is found
 		foreach (string line in lvldata_split) {
-			if (line == "END")//reach end of a level layout
+			if (line.Substring (0, 3) == "END") { //reach end of a level layout
 				reading_level = false;
+			}
 
 			if (reading_level) {//actually loading layout
 				//check for valid index
@@ -513,8 +514,13 @@ public class BoardManager : MonoBehaviour {
 					//get the current level we are reading
 					int remain_length = line.Length - 6;
 					int level_reading = Int32.Parse (line.Substring (6, remain_length));
-					if (level_reading == level_wanted)//we found the level we want
+					if (level_reading == level_wanted) {//we found the level we want
 						reading_level = true;
+					}
+					else if (level_reading > level_wanted) {
+						reading_level = false;
+						return true;
+					}
 				}
 			}
 		}
