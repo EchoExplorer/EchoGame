@@ -103,6 +103,7 @@ public class BoardManager : MonoBehaviour {
 	int total_clip = 11;
 	AudioClip[] clips;
 	AudioClip lv_1_move, lv_1_exit;
+	bool resest_audio = true;
 
 	//Clears our list gridPositions and prepares it to generate a new board.
 	void InitialiseList (){
@@ -141,21 +142,16 @@ public class BoardManager : MonoBehaviour {
 			GameObject player = GameObject.Find ("Player");
 			Player.lv_1_flag temp_f = player.GetComponent<Player> ().lv_1_f;
 			if (temp_f.at_exit) {
-				if (!SoundManager.instance.isBusy ()) {
-					SoundManager.instance.PlaySingle (lv_1_exit);
-				}
+				SoundManager.instance.PlayVoice (lv_1_exit);
 			} else if (temp_f.echo_played && !temp_f.moved) {
-				if (!SoundManager.instance.isBusy ()) {
-					SoundManager.instance.PlaySingle (lv_1_move);
-				}
+				SoundManager.instance.PlayVoice (lv_1_move);
 			}
 		}
 
 		if (cur_clip >= total_clip)
 			return;
 
-		if (!SoundManager.instance.isBusy ()) {
-			SoundManager.instance.PlaySingle (clips [cur_clip]);
+		if (SoundManager.instance.PlayVoice (clips [cur_clip])) {
 			//play only once
 			cur_clip = total_clip + 1;
 		}
