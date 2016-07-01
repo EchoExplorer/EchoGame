@@ -44,6 +44,8 @@ public class Player : MovingObject {
 	private int numSteps;   //Keep track of number of steps taken per level
 	private int exitAttempts;
 
+	private String lastEcho = "";
+
 	//Track locations of the player's crashes
 	private string crashLocs;
 
@@ -127,7 +129,7 @@ public class Player : MovingObject {
 			GameManager.instance.boardScript.getEchoDistData(transform.position, get_player_dir("FRONT"), get_player_dir("LEFT"));
 
 		//String prefix = "15-0"; //Should be a variable somewhere. Hard for now.
-		String prefix = "C01-3";
+		String prefix = "C01-3"; //change this prefix when you change the echo files
 
 		String filename;
 
@@ -147,11 +149,31 @@ public class Player : MovingObject {
 			data.frontDist, data.jun_to_string (data.fType),
 			data.leftDist, data.jun_to_string (data.lType), data.rightDist, data.jun_to_string (data.rType));
 
+		lastEcho = filename;
+
 		UnityEngine.Debug.Log (filename);
 		UnityEngine.Debug.Log (data.all_jun_to_string());
 
 		AudioClip echo = Resources.Load("echoes/" + filename) as AudioClip;
 		SoundManager.instance.PlaySingle(echo);
+	}
+
+	private void reportOnEcho(){
+
+		string echoEndpoint = "http://merichar-dev.eberly.cmu.edu:81/cgi-bin/acceptEchoData.py";
+
+		string location = "(" + transform.position.x.ToString () + "," + transform.position.y.ToString () + ")";
+
+		WWWForm echoForm = new WWWForm();
+		echoForm.AddField("userName", SystemInfo.deviceUniqueIdentifier);
+		echoForm.AddField("currentLevel", curLevel.ToString());
+		echoForm.AddField("echo", lastEcho);
+		echoForm.AddField("echoLocation", location);
+
+		UnityEngine.Debug.Log(System.Text.Encoding.ASCII.GetString(echoForm.data));
+
+		WWW www = new WWW(echoEndpoint, echoForm);
+		StartCoroutine(WaitForRequest(www));
 	}
 
 	//due to the chaotic coord system
@@ -237,6 +259,24 @@ public class Player : MovingObject {
 		return canMove;
 	}
 
+	private void reportOnCrash(){
+
+		string crashEndpoint = "http://merichar-dev.eberly.cmu.edu:81/cgi-bin/acceptCrashData.py";
+
+		string location = "(" + transform.position.x.ToString () + "," + transform.position.y.ToString () + ")";
+
+		WWWForm crashForm = new WWWForm();
+		crashForm.AddField("userName", SystemInfo.deviceUniqueIdentifier);
+		crashForm.AddField("currentLevel", curLevel.ToString());
+		crashForm.AddField("crashNumber", numCrashes.ToString());
+		crashForm.AddField("crashLocation", location);
+
+		UnityEngine.Debug.Log(System.Text.Encoding.ASCII.GetString(crashForm.data));
+
+		WWW www = new WWW(crashEndpoint, crashForm);
+		StartCoroutine(WaitForRequest(www));
+	}
+
 	private void attemptExitFromLevel() {
 		exitAttempts++;
 		GameObject exitSign = GameObject.FindGameObjectWithTag("Exit");
@@ -282,20 +322,20 @@ public class Player : MovingObject {
 		//Send the crash count data and level information to server
 		//string dataEndpoint = "http://cmuecholocation.herokuapp.com/storeGameLevelData";
 		//string dataEndpoint = "http://128.237.139.120:8000/storeGameLevelData";
-		string dataEndpoint = "http://merichar-dev.eberly.cmu.edu:81/cgi-bin/acceptLevelData.py";
+		string levelDataEndpoint = "http://merichar-dev.eberly.cmu.edu:81/cgi-bin/acceptLevelData.py";
 
-		WWWForm form = new WWWForm();
-		form.AddField("userName", SystemInfo.deviceUniqueIdentifier);
-		form.AddField("currentLevel", curLevel.ToString());
-		form.AddField("crashCount", numCrashes.ToString());
-		form.AddField("stepCount", numSteps.ToString());
-		form.AddField("startTime", startTime.ToString());
-		form.AddField("endTime", endTime.ToString());
-		form.AddField("timeElapsed", accurateElapsed.ToString("F3"));
-		form.AddField("exitAttempts", exitAttempts.ToString());
-		//form.AddField("asciiLevelRep", BoardManager.asciiLevelRep);
+		WWWForm levelCompleteForm = new WWWForm();
+		levelCompleteForm.AddField("userName", SystemInfo.deviceUniqueIdentifier);
+		levelCompleteForm.AddField("currentLevel", curLevel.ToString());
+		levelCompleteForm.AddField("crashCount", numCrashes.ToString());
+		levelCompleteForm.AddField("stepCount", numSteps.ToString());
+		levelCompleteForm.AddField("startTime", startTime.ToString());
+		levelCompleteForm.AddField("endTime", endTime.ToString());
+		levelCompleteForm.AddField("timeElapsed", accurateElapsed.ToString("F3"));
+		levelCompleteForm.AddField("exitAttempts", exitAttempts.ToString());
+		levelCompleteForm.AddField("asciiLevelRep", GameManager.instance.boardScript.asciiLevelRep);
 
-		UnityEngine.Debug.Log(System.Text.Encoding.ASCII.GetString(form.data));
+		UnityEngine.Debug.Log(System.Text.Encoding.ASCII.GetString(levelCompleteForm.data));
 
 		//Send the name of the echo files used in this level and the counts
 		//form.AddField("echoFileNames", getEchoNames());
@@ -303,7 +343,7 @@ public class Player : MovingObject {
 		//Send the details of the crash locations
 		//form.AddField("crashLocations", crashLocs);
 
-		form.AddField("score", score);
+		levelCompleteForm.AddField("score", score);
 
 		//Start of the encryption data
 		try {
@@ -334,16 +374,16 @@ public class Player : MovingObject {
 			byte[] encryptedTestString = RSA.EncryptValue(Convert.FromBase64String(testToEncrypt));
 
 			//Add the encrypted test string to the form
-			form.AddField("testEncrypt", Convert.ToBase64String(encryptedTestString));
+			levelCompleteForm.AddField("testEncrypt", Convert.ToBase64String(encryptedTestString));
 
 		}
 		catch(CryptographicException e)
 		{
 			Console.WriteLine(e.Message);
-			form.AddField("testEncrypt", e.Message);
+			levelCompleteForm.AddField("testEncrypt", e.Message);
 		}
 
-		WWW www = new WWW(dataEndpoint, form);
+		WWW www = new WWW(levelDataEndpoint, levelCompleteForm);
 		StartCoroutine(WaitForRequest(www));
 
 		//Invoke the Restart function to start the next level with a delay of restartLevelDelay (default 1 second).
@@ -382,7 +422,6 @@ public class Player : MovingObject {
 	//		
 	//		return allNames;
 	//	}
-
 
 
 	//Makes HTTP requests and waits for response and checks for errors
