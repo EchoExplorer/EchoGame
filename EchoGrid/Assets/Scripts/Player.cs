@@ -156,6 +156,8 @@ public class Player : MovingObject {
 
 		AudioClip echo = Resources.Load("echoes/" + filename) as AudioClip;
 		SoundManager.instance.PlaySingle(echo);
+
+		reportOnEcho (); //send echo report
 	}
 
 	private void reportOnEcho(){
@@ -238,6 +240,7 @@ public class Player : MovingObject {
 			numCrashes++;
 			//Decrement the step count (as no successful step was made)
 			numSteps--;
+			reportOnCrash (); //send crash report
 
 			//Add the crash location details
 			string loc = transform.position.x.ToString() + "," + transform.position.y.ToString();
