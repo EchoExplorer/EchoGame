@@ -171,6 +171,7 @@ public class Player : MovingObject {
 		echoForm.AddField("currentLevel", curLevel.ToString());
 		echoForm.AddField("echo", lastEcho);
 		echoForm.AddField("echoLocation", location);
+		echoForm.AddField ("dateTimeStamp", System.DateTime.Now.ToString());
 
 		UnityEngine.Debug.Log(System.Text.Encoding.ASCII.GetString(echoForm.data));
 
@@ -273,6 +274,7 @@ public class Player : MovingObject {
 		crashForm.AddField("currentLevel", curLevel.ToString());
 		crashForm.AddField("crashNumber", numCrashes.ToString());
 		crashForm.AddField("crashLocation", location);
+		crashForm.AddField ("dateTimeStamp", System.DateTime.Now.ToString());
 
 		UnityEngine.Debug.Log(System.Text.Encoding.ASCII.GetString(crashForm.data));
 

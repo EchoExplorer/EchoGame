@@ -20,12 +20,12 @@ cursor.execute("DROP TABLE IF EXISTS EchoData")
 cursor.execute('''
             CREATE TABLE EchoData(id INTEGER PRIMARY KEY, userName TEXT,        
             currentLevel INTEGER, echo TEXT, echoLocation TEXT,                            
-            dateTimeStamp TIMESTAMP)''')
+            dateTimeStamp TEXT)''')
 
 cursor.execute("DROP TABLE IF EXISTS CrashData")
 cursor.execute('''
             CREATE TABLE CrashData(id INTEGER PRIMARY KEY, userName TEXT,        
             currentLevel INTEGER, crashNumber INTEGER, crashLocation TEXT,                        
-            dateTimeStamp TIMESTAMP)''')
+            dateTimeStamp TEXT)''')
 
 print "Creation successful!"
