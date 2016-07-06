@@ -18,12 +18,13 @@ timeElapsed = float(levelForm.getvalue('timeElapsed'))
 startTime = levelForm.getvalue('startTime')
 endTime = levelForm.getvalue('endTime')
 asciiLevelRep = levelForm.getvalue('asciiLevelRep')
+levelRecord = levelForm.getvalue('levelRecord')
 
 cursor.execute('''INSERT INTO LevelData(userName, currentLevel, crashCount,
-stepCount, timeElapsed,startTime, endTime, asciiLevelRep, dateTimeStamp) 
-VALUES(?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP)''', (userName,
+stepCount, timeElapsed,startTime, endTime, asciiLevelRep, levelRecord, dateTimeStamp) 
+VALUES(?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP)''', (userName,
 currentLevel, crashCount, stepCount, timeElapsed, startTime, endTime, 
-asciiLevelRep))
+asciiLevelRep, levelRecord))
 
 db.commit() #changes are committed to database
 db.close()
