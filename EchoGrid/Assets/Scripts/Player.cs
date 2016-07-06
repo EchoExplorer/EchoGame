@@ -156,19 +156,23 @@ public class Player : MovingObject {
 
 		AudioClip echo = Resources.Load("echoes/" + filename) as AudioClip;
 		SoundManager.instance.PlaySingle(echo);
+
+		reportOnEcho (); //send echo report
 	}
 
 	private void reportOnEcho(){
 
 		string echoEndpoint = "http://merichar-dev.eberly.cmu.edu:81/cgi-bin/acceptEchoData.py";
 
-		string location = "(" + transform.position.x.ToString () + "," + transform.position.y.ToString () + ")";
+		Vector2 idx_location = GameManager.instance.boardScript.get_idx_from_pos (transform.position);
+		string location = "(" + idx_location.x.ToString () + "," + idx_location.y.ToString () + ")";
 
 		WWWForm echoForm = new WWWForm();
 		echoForm.AddField("userName", SystemInfo.deviceUniqueIdentifier);
 		echoForm.AddField("currentLevel", curLevel.ToString());
 		echoForm.AddField("echo", lastEcho);
 		echoForm.AddField("echoLocation", location);
+		echoForm.AddField ("dateTimeStamp", System.DateTime.Now.ToString());
 
 		UnityEngine.Debug.Log(System.Text.Encoding.ASCII.GetString(echoForm.data));
 
@@ -199,10 +203,13 @@ public class Player : MovingObject {
 			return;
 		else if (dir == get_player_dir ("BACK"))
 			return;
-		else if (dir == get_player_dir("LEFT"))
-			transform.Rotate (new Vector3(0,0,90));
-		else if(dir == get_player_dir("RIGHT"))
-			transform.Rotate (new Vector3(0,0,-90));
+		else if (dir == get_player_dir ("LEFT")) {
+			transform.Rotate (new Vector3 (0, 0, 90));
+			GameManager.instance.boardScript.gamerecord += "l";
+		} else if (dir == get_player_dir ("RIGHT")) {
+			transform.Rotate (new Vector3 (0, 0, -90));
+			GameManager.instance.boardScript.gamerecord += "r";
+		}
 	}
 
 	private void calculateMove(Vector3 dir) {
@@ -220,8 +227,13 @@ public class Player : MovingObject {
 		dir.Normalize();
 
 		if(!changedDir){
-			if (AttemptMove<Wall> ((int)dir.x, (int)dir.y))
+			if (AttemptMove<Wall> ((int)dir.x, (int)dir.y)) {
 				lv_1_f.moved = true;
+				if(dir == get_player_dir("FRONT"))
+					GameManager.instance.boardScript.gamerecord += "f";
+				if(dir == get_player_dir("BACK"))
+					GameManager.instance.boardScript.gamerecord += "b";
+			}
 		}
 	}
 
@@ -232,12 +244,14 @@ public class Player : MovingObject {
 		numSteps++;
 		//If player could not move to that location, play the crash sound
 		if (!canMove) {
+			GameManager.instance.boardScript.gamerecord += "C";
 			//if(!SoundManager.instance.isBusy())
 			SoundManager.instance.PlaySingle(wallHit);
 			//Increment the crash count
 			numCrashes++;
 			//Decrement the step count (as no successful step was made)
 			numSteps--;
+			reportOnCrash (); //send crash report
 
 			//Add the crash location details
 			string loc = transform.position.x.ToString() + "," + transform.position.y.ToString();
@@ -263,13 +277,15 @@ public class Player : MovingObject {
 
 		string crashEndpoint = "http://merichar-dev.eberly.cmu.edu:81/cgi-bin/acceptCrashData.py";
 
-		string location = "(" + transform.position.x.ToString () + "," + transform.position.y.ToString () + ")";
+		Vector2 idx_pos = GameManager.instance.boardScript.get_idx_from_pos (transform.position);
+		string location = "(" + idx_pos.x.ToString () + "," + idx_pos.y.ToString () + ")";
 
 		WWWForm crashForm = new WWWForm();
 		crashForm.AddField("userName", SystemInfo.deviceUniqueIdentifier);
 		crashForm.AddField("currentLevel", curLevel.ToString());
 		crashForm.AddField("crashNumber", numCrashes.ToString());
 		crashForm.AddField("crashLocation", location);
+		crashForm.AddField ("dateTimeStamp", System.DateTime.Now.ToString());
 
 		UnityEngine.Debug.Log(System.Text.Encoding.ASCII.GetString(crashForm.data));
 
@@ -334,6 +350,7 @@ public class Player : MovingObject {
 		levelCompleteForm.AddField("timeElapsed", accurateElapsed.ToString("F3"));
 		levelCompleteForm.AddField("exitAttempts", exitAttempts.ToString());
 		levelCompleteForm.AddField("asciiLevelRep", GameManager.instance.boardScript.asciiLevelRep);
+		levelCompleteForm.AddField("levelRecord", GameManager.instance.boardScript.gamerecord);
 
 		UnityEngine.Debug.Log(System.Text.Encoding.ASCII.GetString(levelCompleteForm.data));
 
@@ -491,12 +508,17 @@ public class Player : MovingObject {
 			SoundManager.instance.PlaySingle(swipeAhead);
 		}
 
-		if (Input.GetKeyUp("f"))
+		if (Input.GetKeyUp("f")){
+			GameManager.instance.boardScript.gamerecord += "E{";
 			PlayEcho();
+			GameManager.instance.boardScript.gamerecord += lastEcho;
+			GameManager.instance.boardScript.gamerecord += "}";
+		}
 		else if (Input.GetKeyUp("e")){
-			if(!want_exit)
+			if(!want_exit){
+				GameManager.instance.boardScript.gamerecord += "X";
 				attemptExitFromLevel();
-			else
+			} else
 				want_exit = false;
 		} else if (Input.GetKeyUp("r")){
 			want_exit = true;
@@ -573,12 +595,18 @@ public class Player : MovingObject {
 					numSteps++;
 				} else if (Mathf.Abs(Time.time - touchTime) > TOUCH_TIME) {
 					if (numTouches == 2){
-						if(!want_exit)
+						if(!want_exit){
+							GameManager.instance.boardScript.gamerecord += "X";
 							attemptExitFromLevel();
+						} 
 						else
 							want_exit = false;
-					} else
+					} else{
+						GameManager.instance.boardScript.gamerecord += "E{";
 						PlayEcho();
+						GameManager.instance.boardScript.gamerecord += lastEcho;
+						GameManager.instance.boardScript.gamerecord += "}";
+					}
 				}
 			}
 		}

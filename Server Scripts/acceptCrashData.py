@@ -13,12 +13,13 @@ crashForm = cgi.FieldStorage()
 userName = crashForm.getvalue('userName')
 currentLevel = int(crashForm.getvalue('currentLevel'))
 crashNumber = crashForm.getvalue('crashNumber')
-crashLocation = crashForm.getvalue('location')
+crashLocation = crashForm.getvalue('crashLocation')
+dateTimeStamp = crashForm.getvalue('dateTimeStamp')
 
 cursor.execute('''INSERT INTO CrashData(userName, currentLevel, crashNumber,
 crashLocation, dateTimeStamp) 
-VALUES(?,?,?,?,CURRENT_TIMESTAMP)''', (userName, currentLevel,
-    crashNumber, crashLocation))
+VALUES(?,?,?,?,?)''', (userName, currentLevel,
+    crashNumber, crashLocation, dateTimeStamp))
 
 db.commit() #changes are committed to database
 db.close()

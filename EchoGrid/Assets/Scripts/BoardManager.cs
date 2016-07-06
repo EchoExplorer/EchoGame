@@ -37,6 +37,7 @@ public class BoardManager : MonoBehaviour {
 	}
 
 	public string asciiLevelRep; //should probably make a different type choice here. I don't know what would be better
+	public string gamerecord;
 
 	public struct echoDistData{
 		public int front, back, left, right; //in blocks
@@ -237,6 +238,8 @@ public class BoardManager : MonoBehaviour {
 			randomDelta = playerPositions.Count-1;
 
 		player.transform.position = playerPositions[randomDelta];
+		Vector2 start_idx = get_idx_from_pos (player.transform.position);
+		gamerecord = gamerecord + "s@(" + start_idx.x.ToString() + "," + start_idx.y.ToString() + ")";
 
 		for(int i = 0; i < wallPositions.Count; i++){
 			Vector3 position = wallPositions[i];
@@ -287,6 +290,24 @@ public class BoardManager : MonoBehaviour {
 		return gridIdx; 
 	}
 		
+	public Vector2 get_idx_from_pos(Vector3 pos){
+		float threshhold = 0.01f;
+		int y_idx = -1, x_idx = -1;
+
+		//get which index of gridPos() player is in
+		for (int i = 1; i <= rows; i++) {
+			for (int j = 1; j <= columns; ++j) {
+				if ((gridPositions [i*(columns+2) + j] - pos).magnitude <= threshhold) {
+					y_idx = i; x_idx = j;
+					break;
+				}
+			}
+		}
+
+		Vector2 result = new Vector2 (x_idx, y_idx);
+		return result;
+	}
+
 	//determine which echo to call
 	public echoDistData getEchoDistData(Vector3 playerPos, Vector3 playerFront, Vector3 playerLeft){
 		float threshhold = 0.01f;
@@ -481,11 +502,13 @@ public class BoardManager : MonoBehaviour {
 		float scale = (float)Utilities.SCALE_REF / (float)Utilities.MAZE_SIZE;
 
 		asciiLevelRep = "";
+		gamerecord = "";
 
 		//read through the file until desired level is found
 		foreach (string line in lvldata_split) {
-			if (line == "END")//reach end of a level layout
+			if (line.Substring (0, 3) == "END") { //reach end of a level layout
 				reading_level = false;
+			}
 
 			if (reading_level) {//actually loading layout
 				//check for valid index
@@ -513,8 +536,13 @@ public class BoardManager : MonoBehaviour {
 					//get the current level we are reading
 					int remain_length = line.Length - 6;
 					int level_reading = Int32.Parse (line.Substring (6, remain_length));
-					if (level_reading == level_wanted)//we found the level we want
+					if (level_reading == level_wanted) {//we found the level we want
 						reading_level = true;
+					}
+					else if (level_reading > level_wanted) {
+						reading_level = false;
+						return true;
+					}
 				}
 			}
 		}
