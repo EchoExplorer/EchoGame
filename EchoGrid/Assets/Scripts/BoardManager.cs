@@ -238,7 +238,8 @@ public class BoardManager : MonoBehaviour {
 			randomDelta = playerPositions.Count-1;
 
 		player.transform.position = playerPositions[randomDelta];
-		gamerecord = gamerecord + "s@(" + "," + ")";
+		Vector2 start_idx = get_idx_from_pos (player.transform.position);
+		gamerecord = gamerecord + "s@(" + start_idx.x.ToString() + "," + start_idx.y.ToString() + ")";
 
 		for(int i = 0; i < wallPositions.Count; i++){
 			Vector3 position = wallPositions[i];
@@ -289,6 +290,24 @@ public class BoardManager : MonoBehaviour {
 		return gridIdx; 
 	}
 		
+	public Vector2 get_idx_from_pos(Vector3 pos){
+		float threshhold = 0.01f;
+		int y_idx = -1, x_idx = -1;
+
+		//get which index of gridPos() player is in
+		for (int i = 1; i <= rows; i++) {
+			for (int j = 1; j <= columns; ++j) {
+				if ((gridPositions [i*(columns+2) + j] - pos).magnitude <= threshhold) {
+					y_idx = i; x_idx = j;
+					break;
+				}
+			}
+		}
+
+		Vector2 result = new Vector2 (x_idx, y_idx);
+		return result;
+	}
+
 	//determine which echo to call
 	public echoDistData getEchoDistData(Vector3 playerPos, Vector3 playerFront, Vector3 playerLeft){
 		float threshhold = 0.01f;
