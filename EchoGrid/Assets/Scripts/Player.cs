@@ -199,10 +199,13 @@ public class Player : MovingObject {
 			return;
 		else if (dir == get_player_dir ("BACK"))
 			return;
-		else if (dir == get_player_dir("LEFT"))
-			transform.Rotate (new Vector3(0,0,90));
-		else if(dir == get_player_dir("RIGHT"))
-			transform.Rotate (new Vector3(0,0,-90));
+		else if (dir == get_player_dir ("LEFT")) {
+			transform.Rotate (new Vector3 (0, 0, 90));
+			GameManager.instance.boardScript.gamerecord += "l";
+		} else if (dir == get_player_dir ("RIGHT")) {
+			transform.Rotate (new Vector3 (0, 0, -90));
+			GameManager.instance.boardScript.gamerecord += "r";
+		}
 	}
 
 	private void calculateMove(Vector3 dir) {

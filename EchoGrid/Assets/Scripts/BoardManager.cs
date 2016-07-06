@@ -37,6 +37,7 @@ public class BoardManager : MonoBehaviour {
 	}
 
 	public string asciiLevelRep; //should probably make a different type choice here. I don't know what would be better
+	public string gamerecord;
 
 	public struct echoDistData{
 		public int front, back, left, right; //in blocks
@@ -237,6 +238,7 @@ public class BoardManager : MonoBehaviour {
 			randomDelta = playerPositions.Count-1;
 
 		player.transform.position = playerPositions[randomDelta];
+		gamerecord = gamerecord + "s@(" + "," + ")";
 
 		for(int i = 0; i < wallPositions.Count; i++){
 			Vector3 position = wallPositions[i];
@@ -481,6 +483,7 @@ public class BoardManager : MonoBehaviour {
 		float scale = (float)Utilities.SCALE_REF / (float)Utilities.MAZE_SIZE;
 
 		asciiLevelRep = "";
+		gamerecord = "";
 
 		//read through the file until desired level is found
 		foreach (string line in lvldata_split) {

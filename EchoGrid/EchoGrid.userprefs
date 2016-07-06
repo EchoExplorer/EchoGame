@@ -2,12 +2,12 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\BoardManager.cs">
     <Files>
+      <File FileName="Assets\Scripts\BoardManager.cs" Line="23" Column="27" />
       <File FileName="Assets\Scripts\SoundManager.cs" Line="12" Column="3" />
-      <File FileName="Assets\Scripts\Player.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Player.cs" Line="224" Column="3" />
       <File FileName="Assets\Scripts\GM_main_pre.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\GameManager.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\GM_title.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\BoardManager.cs" Line="524" Column="6" />
       <File FileName="Assets\Scripts\Utilities.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
