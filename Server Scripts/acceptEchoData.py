@@ -14,10 +14,11 @@ userName = echoForm.getvalue('userName')
 currentLevel = int(echoForm.getvalue('currentLevel'))
 echo = echoForm.getvalue('echo')
 location = echoForm.getvalue('location')
+dateTimeStamp = echoForm.getvalue('dateTimeStamp')
 
 cursor.execute('''INSERT INTO EchoData(userName, currentLevel, echo,
 echoLocation, dateTimeStamp) 
-VALUES(?,?,?,?,CURRENT_TIMESTAMP)''', (userName, currentLevel, echo, location))
+VALUES(?,?,?,?,?)''', (userName, currentLevel, echo, location, dateTimeStamp))
 
 db.commit() #changes are committed to database
 db.close()

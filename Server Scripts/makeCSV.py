@@ -16,7 +16,7 @@ with open('/var/www/' + levelOut, 'wb') as f:
     writer = csv.writer(f)
     writer.writerow(['rowID' ,'userName', 'currentLevel','crashCount',
 'stepCount', 'timeElapsed', 'startTime', 'endTime', 'asciiLevelRep', 
-'dateTimeStamp'])
+'serverDateTimeStamp'])
     writer.writerows(data)
 
 data = cursor.execute("SELECT * FROM EchoData")
