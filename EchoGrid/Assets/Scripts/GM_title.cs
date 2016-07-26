@@ -10,7 +10,7 @@ public class GM_title : MonoBehaviour {
 	AudioClip swipeAhead;
 	AudioClip swipeRight;
 	AudioClip swipeLeft;
-	AudioClip to_tutorial;
+	//AudioClip to_tutorial;
 	AudioClip to_main;
 	AudioClip[] clips;
 	int cur_clip = 0;
@@ -28,7 +28,7 @@ public class GM_title : MonoBehaviour {
 		swipeAhead = Resources.Load("fx/swipe-ahead") as AudioClip;
 		swipeRight = Resources.Load("fx/swipe-right") as AudioClip;
 		swipeLeft = Resources.Load("fx/swipe-left") as AudioClip;
-		to_tutorial = Resources.Load ("instructions/Welcome to the tutorial") as AudioClip;
+		//to_tutorial = Resources.Load ("instructions/Welcome to the tutorial") as AudioClip;
 		to_main = Resources.Load ("instructions/Swipe right to continue from last time or double tap to start a new game") as AudioClip;
 	}
 
@@ -56,7 +56,7 @@ public class GM_title : MonoBehaviour {
 		} else if (Input.GetKeyUp(KeyCode.LeftArrow)) {
 			GameMode.gamemode = GameMode.Game_Mode.TUTORIAL;
 			SceneManager.LoadScene("Main");
-			SoundManager.instance.PlayVoice(to_tutorial, true);
+			//SoundManager.instance.PlayVoice(to_tutorial, true);
 			//SoundManager.instance.PlaySingle(swipeLeft);
 		} else if (Input.GetKeyUp("f")) {
 			//SceneManager.LoadScene("Main");
@@ -108,7 +108,7 @@ public class GM_title : MonoBehaviour {
 					} else {//LEFT
 						GameMode.gamemode = GameMode.Game_Mode.TUTORIAL;
 						SceneManager.LoadScene("Main");
-						SoundManager.instance.PlayVoice(to_tutorial, true);
+						//SoundManager.instance.PlayVoice(to_tutorial, true);
 					}
 				} else if (Mathf.Abs(y) > Mathf.Abs(x) && Mathf.Abs(y) >= minSwipeDist) {
 					//If y is greater than zero, set vertical to 1, otherwise set it to -1

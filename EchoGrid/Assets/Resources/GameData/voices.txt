@@ -1,0 +1,107 @@
+LEVEL_1
+Begin
+Welcome to the tutorial
+In this game, you are trapped in a maze, use echolocation to navigate
+Let's start off learning a few sound cues
+To hear an echo, tap the screen
+IN
+at(s,s)_T_T_OTHER
+1sec_silence
+Good!
+The echoes you hear will give you info about your surroundings
+Currently we are in a straight hallway
+Swipe up to move forward
+Inend
+IN
+at(n,s)_T_F_RIGHT
+1sec_silence
+Good!
+1sec_silence
+Tap again to hear another echo
+Notice how the echo has changed as you move forward
+Keep moving forward
+Inend
+Exit
+Use two finger double tap to exit
+END
+
+LEVEL_2
+Begin
+This is another straight hallway
+The stairs are at the end of the hallway
+If you hit a wall, you will hear a sound like this
+wallHitting
+Try to get to the stairs without crashing
+Exit
+Good job
+Use two finger double tap to exit
+END
+
+LEVEL_3
+Begin
+Now let's move on from straight hallways
+There is a right turn in this hallway
+IN
+at(6,9)_T_F_RIGHT
+As you move forward, notice what the echoes sound like
+Inend
+IN
+at(9,9)_T_F_RIGHT
+Now you are at a right turn
+Notice that the echo is louder in your left ear
+Swipe right to turn right
+Inend
+IN
+at(9,9)_T_F_BACK
+1sec_silence
+Now move forward until you reach the stairs
+Inend
+END
+
+LEVEL_4
+Begin
+This hallway has another right turn, try to find the exit
+END
+
+LEVEL_5
+Begin
+This hallway has a left turn
+IN
+at(4,9)_T_F_LEFT
+Tap once to know what it sounds like before you reach a left turn
+Inend
+IN
+at(1,9)_T_F_LEFT
+Now you are at the left turn
+1sec_silence
+Swipe left to turn left
+Inend
+IN
+at(1,9)_T_F_BACK
+Now move forward until you reach the stairs
+Inend
+END
+
+LEVEL_6
+END
+
+LEVEL_7
+Begin
+You've finished the first part of the tutorial, good job
+Now let's challenge ourselves with some harder levels
+END
+
+LEVEL_11
+Begin
+Now let's introduce something new, a T hallway
+The stairs are in one of the two arms of the T
+If you find yourself in the wrong arm, swipe twice to turn around
+IN
+at(5,6)_T_F_OTHER
+You are in the T now, tap to hear echo
+The echoes you hear will give you info about your surroundings
+Inend
+Exit
+Good job
+You have now completed all of the tutorial, congratulations
+END

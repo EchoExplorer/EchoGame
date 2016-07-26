@@ -43,9 +43,10 @@ public class SoundManager : MonoBehaviour {
 		}
 	}
 
+	//play a voice over
 	public bool PlayVoice(AudioClip clip, bool reset = false)
 	{
-		if ( (!voiceSource.isPlaying)||reset ) {
+		if ( (voiceSource.isPlaying == false)||reset ) {
 			voiceSource.clip = clip;
 			//Play the clip.
 			voiceSource.Play ();

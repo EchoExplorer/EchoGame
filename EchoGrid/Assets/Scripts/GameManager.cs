@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour {
 	public BoardManager boardScript;
 
 	public static GameManager instance = null;
+	public static bool level_already_loaded = false;
 	[HideInInspector] public bool playersTurn = true;
 
 	public float levelStartDelay = 2f;	
@@ -25,18 +26,17 @@ public class GameManager : MonoBehaviour {
 			instance = this;
 		else if (instance != this)
 			Destroy (gameObject);
+		
 		DontDestroyOnLoad (gameObject);
+		level_already_loaded = false;
 		boardScript = GetComponent<BoardManager> ();
 
 		if(GameMode.instance.get_mode () == GameMode.Game_Mode.MAIN)//MAIN
-			level = 11;
+			level = 12;
 		else if (GameMode.instance.get_mode () == GameMode.Game_Mode.TUTORIAL)//TUTORIAL
 			level = 1;
 		else if (GameMode.instance.get_mode () == GameMode.Game_Mode.CONTINUE)//CONTINUE
 			LoadSaved();
-
-
-		InitGame ();
 	}
 
 	bool LoadSaved(){
@@ -46,7 +46,7 @@ public class GameManager : MonoBehaviour {
 		if (System.IO.File.Exists (filename)) {
 			svdata_split = System.IO.File.ReadAllLines (filename);
 		} else {
-			level = 11;
+			level = 12;
 			return false;
 		}
 			
@@ -54,29 +54,10 @@ public class GameManager : MonoBehaviour {
 		foreach (string line in svdata_split) {
 			int saved_level = Int32.Parse (line);
 			if (saved_level == 0)
-				level = 11;
+				level = 12;
 			else
 				level = saved_level;
 		}
-
-		/*
-		string filename = "Saved/saved";
-		TextAsset svdata = Resources.Load (filename)as TextAsset;
-		if (svdata == null) {
-			UnityEngine.Debug.Log ("Cannot open file at:");
-			UnityEngine.Debug.Log (filename);
-			return false;
-		}
-		string[] svdata_split = svdata.text.Split ('\n');
-
-		foreach (string line in svdata_split) {
-			int saved_level = Int32.Parse (line);
-			if (saved_level == 0)
-				level = 11;
-			else
-				level = saved_level;
-		}
-		*/
 
 		return true;
 	}
@@ -84,6 +65,7 @@ public class GameManager : MonoBehaviour {
 	//Initializes the game for each level.
 	//TODO(agotsis) Analyze database
 	void InitGame(){
+		print ("init!");
 		Screen.orientation = ScreenOrientation.Landscape;
 
 		//Setup database for the first time
@@ -103,17 +85,18 @@ public class GameManager : MonoBehaviour {
 		
 		//Call the HideLevelImage function with a delay in seconds of levelStartDelay.
 		Invoke("HideLevelImage", levelStartDelay);
-		
+
+		boardScript.max_total_level = boardScript.get_level_count ("GameData/levels");
 		//Call the SetupScene function of the BoardManager script, pass it current level number.
 		if (GameMode.instance.get_mode () == GameMode.Game_Mode.MAIN) {//MAIN
 			boardScript.max_level = boardScript.get_level_count ("GameData/levels");
-			boardScript.min_level = 11;
+			boardScript.min_level = 12;
 		} else if (GameMode.instance.get_mode () == GameMode.Game_Mode.TUTORIAL) {//TUTORIAL
-			boardScript.max_level = 10;
+			boardScript.max_level = 11;
 			boardScript.min_level = 1;
 		} else if (GameMode.instance.get_mode () == GameMode.Game_Mode.CONTINUE) {
 			boardScript.max_level = boardScript.get_level_count ("GameData/levels");
-			boardScript.min_level = 11;
+			boardScript.min_level = 12;
 		}
 
 		boardScript.SetupScene (level);
@@ -131,7 +114,11 @@ public class GameManager : MonoBehaviour {
 	//This is called each time a scene is loaded.
 	void OnLevelWasLoaded(int index){
 		//Call InitGame to initialize our level.
-		InitGame();
+		if (!level_already_loaded) {
+			print ("OnLevelWasLoaded!");
+			InitGame ();
+			level_already_loaded = true;
+		}
 	}
 
 

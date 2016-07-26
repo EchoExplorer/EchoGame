@@ -19,6 +19,8 @@ public class Player : MovingObject {
 	private float touchTime = 0f;
 	private float minSwipeDist = 100f;
 	bool restarted = false;
+	bool is_freezed;//is player not allowed to do anything?
+	bool tapped;//did player tap to hear an echo at this position?
 	private int curLevel;
 
 	//TODO(agotsis/wenyuw1) This needs to be integrated with the local database so these are not hardcoded 
@@ -114,6 +116,7 @@ public class Player : MovingObject {
 		lv_1_f.init ();
 		want_exit = false;
 		reset_audio = false;
+		tapped = false;
 
 		//load audio
 		quit_confirm = new AudioClip[max_quit_clip];
@@ -124,6 +127,7 @@ public class Player : MovingObject {
 	}
 
 	private void PlayEcho() {
+		tapped = true;
 		lv_1_f.echo_played = true;
 		BoardManager.echoDistData data = 
 			GameManager.instance.boardScript.getEchoDistData(transform.position, get_player_dir("FRONT"), get_player_dir("LEFT"));
@@ -182,7 +186,7 @@ public class Player : MovingObject {
 
 	//due to the chaotic coord system
 	//return the relative direction
-	Vector3 get_player_dir(string dir){
+	public Vector3 get_player_dir(string dir){
 		if (dir == "FRONT")
 			return transform.right.normalized;
 		else if (dir == "BACK")
@@ -195,6 +199,22 @@ public class Player : MovingObject {
 		UnityEngine.Debug.Log ("INVALID direction string");
 		return Vector3.zero;
 	}
+	//get the direction in world space
+	/*
+	Vector3 get_world_dir(string dir){
+		if (dir == "FRONT")
+			return transform.right.normalized;
+		else if (dir == "BACK")
+			return -transform.right.normalized;
+		else if (dir == "LEFT")
+			return transform.up.normalized;
+		else if (dir == "RIGHT")
+			return -transform.up.normalized;
+
+		UnityEngine.Debug.Log ("INVALID direction string");
+		return Vector3.zero;		
+	}
+	*/
 
 	//please call this function to rotate player
 	//use this with get_player_dir("SOMETHING")
@@ -228,6 +248,7 @@ public class Player : MovingObject {
 
 		if(!changedDir){
 			if (AttemptMove<Wall> ((int)dir.x, (int)dir.y)) {
+				tapped = false;
 				lv_1_f.moved = true;
 				if(dir == get_player_dir("FRONT"))
 					GameManager.instance.boardScript.gamerecord += "f";
@@ -235,6 +256,10 @@ public class Player : MovingObject {
 					GameManager.instance.boardScript.gamerecord += "b";
 			}
 		}
+	}
+
+	public bool tapped_at_this_block(){
+		return tapped;
 	}
 
 	protected override bool AttemptMove <T> (int xDir, int yDir)
@@ -528,48 +553,56 @@ public class Player : MovingObject {
 		//Check if we are running on iOS, Android, Windows Phone 8 or Unity iPhone
 		#elif UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
 
-		float TOUCH_TIME = 0.05f;
-		float TOUCH_EXIT_TIME = Utilities.exit_touch_time;
-
+		float TOUCH_TIME = 0.02f;
 		//Check if Input has registered more than zero touches
 		int numTouches = Input.touchCount;
 
 		if (numTouches > 0) {
 			//Store the first touch detected.
 			Touch myTouch = Input.touches[0];
+			//Check if the phase of that touch equals Began
+			if (myTouch.phase == TouchPhase.Began){
+				//If so, set touchOrigin to the position of that touch
+				touchOrigin = myTouch.position;
+				touchTime = Time.time;
+			} else if (myTouch.phase == TouchPhase.Ended){
+				
+			}
 
+			switch(numTouches){
+			case 1://swipe, tap(moving, get echo)
+				break;
+			case 2://double tap(exit, repeat/skip instruction)
+				break;
+			case 3://pause menu
+				break;
+			default:
+				break;
+			}
+		}
+
+		if (numTouches > 0) {
+			//Store the first touch detected.
+			Touch myTouch = Input.touches[0];
 			//Check if the phase of that touch equals Began
 			if (myTouch.phase == TouchPhase.Began){
 				//If so, set touchOrigin to the position of that touch
 				touchOrigin = myTouch.position;
 				touchTime = Time.time;
 			}
-
 			//If the touch phase is not Began, and instead is equal to Ended and the x of touchOrigin is greater or equal to zero:
 			else if (myTouch.phase == TouchPhase.Ended && touchOrigin.x >= 0) {
 				//Set touchEnd to equal the position of this touch
 				Vector2 touchEnd = myTouch.position;
-
 				//Calculate the difference between the beginning and end of the touch on the x axis.
 				float x = touchEnd.x - touchOrigin.x;
-
 				//Calculate the difference between the beginning and end of the touch on the y axis.
 				float y = touchEnd.y - touchOrigin.y;
-
 				//Set touchOrigin.x to -1 so that our else if statement will evaluate false and not repeat immediately.
 				touchOrigin.x = -1;
 
-				//check about exit game first
-				if(!want_exit){
-					if (Mathf.Abs(Time.time - touchTime) > TOUCH_EXIT_TIME) {
-						want_exit = true;
-						reset_audio = true;
-					}
-				}
-
 				//Check if the difference along the x axis is greater than the difference along the y axis.
-				if (Mathf.Abs(x) > Mathf.Abs(y) && Mathf.Abs(x) >= minSwipeDist)
-				{
+				if (Mathf.Abs(x) > Mathf.Abs(y) && Mathf.Abs(x) >= minSwipeDist){
 					if (x > 0) {
 						dir = get_player_dir("RIGHT");
 						SoundManager.instance.PlaySingle(swipeRight);
@@ -578,7 +611,6 @@ public class Player : MovingObject {
 							dir = get_player_dir("LEFT");
 							SoundManager.instance.PlaySingle(swipeLeft);
 						}else{
-							//SceneManager.UnloadScene("Main");
 							Destroy(GameObject.Find("GameManager"));
 							SceneManager.LoadScene("Title_Screen");
 						}
@@ -609,38 +641,15 @@ public class Player : MovingObject {
 					}
 				}
 			}
+			else{//the finger is still holding on the screen
+				Vector2 touchEnd = myTouch.position;
+				float x = touchEnd.x - touchOrigin.x;
+				float y = touchEnd.y - touchOrigin.y;
+				
+			}
 		}
 		#endif //End of mobile platform dependendent compilation section started above with #elif
 		calculateMove(dir);
-	}
-
-
-	//no longer used
-	private int echoDist() {
-
-		//Get all the walls on the grid
-		/*
-		GameObject[] wallsArray = GameObject.FindGameObjectsWithTag("Wall");
-		List <Vector3> wallPositions = new List<Vector3>();
-		foreach (GameObject wall in wallsArray) {
-			wallPositions.Add(wall.transform.position);
-		}
-		int dist;
-		int minDistance = 7;
-		float threshhold = 0.01f;
-		float scale = (float)Utilities.SCALE_REF / (float)Utilities.MAZE_SIZE;
-		for (int i = 1; i < Utilities.MAZE_SIZE; i++) {
-			Vector3 tPos = transform.position + get_player_dir ("FRONT") * i*scale;
-			for (int j = 0; j < wallPositions.Count; ++j) {
-				if ((wallPositions [j] - tPos).magnitude <= threshhold) {
-					dist = (int)((tPos - transform.position).magnitude/scale);
-					minDistance = Mathf.Min (minDistance, dist);
-				}
-			}
-		}
-		return minDistance;
-		*/
-		return 0;
 	}
 
 	//Returns a description of the location of the crash (for analysis)
@@ -795,8 +804,9 @@ public class Player : MovingObject {
 	//Restart reloads the scene when called.
 	private void Restart ()
 	{
+		print ("Restart called!");
 		//Load the last scene loaded, in this case Main, the only scene in the game.
-		Application.LoadLevel (Application.loadedLevel);
+		SceneManager.LoadScene("Main");
 		restarted = false;
 	}
 }
