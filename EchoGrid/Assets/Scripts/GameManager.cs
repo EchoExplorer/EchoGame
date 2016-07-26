@@ -65,7 +65,6 @@ public class GameManager : MonoBehaviour {
 	//Initializes the game for each level.
 	//TODO(agotsis) Analyze database
 	void InitGame(){
-		print ("init!");
 		Screen.orientation = ScreenOrientation.Landscape;
 
 		//Setup database for the first time
@@ -115,7 +114,6 @@ public class GameManager : MonoBehaviour {
 	void OnLevelWasLoaded(int index){
 		//Call InitGame to initialize our level.
 		if (!level_already_loaded) {
-			print ("OnLevelWasLoaded!");
 			InitGame ();
 			level_already_loaded = true;
 		}
