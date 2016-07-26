@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
-using UnityEngine.UI;	//Allows us to use UI.
+using UnityEngine.UI;
+
+//Allows us to use UI.
 using System.Collections.Generic;
 using SimpleJSON;
 using System.Security.Cryptography;
@@ -10,24 +12,29 @@ using System.Diagnostics;
 using UnityEngine.SceneManagement;
 
 //Player inherits from MovingObject, our base class for objects that can move, Enemy also inherits from this.
-public class Player : MovingObject {
+public class Player : MovingObject
+{
 
-	public float restartLevelDelay = 3.0f;		//Delay time in seconds to restart level.
-	private Animator animator;					//Used to store a reference to the Player's animator component.
+	public float restartLevelDelay = 3.0f;
+	//Delay time in seconds to restart level.
+	private Animator animator;
+	//Used to store a reference to the Player's animator component.
 	private Vector2 touchOrigin = -Vector2.one;
 
 	private float touchTime = 0f;
 	private float minSwipeDist = 100f;
 	bool restarted = false;
+	bool is_freezed;//is player not allowed to do anything?
+	bool tapped;//did player tap to hear an echo at this position?
 	private int curLevel;
 
-	//TODO(agotsis/wenyuw1) This needs to be integrated with the local database so these are not hardcoded 
+	//TODO(agotsis/wenyuw1) This needs to be integrated with the local database so these are not hardcoded
 
 	public AudioClip wallHit;
 	public AudioClip winSound;
 	public AudioClip walking;
 
-	//TODO(agotsis/wenyuw1) This volume of these sounds may need to go down 
+	//TODO(agotsis/wenyuw1) This volume of these sounds may need to go down
 	public AudioClip swipeAhead;
 	public AudioClip swipeRight;
 	public AudioClip swipeLeft;
@@ -37,11 +44,13 @@ public class Player : MovingObject {
 	int max_quit_clip = 2;
 	bool reset_audio;
 
-	//private SpriteRenderer spriteRenderer; 
+	//private SpriteRenderer spriteRenderer;
 
 	// variables to implement data collection
-	private int numCrashes; //Keep track of number of times user crashed into wall
-	private int numSteps;   //Keep track of number of steps taken per level
+	private int numCrashes;
+	//Keep track of number of times user crashed into wall
+	private int numSteps;
+	//Keep track of number of steps taken per level
 	private int exitAttempts;
 
 	private String lastEcho = "";
@@ -56,12 +65,18 @@ public class Player : MovingObject {
 
 	bool want_exit;
 
-	public struct lv_1_flag{
+	private RSACryptoServiceProvider encrypter = new RSACryptoServiceProvider ();
+	//Create a new instance of RSACryptoServiceProvider.
+
+
+	public struct lv_1_flag
+	{
 		public bool echo_played;
 		public bool moved;
 		public bool at_exit;
 
-		public void init(){
+		public void init ()
+		{
 			echo_played = false;
 			moved = false;
 			at_exit = false;
@@ -72,20 +87,53 @@ public class Player : MovingObject {
 
 	//public bool soundPlaying = false;
 
-	private void initData() {
+	private void initData ()
+	{
 		numCrashes = 0;
 		numSteps = 0;
 		crashLocs = "";
 	}
 
-	protected override void Start () {
+	private void initEncrypt ()
+	{
+		string publicKeyString = "iqKXThQvzLKgG0FQXuznGk4nEyFlE9VGmFIzkQyX9n3giHXJoqln4pZASPH3XnJX7ZOxmXXGskjrAYXLD2BZ8eZFkEmNj0GTC9kbDZzcjd+3Lc6P32J7MjfD7dIyPH8IUB9ELtL2MZ36kZrLrf3c2q2pQIl4s5k0Ro2F2aXWB+s=";
+		byte[] publicKeyBytes = Convert.FromBase64String (publicKeyString);
+
+		byte[] Exponent = { 17 };
+
+
+		//Create a new instance of RSAParameters.
+		RSAParameters RSAKeyInfo = new RSAParameters ();
+
+		//Set RSAKeyInfo to the public key values. 
+		RSAKeyInfo.Modulus = publicKeyBytes;
+		RSAKeyInfo.Exponent = Exponent;
+
+		//Import key parameters into RSA.
+		encrypter.ImportParameters (RSAKeyInfo);
+	}
+
+	private String encrypt (String encryptThis)
+	{
+		string b64EncryptThis = Base64Encode (encryptThis);
+
+		//Encrypt the symmetric key and IV.
+		byte[] encryptedString = encrypter.EncryptValue (Convert.FromBase64String (b64EncryptThis));
+
+		//Add the encrypted test string to the form
+		return Convert.ToBase64String (encryptedString);
+	}
+
+	protected override void Start ()
+	{
 		//Get a component reference to the Player's animator component
-		animator = GetComponent<Animator>();
+		animator = GetComponent<Animator> ();
 		curLevel = GameManager.instance.level;
 		//spriteRenderer = GetComponent<SpriteRenderer>();
 
 		//Initialize data collection variables
-		initData();
+		initData ();
+		initEncrypt ();
 
 		/*
 		//TODO(agotsis/wenyuw1) Once the local database is integrated this hardcoding will go away. 
@@ -107,26 +155,28 @@ public class Player : MovingObject {
 		transform.localScale = new_scale;
 
 		//Start the time for the game level
-		stopWatch = new Stopwatch();
+		stopWatch = new Stopwatch ();
 		stopWatch.Start ();
 		startTime = System.DateTime.Now;
 
 		lv_1_f.init ();
 		want_exit = false;
 		reset_audio = false;
+		tapped = false;
 
 		//load audio
 		quit_confirm = new AudioClip[max_quit_clip];
-		quit_confirm[0] = Resources.Load ("instructions/Are you sure you want to quit") as AudioClip;
-		quit_confirm[1] = Resources.Load ("instructions/Swipe left to confirm or double tap to cancel") as AudioClip;
+		quit_confirm [0] = Resources.Load ("instructions/Are you sure you want to quit") as AudioClip;
+		quit_confirm [1] = Resources.Load ("instructions/Swipe left to confirm or double tap to cancel") as AudioClip;
 
 		base.Start ();
 	}
-
+		
 	private void PlayEcho() {
+		tapped = true;
 		lv_1_f.echo_played = true;
 		BoardManager.echoDistData data = 
-			GameManager.instance.boardScript.getEchoDistData(transform.position, get_player_dir("FRONT"), get_player_dir("LEFT"));
+			GameManager.instance.boardScript.getEchoDistData (transform.position, get_player_dir ("FRONT"), get_player_dir ("LEFT"));
 
 		//String prefix = "15-0"; //Should be a variable somewhere. Hard for now.
 		String prefix = "C01-3"; //change this prefix when you change the echo files
@@ -145,44 +195,45 @@ public class Player : MovingObject {
 			data.leftDist, data.jun_to_string (data.lType), data.rightDist, data.jun_to_string (data.rType));*/
 
 		//assume a deadend is behind you always
-		filename = String.Format("{0}_F-{1:F2}-{2}_L-{3:F2}-{4}_R-{5:F2}-{6}", prefix, 
+		filename = String.Format ("{0}_F-{1:F2}-{2}_L-{3:F2}-{4}_R-{5:F2}-{6}", prefix, 
 			data.frontDist, data.jun_to_string (data.fType),
 			data.leftDist, data.jun_to_string (data.lType), data.rightDist, data.jun_to_string (data.rType));
 
 		lastEcho = filename;
 
 		UnityEngine.Debug.Log (filename);
-		UnityEngine.Debug.Log (data.all_jun_to_string());
+		UnityEngine.Debug.Log (data.all_jun_to_string ());
 
-		AudioClip echo = Resources.Load("echoes/" + filename) as AudioClip;
-		SoundManager.instance.PlaySingle(echo);
+		AudioClip echo = Resources.Load ("echoes/" + filename) as AudioClip;
+		SoundManager.instance.PlaySingle (echo);
 
 		reportOnEcho (); //send echo report
 	}
 
-	private void reportOnEcho(){
+	private void reportOnEcho ()
+	{
 
 		string echoEndpoint = "http://merichar-dev.eberly.cmu.edu:81/cgi-bin/acceptEchoData.py";
 
 		Vector2 idx_location = GameManager.instance.boardScript.get_idx_from_pos (transform.position);
 		string location = "(" + idx_location.x.ToString () + "," + idx_location.y.ToString () + ")";
 
-		WWWForm echoForm = new WWWForm();
-		echoForm.AddField("userName", SystemInfo.deviceUniqueIdentifier);
-		echoForm.AddField("currentLevel", curLevel.ToString());
-		echoForm.AddField("echo", lastEcho);
-		echoForm.AddField("echoLocation", location);
-		echoForm.AddField ("dateTimeStamp", System.DateTime.Now.ToString());
+		WWWForm echoForm = new WWWForm ();
+		echoForm.AddField ("userName", encrypt (SystemInfo.deviceUniqueIdentifier));
+		echoForm.AddField ("currentLevel", encrypt (curLevel.ToString ()));
+		echoForm.AddField ("echo", encrypt (lastEcho));
+		echoForm.AddField ("echoLocation", encrypt (location));
+		echoForm.AddField ("dateTimeStamp", encrypt (System.DateTime.Now.ToString ()));
 
-		UnityEngine.Debug.Log(System.Text.Encoding.ASCII.GetString(echoForm.data));
+		UnityEngine.Debug.Log (System.Text.Encoding.ASCII.GetString (echoForm.data));
 
-		WWW www = new WWW(echoEndpoint, echoForm);
-		StartCoroutine(WaitForRequest(www));
+		WWW www = new WWW (echoEndpoint, echoForm);
+		StartCoroutine (WaitForRequest (www));
 	}
 
 	//due to the chaotic coord system
 	//return the relative direction
-	Vector3 get_player_dir(string dir){
+	public Vector3 get_player_dir(string dir){
 		if (dir == "FRONT")
 			return transform.right.normalized;
 		else if (dir == "BACK")
@@ -195,10 +246,27 @@ public class Player : MovingObject {
 		UnityEngine.Debug.Log ("INVALID direction string");
 		return Vector3.zero;
 	}
+	//get the direction in world space
+	/*
+	Vector3 get_world_dir(string dir){
+		if (dir == "FRONT")
+			return transform.right.normalized;
+		else if (dir == "BACK")
+			return -transform.right.normalized;
+		else if (dir == "LEFT")
+			return transform.up.normalized;
+		else if (dir == "RIGHT")
+			return -transform.up.normalized;
+
+		UnityEngine.Debug.Log ("INVALID direction string");
+		return Vector3.zero;		
+	}
+	*/
 
 	//please call this function to rotate player
 	//use this with get_player_dir("SOMETHING")
-	void rotateplayer(Vector3 dir){
+	void rotateplayer (Vector3 dir)
+	{
 		if (dir == get_player_dir ("FRONT"))
 			return;
 		else if (dir == get_player_dir ("BACK"))
@@ -212,29 +280,35 @@ public class Player : MovingObject {
 		}
 	}
 
-	private void calculateMove(Vector3 dir) {
+	private void calculateMove (Vector3 dir)
+	{
 		if (dir.magnitude == 0)
 			return;
 
 		bool changedDir = false;
 		//print (dir);
 
-		if ((dir != get_player_dir("FRONT")) && (dir != get_player_dir("BACK"))) {
+		if ((dir != get_player_dir ("FRONT")) && (dir != get_player_dir ("BACK"))) {
 			changedDir = true;
 			rotateplayer (dir);
 		}
 
-		dir.Normalize();
+		dir.Normalize ();
 
-		if(!changedDir){
+		if (!changedDir) {
 			if (AttemptMove<Wall> ((int)dir.x, (int)dir.y)) {
+				tapped = false;
 				lv_1_f.moved = true;
-				if(dir == get_player_dir("FRONT"))
+				if (dir == get_player_dir ("FRONT"))
 					GameManager.instance.boardScript.gamerecord += "f";
-				if(dir == get_player_dir("BACK"))
+				if (dir == get_player_dir ("BACK"))
 					GameManager.instance.boardScript.gamerecord += "b";
 			}
 		}
+	}
+
+	public bool tapped_at_this_block(){
+		return tapped;
 	}
 
 	protected override bool AttemptMove <T> (int xDir, int yDir)
@@ -246,7 +320,7 @@ public class Player : MovingObject {
 		if (!canMove) {
 			GameManager.instance.boardScript.gamerecord += "C";
 			//if(!SoundManager.instance.isBusy())
-			SoundManager.instance.PlaySingle(wallHit);
+			SoundManager.instance.PlaySingle (wallHit);
 			//Increment the crash count
 			numCrashes++;
 			//Decrement the step count (as no successful step was made)
@@ -254,14 +328,13 @@ public class Player : MovingObject {
 			reportOnCrash (); //send crash report
 
 			//Add the crash location details
-			string loc = transform.position.x.ToString() + "," + transform.position.y.ToString();
+			string loc = transform.position.x.ToString () + "," + transform.position.y.ToString ();
 			//TODO put those two lines back
 			//string crashPos = getCrashDescription((int) transform.position.x, (int) transform.position.y);
 			//loc = loc + "," + crashPos;
-			if (crashLocs.Equals("")) {
+			if (crashLocs.Equals ("")) {
 				crashLocs = loc;
-			}
-			else {
+			} else {
 				crashLocs = crashLocs + ";" + loc;
 			}
 		}
@@ -273,38 +346,41 @@ public class Player : MovingObject {
 		return canMove;
 	}
 
-	private void reportOnCrash(){
+	private void reportOnCrash ()
+	{
 
 		string crashEndpoint = "http://merichar-dev.eberly.cmu.edu:81/cgi-bin/acceptCrashData.py";
 
 		Vector2 idx_pos = GameManager.instance.boardScript.get_idx_from_pos (transform.position);
 		string location = "(" + idx_pos.x.ToString () + "," + idx_pos.y.ToString () + ")";
 
-		WWWForm crashForm = new WWWForm();
-		crashForm.AddField("userName", SystemInfo.deviceUniqueIdentifier);
-		crashForm.AddField("currentLevel", curLevel.ToString());
-		crashForm.AddField("crashNumber", numCrashes.ToString());
-		crashForm.AddField("crashLocation", location);
-		crashForm.AddField ("dateTimeStamp", System.DateTime.Now.ToString());
+		WWWForm crashForm = new WWWForm ();
+		crashForm.AddField ("userName", encrypt (SystemInfo.deviceUniqueIdentifier));
+		crashForm.AddField ("currentLevel", encrypt (curLevel.ToString ()));
+		crashForm.AddField ("crashNumber", encrypt (numCrashes.ToString ()));
+		crashForm.AddField ("crashLocation", encrypt (location));
+		crashForm.AddField ("dateTimeStamp", encrypt (System.DateTime.Now.ToString ()));
 
-		UnityEngine.Debug.Log(System.Text.Encoding.ASCII.GetString(crashForm.data));
+		UnityEngine.Debug.Log (System.Text.Encoding.ASCII.GetString (crashForm.data));
 
-		WWW www = new WWW(crashEndpoint, crashForm);
-		StartCoroutine(WaitForRequest(www));
+		WWW www = new WWW (crashEndpoint, crashForm);
+		StartCoroutine (WaitForRequest (www));
 	}
 
-	private void attemptExitFromLevel() {
+	private void attemptExitFromLevel ()
+	{
 		exitAttempts++;
-		GameObject exitSign = GameObject.FindGameObjectWithTag("Exit");
+		GameObject exitSign = GameObject.FindGameObjectWithTag ("Exit");
 		Vector2 distFromExit = transform.position - exitSign.transform.position;
-		if (Vector2.SqrMagnitude(distFromExit) < 0.25) {
+		if (Vector2.SqrMagnitude (distFromExit) < 0.25) {
 			//Calculate time elapsed during the game level
-			endLevel();
+			endLevel ();
 		}
 	}
 
-	private void endLevel(){
-		stopWatch.Stop();
+	private void endLevel ()
+	{
+		stopWatch.Stop ();
 		endTime = System.DateTime.Now;
 
 		float accurateElapsed = stopWatch.ElapsedMilliseconds / 1000;
@@ -319,10 +395,10 @@ public class Player : MovingObject {
 		//Max score currently is 1500 points
 		int score = 1500;
 		if (timeElapsed > 15) {
-			score = score - (((timeElapsed - 16)/10) + 1)*100;
+			score = score - (((timeElapsed - 16) / 10) + 1) * 100;
 		}
 		if (numCrashes > 0) {
-			score = score - numCrashes*150;
+			score = score - numCrashes * 150;
 		}
 		//Check if the score went below 0
 		if (score < 0) {
@@ -340,19 +416,19 @@ public class Player : MovingObject {
 		//string dataEndpoint = "http://128.237.139.120:8000/storeGameLevelData";
 		string levelDataEndpoint = "http://merichar-dev.eberly.cmu.edu:81/cgi-bin/acceptLevelData.py";
 
-		WWWForm levelCompleteForm = new WWWForm();
-		levelCompleteForm.AddField("userName", SystemInfo.deviceUniqueIdentifier);
-		levelCompleteForm.AddField("currentLevel", curLevel.ToString());
-		levelCompleteForm.AddField("crashCount", numCrashes.ToString());
-		levelCompleteForm.AddField("stepCount", numSteps.ToString());
-		levelCompleteForm.AddField("startTime", startTime.ToString());
-		levelCompleteForm.AddField("endTime", endTime.ToString());
-		levelCompleteForm.AddField("timeElapsed", accurateElapsed.ToString("F3"));
-		levelCompleteForm.AddField("exitAttempts", exitAttempts.ToString());
-		levelCompleteForm.AddField("asciiLevelRep", GameManager.instance.boardScript.asciiLevelRep);
-		levelCompleteForm.AddField("levelRecord", GameManager.instance.boardScript.gamerecord);
+		WWWForm levelCompleteForm = new WWWForm ();
+		levelCompleteForm.AddField ("userName", encrypt (SystemInfo.deviceUniqueIdentifier));
+		levelCompleteForm.AddField ("currentLevel", encrypt (curLevel.ToString ()));
+		levelCompleteForm.AddField ("crashCount", encrypt (numCrashes.ToString ()));
+		levelCompleteForm.AddField ("stepCount", encrypt (numSteps.ToString ()));
+		levelCompleteForm.AddField ("startTime", encrypt (startTime.ToString ()));
+		levelCompleteForm.AddField ("endTime", encrypt (endTime.ToString ()));
+		levelCompleteForm.AddField ("timeElapsed", encrypt (accurateElapsed.ToString ("F3")));
+		levelCompleteForm.AddField ("exitAttempts", encrypt (exitAttempts.ToString ()));
+		levelCompleteForm.AddField ("asciiLevelRep", encrypt (GameManager.instance.boardScript.asciiLevelRep));
+		levelCompleteForm.AddField ("levelRecord", encrypt (GameManager.instance.boardScript.gamerecord));
 
-		UnityEngine.Debug.Log(System.Text.Encoding.ASCII.GetString(levelCompleteForm.data));
+		UnityEngine.Debug.Log (System.Text.Encoding.ASCII.GetString (levelCompleteForm.data));
 
 		//Send the name of the echo files used in this level and the counts
 		//form.AddField("echoFileNames", getEchoNames());
@@ -360,74 +436,38 @@ public class Player : MovingObject {
 		//Send the details of the crash locations
 		//form.AddField("crashLocations", crashLocs);
 
-		levelCompleteForm.AddField("score", score);
+		levelCompleteForm.AddField ("score", score);
 
-		//Start of the encryption data
-		try {
-			string testToEncrypt = Base64Encode("This is a test string");
-			//initialze the byte arrays to the public key information.
-			string publicKeyString = "iqKXThQvzLKgG0FQXuznGk4nEyFlE9VGmFIzkQyX9n3giHXJoqln4pZASPH3XnJX7ZOxmXXGskjrAYXLD2BZ8eZFkEmNj0GTC9kbDZzcjd+3Lc6P32J7MjfD7dIyPH8IUB9ELtL2MZ36kZrLrf3c2q2pQIl4s5k0Ro2F2aXWB+s=";
-			byte[] publicKeyBytes = Convert.FromBase64String(publicKeyString);
-
-			byte[] Exponent = {17};
-
-			//Create a new instance of RSACryptoServiceProvider.
-			RSACryptoServiceProvider RSA = new RSACryptoServiceProvider();
-
-			//Create a new instance of RSAParameters.
-			RSAParameters RSAKeyInfo = new RSAParameters();
-
-			//Set RSAKeyInfo to the public key values. 
-			RSAKeyInfo.Modulus = publicKeyBytes;
-			RSAKeyInfo.Exponent = Exponent;
-
-			//Import key parameters into RSA.
-			RSA.ImportParameters(RSAKeyInfo);
-
-			//Create a new instance of the RijndaelManaged class.
-			RijndaelManaged RM = new RijndaelManaged();
-
-			//Encrypt the symmetric key and IV.
-			byte[] encryptedTestString = RSA.EncryptValue(Convert.FromBase64String(testToEncrypt));
-
-			//Add the encrypted test string to the form
-			levelCompleteForm.AddField("testEncrypt", Convert.ToBase64String(encryptedTestString));
-
-		}
-		catch(CryptographicException e)
-		{
-			Console.WriteLine(e.Message);
-			levelCompleteForm.AddField("testEncrypt", e.Message);
-		}
-
-		WWW www = new WWW(levelDataEndpoint, levelCompleteForm);
-		StartCoroutine(WaitForRequest(www));
+		WWW www = new WWW (levelDataEndpoint, levelCompleteForm);
+		StartCoroutine (WaitForRequest (www));
 
 		//Invoke the Restart function to start the next level with a delay of restartLevelDelay (default 1 second).
 		restarted = true;
 		Invoke ("Restart", restartLevelDelay);
 		//Disable the player object since level is over.
 		enabled = false;
-		AudioSource.PlayClipAtPoint(winSound, transform.localPosition, 0.3f);
+		AudioSource.PlayClipAtPoint (winSound, transform.localPosition, 0.3f);
 
 		//Reset extra data.
-		resetData();
+		resetData ();
 	}
 
-	private void resetData(){
+	private void resetData ()
+	{
 		numCrashes = 0;
 		exitAttempts = 0;
 	}
 
-	public static string Base64Encode(string plainText) {
-		var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
-		return System.Convert.ToBase64String(plainTextBytes);
+	public static string Base64Encode (string plainText)
+	{
+		var plainTextBytes = System.Text.Encoding.UTF8.GetBytes (plainText);
+		return System.Convert.ToBase64String (plainTextBytes);
 	}
 
 	//	//Creates a comma delimited string containing all the echo file names used in the level
 	//	//and the corresponding number of times the echo was played
 	//	private string getEchoNames() {
-	//		//TODO(agotsis/wenyuw1) Once the local database is integrated, this hardcoding will go away. 
+	//		//TODO(agotsis/wenyuw1) Once the local database is integrated, this hardcoding will go away.
 	//		string allNames = "";
 	//		allNames = allNames + echo1m.name + ":" + numEcho1.ToString() + ",";
 	//		allNames = allNames + echo2m.name + ":" + numEcho2.ToString() + ",";
@@ -436,18 +476,19 @@ public class Player : MovingObject {
 	//		allNames = allNames + echo5m.name + ":" + numEcho5.ToString() + ",";
 	//		allNames = allNames + echo6m.name + ":" + numEcho6.ToString() + ",";
 	//		allNames = allNames + echo7m.name + ":" + numEcho7.ToString();
-	//		
+	//
 	//		return allNames;
 	//	}
 
 
 	//Makes HTTP requests and waits for response and checks for errors
-	IEnumerator WaitForRequest(WWW www) {
+	IEnumerator WaitForRequest (WWW www)
+	{
 		yield return www;
 
 		//Check for errors 
 		if (www.error == null) {
-			JSONNode data = JSON.Parse(www.data);
+			JSONNode data = JSON.Parse (www.data);
 			//Debug.Log("this is the parsed json data: " + data["testData"]);
 			//Debug.Log(data["testData"]);
 			UnityEngine.Debug.Log ("WWW.Ok! " + www.data);
@@ -456,7 +497,8 @@ public class Player : MovingObject {
 		}
 	}
 
-	void play_audio(){
+	void play_audio ()
+	{
 		if (want_exit) {
 			if (SoundManager.instance.PlayVoice (quit_confirm [cur_clip], reset_audio)) {
 				reset_audio = false;
@@ -467,14 +509,16 @@ public class Player : MovingObject {
 		} 
 	}
 
-	private void Update () {
+	private void Update ()
+	{
 		play_audio ();
 		//UnityEngine.Debug.DrawLine (transform.position, transform.position+get_player_dir("FRONT"), Color.green);
 		//UnityEngine.Debug.DrawLine (transform.position, transform.position+get_player_dir("LEFT"), Color.yellow);
 		//If it's not the player's turn, exit the function.
-		if(!GameManager.instance.playersTurn) return;
+		if (!GameManager.instance.playersTurn)
+			return;
 
-		GameObject exitSign = GameObject.FindGameObjectWithTag("Exit");
+		GameObject exitSign = GameObject.FindGameObjectWithTag ("Exit");
 		Vector2 distFromExit = transform.position - exitSign.transform.position;
 		if (Vector2.SqrMagnitude (distFromExit) < 0.25) {
 			//Calculate time elapsed during the game level
@@ -488,39 +532,38 @@ public class Player : MovingObject {
 		#if UNITY_STANDALONE || UNITY_WEBPLAYER
 
 		//Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
-		if (Input.GetKeyUp(KeyCode.RightArrow)) {
+		if (Input.GetKeyUp (KeyCode.RightArrow)) {
 			dir = -transform.up;
-			SoundManager.instance.PlaySingle(swipeRight);
-		} else if (Input.GetKeyUp(KeyCode.LeftArrow)) {
-			if(!want_exit){
-				dir = get_player_dir("LEFT");
-				SoundManager.instance.PlaySingle(swipeLeft);
-			}else{
+			SoundManager.instance.PlaySingle (swipeRight);
+		} else if (Input.GetKeyUp (KeyCode.LeftArrow)) {
+			if (!want_exit) {
+				dir = get_player_dir ("LEFT");
+				SoundManager.instance.PlaySingle (swipeLeft);
+			} else {
 				//SceneManager.UnloadScene("Main");
-				Destroy(GameObject.Find("GameManager"));
-				SceneManager.LoadScene("Title_Screen");
+				Destroy (GameObject.Find ("GameManager"));
+				SceneManager.LoadScene ("Title_Screen");
 			}
-		} else if (Input.GetKeyUp(KeyCode.UpArrow)) {
+		} else if (Input.GetKeyUp (KeyCode.UpArrow)) {
 			dir = transform.right;
-			SoundManager.instance.PlaySingle(swipeAhead);
-		} else if (Input.GetKeyUp(KeyCode.DownArrow)) {
+			SoundManager.instance.PlaySingle (swipeAhead);
+		} else if (Input.GetKeyUp (KeyCode.DownArrow)) {
 			dir = -transform.right;
-			SoundManager.instance.PlaySingle(swipeAhead);
+			SoundManager.instance.PlaySingle (swipeAhead);
 		}
 
-		if (Input.GetKeyUp("f")){
+		if (Input.GetKeyUp ("f")) {
 			GameManager.instance.boardScript.gamerecord += "E{";
-			PlayEcho();
+			PlayEcho ();
 			GameManager.instance.boardScript.gamerecord += lastEcho;
 			GameManager.instance.boardScript.gamerecord += "}";
-		}
-		else if (Input.GetKeyUp("e")){
-			if(!want_exit){
+		} else if (Input.GetKeyUp ("e")) {
+			if (!want_exit) {
 				GameManager.instance.boardScript.gamerecord += "X";
-				attemptExitFromLevel();
+				attemptExitFromLevel ();
 			} else
 				want_exit = false;
-		} else if (Input.GetKeyUp("r")){
+		} else if (Input.GetKeyUp ("r")) {
 			want_exit = true;
 			reset_audio = true;
 		}
@@ -528,48 +571,56 @@ public class Player : MovingObject {
 		//Check if we are running on iOS, Android, Windows Phone 8 or Unity iPhone
 		#elif UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
 
-		float TOUCH_TIME = 0.05f;
-		float TOUCH_EXIT_TIME = Utilities.exit_touch_time;
-
+		float TOUCH_TIME = 0.02f;
 		//Check if Input has registered more than zero touches
 		int numTouches = Input.touchCount;
 
 		if (numTouches > 0) {
 			//Store the first touch detected.
 			Touch myTouch = Input.touches[0];
+			//Check if the phase of that touch equals Began
+			if (myTouch.phase == TouchPhase.Began){
+				//If so, set touchOrigin to the position of that touch
+				touchOrigin = myTouch.position;
+				touchTime = Time.time;
+			} else if (myTouch.phase == TouchPhase.Ended){
+				
+			}
 
+			switch(numTouches){
+			case 1://swipe, tap(moving, get echo)
+				break;
+			case 2://double tap(exit, repeat/skip instruction)
+				break;
+			case 3://pause menu
+				break;
+			default:
+				break;
+			}
+		}
+
+		if (numTouches > 0) {
+			//Store the first touch detected.
+			Touch myTouch = Input.touches[0];
 			//Check if the phase of that touch equals Began
 			if (myTouch.phase == TouchPhase.Began){
 				//If so, set touchOrigin to the position of that touch
 				touchOrigin = myTouch.position;
 				touchTime = Time.time;
 			}
-
 			//If the touch phase is not Began, and instead is equal to Ended and the x of touchOrigin is greater or equal to zero:
 			else if (myTouch.phase == TouchPhase.Ended && touchOrigin.x >= 0) {
 				//Set touchEnd to equal the position of this touch
 				Vector2 touchEnd = myTouch.position;
-
 				//Calculate the difference between the beginning and end of the touch on the x axis.
 				float x = touchEnd.x - touchOrigin.x;
-
 				//Calculate the difference between the beginning and end of the touch on the y axis.
 				float y = touchEnd.y - touchOrigin.y;
-
 				//Set touchOrigin.x to -1 so that our else if statement will evaluate false and not repeat immediately.
 				touchOrigin.x = -1;
 
-				//check about exit game first
-				if(!want_exit){
-					if (Mathf.Abs(Time.time - touchTime) > TOUCH_EXIT_TIME) {
-						want_exit = true;
-						reset_audio = true;
-					}
-				}
-
 				//Check if the difference along the x axis is greater than the difference along the y axis.
-				if (Mathf.Abs(x) > Mathf.Abs(y) && Mathf.Abs(x) >= minSwipeDist)
-				{
+				if (Mathf.Abs(x) > Mathf.Abs(y) && Mathf.Abs(x) >= minSwipeDist){
 					if (x > 0) {
 						dir = get_player_dir("RIGHT");
 						SoundManager.instance.PlaySingle(swipeRight);
@@ -578,7 +629,6 @@ public class Player : MovingObject {
 							dir = get_player_dir("LEFT");
 							SoundManager.instance.PlaySingle(swipeLeft);
 						}else{
-							//SceneManager.UnloadScene("Main");
 							Destroy(GameObject.Find("GameManager"));
 							SceneManager.LoadScene("Title_Screen");
 						}
@@ -609,40 +659,17 @@ public class Player : MovingObject {
 					}
 				}
 			}
-		}
-		#endif //End of mobile platform dependendent compilation section started above with #elif
-		calculateMove(dir);
-	}
-
-
-	//no longer used
-	private int echoDist() {
-
-		//Get all the walls on the grid
-		/*
-		GameObject[] wallsArray = GameObject.FindGameObjectsWithTag("Wall");
-		List <Vector3> wallPositions = new List<Vector3>();
-		foreach (GameObject wall in wallsArray) {
-			wallPositions.Add(wall.transform.position);
-		}
-		int dist;
-		int minDistance = 7;
-		float threshhold = 0.01f;
-		float scale = (float)Utilities.SCALE_REF / (float)Utilities.MAZE_SIZE;
-		for (int i = 1; i < Utilities.MAZE_SIZE; i++) {
-			Vector3 tPos = transform.position + get_player_dir ("FRONT") * i*scale;
-			for (int j = 0; j < wallPositions.Count; ++j) {
-				if ((wallPositions [j] - tPos).magnitude <= threshhold) {
-					dist = (int)((tPos - transform.position).magnitude/scale);
-					minDistance = Mathf.Min (minDistance, dist);
-				}
+			else{//the finger is still holding on the screen
+				Vector2 touchEnd = myTouch.position;
+				float x = touchEnd.x - touchOrigin.x;
+				float y = touchEnd.y - touchOrigin.y;
+				
 			}
 		}
-		return minDistance;
-		*/
-		return 0;
+		#endif //End of mobile platform dependendent compilation section started above with #elif
+		calculateMove (dir);
 	}
-
+				
 	//Returns a description of the location of the crash (for analysis)
 	//Currently, the ouput is from the following list of options
 	//["End of the Corridor", "Intersection of 2 Corridors", "Start of the Corridor",
@@ -650,13 +677,14 @@ public class Player : MovingObject {
 	//"Crashed while on the Exit Sign"];
 	//Currently not returning the Towards Start/End descriptions due to only having 7 discrete
 	//movements in each x/y direction. May be relevant in the future.
-	private string getCrashDescription(int xLoc, int yLoc) {
+	private string getCrashDescription (int xLoc, int yLoc)
+	{
 		GameObject[] walls = GameObject.FindGameObjectsWithTag ("Wall");
-		List<Vector3> positions = new List<Vector3>();
+		List<Vector3> positions = new List<Vector3> ();
 
 		//Go through all the walls
 		foreach (var wall in walls) {
-			positions.Add(new Vector3(wall.transform.position.x, wall.transform.position.y, 0f));
+			positions.Add (new Vector3 (wall.transform.position.x, wall.transform.position.y, 0f));
 		}
 
 		float distXUp = 0;
@@ -667,8 +695,8 @@ public class Player : MovingObject {
 		float threshhold = 0.01f;
 
 		while (true) {
-			distXUp = distXUp + 1*scale;
-			Vector3 currPos = new Vector3(xLoc + distXUp, yLoc, 0f);
+			distXUp = distXUp + 1 * scale;
+			Vector3 currPos = new Vector3 (xLoc + distXUp, yLoc, 0f);
 			for (int j = 0; j < positions.Count; ++j) {
 				if ((positions [j] - currPos).magnitude <= threshhold) {
 					break;
@@ -676,8 +704,8 @@ public class Player : MovingObject {
 			}
 		}
 		while (true) {
-			distXDown = distXDown + 1*scale;
-			Vector3 currPos = new Vector3(xLoc - distXDown, yLoc, 0f);
+			distXDown = distXDown + 1 * scale;
+			Vector3 currPos = new Vector3 (xLoc - distXDown, yLoc, 0f);
 			for (int j = 0; j < positions.Count; ++j) {
 				if ((positions [j] - currPos).magnitude <= threshhold) {
 					break;
@@ -685,8 +713,8 @@ public class Player : MovingObject {
 			}
 		}
 		while (true) {
-			distYUp = distYUp + 1*scale;
-			Vector3 currPos = new Vector3(xLoc, yLoc + distYUp, 0f);
+			distYUp = distYUp + 1 * scale;
+			Vector3 currPos = new Vector3 (xLoc, yLoc + distYUp, 0f);
 			for (int j = 0; j < positions.Count; ++j) {
 				if ((positions [j] - currPos).magnitude <= threshhold) {
 					break;
@@ -694,8 +722,8 @@ public class Player : MovingObject {
 			}
 		}
 		while (true) {
-			distYDown = distYDown + 1*scale;
-			Vector3 currPos = new Vector3(xLoc, yLoc - distYDown, 0f);
+			distYDown = distYDown + 1 * scale;
+			Vector3 currPos = new Vector3 (xLoc, yLoc - distYDown, 0f);
 			for (int j = 0; j < positions.Count; ++j) {
 				if ((positions [j] - currPos).magnitude <= threshhold) {
 					break;
@@ -706,7 +734,7 @@ public class Player : MovingObject {
 		//positions.Contains (xLoc, yLoc);
 
 		UnityEngine.Debug.Log ("Number of walls detected");
-		UnityEngine.Debug.Log(walls.Length);
+		UnityEngine.Debug.Log (walls.Length);
 
 		UnityEngine.Debug.Log ("Current Position of Player");
 		UnityEngine.Debug.Log (xLoc);
@@ -722,7 +750,7 @@ public class Player : MovingObject {
 		//string[] locs = ["End of the Corridor", "Intersection of 2 Corridors", "Start of the Corridor", "Middle of the Corridor", "Towards End of the Corridor", "Towards Start of the Corridor"];
 
 		//If Crash happened while on the Exit Sign
-		GameObject exitSign = GameObject.FindGameObjectWithTag("Exit");
+		GameObject exitSign = GameObject.FindGameObjectWithTag ("Exit");
 		if ((xLoc == (int)exitSign.transform.position.x) & (yLoc == (int)exitSign.transform.position.y)) {
 			return "Crashed while on the Exit Sign";
 		}
@@ -774,10 +802,10 @@ public class Player : MovingObject {
 		//Set hitWall to equal the component passed in as a parameter.
 		Wall hitWall = component as Wall;
 		//if(!SoundManager.instance.isBusy())
-		SoundManager.instance.PlaySingle(wallHit);
+		SoundManager.instance.PlaySingle (wallHit);
 	}
 
-	protected override void OnMove () 
+	protected override void OnMove ()
 	{
 	}
 
@@ -795,8 +823,9 @@ public class Player : MovingObject {
 	//Restart reloads the scene when called.
 	private void Restart ()
 	{
+		print ("Restart called!");
 		//Load the last scene loaded, in this case Main, the only scene in the game.
-		Application.LoadLevel (Application.loadedLevel);
+		SceneManager.LoadScene("Main");
 		restarted = false;
 	}
 }

@@ -26,14 +26,15 @@ public class BoardManager : MonoBehaviour {
 		T,
 		LL,
 		RL,
-		CROSS
+		CROSS,
 	}
 
 	public enum Direction{
 		FRONT,
 		BACK,
 		LEFT,
-		RIGHT
+		RIGHT,
+		OTHER,
 	}
 
 	public string asciiLevelRep; //should probably make a different type choice here. I don't know what would be better
@@ -43,6 +44,7 @@ public class BoardManager : MonoBehaviour {
 		public int front, back, left, right; //in blocks
 		public float frontDist, backDist, leftDist, rightDist; //in meters
 		public JunctionType fType, bType, lType, rType;
+		public int exitpos;//0: no exit, 1:left, 2:right, 3:front, 4:back
 
 		//TODO Weynu, is this a bad design choice? Call method to calcuate distances.
 		public void updateDistances(){
@@ -79,10 +81,64 @@ public class BoardManager : MonoBehaviour {
 		}
 	}
 
+	//audio management struct
+	public struct pos_and_action{
+		public Vector2 pos;
+		public bool once;//play the audio only once?(usually yes)
+		public bool tap;//player tap the screen?(play an echo?)
+		public Direction dir;//FRONT, BACK, LEFT, RIGHT
+		public List<string> clip_names;
+		public List<AudioClip> clips;
+
+		public void init(){
+			once = true;
+			tap = false;
+			pos = new Vector2 ();
+			dir = Direction.OTHER;
+			clip_names = new List<string> ();
+			clips = new List<AudioClip> ();
+		}
+	}
+
+	public struct level_voice_list{
+		public List<string> play_at_begin;
+		public List<AudioClip> clip_at_begin;
+		public int clip_begin;
+		public List<string> play_at_exit;
+		public List<AudioClip> clip_at_exit;
+		public int clip_exit;
+		public List<pos_and_action> ingame;
+		public List<int> ingame_cur_clip;
+
+		public void init(){
+			play_at_begin = new List<string> ();
+			clip_at_begin = new List<AudioClip> ();
+			clip_begin = 0;
+			play_at_exit = new List<string> ();
+			clip_at_exit = new List<AudioClip> ();
+			clip_exit = 0;
+			ingame = new List<pos_and_action> ();
+			ingame_cur_clip = new List<int> ();
+		}
+
+		public void clear(){
+			play_at_begin.Clear ();
+			clip_at_begin.Clear ();
+			clip_begin = 0;
+			play_at_exit.Clear ();
+			clip_at_exit.Clear ();
+			clip_exit = 0;
+			ingame.Clear ();
+			init ();
+		}
+	}
+
 	int columns = Utilities.MAZE_SIZE;
 	int rows = Utilities.MAZE_SIZE;
 	public int max_level;
+	public int max_total_level;//same as max_level in Main mode, for local stats use only
 	public int min_level;
+	int[] local_stats;
 
 	// number of walls and such
 	public GameObject[] floorTiles;
@@ -90,12 +146,15 @@ public class BoardManager : MonoBehaviour {
 	public GameObject[] outerWallTiles;
 	public Count wallCount = new Count (5, 9);	//Lower and upper limit for our random number of walls per level.
 	public GameObject exit;
+	GameObject player_ref;
+	Player player_script;
 
 	private Transform boardHolder;
 	private List <Vector3> gridPositions = new List<Vector3> ();
 	private List <int> wallIdxes = new List<int> ();
 	public List <Vector3> wallPositions = new List<Vector3> ();
 	private List<Vector3> playerPositions = new List<Vector3> ();
+	level_voice_list level_voices = new level_voice_list();
 	Vector3 exitPos;
 
 	//audios
@@ -124,18 +183,28 @@ public class BoardManager : MonoBehaviour {
 	}
 		
 	void LoadAudio(){
-		//one level can have one clip of instruction
-		cur_clip = 0;
-		clips = new AudioClip[total_clip];
-		lv_1_move = Resources.Load ("instructions/movement instruction") as AudioClip;
-		lv_1_exit = Resources.Load ("instructions/Use two finger double tap to exit") as AudioClip;
-		clips [0] = Resources.Load ("instructions/Welcome to the tutorial") as AudioClip;
-		clips [1] = Resources.Load ("instructions/Tap once to hear an echo") as AudioClip;
-		clips [2] = Resources.Load ("instructions/In this level you'll learn how to navigate a right turn") as AudioClip;
-		clips [3] = Resources.Load ("instructions/In this level you'll learn how to navigate a left turn") as AudioClip;
-		clips [4] = Resources.Load ("instructions/In this level you'll learn how to navigate at T hall") as AudioClip;
-		clips [5] = Resources.Load ("instructions/In this level you'll learn to distinguish between the exit and a dead end") as AudioClip;
-		//clips [6] = Resources.Load ("instructions/In this level you'll learn to distinguish between the exit and a dead end") as AudioClip;
+		//load the audio with those filename
+		level_voices.clip_at_begin.Clear();
+		foreach (string clip_name in level_voices.play_at_begin) {
+			string filename = "instructions/" + clip_name.Substring(0, clip_name.Length-1);
+			AudioClip clip = Resources.Load (filename) as AudioClip;
+			level_voices.clip_at_begin.Add (clip);
+		}
+
+		level_voices.clip_at_exit.Clear();
+		foreach (string clip_name in level_voices.play_at_exit) {
+			string filename = "instructions/" + clip_name.Substring(0, clip_name.Length-1);
+			AudioClip clip = Resources.Load (filename) as AudioClip;
+			level_voices.clip_at_exit.Add (clip);
+		}
+
+		foreach (pos_and_action itm in level_voices.ingame) {
+			foreach(string clip_name in itm.clip_names){
+				string filename = "instructions/" + clip_name.Substring(0, clip_name.Length-1);
+				AudioClip clip = Resources.Load (filename) as AudioClip;
+				itm.clips.Add (clip);
+			}
+		}
 	}
 
 	void play_audio(){
@@ -144,9 +213,8 @@ public class BoardManager : MonoBehaviour {
 			Player.lv_1_flag temp_f = player.GetComponent<Player> ().lv_1_f;
 			if (temp_f.at_exit) {
 				SoundManager.instance.PlayVoice (lv_1_exit);
-			} else if (temp_f.echo_played && !temp_f.moved) {
+			} else if (temp_f.echo_played && !temp_f.moved)
 				SoundManager.instance.PlayVoice (lv_1_move);
-			}
 		}
 
 		if (cur_clip >= total_clip)
@@ -158,9 +226,81 @@ public class BoardManager : MonoBehaviour {
 		}
 	}
 
+	public int play_audio(List<AudioClip> audios, int cur){
+
+		if (cur == 0) {
+			SoundManager.instance.PlayVoice (audios [cur], true);
+			return (cur + 1);
+		} else if (SoundManager.instance.PlayVoice (audios [cur])) {
+			return (cur + 1);
+		}
+		
+		return cur;
+	}
+
 	//loop during the game
 	void Update(){
-		play_audio ();
+		
+		float threshold = 0.001f;
+		Vector2 idx_pos = get_idx_from_pos (player_ref.transform.position);
+		bool ingame_playing = false;
+		//play sounds according to positions
+		if ((idx_pos - get_idx_from_pos (exitPos)).magnitude <= threshold) {
+			if (level_voices.clip_exit < level_voices.clip_at_exit.Count)
+				level_voices.clip_exit = play_audio (level_voices.clip_at_exit, level_voices.clip_exit);
+		}else{
+			for(int i = 0; i < level_voices.ingame.Count; ++i){//find out that if player is in specific position and dir
+				if ( ((idx_pos - level_voices.ingame[i].pos).magnitude <= threshold)&&
+					 ((get_player_dir_world() == level_voices.ingame[i].dir)||(level_voices.ingame[i].dir == Direction.OTHER)) ) {
+					//if player tapped(played echo)
+					if ((level_voices.ingame [i].tap) && (player_script.tapped_at_this_block ())) {
+						ingame_playing = true;
+						//play voice
+						if (level_voices.ingame_cur_clip [i] < level_voices.ingame [i].clips.Count)
+							level_voices.ingame_cur_clip [i] = play_audio (level_voices.ingame [i].clips, level_voices.ingame_cur_clip [i]);
+					} else if (!level_voices.ingame [i].tap) {
+						ingame_playing = true;
+						if (level_voices.ingame_cur_clip [i] < level_voices.ingame [i].clips.Count)
+							level_voices.ingame_cur_clip[i] = play_audio (level_voices.ingame [i].clips, level_voices.ingame_cur_clip [i]);				
+					}
+				}
+			}
+		}
+
+		//play voices that should be played from beginning
+		if (!ingame_playing) {
+			if (level_voices.clip_begin < level_voices.clip_at_begin.Count)
+				level_voices.clip_begin = play_audio (level_voices.clip_at_begin, level_voices.clip_begin);
+		}
+	}
+	//get player's direction in world space
+	//need this function due to the coord system
+	public Direction get_player_dir_world(){
+		float threshold = 0.001f;
+		Vector3 player_dir = player_script.get_player_dir("FRONT");
+		if ((player_dir - Vector3.up).magnitude <= threshold)
+			return Direction.FRONT;
+		else if ((player_dir - Vector3.down).magnitude <= threshold)
+			return Direction.BACK;
+		else if ((player_dir - Vector3.left).magnitude <= threshold)
+			return Direction.LEFT;
+		else if ((player_dir - Vector3.right).magnitude <= threshold)
+			return Direction.RIGHT;
+
+		return Direction.OTHER;
+	}
+
+	public Direction StringToDir(string str){
+		if (str == "FRONT")
+			return Direction.FRONT;
+		else if (str == "BACK")
+			return Direction.BACK;
+		else if (str == "LEFT")
+			return Direction.LEFT;
+		else if (str == "RIGHT")
+			return Direction.RIGHT;
+
+		return Direction.OTHER;
 	}
 
 	//Sets up the outer walls and floor (background) of the game board.
@@ -239,6 +379,11 @@ public class BoardManager : MonoBehaviour {
 
 		player.transform.position = playerPositions[randomDelta];
 		Vector2 start_idx = get_idx_from_pos (player.transform.position);
+		level_voices.init();
+		level_voices.clear ();
+		load_level_voices_from_file ("GameData/voices", level_voices, level);
+		//load audio
+		LoadAudio();
 		gamerecord = gamerecord + "s@(" + start_idx.x.ToString() + "," + start_idx.y.ToString() + ")";
 
 		for(int i = 0; i < wallPositions.Count; i++){
@@ -271,6 +416,14 @@ public class BoardManager : MonoBehaviour {
 				return true;
 			}
 		}
+		return false;
+	}
+
+	bool _idx_is_equal(Vector2 idx1, Vector2 idx2){
+		float threshold = 0.001f;
+		if ((idx1 - idx2).magnitude <= threshold)
+			return true;
+
 		return false;
 	}
 
@@ -310,43 +463,81 @@ public class BoardManager : MonoBehaviour {
 
 	//determine which echo to call
 	public echoDistData getEchoDistData(Vector3 playerPos, Vector3 playerFront, Vector3 playerLeft){
-		float threshhold = 0.01f;
-		int player_y_idx = 0, player_x_idx = 0;
-
-		//get which index of gridPos() player is in
-		for (int i = 1; i <= rows; i++) {
-			for (int j = 1; j <= columns; ++j) {
-				if ((gridPositions [i*(columns+2) + j] - playerPos).magnitude <= threshhold) {
-					player_y_idx = i; player_x_idx = j;
-					//UnityEngine.Debug.Log ("idx is");
-					//UnityEngine.Debug.Log (new Vector2 (j, i));
-					break;
-				}
-			}
-		}
 
 		//setup the return value
 		echoDistData result = new echoDistData();
-		Vector2 gridIdx = new Vector2 (player_x_idx, player_y_idx);
+		Vector2 gridIdx = get_idx_from_pos (playerPos);
 		Vector2 gridTemp;
+		Vector2 exitIdx = get_idx_from_pos(exitPos);
+		bool check_exit = true;
+		result.exitpos = 0;
 
 		gridTemp = _getDist (gridIdx, playerFront);
 		result.front = (int)(gridTemp - gridIdx).magnitude;
 		result.fType = getJunctionType (gridTemp - new Vector2(playerFront.x, playerFront.y), gridIdx);
+		//0: no exit, 1:left, 2:right, 3:front, 4:back
+		if (check_exit) {
+			Vector2 searchIdx = gridIdx;
+			while ((searchIdx.x > 0) && (searchIdx.x < columns+1) && (searchIdx.y > 0) && (searchIdx.y < rows+1)) {
+				if (_idx_is_equal (searchIdx, exitIdx)) {
+					result.exitpos = 3;
+					check_exit = false;
+					break;
+				}
+				else
+					searchIdx += new Vector2 (playerFront.x, playerFront.y); 	
+			}
+		}
 
 		gridTemp = _getDist (gridIdx, -playerFront);
 		result.back = (int)(gridTemp - gridIdx).magnitude;
 		result.bType = getJunctionType (gridTemp + new Vector2(playerFront.x, playerFront.y), gridIdx);
+		if (check_exit) {
+			Vector2 searchIdx = gridIdx;
+			while ((searchIdx.x > 0) && (searchIdx.x < columns+1) && (searchIdx.y > 0) && (searchIdx.y < rows+1)) {
+				if (_idx_is_equal (searchIdx, exitIdx)) {
+					result.exitpos = 4;
+					check_exit = false;
+					break;
+				}
+				else
+					searchIdx -= new Vector2 (playerFront.x, playerFront.y); 	
+			}
+		}
 
 		//_debug_print_wallidx ();
 		//print ("LEFT!");
 		gridTemp = _getDist (gridIdx, playerLeft);
 		result.left = (int)(gridTemp - gridIdx).magnitude;
 		result.lType = getJunctionType (gridTemp - new Vector2(playerLeft.x, playerLeft.y), gridIdx);
+		if (check_exit) {
+			Vector2 searchIdx = gridIdx;
+			while ((searchIdx.x > 0) && (searchIdx.x < columns+1) && (searchIdx.y > 0) && (searchIdx.y < rows+1)) {
+				if (_idx_is_equal (searchIdx, exitIdx)) {
+					result.exitpos = 1;
+					check_exit = false;
+					break;
+				}
+				else
+					searchIdx += new Vector2 (playerLeft.x, playerLeft.y); 	
+			}
+		}
 
 		gridTemp = _getDist (gridIdx, -playerLeft);
 		result.right = (int)(gridTemp - gridIdx).magnitude;
 		result.rType = getJunctionType (gridTemp + new Vector2(playerLeft.x, playerLeft.y), gridIdx);
+		if (check_exit) {
+			Vector2 searchIdx = gridIdx;
+			while ((searchIdx.x > 0) && (searchIdx.x < columns+1) && (searchIdx.y > 0) && (searchIdx.y < rows+1)) {
+				if (_idx_is_equal (searchIdx, exitIdx)) {
+					result.exitpos = 2;
+					check_exit = false;
+					break;
+				}
+				else
+					searchIdx -= new Vector2 (playerLeft.x, playerLeft.y); 	
+			}
+		}
 
 		result.updateDistances();
 
@@ -384,8 +575,6 @@ public class BoardManager : MonoBehaviour {
 			ydf = true;
 			path_count += 1;
 		}
-
-		Debug.Log (path_count);
 
 		if (path_count <= 1)
 			return JunctionType.DEADEND;
@@ -455,8 +644,9 @@ public class BoardManager : MonoBehaviour {
 	
 	//SetupScene initializes our level and calls the previous functions to lay out the game board
 	public void SetupScene (int level){
-		//load audio
-		LoadAudio();
+		//find player
+		player_ref = GameObject.Find("Player");
+		player_script = player_ref.GetComponent<Player> ();
 		//SoundManager.instance.PlaySingle (clips[cur_clip]);
 		//Reset our list of gridpositions.
 		InitialiseList ();
@@ -464,28 +654,162 @@ public class BoardManager : MonoBehaviour {
 		BoardSetup ();
 		float repeat = 1f;
 		level = (int) Mathf.Floor(GameManager.instance.level / repeat);
+		LoadLoaclStats();
 		setup_level (level);
 		if( (GameMode.instance.get_mode() == GameMode.Game_Mode.MAIN)||
 			(GameMode.instance.get_mode() == GameMode.Game_Mode.CONTINUE) )
 			write_save (level);
+
+		//update stats
+		local_stats[level] += 1;
+		write_local_stats ();
 	}
 
 	bool write_save (int lv){
 		string filename = Application.persistentDataPath + "echosaved";
 		System.IO.File.WriteAllText (filename, lv.ToString ());
+		return true;
+	}
 
-		/*
-		string filename = "Saved/saved";
-		TextAsset svdata = Resources.Load (filename)as TextAsset;
-		if (svdata == null) {
+	string _InttoString(int tochange){
+		return tochange.ToString ();
+	}
+
+	bool write_local_stats(){
+		string filename = Application.persistentDataPath + "echostats";
+		string[] toWrite = Array.ConvertAll<int, string> (local_stats, _InttoString);
+		string final = "";
+		foreach (string itm in toWrite) {
+			final += itm;
+			final += "\n";
+		}
+		System.IO.File.WriteAllText (filename, final);
+		return true;
+	}
+
+	bool LoadLoaclStats(){
+		string filename = Application.persistentDataPath + "echostats";
+		local_stats = new int[max_total_level+1];
+		//for(int i = 0; i < local_stats.Length; ++i)
+		//	local_stats[i] = 0;
+		string[] svdata_split;
+		if (System.IO.File.Exists (filename)) {
+			svdata_split = System.IO.File.ReadAllLines (filename);
+			local_stats = Array.ConvertAll<string, int>(svdata_split, int.Parse);
+		} else {
+			for(int i = 0; i < local_stats.Length; ++i)
+				local_stats[i] = 0;
+			
+			return false;
+		}
+
+		return true;
+	}
+
+	public bool load_level_voices_from_file(string filename, level_voice_list data, int level_wanted = 1){
+		TextAsset lvldata = Resources.Load (filename)as TextAsset;
+		if (lvldata == null) {
 			UnityEngine.Debug.Log ("Cannot open file at:");
 			UnityEngine.Debug.Log (filename);
 			return false;
 		}
+		string[] lvldata_split = lvldata.text.Split ('\n');
+		bool reading_level = false;
+		bool reading_begin = false;//is it reading the playlist at the start of new game?
+		bool reading_exit = false;
+		bool reading_ingame = false;
+		bool reading_ingame_data = false;
+		float scale = (float)Utilities.SCALE_REF / (float)Utilities.MAZE_SIZE;
+		pos_and_action ingame_data;
 
-		string level_tobe_written = lv.ToString ();
-		svdata.text = level_tobe_written;
-*/
+		//read through the file until desired level is found
+		foreach (string line in lvldata_split) {
+			if (line.Length >= 3) {
+				if (line.Substring (0, 3) == "END") { //reach end of a level layout
+					reading_level = false;
+				}
+			}
+
+			if (reading_level) {//actually loading layout
+				if (line.Substring (0, 2) == "IN") {
+					reading_ingame = true;
+					reading_begin = false;
+					reading_exit = false;
+					reading_ingame_data = false;
+				} else if (line.Substring (0, 4) == "Exit") {
+					reading_exit = true;
+					reading_ingame = false;
+					reading_begin = false;
+					reading_ingame_data = false;
+				} else if (line.Substring (0, 5) == "Begin") {
+					reading_begin = true;
+					reading_ingame = false;
+					reading_exit = false;
+					reading_ingame_data = false;
+				} else if (line.Substring (0, 5) == "Inend") {
+					reading_ingame_data = false;
+				} else {
+					if (reading_begin)
+						data.play_at_begin.Add (line);
+					else if (reading_ingame) {
+						reading_ingame = false;
+						reading_ingame_data = true;
+						ingame_data = new pos_and_action ();
+						ingame_data.init ();
+						Vector2 start_idx = get_idx_from_pos (player_ref.transform.position);
+						float ingame_x, ingame_y;
+						if (line.Substring (3, 1) == "s")
+							ingame_x = start_idx.x;
+						else if (line.Substring (3, 1) == "n")
+							ingame_x = start_idx.x + 1f;
+						else
+							ingame_x = float.Parse (line.Substring (3, 1));
+					
+						if (line.Substring (5, 1) == "s")
+							ingame_y = start_idx.y;
+						else if (line.Substring (5, 1) == "n")
+							ingame_y = start_idx.y + 1f;
+						else
+							ingame_y = float.Parse (line.Substring (5, 1));
+					
+						ingame_data.pos = new Vector2 (ingame_x, ingame_y);
+						if (line.Substring (8, 1) == "T")
+							ingame_data.once = true;
+						else
+							ingame_data.once = false;
+					
+						if (line.Substring (10, 1) == "T")
+							ingame_data.tap = true;
+						else
+							ingame_data.tap = false;
+					
+						ingame_data.dir = StringToDir (line.Substring (12, line.Length - 13));
+						data.ingame.Add (ingame_data);
+						data.ingame_cur_clip.Add (0);
+					} else if (reading_ingame_data) {
+						ingame_data.clip_names.Add (line);
+					} else if (reading_exit)
+						data.play_at_exit.Add (line);
+				}
+			}
+
+			//flow control
+			if (line.Length >= 7) {
+				if (line.Substring (0, 6) == "LEVEL_") {
+					//get the current level we are reading
+					int remain_length = line.Length - 6;
+					int level_reading = Int32.Parse (line.Substring (6, remain_length));
+					if (level_reading == level_wanted) {//we found the level we want
+						reading_level = true;
+					}
+					else if (level_reading > level_wanted) {
+						reading_level = false;
+						return true;
+					}
+				}
+			}
+		}
+
 		return true;
 	}
 
