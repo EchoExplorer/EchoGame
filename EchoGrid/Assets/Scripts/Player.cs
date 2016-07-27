@@ -225,6 +225,7 @@ public class Player : MovingObject
 		WWWForm echoForm = new WWWForm ();
 		echoForm.AddField ("userName", encrypt (SystemInfo.deviceUniqueIdentifier));
 		echoForm.AddField ("currentLevel", encrypt (curLevel.ToString ()));
+		echoForm.AddField ("trackCount", encrypt (GameManager.instance.boardScript.local_stats[curLevel].ToString()));
 		echoForm.AddField ("echo", encrypt (lastEcho));
 		echoForm.AddField ("echoLocation", encrypt (location));
 		echoForm.AddField ("dateTimeStamp", encrypt (System.DateTime.Now.ToString ()));
@@ -361,6 +362,7 @@ public class Player : MovingObject
 		WWWForm crashForm = new WWWForm ();
 		crashForm.AddField ("userName", encrypt (SystemInfo.deviceUniqueIdentifier));
 		crashForm.AddField ("currentLevel", encrypt (curLevel.ToString ()));
+		crashForm.AddField ("trackCount", encrypt (GameManager.instance.boardScript.local_stats[curLevel].ToString()));
 		crashForm.AddField ("crashNumber", encrypt (numCrashes.ToString ()));
 		crashForm.AddField ("crashLocation", encrypt (location));
 		crashForm.AddField ("dateTimeStamp", encrypt (System.DateTime.Now.ToString ()));
@@ -423,6 +425,7 @@ public class Player : MovingObject
 		WWWForm levelCompleteForm = new WWWForm ();
 		levelCompleteForm.AddField ("userName", encrypt (SystemInfo.deviceUniqueIdentifier));
 		levelCompleteForm.AddField ("currentLevel", encrypt (curLevel.ToString ()));
+		levelCompleteForm.AddField ("trackCount", encrypt (GameManager.instance.boardScript.local_stats[curLevel].ToString()));
 		levelCompleteForm.AddField ("crashCount", encrypt (numCrashes.ToString ()));
 		levelCompleteForm.AddField ("stepCount", encrypt (numSteps.ToString ()));
 		levelCompleteForm.AddField ("startTime", encrypt (startTime.ToString ()));
