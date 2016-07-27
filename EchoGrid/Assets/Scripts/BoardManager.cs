@@ -161,7 +161,6 @@ public class BoardManager : MonoBehaviour {
 	int cur_clip = 1;
 	int cur_level = 0;
 	int total_clip = 11;
-	AudioClip[] clips;
 	List<AudioClip> latest_clips;//used to repeat instructions
 	int latest_clip_idx;
 	AudioClip lv_1_move, lv_1_exit;
@@ -211,25 +210,6 @@ public class BoardManager : MonoBehaviour {
 		}
 	}
 
-	void play_audio(){
-		if (cur_level == 1) {
-			GameObject player = GameObject.Find ("Player");
-			Player.lv_1_flag temp_f = player.GetComponent<Player> ().lv_1_f;
-			if (temp_f.at_exit) {
-				SoundManager.instance.PlayVoice (lv_1_exit);
-			} else if (temp_f.echo_played && !temp_f.moved)
-				SoundManager.instance.PlayVoice (lv_1_move);
-		}
-
-		if (cur_clip >= total_clip)
-			return;
-
-		if (SoundManager.instance.PlayVoice (clips [cur_clip])) {
-			//play only once
-			cur_clip = total_clip + 1;
-		}
-	}
-
 	public int play_audio(List<AudioClip> audios, int cur){
 
 		if (!skip_clip) {
@@ -245,17 +225,19 @@ public class BoardManager : MonoBehaviour {
 				latest_clip_idx = latest_clips.Count - 1;
 				return (cur + 1);
 			}
-		} else {
-			if (cur + 1 < audios.Count)
+		} else {//skip instruction
+			skip_clip = false;
+			if (cur + 1 < audios.Count){
 				SoundManager.instance.PlayVoice (audios [cur + 1], true);
-			else {
-			}
+				return (cur + 2);
+			}else
+				return (cur + 1);
 		}
 		
 		return cur;
 	}
 
-	public void play_latest_instruction(){
+	public void repeat_latest_instruction(){
 		if (latest_clip_idx >= 0) {
 			SoundManager.instance.PlayVoice (latest_clips [latest_clip_idx], true);
 			latest_clip_idx -= 1;
@@ -684,15 +666,16 @@ public class BoardManager : MonoBehaviour {
 		level = (int) Mathf.Floor(GameManager.instance.level / repeat);
 		LoadLoaclStats();
 		setup_level (level);
-		if( (GameMode.instance.get_mode() == GameMode.Game_Mode.MAIN)||
-			(GameMode.instance.get_mode() == GameMode.Game_Mode.CONTINUE) )
-			write_save (level);
+		//if( (GameMode.instance.get_mode() == GameMode.Game_Mode.MAIN)||
+		//	(GameMode.instance.get_mode() == GameMode.Game_Mode.CONTINUE) )
+		write_save (level);
 
 		//update stats
 		local_stats[level] += 1;
 		write_local_stats ();
 
 		//setup clip history list
+		latest_clips = new List<AudioClip>();
 		latest_clips.Clear();
 		latest_clip_idx = 0;
 		skip_clip = false;
@@ -758,7 +741,6 @@ public class BoardManager : MonoBehaviour {
 		bool reading_exit = false;
 		bool reading_ingame = false;
 		bool reading_ingame_data = false;
-		float scale = (float)Utilities.SCALE_REF / (float)Utilities.MAZE_SIZE;
 		pos_and_action ingame_data;
 
 		//read through the file until desired level is found
@@ -862,7 +844,6 @@ public class BoardManager : MonoBehaviour {
 		string[] lvldata_split = lvldata.text.Split ('\n');
 		bool reading_level = false;
 		int cur_y = Utilities.MAZE_SIZE-1;//start from top left corner
-		float scale = (float)Utilities.SCALE_REF / (float)Utilities.MAZE_SIZE;
 
 		asciiLevelRep = "";
 		gamerecord = "";
@@ -921,13 +902,9 @@ public class BoardManager : MonoBehaviour {
 			return 0;
 		}
 		string[] lvldata_split = lvldata.text.Split ('\n');
-		bool reading_level = false;
-		int cur_y = 7;//start from top left corner
 
-		//read through the file until desired level is found
 		int level_count = 0;
 		foreach (string line in lvldata_split) {
-			//flow control
 			if (line.Length >= 7) {
 				if (line.Substring (0, 6) == "LEVEL_") {
 					//get the current level we are reading

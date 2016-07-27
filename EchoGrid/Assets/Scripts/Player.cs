@@ -26,6 +26,7 @@ public class Player : MovingObject
 	bool restarted = false;
 	bool is_freezed;//is player not allowed to do anything?
 	bool tapped;//did player tap to hear an echo at this position?
+	bool reportSent;
 	private int curLevel;
 
 	//TODO(agotsis/wenyuw1) This needs to be integrated with the local database so these are not hardcoded
@@ -67,25 +68,8 @@ public class Player : MovingObject
 	bool swp_lock = false;//stop very fast control
 	bool at_pause_menu = false;//indicating if the player activated pause menu
 
-	private RSACryptoServiceProvider encrypter = new RSACryptoServiceProvider ();
 	//Create a new instance of RSACryptoServiceProvider.
-
-
-	public struct lv_1_flag
-	{
-		public bool echo_played;
-		public bool moved;
-		public bool at_exit;
-
-		public void init ()
-		{
-			echo_played = false;
-			moved = false;
-			at_exit = false;
-		}
-	}
-
-	public lv_1_flag lv_1_f;
+	private RSACryptoServiceProvider encrypter = new RSACryptoServiceProvider ();
 
 	//public bool soundPlaying = false;
 
@@ -161,12 +145,12 @@ public class Player : MovingObject
 		stopWatch.Start ();
 		startTime = System.DateTime.Now;
 
-		lv_1_f.init ();
 		want_exit = false;
 		at_pause_menu = false;
 		swp_lock = false;
 		reset_audio = false;
 		tapped = false;
+		reportSent = false;
 
 		//load audio
 		quit_confirm = new AudioClip[max_quit_clip];
@@ -178,7 +162,7 @@ public class Player : MovingObject
 		
 	private void PlayEcho() {
 		tapped = true;
-		lv_1_f.echo_played = true;
+		reportSent = true;
 		BoardManager.echoDistData data = 
 			GameManager.instance.boardScript.getEchoDistData (transform.position, get_player_dir ("FRONT"), get_player_dir ("LEFT"));
 
@@ -211,8 +195,10 @@ public class Player : MovingObject
 		AudioClip echo = Resources.Load ("echoes/" + filename) as AudioClip;
 		SoundManager.instance.PlaySingle (echo);
 
-		reportOnEcho (); //send echo report
+		//reportOnEcho (); //send echo report
 	}
+
+	string post_act = "";
 
 	private void reportOnEcho ()
 	{
@@ -228,6 +214,7 @@ public class Player : MovingObject
 		echoForm.AddField ("trackCount", encrypt (GameManager.instance.boardScript.local_stats[curLevel].ToString()));
 		echoForm.AddField ("echo", encrypt (lastEcho));
 		echoForm.AddField ("echoLocation", encrypt (location));
+		echoForm.AddField ("postEchoAction", encrypt (post_act));
 		echoForm.AddField ("dateTimeStamp", encrypt (System.DateTime.Now.ToString ()));
 
 		UnityEngine.Debug.Log (System.Text.Encoding.ASCII.GetString (echoForm.data));
@@ -296,6 +283,16 @@ public class Player : MovingObject
 		if ((dir != get_player_dir ("FRONT")) && (dir != get_player_dir ("BACK"))) {
 			changedDir = true;
 			rotateplayer (dir);
+			if (reportSent) {
+				post_act = "Turn ";
+				if(dir == get_player_dir("LEFT"))
+					post_act += "LEFT";
+				else
+					post_act += "RIGHT";
+				
+				reportOnEcho ();
+				reportSent = false;
+			}
 		}
 
 		dir.Normalize ();
@@ -303,7 +300,6 @@ public class Player : MovingObject
 		if (!changedDir) {
 			if (AttemptMove<Wall> ((int)dir.x, (int)dir.y)) {
 				tapped = false;
-				lv_1_f.moved = true;
 				if (dir == get_player_dir ("FRONT"))
 					GameManager.instance.boardScript.gamerecord += "f";
 				if (dir == get_player_dir ("BACK"))
@@ -342,8 +338,19 @@ public class Player : MovingObject
 			} else {
 				crashLocs = crashLocs + ";" + loc;
 			}
+
+			if (reportSent) {
+				post_act = "Crash";
+				reportOnEcho ();
+				reportSent = false;
+			}
 		}
 
+		if (reportSent) {
+			post_act = "Move Forward";
+			reportOnEcho ();
+			reportSent = false;
+		}
 		//Hit allows us to reference the result of the Linecast done in Move.
 		//RaycastHit2D hit;
 
@@ -381,6 +388,12 @@ public class Player : MovingObject
 		if (Vector2.SqrMagnitude (distFromExit) < 0.25) {
 			//Calculate time elapsed during the game level
 			endLevel ();
+		}
+
+		if (reportSent) {
+			post_act = "Exit";
+			reportOnEcho ();
+			reportSent = false;
 		}
 	}
 
@@ -421,11 +434,12 @@ public class Player : MovingObject
 		//string dataEndpoint = "http://cmuecholocation.herokuapp.com/storeGameLevelData";
 		//string dataEndpoint = "http://128.237.139.120:8000/storeGameLevelData";
 		string levelDataEndpoint = "http://merichar-dev.eberly.cmu.edu:81/cgi-bin/acceptLevelData.py";
+		int temp = GameManager.instance.boardScript.local_stats [curLevel];
 
 		WWWForm levelCompleteForm = new WWWForm ();
 		levelCompleteForm.AddField ("userName", encrypt (SystemInfo.deviceUniqueIdentifier));
 		levelCompleteForm.AddField ("currentLevel", encrypt (curLevel.ToString ()));
-		levelCompleteForm.AddField ("trackCount", encrypt (GameManager.instance.boardScript.local_stats[curLevel].ToString()));
+		levelCompleteForm.AddField ("trackCount", encrypt (temp.ToString()));
 		levelCompleteForm.AddField ("crashCount", encrypt (numCrashes.ToString ()));
 		levelCompleteForm.AddField ("stepCount", encrypt (numSteps.ToString ()));
 		levelCompleteForm.AddField ("startTime", encrypt (startTime.ToString ()));
@@ -525,14 +539,6 @@ public class Player : MovingObject
 		if (!GameManager.instance.playersTurn)
 			return;
 
-		GameObject exitSign = GameObject.FindGameObjectWithTag ("Exit");
-		Vector2 distFromExit = transform.position - exitSign.transform.position;
-		if (Vector2.SqrMagnitude (distFromExit) < 0.25) {
-			//Calculate time elapsed during the game level
-			lv_1_f.at_exit = true;
-		} else
-			lv_1_f.at_exit = false;
-
 		Vector3 dir = Vector3.zero;
 
 		//Check if we are running either in the Unity editor or in a standalone build.
@@ -631,6 +637,7 @@ public class Player : MovingObject
 				}
 				else{//at the pause menu
 					if(swp_dir == BoardManager.Direction.BACK){//turn on/of black screen
+						//TODO
 						SoundManager.instance.PlaySingle(swipeAhead);//shoule have another set of sound effect
 					}else if(swp_dir == BoardManager.Direction.LEFT){//jump to tutorial
 						SoundManager.instance.PlaySingle(swipeLeft);
@@ -646,9 +653,9 @@ public class Player : MovingObject
 				break;
 			case 2://double tap(exit, repeat/skip instruction)
 				if(swp_dir == BoardManager.Direction.LEFT){//repeat instruction
-
+					GameManager.instance.boardScript.repeat_latest_instruction();
 				}else if(swp_dir == BoardManager.Direction.RIGHT){//skip instruction
-
+					GameManager.instance.boardScript.skip_instruction();
 				}else if(swp_dir == BoardManager.Direction.OTHER){//tap
 					GameManager.instance.boardScript.gamerecord += "X";
 					attemptExitFromLevel();
@@ -665,6 +672,7 @@ public class Player : MovingObject
 			}
 		}
 
+		//TODO old one ,remove this later
 		if (numTouches > 0) {
 			//Store the first touch detected.
 			Touch myTouch = Input.touches[0];
@@ -732,6 +740,7 @@ public class Player : MovingObject
 				
 			}
 		}
+
 		#endif //End of mobile platform dependendent compilation section started above with #elif
 		calculateMove (dir);
 	}
@@ -889,7 +898,6 @@ public class Player : MovingObject
 	//Restart reloads the scene when called.
 	private void Restart ()
 	{
-		print ("Restart called!");
 		//Load the last scene loaded, in this case Main, the only scene in the game.
 		SceneManager.LoadScene("Main");
 		restarted = false;
