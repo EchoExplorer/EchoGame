@@ -138,7 +138,7 @@ public class BoardManager : MonoBehaviour {
 	public int max_level;
 	public int max_total_level;//same as max_level in Main mode, for local stats use only
 	public int min_level;
-	int[] local_stats;
+	public int[] local_stats;
 
 	// number of walls and such
 	public GameObject[] floorTiles;
@@ -162,8 +162,12 @@ public class BoardManager : MonoBehaviour {
 	int cur_level = 0;
 	int total_clip = 11;
 	AudioClip[] clips;
+	List<AudioClip> latest_clips;//used to repeat instructions
+	int latest_clip_idx;
 	AudioClip lv_1_move, lv_1_exit;
+
 	bool resest_audio = true;
+	bool skip_clip = false;
 
 	//Clears our list gridPositions and prepares it to generate a new board.
 	void InitialiseList (){
@@ -228,14 +232,38 @@ public class BoardManager : MonoBehaviour {
 
 	public int play_audio(List<AudioClip> audios, int cur){
 
-		if (cur == 0) {
-			SoundManager.instance.PlayVoice (audios [cur], true);
-			return (cur + 1);
-		} else if (SoundManager.instance.PlayVoice (audios [cur])) {
-			return (cur + 1);
+		if (!skip_clip) {
+			if (cur == 0) {
+				SoundManager.instance.PlayVoice (audios [cur], true);
+				//update history clip list
+				latest_clips.Add (audios [cur]);
+				latest_clip_idx = latest_clips.Count - 1;
+				return (cur + 1);
+			} else if (SoundManager.instance.PlayVoice (audios [cur])) {
+				//update history clip list
+				latest_clips.Add (audios [cur]);
+				latest_clip_idx = latest_clips.Count - 1;
+				return (cur + 1);
+			}
+		} else {
+			if (cur + 1 < audios.Count)
+				SoundManager.instance.PlayVoice (audios [cur + 1], true);
+			else {
+			}
 		}
 		
 		return cur;
+	}
+
+	public void play_latest_instruction(){
+		if (latest_clip_idx >= 0) {
+			SoundManager.instance.PlayVoice (latest_clips [latest_clip_idx], true);
+			latest_clip_idx -= 1;
+		}
+	}
+
+	public void skip_instruction(){
+		skip_clip = true;
 	}
 
 	//loop during the game
@@ -663,10 +691,21 @@ public class BoardManager : MonoBehaviour {
 		//update stats
 		local_stats[level] += 1;
 		write_local_stats ();
+
+		//setup clip history list
+		latest_clips.Clear();
+		latest_clip_idx = 0;
+		skip_clip = false;
 	}
 
 	bool write_save (int lv){
-		string filename = Application.persistentDataPath + "echosaved";
+		string filename = "";
+
+		if(GameMode.instance.get_mode () != GameMode.Game_Mode.TUTORIAL)
+			filename = Application.persistentDataPath + "echosaved";
+		else//load specific save for tutorial
+			filename = Application.persistentDataPath + "echosaved_tutorial";
+		
 		System.IO.File.WriteAllText (filename, lv.ToString ());
 		return true;
 	}

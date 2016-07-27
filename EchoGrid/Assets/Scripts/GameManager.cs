@@ -40,22 +40,34 @@ public class GameManager : MonoBehaviour {
 	}
 
 	bool LoadSaved(){
-		string filename = Application.persistentDataPath + "echosaved";
-
+		string filename = "";
 		string[] svdata_split;
+
+		if(GameMode.instance.get_mode () != GameMode.Game_Mode.TUTORIAL)
+			filename = Application.persistentDataPath + "echosaved";
+		else//load specific save for tutorial
+			filename = Application.persistentDataPath + "echosaved_tutorial";
+
 		if (System.IO.File.Exists (filename)) {
 			svdata_split = System.IO.File.ReadAllLines (filename);
 		} else {
-			level = 12;
+			if(GameMode.instance.get_mode () != GameMode.Game_Mode.TUTORIAL)
+				level = 12;
+			else//load specific save for tutorial
+				level = 1;
+			
 			return false;
 		}
 			
-
+		//read existing data
 		foreach (string line in svdata_split) {
 			int saved_level = Int32.Parse (line);
-			if (saved_level == 0)
-				level = 12;
-			else
+			if (saved_level == 0) {
+				if (GameMode.instance.get_mode () != GameMode.Game_Mode.TUTORIAL)
+					level = 12;
+				else//load specific save for tutorial
+					level = 1;
+			}else
 				level = saved_level;
 		}
 
