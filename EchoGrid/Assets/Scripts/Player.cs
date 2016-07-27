@@ -64,6 +64,8 @@ public class Player : MovingObject
 	private DateTime endTime;
 
 	bool want_exit;
+	bool swp_lock = false;//stop very fast control
+	bool at_pause_menu = false;//indicating if the player activated pause menu
 
 	private RSACryptoServiceProvider encrypter = new RSACryptoServiceProvider ();
 	//Create a new instance of RSACryptoServiceProvider.
@@ -161,6 +163,8 @@ public class Player : MovingObject
 
 		lv_1_f.init ();
 		want_exit = false;
+		at_pause_menu = false;
+		swp_lock = false;
 		reset_audio = false;
 		tapped = false;
 
@@ -574,6 +578,8 @@ public class Player : MovingObject
 		float TOUCH_TIME = 0.02f;
 		//Check if Input has registered more than zero touches
 		int numTouches = Input.touchCount;
+		Vector2 touchEndpos;
+		BoardManager.Direction swp_dir = BoardManager.Direction.OTHER;
 
 		if (numTouches > 0) {
 			//Store the first touch detected.
@@ -583,16 +589,73 @@ public class Player : MovingObject
 				//If so, set touchOrigin to the position of that touch
 				touchOrigin = myTouch.position;
 				touchTime = Time.time;
-			} else if (myTouch.phase == TouchPhase.Ended){
-				
+				swp_lock = true;
+			} else if ((myTouch.phase == TouchPhase.Ended) && swp_lock){//deals with swipe and multiple taps
+				//Set touchEnd to equal the position of this touch
+				touchEndpos = myTouch.position;
+				float x = touchEndpos.x - touchOrigin.x;
+				float y = touchEndpos.y - touchOrigin.y;		
+				if (Mathf.Abs(x) > Mathf.Abs(y) && Mathf.Abs(x) >= minSwipeDist){//right & left
+					if (x > 0)//right
+						swp_dir = BoardManager.Direction.RIGHT;
+					else//left
+						swp_dir = BoardManager.Direction.LEFT;
+				} else if (Mathf.Abs(y) > Mathf.Abs(x) && Mathf.Abs(y) >= minSwipeDist) {//up & down
+					if (y > 0)//up/front
+						swp_dir = BoardManager.Direction.FRONT;
+					else//down/back
+						swp_dir = BoardManager.Direction.BACK;
+					//Increment step count
+					numSteps++;
+				}
+
+				swp_lock = false;//flip the lock, until we find another TouchPhase.Began
 			}
 
 			switch(numTouches){
 			case 1://swipe, tap(moving, get echo)
+				if(!at_pause_menu){
+					if(swp_dir == BoardManager.Direction.FRONT){
+						dir = get_player_dir("FRONT");
+						SoundManager.instance.PlaySingle(swipeAhead);
+					}else if(swp_dir == BoardManager.Direction.LEFT){
+						dir = get_player_dir("LEFT");
+						SoundManager.instance.PlaySingle(swipeLeft);
+					}else if(swp_dir == BoardManager.Direction.RIGHT){
+						dir = get_player_dir("RIGHT");
+						SoundManager.instance.PlaySingle(swipeRight);
+					}
+				}
+				else{//at the pause menu
+					if(swp_dir == BoardManager.Direction.BACK){//turn on/of black screen
+						SoundManager.instance.PlaySingle(swipeAhead);//shoule have another set of sound effect
+					}else if(swp_dir == BoardManager.Direction.LEFT){//jump to tutorial
+						SoundManager.instance.PlaySingle(swipeLeft);
+						GameMode.gamemode = GameMode.Game_Mode.TUTORIAL;
+						Destroy(GameObject.Find("GameManager"));
+						SceneManager.LoadScene("Main");
+					}else if(swp_dir == BoardManager.Direction.RIGHT){//quit to main menu
+						SoundManager.instance.PlaySingle(swipeRight);
+						Destroy(GameObject.Find("GameManager"));
+						SceneManager.LoadScene("Title_Screen");
+					}					
+				}
 				break;
 			case 2://double tap(exit, repeat/skip instruction)
+				if(swp_dir == BoardManager.Direction.LEFT){//repeat instruction
+
+				}else if(swp_dir == BoardManager.Direction.RIGHT){//skip instruction
+
+				}else if(swp_dir == BoardManager.Direction.OTHER){//tap
+					GameManager.instance.boardScript.gamerecord += "X";
+					attemptExitFromLevel();
+				}
 				break;
 			case 3://pause menu
+				if(!at_pause_menu)//turn on/off pause menu
+					at_pause_menu = true;
+				else
+					at_pause_menu = false;
 				break;
 			default:
 				break;
