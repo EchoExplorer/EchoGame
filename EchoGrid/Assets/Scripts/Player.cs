@@ -241,35 +241,104 @@ public class Player : MovingObject
 		BoardManager.echoDistData data = 
 			GameManager.instance.boardScript.getEchoDistData (transform.position, get_player_dir ("FRONT"), get_player_dir ("LEFT"));
 
-		//String prefix = "15-0"; //Should be a variable somewhere. Hard for now.
-		String prefix = "C01-3"; //change this prefix when you change the echo files
-
-		String filename;
-
+		String prefix = "C00-0"; //change this prefix when you change the echo files
+		String filename, filename2, filename3;
+		float wallDist = 0.75f, shortDist = 2.25f, midDist = 6.75f, longDist = 12.75f;
+		//catogrize the distance
+		//back
+		/*
+		if (data.backDist <= shortDist)
+			data.backDist = shortDist;
+		else if ((data.backDist > shortDist) && (data.backDist <= midDist))
+			data.backDist = midDist;
+		else if ((data.backDist > midDist) && (data.backDist <= longDist))
+			data.backDist = longDist;
+		//left
+		if ((data.leftDist > wallDist)&&(data.leftDist <= shortDist))
+			data.leftDist = shortDist;
+		else if ((data.leftDist > shortDist) && (data.leftDist <= midDist))
+			data.leftDist = midDist;
+		else if ((data.leftDist > midDist) && (data.leftDist <= longDist))
+			data.leftDist = longDist;
+		//right
+		if ((data.rightDist > wallDist)&&(data.rightDist <= shortDist))
+			data.rightDist = shortDist;
+		else if ((data.rightDist > shortDist) && (data.rightDist <= midDist))
+			data.rightDist = midDist;
+		else if ((data.rightDist > midDist) && (data.rightDist <= longDist))
+			data.rightDist = longDist;
+*/
 		/*
 		filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix, 
 			data.frontDist, data.jun_to_string (data.fType), data.backDist, data.jun_to_string (data.bType),
 			data.leftDist, data.jun_to_string (data.lType), data.rightDist, data.jun_to_string (data.rType));
 		*/ //replace this to check what is behind you
 
-		//this is the full filename, deadend behind
-		/*filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix, 
-			data.frontDist, data.jun_to_string (data.fType), data.backDist, "D",
-			data.leftDist, data.jun_to_string (data.lType), data.rightDist, data.jun_to_string (data.rType));*/
+		//this is the full filename, if back is not D or Stairs, it will be "na"
+		string back_type = "D", front_type = "", left_type = "", right_type = "";
+		if( (data.bType != BoardManager.JunctionType.DEADEND)&&(data.exitpos != 4) )
+			back_type = "na";
+		if (data.exitpos != 1)
+			left_type = data.jun_to_string (data.lType);
+		if (data.exitpos != 2)
+			right_type = data.jun_to_string (data.rType);
+		if (data.exitpos != 3)
+			front_type = data.jun_to_string (data.fType);
 
-		//assume a deadend is behind you always
+		switch (data.exitpos) {
+		case 1://left
+			left_type = "US";
+			break;
+		case 2://right
+			right_type = "US";
+			break;
+		case 3://front
+			front_type = "US";
+			break;
+		case 4://back
+			back_type = "US";
+			break;
+		default:
+			break;
+		}
+		
+		filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix, 
+			data.frontDist, front_type, data.backDist, "D",
+			data.leftDist, left_type, data.rightDist, right_type);
+		filename2 = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix, 
+			data.frontDist, front_type, data.backDist, "na",
+			data.leftDist, left_type, data.rightDist, right_type);
+		filename3 = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix, 
+			data.frontDist, front_type, data.backDist, "US",
+			data.leftDist, left_type, data.rightDist, right_type);
+
+		/*
+		//ignore back
 		filename = String.Format ("{0}_F-{1:F2}-{2}_L-{3:F2}-{4}_R-{5:F2}-{6}", prefix, 
 			data.frontDist, data.jun_to_string (data.fType),
 			data.leftDist, data.jun_to_string (data.lType), data.rightDist, data.jun_to_string (data.rType));
+		*/
 
+		//try all three files
+		AudioClip echo = Resources.Load ("echoes/" + filename) as AudioClip;
 		lastEcho = filename;
 
-		UnityEngine.Debug.Log (filename);
+		if (echo == null) {
+			echo = Resources.Load ("echoes/" + filename2) as AudioClip;
+			lastEcho = filename2;
+		}
+		if (echo == null) {
+			echo = Resources.Load ("echoes/" + filename3) as AudioClip;
+			lastEcho = filename3;
+		}
+		SoundManager.instance.PlayEcho (echo);
+	
+		UnityEngine.Debug.Log (lastEcho);
 		UnityEngine.Debug.Log (data.all_jun_to_string ());
-
-		//AudioClip echo = Resources.Load ("echoes/" + filename) as AudioClip;
-		//SoundManager.instance.PlayEcho (echo);
-
+		if (echo == null)
+			UnityEngine.Debug.Log ("Echo not found");
+		
+		/*
 		//TODO: Hotfix for test
 		int temp_dist = (int)data.frontDist;
 		if (temp_dist < 1)
@@ -278,7 +347,7 @@ public class Player : MovingObject
 			temp_dist = 7;
 		AudioClip echo = Resources.Load ("echoes/echo_0deg_" + temp_dist.ToString() + "m") as AudioClip;
 		SoundManager.instance.PlayEcho (echo);
-
+		*/
 		//reportOnEcho (); //send echo report
 	}
 
@@ -287,7 +356,7 @@ public class Player : MovingObject
 	private void reportOnEcho ()
 	{
 
-		string echoEndpoint = "http://merichar-dev.eberly.cmu.edu:81/cgi-bin/acceptEchoData.py";
+		string echoEndpoint = "http://echolock.andrew.cmu.edu/cgi-bin/acceptEchoData.py";
 
 		Vector2 idx_location = GameManager.instance.boardScript.get_idx_from_pos (transform.position);
 		string location = "(" + idx_location.x.ToString () + "," + idx_location.y.ToString () + ")";
@@ -459,7 +528,7 @@ public class Player : MovingObject
 	private void reportOnCrash ()
 	{
 
-		string crashEndpoint = "http://merichar-dev.eberly.cmu.edu:81/cgi-bin/acceptCrashData.py";
+		string crashEndpoint = "http://echolock.andrew.cmu.edu/cgi-bin/acceptCrashData.py";
 
 		Vector2 idx_pos = GameManager.instance.boardScript.get_idx_from_pos (transform.position);
 		string location = "(" + idx_pos.x.ToString () + "," + idx_pos.y.ToString () + ")";
@@ -529,9 +598,7 @@ public class Player : MovingObject
 
 		//TODO(agotsis) understand this. Reimplement.
 		//Send the crash count data and level information to server
-		//string dataEndpoint = "http://cmuecholocation.herokuapp.com/storeGameLevelData";
-		//string dataEndpoint = "http://128.237.139.120:8000/storeGameLevelData";
-		string levelDataEndpoint = "http://merichar-dev.eberly.cmu.edu:81/cgi-bin/acceptLevelData.py";
+		string levelDataEndpoint = "http://echolock.andrew.cmu.edu/cgi-bin/acceptLevelData.py";
 		int temp = GameManager.instance.boardScript.local_stats [curLevel];
 
 		WWWForm levelCompleteForm = new WWWForm ();
@@ -697,7 +764,7 @@ public class Player : MovingObject
 			SoundManager.instance.PlaySingle (swipeAhead);
 		}
 
-		if (Input.GetKey ("f")) {
+		if (Input.GetKeyUp ("f")) {
 			GameManager.instance.boardScript.gamerecord += "E{";
 			PlayEcho ();
 			GameManager.instance.boardScript.gamerecord += lastEcho;
