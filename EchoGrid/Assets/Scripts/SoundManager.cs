@@ -5,6 +5,7 @@ public class SoundManager : MonoBehaviour {
 
 	public AudioSource[] efxSource;					//Drag a reference to the audio source which will play the sound effects.
 	public AudioSource voiceSource;
+	public AudioSource echoSource;
 	public static SoundManager instance = null;		//Allows other scripts to call functions from SoundManager.				
 	int max_sfx_playing = 5;
 
@@ -30,8 +31,7 @@ public class SoundManager : MonoBehaviour {
 	
 	
 	//Used to play single sound clips.
-	public void PlaySingle(AudioClip clip)
-	{
+	public void PlaySingle(AudioClip clip){
 		//Set the clip of our efxSource audio source to the clip passed in as a parameter.
 		for (int i = 0; i < max_sfx_playing; ++i) {
 			if (!efxSource [i].isPlaying) {
@@ -43,9 +43,17 @@ public class SoundManager : MonoBehaviour {
 		}
 	}
 
+	public void PlayEcho(AudioClip clip){
+		if (!echoSource.isPlaying) {
+			echoSource.clip = clip;
+			//Play the clip.
+			echoSource.Play ();
+			return;
+		}
+	}
+
 	//play a voice over
-	public bool PlayVoice(AudioClip clip, bool reset = false)
-	{
+	public bool PlayVoice(AudioClip clip, bool reset = false){
 		if ( (voiceSource.isPlaying == false)||reset ) {
 			voiceSource.clip = clip;
 			//Play the clip.

@@ -8,7 +8,8 @@ public class GameMode : MonoBehaviour {
 		CONTINUE
 	}
 
-	public static GameMode instance = null;		//Allows other scripts to call functions from SoundManager.				
+	public static GameMode instance = null;		//Allows other scripts to call functions from SoundManager.			
+	public Game_Mode gamemode;
 
 	void Awake ()
 	{
@@ -23,8 +24,6 @@ public class GameMode : MonoBehaviour {
 		//Set SoundManager to DontDestroyOnLoad so that it won't be destroyed when reloading our scene.
 		DontDestroyOnLoad (gameObject);
 	}
-
-	public static Game_Mode gamemode;
 
 	public void init(){
 		gamemode = Game_Mode.MAIN;

@@ -154,12 +154,13 @@ public class BoardManager : MonoBehaviour {
 	private List <int> wallIdxes = new List<int> ();
 	public List <Vector3> wallPositions = new List<Vector3> ();
 	private List<Vector3> playerPositions = new List<Vector3> ();
+	string mazeSolution = "";
 	level_voice_list level_voices = new level_voice_list();
 	Vector3 exitPos;
 
 	//audios
 	int cur_clip = 1;
-	int cur_level = 0;
+	int cur_level;
 	int total_clip = 11;
 	List<AudioClip> latest_clips;//used to repeat instructions
 	int latest_clip_idx;
@@ -389,6 +390,7 @@ public class BoardManager : MonoBehaviour {
 
 		player.transform.position = playerPositions[randomDelta];
 		Vector2 start_idx = get_idx_from_pos (player.transform.position);
+
 		level_voices.init();
 		level_voices.clear ();
 		load_level_voices_from_file ("GameData/voices", level_voices, level);
@@ -409,6 +411,25 @@ public class BoardManager : MonoBehaviour {
 		}
 		GameObject new_exit = Instantiate (exit, exitPos, Quaternion.identity) as GameObject;
 		new_exit.transform.SetParent (wall_parent.transform);
+
+		//now let the player face the right dir
+		mazeSolution = "";
+		searched = new bool[(columns+1)*(rows+1)];
+		for(int i = 0; i < searched.Length; ++i)
+			searched[i] = false;
+
+		solveMaze (start_idx, "s");
+		player.transform.rotation = Quaternion.identity;
+		if (mazeSolution.Length >= 2) {
+			if (mazeSolution [mazeSolution.Length-2] == 'u')
+				player_script.rotateplayer_no_update (StringToDir("FRONT"));
+			if(mazeSolution[mazeSolution.Length-2] == 'd')
+				player_script.rotateplayer_no_update (StringToDir("BACK"));
+			if(mazeSolution[mazeSolution.Length-2] == 'l')
+				player_script.rotateplayer_no_update (StringToDir("LEFT"));
+			if(mazeSolution[mazeSolution.Length-2] == 'r')
+				player_script.rotateplayer_no_update (StringToDir("RIGHT"));
+		}
 	}
 
 	//private help function to replace list.contain()
@@ -655,24 +676,21 @@ public class BoardManager : MonoBehaviour {
 	//SetupScene initializes our level and calls the previous functions to lay out the game board
 	public void SetupScene (int level){
 		//find player
-		player_ref = GameObject.Find("Player");
+		player_ref = GameObject.Find("Player");//Player.instance.gameObject;
 		player_script = player_ref.GetComponent<Player> ();
 		//SoundManager.instance.PlaySingle (clips[cur_clip]);
 		//Reset our list of gridpositions.
 		InitialiseList ();
 		//Creates the outer walls and floor.
 		BoardSetup ();
-		float repeat = 1f;
-		level = (int) Mathf.Floor(GameManager.instance.level / repeat);
 		LoadLoaclStats();
 		setup_level (level);
 		//if( (GameMode.instance.get_mode() == GameMode.Game_Mode.MAIN)||
 		//	(GameMode.instance.get_mode() == GameMode.Game_Mode.CONTINUE) )
 		write_save (level);
 
-		//update stats
-		local_stats[level] += 1;
-		write_local_stats ();
+		//local_stats[level] += 1;
+		//write_local_stats ();
 
 		//setup clip history list
 		latest_clips = new List<AudioClip>();
@@ -681,7 +699,7 @@ public class BoardManager : MonoBehaviour {
 		skip_clip = false;
 	}
 
-	bool write_save (int lv){
+	public bool write_save (int lv){
 		string filename = "";
 
 		if(GameMode.instance.get_mode () != GameMode.Game_Mode.TUTORIAL)
@@ -697,7 +715,7 @@ public class BoardManager : MonoBehaviour {
 		return tochange.ToString ();
 	}
 
-	bool write_local_stats(){
+	public bool write_local_stats(){
 		string filename = Application.persistentDataPath + "echostats";
 		string[] toWrite = Array.ConvertAll<int, string> (local_stats, _InttoString);
 		string final = "";
@@ -913,5 +931,32 @@ public class BoardManager : MonoBehaviour {
 			}
 		}
 		return level_count;
+	}
+
+	bool[] searched;
+
+	public bool solveMaze(Vector2 idx, string dir){
+		if ((idx.x > columns) || (idx.x < 1) || (idx.y > rows) || (idx.y < 1))//just in case, so I widen the range
+			return false;
+
+		if (searched [(int)((columns + 1) * idx.y + idx.x)])
+			return false;
+		searched [(int)((columns + 1) * idx.y + idx.x)] = true;
+		
+		if (_searchWallIdxes (idx))
+			return false;
+
+		if (get_idx_from_pos (exitPos) == idx) {
+			mazeSolution += dir;
+			return true;
+		}
+
+		bool result = false || solveMaze (new Vector2 (idx.x, idx.y+1f), "u") || solveMaze (new Vector2 (idx.x, idx.y-1f), "d") ||
+					 		   solveMaze (new Vector2 (idx.x+1f, idx.y), "r") || solveMaze (new Vector2 (idx.x-1f, idx.y), "l");
+
+		if (result)
+			mazeSolution += dir;
+		
+		return result;
 	}
 }
