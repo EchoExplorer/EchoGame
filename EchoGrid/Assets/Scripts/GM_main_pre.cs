@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GM_main_pre : MonoBehaviour {
 	Vector2 touchOrigin = -Vector2.one;
@@ -35,23 +36,43 @@ public class GM_main_pre : MonoBehaviour {
 		new_game = Resources.Load ("instructions/New game started") as AudioClip;
 		at_confirm = false;
 		reset_audio = false;
+		init_input ();
+	}
+
+	void init_input(){
+		TouchTapCount = 0;
+		menuTapTime = 0f;
+		multiTapStartTime = 0f;
+		swp_lock = false;
+		inputSFX = Resources.Load ("fx/inputSFX") as AudioClip;
 	}
 
 	void play_audio(){
 		if (!at_confirm) {
-			if (SoundManager.instance.PlayVoice (clips [cur_clip])) {
+			if (SoundManager.instance.PlayVoice (clips [cur_clip], reset_audio)) {
+				reset_audio = false;
 				cur_clip += 1;
 				if (cur_clip >= total_clip)
 					cur_clip = 0;
 			}
 		} else {
-			if (SoundManager.instance.PlayVoice (confirm_list [cur_clip])) {
+			if (SoundManager.instance.PlayVoice (confirm_list [cur_clip], reset_audio)) {
+				reset_audio = false;
 				cur_clip += 1;
 				if (cur_clip >= total_confirm_clip)
 					cur_clip = 0;
 			}
 		}
 	}
+
+	float multiTapStartTime;
+	int TouchTapCount;
+	const float multiTapCD = 0.2f;//make multitap easier
+	const float menuUpdateCD = 0.5f;//shortest time between turn on/off pause menu
+	bool swp_lock = false;//stop very fast input
+	AudioClip inputSFX;
+	public Text debug_text;
+	float menuTapTime;
 
 	// Update is called once per frame
 	void Update () {
@@ -63,14 +84,14 @@ public class GM_main_pre : MonoBehaviour {
 		//Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
 		if (Input.GetKeyUp(KeyCode.RightArrow)) {
 			if(!at_confirm){
-				GameMode.gamemode = GameMode.Game_Mode.CONTINUE;
+				GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
 				SoundManager.instance.PlayVoice(continue_game, true);
 				SceneManager.LoadScene("Main");
 			}
 			//SoundManager.instance.PlaySingle(swipeRight);
 		} else if (Input.GetKeyUp(KeyCode.LeftArrow)) {
 			if(at_confirm){
-				GameMode.gamemode = GameMode.Game_Mode.MAIN;
+				GameMode.instance.gamemode = GameMode.Game_Mode.MAIN;
 				SoundManager.instance.PlayVoice(new_game, true);
 				SceneManager.LoadScene("Main");
 			}
@@ -95,80 +116,101 @@ public class GM_main_pre : MonoBehaviour {
 		//Check if we are running on iOS, Android, Windows Phone 8 or Unity iPhone
 		#elif UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
 
-		float TOUCH_TIME = 0.05f;
-
+		float ECHO_TOUCH_TIME = 0.2f;
+		float TOUCH_TIME = 0.02f;
+		float MENU_TOUCH_TIME = 1.5f;
 		//Check if Input has registered more than zero touches
 		int numTouches = Input.touchCount;
 
+		Touch myTouch;
+		Vector2 touchEndpos;
+		BoardManager.Direction swp_dir = BoardManager.Direction.OTHER;
+
+		//update all timers
+		//update TouchTapCount part 1
+		if( (Time.time - multiTapStartTime) >= multiTapCD ){
+			multiTapStartTime = Time.time;
+			TouchTapCount = 0;
+		}
+
+		//collect raw data from the device
 		if (numTouches > 0) {
-		//Store the first touch detected.
-		Touch myTouch = Input.touches[0];
+			//Store the first touch detected.
+			myTouch = Input.touches[0];
 
-		//Check if the phase of that touch equals Began
-		if (myTouch.phase == TouchPhase.Began){
-		//If so, set touchOrigin to the position of that touch
-		touchOrigin = myTouch.position;
-		touchTime = Time.time;
-		}
-
-		//If the touch phase is not Began, and instead is equal to Ended and the x of touchOrigin is greater or equal to zero:
-		else if (myTouch.phase == TouchPhase.Ended && touchOrigin.x >= 0) {
-		//Set touchEnd to equal the position of this touch
-		Vector2 touchEnd = myTouch.position;
-
-		//Calculate the difference between the beginning and end of the touch on the x axis.
-		float x = touchEnd.x - touchOrigin.x;
-
-		//Calculate the difference between the beginning and end of the touch on the y axis.
-		float y = touchEnd.y - touchOrigin.y;
-
-		//Set touchOrigin.x to -1 so that our else if statement will evaluate false and not repeat immediately.
-		touchOrigin.x = -1;
-
-		//Check if the difference along the x axis is greater than the difference along the y axis.
-		if (Mathf.Abs(x) > Mathf.Abs(y) && Mathf.Abs(x) >= minSwipeDist)
-		{
-		//If x is greater than zero, set horizontal to 1, otherwise set it to -1
-		if (x > 0) {//RIGHT
-			if(!at_confirm){
-				GameMode.gamemode = GameMode.Game_Mode.CONTINUE;
-				SoundManager.instance.PlayVoice(continue_game, true);
-				SceneManager.LoadScene("Main");
+			//update TouchTapCount part 2
+			if( (Time.time - multiTapStartTime) < multiTapCD ){
+				TouchTapCount += myTouch.tapCount;
 			}
-			//SoundManager.instance.PlaySingle(swipeRight);
-		} else {//LEFT
-			if(at_confirm){
-				GameMode.gamemode = GameMode.Game_Mode.MAIN;
-				SoundManager.instance.PlayVoice(new_game, true);
-				SceneManager.LoadScene("Main");
+
+			//Check if the phase of that touch equals Began
+			if (myTouch.phase == TouchPhase.Began){
+				//If so, set touchOrigin to the position of that touch
+				touchOrigin = myTouch.position;
+				touchTime = Time.time;
+				swp_lock = true;
+			} else if ((myTouch.phase == TouchPhase.Ended) && swp_lock){//deals with swipe and multiple taps
+				//Set touchEnd to equal the position of this touch
+				touchEndpos = myTouch.position;
+				float x = touchEndpos.x - touchOrigin.x;
+				float y = touchEndpos.y - touchOrigin.y;		
+
+				if (Mathf.Abs(x) > Mathf.Abs(y) && Mathf.Abs(x) >= minSwipeDist){//right & left
+					if (x > 0)//right
+						swp_dir = BoardManager.Direction.RIGHT;
+					else//left
+						swp_dir = BoardManager.Direction.LEFT;
+				} else if (Mathf.Abs(y) > Mathf.Abs(x) && Mathf.Abs(y) >= minSwipeDist) {//up & down
+					if (y > 0)//up/front
+						swp_dir = BoardManager.Direction.FRONT;
+					else//down/back
+						swp_dir = BoardManager.Direction.BACK;
+				}
+
+				swp_lock = false;//flip the lock, until we find another TouchPhase.Began
 			}
-			//SoundManager.instance.PlaySingle(swipeLeft);
 		}
-		} else if (Mathf.Abs(y) > Mathf.Abs(x) && Mathf.Abs(y) >= minSwipeDist) {
-		//If y is greater than zero, set vertical to 1, otherwise set it to -1
-		if (y > 0) {//FRONT
-		//SoundManager.instance.PlaySingle(swipeAhead);
-		} else {//BACK
-		//SoundManager.instance.PlaySingle(swipeAhead);
-		}
-		} else if (Mathf.Abs(Time.time - touchTime) > TOUCH_TIME) {
-		if (numTouches == 2){
-			if(!at_confirm){
+
+		debug_text.text = "numTouches:" + numTouches.ToString() + "\n"
+						+ "TouchTapCount: " + TouchTapCount.ToString() + "\n"
+						+ "at_confirm: " + at_confirm.ToString() + "\n";
+
+
+		if(Time.time - menuTapTime >= menuUpdateCD){
+			menuTapTime= Time.time;
+			if( (!at_confirm)&&(TouchTapCount >= 2)&&(swp_dir == BoardManager.Direction.OTHER) ){
+				cur_clip = 0;
+				reset_audio = true;
 				at_confirm = true;
+				SoundManager.instance.PlaySingle(inputSFX);
+			}else if( (at_confirm)&&(TouchTapCount >= 2)&&(swp_dir == BoardManager.Direction.OTHER) ){
 				cur_clip = 0;
 				reset_audio = true;
-			}
-			else{
 				at_confirm = false;
-				cur_clip = 0;
-				reset_audio = true;
+				SoundManager.instance.PlaySingle(inputSFX);
 			}
-			//SoundManager.instance.PlaySingle(swipeAhead);
 		}
-		else{}
+
+		//process the data
+		if(numTouches > 0){//turn, get echo, etc.
+			if(!at_confirm){
+				if(swp_dir == BoardManager.Direction.RIGHT){
+					SoundManager.instance.PlaySingle(inputSFX);
+					GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
+					SceneManager.LoadScene("Main");
+					SoundManager.instance.PlayVoice(continue_game, true);
+				}
+			}else{//at_confirm = true
+				if(swp_dir == BoardManager.Direction.LEFT){
+					at_confirm = false;
+					SoundManager.instance.PlaySingle(inputSFX);
+					GameMode.instance.gamemode = GameMode.Game_Mode.MAIN;
+					SceneManager.LoadScene("Main");
+					SoundManager.instance.PlayVoice(new_game, true);					
+				}
+			}
 		}
-		}
-		}
+
 		#endif //End of mobile platform dependendent compilation section started above with #elif	
 	}
 }

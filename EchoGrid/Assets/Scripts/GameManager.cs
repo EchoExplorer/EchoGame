@@ -11,7 +11,8 @@ public class GameManager : MonoBehaviour {
 	public BoardManager boardScript;
 
 	public static GameManager instance = null;
-	public static bool level_already_loaded = false;
+	public bool level_already_loaded = false;
+	public bool levelImageActive = false;
 	[HideInInspector] public bool playersTurn = true;
 
 	public float levelStartDelay = 2f;	
@@ -28,15 +29,18 @@ public class GameManager : MonoBehaviour {
 			Destroy (gameObject);
 		
 		DontDestroyOnLoad (gameObject);
+
 		level_already_loaded = false;
 		boardScript = GetComponent<BoardManager> ();
-
+		LoadSaved ();
+		/*
 		if(GameMode.instance.get_mode () == GameMode.Game_Mode.MAIN)//MAIN
 			level = 12;
 		else if (GameMode.instance.get_mode () == GameMode.Game_Mode.TUTORIAL)//TUTORIAL
 			level = 1;
 		else if (GameMode.instance.get_mode () == GameMode.Game_Mode.CONTINUE)//CONTINUE
 			LoadSaved();
+		*/
 	}
 
 	bool LoadSaved(){
@@ -55,7 +59,7 @@ public class GameManager : MonoBehaviour {
 				level = 12;
 			else//load specific save for tutorial
 				level = 1;
-			
+
 			return false;
 		}
 			
@@ -70,7 +74,6 @@ public class GameManager : MonoBehaviour {
 			}else
 				level = saved_level;
 		}
-
 		return true;
 	}
 	
@@ -86,16 +89,16 @@ public class GameManager : MonoBehaviour {
 		//db.CloseSqlConnection();
 
 		doingSetup = true;
-		levelImage = GameObject.Find("LevelImage");
-		levelText = GameObject.Find("LevelText").GetComponent<Text>();
+		levelImage = UICanvas.instance.transform.FindChild ("LevelImage").gameObject; //GameObject.Find("LevelImage");
+		levelText = levelImage.transform.FindChild("LevelText").gameObject.GetComponent<Text>();
 		//Set the text of levelText to the string "Day" and append the current level number.;
-		levelText.text = "Loading level";
 		
 		//Set levelImage to block player's view of the game board during setup.
 		levelImage.SetActive(true);
+		levelImageActive = true;
 		
 		//Call the HideLevelImage function with a delay in seconds of levelStartDelay.
-		Invoke("HideLevelImage", levelStartDelay);
+		Invoke("StartGame", levelStartDelay);
 
 		boardScript.max_total_level = boardScript.get_level_count ("GameData/levels");
 		//Call the SetupScene function of the BoardManager script, pass it current level number.
@@ -109,26 +112,43 @@ public class GameManager : MonoBehaviour {
 			boardScript.max_level = boardScript.get_level_count ("GameData/levels");
 			boardScript.min_level = 12;
 		}
-
+			
+		levelText.text = "Loading level " + level.ToString();
+		LoadSaved ();
 		boardScript.SetupScene (level);
 	}
 
 	//Hides black image used between levels
-	void HideLevelImage(){
+	void StartGame(){
 		//Disable the levelImage gameObject.
-		levelImage.SetActive(false);
-		
+		HideLevelImage();
 		//Set doingSetup to false allowing player to move again.
 		doingSetup = false;
+		playersTurn = true;
+	}
+
+	public void UnHideLevelImage(){
+		levelText.text = "level " + level.ToString () + "\n";
+		levelText.text += "Game In Progress";
+		levelImage.SetActive(true);
+		levelImageActive = true;
+	}
+
+	public void HideLevelImage(){
+		//Disable the levelImage gameObject.
+		levelImage.SetActive(false);
+		levelImageActive = false;
 	}
 
 	//This is called each time a scene is loaded.
 	void OnLevelWasLoaded(int index){
 		//Call InitGame to initialize our level.
-		if (!level_already_loaded) {
+		//if (!level_already_loaded) {
+			levelImage = UICanvas.instance.transform.FindChild("LevelImage").gameObject;
+			levelText = levelImage.transform.FindChild ("LevelText").gameObject.GetComponent<Text> ();
 			InitGame ();
 			level_already_loaded = true;
-		}
+		//}
 	}
 
 

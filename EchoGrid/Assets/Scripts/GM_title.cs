@@ -49,12 +49,12 @@ public class GM_title : MonoBehaviour {
 
 		//Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
 		if (Input.GetKeyUp(KeyCode.RightArrow)) {
-			GameMode.gamemode = GameMode.Game_Mode.CONTINUE;
+			GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
 			SceneManager.LoadScene("Main_pre");
 			SoundManager.instance.PlayVoice(to_main, true);
 			//SoundManager.instance.PlaySingle(swipeRight);
 		} else if (Input.GetKeyUp(KeyCode.LeftArrow)) {
-			GameMode.gamemode = GameMode.Game_Mode.TUTORIAL;
+			GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
 			SceneManager.LoadScene("Main");
 			//SoundManager.instance.PlayVoice(to_tutorial, true);
 			//SoundManager.instance.PlaySingle(swipeLeft);
@@ -101,12 +101,12 @@ public class GM_title : MonoBehaviour {
 				{
 					//If x is greater than zero, set horizontal to 1, otherwise set it to -1
 					if (x > 0) {//RIGHT
-						GameMode.gamemode = GameMode.Game_Mode.CONTINUE;
+						GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
 						SceneManager.LoadScene("Main_pre");
 						SoundManager.instance.PlayVoice(to_main, true);
 						//SoundManager.instance.PlaySingle(swipeRight);
 					} else {//LEFT
-						GameMode.gamemode = GameMode.Game_Mode.TUTORIAL;
+						GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
 						SceneManager.LoadScene("Main");
 						//SoundManager.instance.PlayVoice(to_tutorial, true);
 					}
