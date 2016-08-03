@@ -48,12 +48,21 @@ public class BoardManager : MonoBehaviour {
 
 		//TODO Weynu, is this a bad design choice? Call method to calcuate distances.
 		public void updateDistances(){
-			float halfSize = BoardManager.tileSize / 2;
-
+			float halfSize = BoardManager.tileSize / 2;//0.75 in this case
+			float wallDist = 0.75f, shortDist = 2.25f, midDist = 6.75f, longDist = 12.75f;
+			//the old way:
+			//frontDist = halfSize + (front - 1) * BoardManager.tileSize;
+			//backDist = halfSize + (back - 1) * BoardManager.tileSize;
+			//leftDist = halfSize + (left - 1) * BoardManager.tileSize;
+			//rightDist = halfSize + (right - 1) * BoardManager.tileSize;
+			//the new way:
+			//front is still the raw data
 			frontDist = halfSize + (front - 1) * BoardManager.tileSize;
+			//the other three sides follows the short-medium-long format
 			backDist = halfSize + (back - 1) * BoardManager.tileSize;
 			leftDist = halfSize + (left - 1) * BoardManager.tileSize;
 			rightDist = halfSize + (right - 1) * BoardManager.tileSize;
+
 		}
 
 		public string all_jun_to_string(){
@@ -510,7 +519,7 @@ public class BoardManager : MonoBehaviour {
 		if (check_exit) {
 			Vector2 searchIdx = gridIdx;
 			while ((searchIdx.x > 0) && (searchIdx.x < columns+1) && (searchIdx.y > 0) && (searchIdx.y < rows+1)) {
-				if (_idx_is_equal (searchIdx, exitIdx)) {
+				if ( (_idx_is_equal (searchIdx, exitIdx))&&((int)(searchIdx - gridIdx).magnitude)<=result.front ){
 					result.exitpos = 3;
 					check_exit = false;
 					break;
@@ -526,7 +535,7 @@ public class BoardManager : MonoBehaviour {
 		if (check_exit) {
 			Vector2 searchIdx = gridIdx;
 			while ((searchIdx.x > 0) && (searchIdx.x < columns+1) && (searchIdx.y > 0) && (searchIdx.y < rows+1)) {
-				if (_idx_is_equal (searchIdx, exitIdx)) {
+				if ( (_idx_is_equal (searchIdx, exitIdx))&&((int)(searchIdx - gridIdx).magnitude)<=result.back ) {
 					result.exitpos = 4;
 					check_exit = false;
 					break;
@@ -544,7 +553,7 @@ public class BoardManager : MonoBehaviour {
 		if (check_exit) {
 			Vector2 searchIdx = gridIdx;
 			while ((searchIdx.x > 0) && (searchIdx.x < columns+1) && (searchIdx.y > 0) && (searchIdx.y < rows+1)) {
-				if (_idx_is_equal (searchIdx, exitIdx)) {
+				if ( (_idx_is_equal (searchIdx, exitIdx))&&((int)(searchIdx - gridIdx).magnitude)<=result.left ) {
 					result.exitpos = 1;
 					check_exit = false;
 					break;
@@ -560,7 +569,7 @@ public class BoardManager : MonoBehaviour {
 		if (check_exit) {
 			Vector2 searchIdx = gridIdx;
 			while ((searchIdx.x > 0) && (searchIdx.x < columns+1) && (searchIdx.y > 0) && (searchIdx.y < rows+1)) {
-				if (_idx_is_equal (searchIdx, exitIdx)) {
+				if ( (_idx_is_equal (searchIdx, exitIdx))&&((int)(searchIdx - gridIdx).magnitude)<=result.right ) {
 					result.exitpos = 2;
 					check_exit = false;
 					break;

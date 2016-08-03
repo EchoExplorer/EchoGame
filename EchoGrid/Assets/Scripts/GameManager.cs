@@ -116,6 +116,8 @@ public class GameManager : MonoBehaviour {
 		levelText.text = "Loading level " + level.ToString();
 		LoadSaved ();
 		boardScript.SetupScene (level);
+
+		checkEchoFiles ();
 	}
 
 	//Hides black image used between levels
@@ -151,6 +153,53 @@ public class GameManager : MonoBehaviour {
 		//}
 	}
 
+	public void checkEchoFiles(){
+		String prefix = "C00-0"; //change this prefix when you change the echo files
+		String filename, filename2, filename3;
+		/*
+		float step = 1.5f;
+		float max_dist = 0.75f + 1.5f * 8;
+		string[] types = new string[]{"D", "ER", "EL", "US",};
+		for (int f_dist = 0.75f; f_dist < max_dist; f_dist += step) {
+			for (int b_dist = 0.75f; b_dist < max_dist - f_dist; b_dist += step) {
+				for (int l_dist = 0.75f; l_dist < max_dist; l_dist += step) {
+					for (int r_dist = 0.75f; r_dist < max_dist - l_dist; r_dist += step) {
+						
+					}
+				}
+			}
+		}
+
+		filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix, 
+			data.frontDist, front_type, data.backDist, "D",
+			data.leftDist, left_type, data.rightDist, right_type);
+		filename2 = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix, 
+			data.frontDist, front_type, data.backDist, "na",
+			data.leftDist, left_type, data.rightDist, right_type);
+		filename3 = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix, 
+			data.frontDist, front_type, data.backDist, "US",
+			data.leftDist, left_type, data.rightDist, right_type);
+
+		//try all three files
+		AudioClip echo = Resources.Load ("echoes/" + filename) as AudioClip;
+		lastEcho = filename;
+
+		if (echo == null) {
+			echo = Resources.Load ("echoes/" + filename2) as AudioClip;
+			lastEcho = filename2;
+		}
+		if (echo == null) {
+			echo = Resources.Load ("echoes/" + filename3) as AudioClip;
+			lastEcho = filename3;
+		}
+		SoundManager.instance.PlayEcho (echo);
+
+		UnityEngine.Debug.Log (lastEcho);
+		UnityEngine.Debug.Log (data.all_jun_to_string ());
+		if (echo == null)
+			UnityEngine.Debug.Log ("Echo not found");
+		*/
+	}
 
 	public void GameOver() {
 		enabled = false;
