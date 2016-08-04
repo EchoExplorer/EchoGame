@@ -101,6 +101,8 @@ public class Player : MovingObject
 
 		//Import key parameters into RSA.
 		encrypter.ImportParameters (RSAKeyInfo);
+
+		//UnityEngine.Debug.Log (encrypt ("This is a test String"));
 	}
 
 	private String encrypt (String encryptThis)
@@ -208,7 +210,6 @@ public class Player : MovingObject
 		//	level_already_loaded = true;
 			//Initialize data collection variables
 			initData ();
-			initEncrypt ();
 			//Initialize list of crash locations
 			crashLocs = "";
 			curLevel = GameManager.instance.level;
