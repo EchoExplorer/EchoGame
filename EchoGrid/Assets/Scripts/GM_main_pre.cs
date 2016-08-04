@@ -22,6 +22,8 @@ public class GM_main_pre : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		Screen.orientation = ScreenOrientation.Landscape;
+
 		GameObject.Find ("GameMode").GetComponent <GameMode>().init ();
 		//load instruction clips
 		clips = new AudioClip[total_clip];
@@ -115,7 +117,7 @@ public class GM_main_pre : MonoBehaviour {
 
 		//Check if we are running on iOS, Android, Windows Phone 8 or Unity iPhone
 		#elif UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
-
+			
 		float ECHO_TOUCH_TIME = 0.2f;
 		float TOUCH_TIME = 0.02f;
 		float MENU_TOUCH_TIME = 1.5f;

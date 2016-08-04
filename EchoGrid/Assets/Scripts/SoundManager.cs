@@ -8,6 +8,7 @@ public class SoundManager : MonoBehaviour {
 	public AudioSource echoSource;
 	public static SoundManager instance = null;		//Allows other scripts to call functions from SoundManager.				
 	int max_sfx_playing = 5;
+	bool voice_adjusted = false;
 
 	void Awake ()
 	{
@@ -29,7 +30,26 @@ public class SoundManager : MonoBehaviour {
 		DontDestroyOnLoad (gameObject);
 	}
 	
-	
+
+	void Update(){
+		if (!voice_adjusted) {
+			for (int i = 0; i < efxSource.Length; ++i) {
+				if (efxSource [i] != null) {
+					efxSource [i].volume = 0.5f;
+					voice_adjusted = true;
+				} else {
+					voice_adjusted = false;
+					return;
+				}
+			}
+			if (voiceSource != null) {
+				voiceSource.volume = 0.3f;
+				voice_adjusted = true;
+			} else
+				voice_adjusted = false;
+		}
+	}
+
 	//Used to play single sound clips.
 	public void PlaySingle(AudioClip clip){
 		//Set the clip of our efxSource audio source to the clip passed in as a parameter.

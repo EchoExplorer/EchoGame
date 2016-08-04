@@ -71,8 +71,15 @@ public class GameManager : MonoBehaviour {
 					level = 12;
 				else//load specific save for tutorial
 					level = 1;
-			}else
+			} else {
 				level = saved_level;
+				if (GameMode.instance.get_mode () != GameMode.Game_Mode.TUTORIAL) {
+					if ((level < 12) || (level > 150))
+						level = 12;
+				}else//load specific save for tutorial
+					if ((level < 1) || (level > 11))
+						level = 1;
+			}
 		}
 		return true;
 	}
