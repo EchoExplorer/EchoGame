@@ -86,10 +86,10 @@ public class Player : MovingObject
 
 	private void initEncrypt ()
 	{
-		string publicKeyString = "iqKXThQvzLKgG0FQXuznGk4nEyFlE9VGmFIzkQyX9n3giHXJoqln4pZASPH3XnJX7ZOxmXXGskjrAYXLD2BZ8eZFkEmNj0GTC9kbDZzcjd+3Lc6P32J7MjfD7dIyPH8IUB9ELtL2MZ36kZrLrf3c2q2pQIl4s5k0Ro2F2aXWB+s=";
+		string publicKeyString = "MIGdMA0GCSqGSIb3DQEBAQUAA4GLADCBhwKBgQC1hBlMytDpiLGqCNGfx+IvbRH9edqFcxJoL5CuEPOjr31u9PXTgtSuZhldKc9KpPR4j62M6+UxSs9abDd1/C0txQEB4Jxe/FPMOBmlvNHNHLw6htPx5JRHzN1cegi3W6Qd8YRMi3XfSx5tGx0NNLxuf+EDrE5NIVUdp0hpQ7yMFQIBAw==";
 		byte[] publicKeyBytes = Convert.FromBase64String (publicKeyString);
 
-		byte[] Exponent = { 17 };
+		byte[] Exponent = {3};
 
 
 		//Create a new instance of RSAParameters.
@@ -366,7 +366,7 @@ public class Player : MovingObject
 		echoForm.AddField ("userName", encrypt (SystemInfo.deviceUniqueIdentifier));
 		echoForm.AddField ("currentLevel", encrypt (curLevel.ToString ()));
 		echoForm.AddField ("trackCount", encrypt (GameManager.instance.boardScript.local_stats[curLevel].ToString()));
-		echoForm.AddField ("echo", encrypt (lastEcho));
+		echoForm.AddField ("echo", lastEcho); //fix
 		echoForm.AddField ("echoLocation", encrypt (location));
 		echoForm.AddField ("postEchoAction", encrypt (post_act));
 		echoForm.AddField ("dateTimeStamp", encrypt (System.DateTime.Now.ToString ()));
@@ -612,7 +612,7 @@ public class Player : MovingObject
 		levelCompleteForm.AddField ("endTime", encrypt (endTime.ToString ()));
 		levelCompleteForm.AddField ("timeElapsed", encrypt (accurateElapsed.ToString ("F3")));
 		levelCompleteForm.AddField ("exitAttempts", encrypt (exitAttempts.ToString ()));
-		levelCompleteForm.AddField ("asciiLevelRep", encrypt (GameManager.instance.boardScript.asciiLevelRep));
+		levelCompleteForm.AddField ("asciiLevelRep", GameManager.instance.boardScript.asciiLevelRep); //fix
 		levelCompleteForm.AddField ("levelRecord", encrypt (GameManager.instance.boardScript.gamerecord));
 
 		UnityEngine.Debug.Log (System.Text.Encoding.ASCII.GetString (levelCompleteForm.data));
