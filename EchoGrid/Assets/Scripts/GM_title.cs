@@ -12,9 +12,10 @@ public class GM_title : MonoBehaviour {
 	AudioClip swipeLeft;
 	//AudioClip to_tutorial;
 	AudioClip to_main;
-	AudioClip orit;
+	AudioClip[] orit;
 	AudioClip[] clips;
 	int cur_clip = 0;
+	int orti_clip = 0;
 	int total_clip = 2;
 	float time_interval = 2.0f;
 	bool isLandscape = true;
@@ -24,7 +25,9 @@ public class GM_title : MonoBehaviour {
 	void Start () {
 		Screen.orientation = ScreenOrientation.Landscape;
 		reset_audio = false;
-		orit = Resources.Load ("instructions/Please hold your phone horizontally for this game") as AudioClip;
+		orit = new AudioClip[2];
+		orit[0] = Resources.Load ("instructions/Please hold your phone horizontally for this game") as AudioClip;
+		orit[1] = Resources.Load ("instructions/2sec_silence") as AudioClip;
 		if ((Input.deviceOrientation == DeviceOrientation.LandscapeLeft) || (Input.deviceOrientation == DeviceOrientation.LandscapeRight))
 			isLandscape = true;
 		else if (Input.deviceOrientation == DeviceOrientation.Portrait)
@@ -51,7 +54,11 @@ public class GM_title : MonoBehaviour {
 					cur_clip = 0;
 			}
 		} else {
-			SoundManager.instance.PlayVoice (orit);
+			if (SoundManager.instance.PlayVoice (orit [orti_clip])) {
+				orti_clip += 1;
+				if (orti_clip >= orit.Length)
+					orti_clip = 0;
+			}
 		}
 	}
 

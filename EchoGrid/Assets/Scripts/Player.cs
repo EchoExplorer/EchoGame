@@ -446,6 +446,7 @@ public class Player : MovingObject
 	}
 
 	string post_act = "";
+	string correct_post_act = "";
 
 	private void reportOnEcho ()
 	{
@@ -454,6 +455,36 @@ public class Player : MovingObject
 
 		Vector2 idx_location = GameManager.instance.boardScript.get_idx_from_pos (transform.position);
 		string location = "(" + idx_location.x.ToString () + "," + idx_location.y.ToString () + ")";
+		correct_post_act = "";
+		GameManager.instance.boardScript.sol = "";
+		for(int i = 0; i < GameManager.instance.boardScript.searched_temp.Length; ++i)
+			GameManager.instance.boardScript.searched_temp[i] = false;
+		GameManager.instance.boardScript.solveMazeMid (idx_location,"s");
+		if(GameManager.instance.boardScript.sol.Length >= 2)
+			correct_post_act = GameManager.instance.boardScript.sol[GameManager.instance.boardScript.sol.Length-2].ToString();
+
+		Vector3 forward = old_dir;
+		Vector3 sol_dir = new Vector3 ();
+		if (correct_post_act == "u")
+			sol_dir = Vector3.up;
+		else if (correct_post_act == "d")
+			sol_dir = Vector3.down;
+		else if (correct_post_act == "l")
+			sol_dir = Vector3.left;
+		else if (correct_post_act == "r")
+			sol_dir = Vector3.right;
+
+		if (forward == sol_dir)
+			correct_post_act = "Forward";
+		else if (forward == -sol_dir)
+			correct_post_act = "Turn Around";
+		else {
+			Vector3 angle = Vector3.Cross (forward, sol_dir);
+			if(angle.z > 0)
+				correct_post_act = "Turn Left";
+			else 
+				correct_post_act = "Turn Right";
+		}
 
 		WWWForm echoForm = new WWWForm ();
 		echoForm.AddField ("userName", encrypt (SystemInfo.deviceUniqueIdentifier));
@@ -462,7 +493,7 @@ public class Player : MovingObject
 		echoForm.AddField ("echo", lastEcho); //fix
 		echoForm.AddField ("echoLocation", encrypt (location));
 		echoForm.AddField ("postEchoAction", encrypt (post_act));
-		echoForm.AddField ("correctAction", encrypt (post_act));
+		echoForm.AddField ("correctAction", encrypt (correct_post_act));
 		echoForm.AddField ("dateTimeStamp", encrypt (System.DateTime.Now.ToString ()));
 
 		UnityEngine.Debug.Log (System.Text.Encoding.ASCII.GetString (echoForm.data));
@@ -505,6 +536,7 @@ public class Player : MovingObject
 
 	//please call this function to rotate player
 	//use this with get_player_dir("SOMETHING")
+	Vector3 old_dir = new Vector3();
 	void rotateplayer (Vector3 dir)
 	{
 		if (dir == get_player_dir ("FRONT"))
@@ -536,6 +568,8 @@ public class Player : MovingObject
 
 	private void calculateMove (Vector3 dir)
 	{
+		old_dir = get_player_dir ("FRONT");
+
 		if (dir.magnitude == 0)
 			return;
 
@@ -548,9 +582,9 @@ public class Player : MovingObject
 			if (reportSent) {
 				post_act = "Turn ";
 				if(dir == get_player_dir("LEFT"))
-					post_act += "LEFT";
+					post_act += "Left";
 				else
-					post_act += "RIGHT";
+					post_act += "Right";
 
 				reportOnEcho ();
 				reportSent = false;
@@ -609,7 +643,7 @@ public class Player : MovingObject
 		}
 
 		if (reportSent) {
-			post_act = "Move Forward";
+			post_act = "Forward";
 			reportOnEcho ();
 			reportSent = false;
 		}
@@ -989,13 +1023,12 @@ public class Player : MovingObject
 			}
 			else{//at the pause menu
 				if(swp_dir == BoardManager.Direction.BACK){//turn on/of black screen
-					//TODO
 					if(GameManager.instance.levelImageActive)
 						GameManager.instance.HideLevelImage();
 					else
 						GameManager.instance.UnHideLevelImage();
 					at_pause_menu = false;
-					SoundManager.instance.PlaySingle(inputSFX);//shoule have another set of sound effect
+					SoundManager.instance.PlayVoice(menuOff, true);//shoule have another set of sound effect
 					debug_text.text += "BLACKEN SCREEN";
 				}else if(swp_dir == BoardManager.Direction.LEFT){//jump to tutorial
 					SoundManager.instance.PlaySingle(inputSFX);
