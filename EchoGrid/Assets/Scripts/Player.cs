@@ -87,21 +87,23 @@ public class Player : MovingObject
 
 	private void initEncrypt ()
 	{
-		string publicKeyString = "iqKXThQvzLKgG0FQXuznGk4nEyFlE9VGmFIzkQyX9n3giHXJoqln4pZASPH3XnJX7ZOxmXXGskjrAYXLD2BZ8eZFkEmNj0GTC9kbDZzcjd+3Lc6P32J7MjfD7dIyPH8IUB9ELtL2MZ36kZrLrf3c2q2pQIl4s5k0Ro2F2aXWB+s=";
+		string publicKeyString = "MIGdMA0GCSqGSIb3DQEBAQUAA4GLADCBhwKBgQC1hBlMytDpiLGqCNGfx+IvbRH9edqFcxJoL5CuEPOjr31u9PXTgtSuZhldKc9KpPR4j62M6+UxSs9abDd1/C0txQEB4Jxe/FPMOBmlvNHNHLw6htPx5JRHzN1cegi3W6Qd8YRMi3XfSx5tGx0NNLxuf+EDrE5NIVUdp0hpQ7yMFQIBAw==";
 		byte[] publicKeyBytes = Convert.FromBase64String (publicKeyString);
 
-		byte[] Exponent = { 17 };
+		byte[] Exponent = {3};
 
 
 		//Create a new instance of RSAParameters.
 		RSAParameters RSAKeyInfo = new RSAParameters ();
 
-		//Set RSAKeyInfo to the public key values. 
+		//Set RSAKeyInfo to the public key values.
 		RSAKeyInfo.Modulus = publicKeyBytes;
 		RSAKeyInfo.Exponent = Exponent;
 
 		//Import key parameters into RSA.
 		encrypter.ImportParameters (RSAKeyInfo);
+
+		//UnityEngine.Debug.Log (encrypt ("This is a test String"));
 	}
 
 	private String encrypt (String encryptThis)
@@ -116,7 +118,7 @@ public class Player : MovingObject
 	}
 
 	void Awake(){
-		
+
 		level_already_loaded = false;
 
 		if (instance == null)
@@ -139,7 +141,7 @@ public class Player : MovingObject
 		initEncrypt ();
 
 		/*
-		//TODO(agotsis/wenyuw1) Once the local database is integrated this hardcoding will go away. 
+		//TODO(agotsis/wenyuw1) Once the local database is integrated this hardcoding will go away.
 		numEcho1 = 0;
 		numEcho2 = 0;
 		numEcho3 = 0;
@@ -212,7 +214,6 @@ public class Player : MovingObject
 		//	level_already_loaded = true;
 			//Initialize data collection variables
 			initData ();
-			initEncrypt ();
 			//Initialize list of crash locations
 			crashLocs = "";
 			curLevel = GameManager.instance.level;
@@ -238,7 +239,7 @@ public class Player : MovingObject
 			base.Start ();
 		//}
 	}
-		
+
 	public enum DistRange{
 		SHORT,
 		MID,
@@ -248,7 +249,7 @@ public class Player : MovingObject
 	private void PlayEcho() {
 		tapped = true;
 		reportSent = true;
-		BoardManager.echoDistData data = 
+		BoardManager.echoDistData data =
 			GameManager.instance.boardScript.getEchoDistData (transform.position, get_player_dir ("FRONT"), get_player_dir ("LEFT"));
 
 		UnityEngine.Debug.Log (data.all_jun_to_string ());
@@ -281,7 +282,7 @@ public class Player : MovingObject
 			data.rightDist = longDist;
 */
 		/*
-		filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix, 
+		filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix,
 			data.frontDist, data.jun_to_string (data.fType), data.backDist, data.jun_to_string (data.bType),
 			data.leftDist, data.jun_to_string (data.lType), data.rightDist, data.jun_to_string (data.rType));
 		*/ //replace this to check what is behind you
@@ -315,7 +316,7 @@ public class Player : MovingObject
 		}
 
 		//search for the most accurate one first
-		filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix, 
+		filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix,
 			data.frontDist, front_type, data.backDist, "D",
 			data.leftDist, left_type, data.rightDist, right_type);
 		AudioClip echo = Resources.Load ("echoes/" + filename) as AudioClip;
@@ -390,10 +391,10 @@ public class Player : MovingObject
 							front_str [0] = front_type;
 							for (int bsi = 0; bsi < back_str.Length; ++bsi) {
 								for (int fsi = 0; fsi < front_str.Length; ++fsi) {
-									filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix, 
+									filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix,
 										0.75f + 1.5f*i, front_str[fsi], 0.75f + 1.5f*j, back_str[bsi],
 										0.75f + 1.5f*k, left_type, 0.75f + 1.5f*l, right_type);
-									
+
 									echo = Resources.Load ("echoes/" + filename) as AudioClip;
 									if (echo != null) {
 										lastEcho = filename;
@@ -420,7 +421,7 @@ public class Player : MovingObject
 
 		/*
 		//ignore back
-		filename = String.Format ("{0}_F-{1:F2}-{2}_L-{3:F2}-{4}_R-{5:F2}-{6}", prefix, 
+		filename = String.Format ("{0}_F-{1:F2}-{2}_L-{3:F2}-{4}_R-{5:F2}-{6}", prefix,
 			data.frontDist, data.jun_to_string (data.fType),
 			data.leftDist, data.jun_to_string (data.lType), data.rightDist, data.jun_to_string (data.rType));
 		*/
@@ -430,7 +431,7 @@ public class Player : MovingObject
 			SoundManager.instance.PlayEcho (echo);
 			UnityEngine.Debug.Log (lastEcho);
 		}
-		
+
 		/*
 		//TODO: Hotfix for test
 		int temp_dist = (int)data.frontDist;
@@ -458,7 +459,7 @@ public class Player : MovingObject
 		echoForm.AddField ("userName", encrypt (SystemInfo.deviceUniqueIdentifier));
 		echoForm.AddField ("currentLevel", encrypt (curLevel.ToString ()));
 		echoForm.AddField ("trackCount", encrypt (GameManager.instance.boardScript.local_stats[curLevel].ToString()));
-		echoForm.AddField ("echo", encrypt (lastEcho));
+		echoForm.AddField ("echo", lastEcho); //fix
 		echoForm.AddField ("echoLocation", encrypt (location));
 		echoForm.AddField ("postEchoAction", encrypt (post_act));
 		echoForm.AddField ("correctAction", encrypt (post_act));
@@ -498,7 +499,7 @@ public class Player : MovingObject
 			return -transform.up.normalized;
 
 		UnityEngine.Debug.Log ("INVALID direction string");
-		return Vector3.zero;		
+		return Vector3.zero;
 	}
 	*/
 
@@ -550,7 +551,7 @@ public class Player : MovingObject
 					post_act += "LEFT";
 				else
 					post_act += "RIGHT";
-				
+
 				reportOnEcho ();
 				reportSent = false;
 			}
@@ -574,7 +575,7 @@ public class Player : MovingObject
 	}
 
 	protected override bool AttemptMove <T> (int xDir, int yDir)
-	{	
+	{
 		//Call the AttemptMove method of the base class, passing in the component T (in this case Wall) and x and y direction to move.
 		bool canMove = base.AttemptMove <T> (xDir, yDir);
 		numSteps++;
@@ -687,7 +688,7 @@ public class Player : MovingObject
 		//TODO
 		//if numSteps > numOptimalSteps, then adjust score
 		//Calculate optimal steps by getting start position and end position
-		//and calculate the number of steps 
+		//and calculate the number of steps
 
 
 		//TODO(agotsis) understand this. Reimplement.
@@ -770,7 +771,7 @@ public class Player : MovingObject
 	{
 		yield return www;
 
-		//Check for errors 
+		//Check for errors
 		if (www.error == null) {
 			JSONNode data = JSON.Parse (www.data);
 			//Debug.Log("this is the parsed json data: " + data["testData"]);
@@ -891,7 +892,7 @@ public class Player : MovingObject
 			TouchTapCount = 0;
 		}
 
-		debug_text.text = "numTOuches: " + numTouches.ToString() + "\n" 
+		debug_text.text = "numTOuches: " + numTouches.ToString() + "\n"
 						+ "PauseMenuOn: " + at_pause_menu.ToString() + "\n"
 						+ "Tap Count: " + TouchTapCount.ToString() + "\n";
 
@@ -905,10 +906,10 @@ public class Player : MovingObject
 				TouchTapCount += myTouch.tapCount;
 			}
 
-			debug_text.text = "numTOuches: " + numTouches.ToString() + "\n" 
+			debug_text.text = "numTOuches: " + numTouches.ToString() + "\n"
 							+ "PauseMenuOn: " + at_pause_menu.ToString() + "\n"
 							+ "Tap Count: " + TouchTapCount.ToString() + "\n";
-				
+
 			//Check if the phase of that touch equals Began
 			if (myTouch.phase == TouchPhase.Began){
 				//If so, set touchOrigin to the position of that touch
@@ -922,7 +923,7 @@ public class Player : MovingObject
 				//Set touchEnd to equal the position of this touch
 				touchEndpos = myTouch.position;
 				float x = touchEndpos.x - touchOrigin.x;
-				float y = touchEndpos.y - touchOrigin.y;		
+				float y = touchEndpos.y - touchOrigin.y;
 
 				if (Mathf.Abs(x) > Mathf.Abs(y) && Mathf.Abs(x) >= minSwipeDist){//right & left
 					if (x > 0)//right
@@ -1005,7 +1006,7 @@ public class Player : MovingObject
 					SoundManager.instance.PlaySingle(inputSFX);
 					Destroy(GameObject.Find("GameManager"));
 					SceneManager.LoadScene("Title_Screen");
-				}					
+				}
 			}
 		}else if( (numTouches == touch_audio)&&(swp_dir != BoardManager.Direction.OTHER) ){//skip/repeat sudio
 			if(swp_dir == BoardManager.Direction.LEFT){//repeat instruction
@@ -1031,11 +1032,11 @@ public class Player : MovingObject
 				menuUpdatedThisTouch = true;
 			}
 		}
-			
+
 		#endif //End of mobile platform dependendent compilation section started above with #elif
 		calculateMove (dir);
 	}
-				
+
 	//Returns a description of the location of the crash (for analysis)
 	//Currently, the ouput is from the following list of options
 	//["End of the Corridor", "Intersection of 2 Corridors", "Start of the Corridor",
@@ -1120,7 +1121,7 @@ public class Player : MovingObject
 		if ((xLoc == (int)exitSign.transform.position.x) & (yLoc == (int)exitSign.transform.position.y)) {
 			return "Crashed while on the Exit Sign";
 		}
-		//TODO(agotsis/wenyuw1) This hardcoding needs to go away. Mainly here to test the database.  
+		//TODO(agotsis/wenyuw1) This hardcoding needs to go away. Mainly here to test the database.
 		//For the x direction
 		if ((distXUp == 7) & (distXDown == 1) & (distYUp == 1) & (distYDown == 1)) {
 			return "Start of the Corridor";

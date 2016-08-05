@@ -2,7 +2,8 @@
 
 import sqlite3, csv, datetime
 
-rootPath = "http://merichar-dev.eberly.cmu.edu:81/"
+rootPath = "http://echolock.andrew.cmu.edu/srvData/"
+dataRoot = '/var/www/srvData/'
 
 time = str(datetime.datetime.now())
 
@@ -12,26 +13,26 @@ db.commit()
 
 data = cursor.execute("SELECT * FROM LevelData")
 levelOut = "levelOutput " + time + ".csv"
-with open('/var/www/' + levelOut, 'wb') as f:
+with open(dataRoot + levelOut, 'wb') as f:
     writer = csv.writer(f)
-    writer.writerow(['rowID' ,'userName', 'currentLevel','crashCount',
-'stepCount', 'timeElapsed', 'startTime', 'endTime', 'asciiLevelRep', 
-'levelRecord', 'serverDateTimeStamp'])
+    writer.writerow(['rowID' ,'userName', 'currentLevel', 'trackCount', 'crashCount',
+                     'stepCount', 'timeElapsed', 'startTime', 'endTime', 'asciiLevelRep', 
+                     'levelRecord', 'serverDateTimeStamp'])
     writer.writerows(data)
 
 data = cursor.execute("SELECT * FROM EchoData")
 echoOut = "echoOutput " + time + ".csv"
-with open('/var/www/' + echoOut, 'wb') as f:
+with open(dataRoot + echoOut, 'wb') as f:
     writer = csv.writer(f)
-    writer.writerow(['rowID' ,'userName', 'currentLevel','echo',
-'echoLocation', 'dateTimeStamp'])
+    writer.writerow(['rowID' ,'userName', 'currentLevel', 'trackCount', 'echo',
+                     'echoLocation', 'postEchoAction', 'correctAction', 'dateTimeStamp'])
     writer.writerows(data)
 
 data = cursor.execute("SELECT * FROM CrashData")
 crashOut = "crashOutput " + time + ".csv"
-with open('/var/www/' + crashOut, 'wb') as f:
+with open(dataRoot + crashOut, 'wb') as f:
     writer = csv.writer(f)
-    writer.writerow(['rowID' ,'userName', 'currentLevel', 'crashNumber',
+    writer.writerow(['rowID' ,'userName', 'currentLevel', 'trackCount',  'crashNumber',
 'crashLocation', 'dateTimeStamp'])
     writer.writerows(data)
 
