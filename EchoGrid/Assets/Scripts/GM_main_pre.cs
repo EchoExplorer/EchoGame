@@ -69,7 +69,7 @@ public class GM_main_pre : MonoBehaviour {
 
 	float multiTapStartTime;
 	int TouchTapCount;
-	const float multiTapCD = 0.2f;//make multitap easier
+	const float multiTapCD = 0.4f;//make multitap easier
 	const float menuUpdateCD = 0.5f;//shortest time between turn on/off pause menu
 	bool swp_lock = false;//stop very fast input
 	AudioClip inputSFX;
@@ -140,11 +140,6 @@ public class GM_main_pre : MonoBehaviour {
 			//Store the first touch detected.
 			myTouch = Input.touches[0];
 
-			//update TouchTapCount part 2
-			if( (Time.time - multiTapStartTime) < multiTapCD ){
-				TouchTapCount += myTouch.tapCount;
-			}
-
 			//Check if the phase of that touch equals Began
 			if (myTouch.phase == TouchPhase.Began){
 				//If so, set touchOrigin to the position of that touch
@@ -169,6 +164,11 @@ public class GM_main_pre : MonoBehaviour {
 						swp_dir = BoardManager.Direction.BACK;
 				}
 
+				//update TouchTapCount part 2
+				if( (Time.time - multiTapStartTime) < multiTapCD ){
+					TouchTapCount += myTouch.tapCount;
+				}
+
 				swp_lock = false;//flip the lock, until we find another TouchPhase.Began
 			}
 		}
@@ -177,7 +177,7 @@ public class GM_main_pre : MonoBehaviour {
 						+ "TouchTapCount: " + TouchTapCount.ToString() + "\n"
 						+ "at_confirm: " + at_confirm.ToString() + "\n";
 
-
+		//process the data
 		if(Time.time - menuTapTime >= menuUpdateCD){
 			menuTapTime= Time.time;
 			if( (!at_confirm)&&(TouchTapCount >= 2)&&(swp_dir == BoardManager.Direction.OTHER) ){
@@ -185,15 +185,16 @@ public class GM_main_pre : MonoBehaviour {
 				reset_audio = true;
 				at_confirm = true;
 				SoundManager.instance.PlaySingle(inputSFX);
+				TouchTapCount = 0;
 			}else if( (at_confirm)&&(TouchTapCount >= 2)&&(swp_dir == BoardManager.Direction.OTHER) ){
 				cur_clip = 0;
 				reset_audio = true;
 				at_confirm = false;
 				SoundManager.instance.PlaySingle(inputSFX);
+				TouchTapCount = 0;
 			}
 		}
 
-		//process the data
 		if(numTouches > 0){//turn, get echo, etc.
 			if(!at_confirm){
 				if(swp_dir == BoardManager.Direction.RIGHT){
@@ -212,7 +213,6 @@ public class GM_main_pre : MonoBehaviour {
 				}
 			}
 		}
-
 		#endif //End of mobile platform dependendent compilation section started above with #elif	
 	}
 }

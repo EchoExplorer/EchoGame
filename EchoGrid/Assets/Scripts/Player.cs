@@ -14,6 +14,12 @@ using UnityEngine.SceneManagement;
 //Player inherits from MovingObject, our base class for objects that can move, Enemy also inherits from this.
 public class Player : MovingObject
 {
+	public enum dist_type{
+		WALL,
+		SHORT,
+		MID,
+		LONG,
+	}
 
 	public static Player instance;
 	public float restartLevelDelay = 3.0f;
@@ -246,6 +252,27 @@ public class Player : MovingObject
 		LONG,
 	}
 
+	private string _dist_type_to_string(dist_type type){
+		switch (type) {
+		case dist_type.WALL:
+			return "w";
+			break;
+		case dist_type.SHORT:
+			return "s";
+			break;
+		case dist_type.MID:
+			return "m";
+			break;
+		case dist_type.LONG:
+			return "l";
+			break;
+		default:
+			break;
+		}
+
+		return "na";
+	}
+
 	private void PlayEcho() {
 		tapped = true;
 		reportSent = true;
@@ -257,50 +284,41 @@ public class Player : MovingObject
 		String prefix = "C00-0"; //change this prefix when you change the echo files
 		String filename;
 		float wallDist = 0.75f, shortDist = 2.25f, midDist = 6.75f, longDist = 12.75f;
+		dist_type b_dtype, l_dtype, r_dtype;
+		string front_type = data.jun_to_string(data.fType), back_type = "D", left_type = "D", right_type = "D";
+
 		//catogrize the distance
 		//back
-		/*
-		if (data.backDist <= shortDist)
-			data.backDist = shortDist;
+		if (data.backDist <= wallDist)
+			b_dtype = dist_type.WALL;
+		else if ((data.backDist > wallDist) && (data.backDist <= shortDist))
+			b_dtype = dist_type.SHORT;
 		else if ((data.backDist > shortDist) && (data.backDist <= midDist))
-			data.backDist = midDist;
-		else if ((data.backDist > midDist) && (data.backDist <= longDist))
-			data.backDist = longDist;
+			b_dtype = dist_type.MID;
+		else
+			b_dtype = dist_type.LONG;
 		//left
-		if ((data.leftDist > wallDist)&&(data.leftDist <= shortDist))
-			data.leftDist = shortDist;
+		if (data.leftDist <= wallDist)
+			l_dtype = dist_type.WALL;
+		else if ((data.leftDist > wallDist) && (data.leftDist <= shortDist))
+			l_dtype = dist_type.SHORT;
 		else if ((data.leftDist > shortDist) && (data.leftDist <= midDist))
-			data.leftDist = midDist;
-		else if ((data.leftDist > midDist) && (data.leftDist <= longDist))
-			data.leftDist = longDist;
+			l_dtype = dist_type.MID;
+		else
+			l_dtype = dist_type.LONG;
 		//right
-		if ((data.rightDist > wallDist)&&(data.rightDist <= shortDist))
-			data.rightDist = shortDist;
+		if (data.rightDist <= wallDist)
+			r_dtype = dist_type.WALL;
+		else if ((data.rightDist > wallDist) && (data.rightDist <= shortDist))
+			r_dtype = dist_type.SHORT;
 		else if ((data.rightDist > shortDist) && (data.rightDist <= midDist))
-			data.rightDist = midDist;
-		else if ((data.rightDist > midDist) && (data.rightDist <= longDist))
-			data.rightDist = longDist;
-*/
-		/*
-		filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix,
-			data.frontDist, data.jun_to_string (data.fType), data.backDist, data.jun_to_string (data.bType),
-			data.leftDist, data.jun_to_string (data.lType), data.rightDist, data.jun_to_string (data.rType));
-		*/ //replace this to check what is behind you
-
-		//this is the full filename, if back is not D or Stairs, it will be "na"
-		string back_type = "D", front_type = "", left_type = "", right_type = "";
-		if( (data.bType != BoardManager.JunctionType.DEADEND)&&(data.exitpos != 4) )
-			back_type = "na";
-		if (data.exitpos != 1)
-			left_type = "D";
-		if (data.exitpos != 2)
-			right_type = "D";
-		if (data.exitpos != 3)
-			front_type = data.jun_to_string (data.fType);
+			r_dtype = dist_type.MID;
+		else
+			r_dtype = dist_type.LONG;
 
 		switch (data.exitpos) {
 		case 1://left
-			left_type = "US";
+			left_type= "US";
 			break;
 		case 2://right
 			right_type = "US";
@@ -315,92 +333,134 @@ public class Player : MovingObject
 			break;
 		}
 
-		//search for the most accurate one first
 		filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix,
-			data.frontDist, front_type, data.backDist, "D",
-			data.leftDist, left_type, data.rightDist, right_type);
+			data.frontDist, front_type, _dist_type_to_string(b_dtype), "D",
+			_dist_type_to_string(l_dtype), left_type, _dist_type_to_string(r_dtype), right_type);
 		AudioClip echo = Resources.Load ("echoes/" + filename) as AudioClip;
 		lastEcho = filename;
 
-		DistRange fr, br, lr, rr;
-		int fr_start, fr_end, br_start, br_end, lr_start, lr_end, rr_start, rr_end;
+
 		if (echo == null) {
-			if (data.front <= 3) {
-				fr = DistRange.SHORT;
-				fr_start = 0;
-				fr_end = 3;
-			} else if ((data.front > 3) && (data.front <= 5)) {
-				fr = DistRange.MID;
-				fr_start = 4;
-				fr_end = 5;
-			} else {
-				fr = DistRange.LONG;
-				fr_start = 6;
-				fr_end = 10;
+			UnityEngine.Debug.Log (filename);
+			UnityEngine.Debug.Log ("did not find accurate one, searching");
+				//Old version
+			//this is the full filename, if back is not D or Stairs, it will be "na"
+				back_type = "D"; front_type = ""; left_type = ""; right_type = "";
+			if( (data.bType != BoardManager.JunctionType.DEADEND)&&(data.exitpos != 4) )
+				back_type = "na";
+			if (data.exitpos != 1)
+				left_type = "D";
+			if (data.exitpos != 2)
+				right_type = "D";
+			if (data.exitpos != 3)
+				front_type = data.jun_to_string (data.fType);
+
+			switch (data.exitpos) {
+			case 1://left
+				left_type = "US";
+				break;
+			case 2://right
+				right_type = "US";
+				break;
+			case 3://front
+				front_type = "US";
+				break;
+			case 4://back
+				back_type = "US";
+				break;
+			default:
+				break;
 			}
 
-			if (data.back <= 3) {
-				br = DistRange.SHORT;
-				br_start = 0;
-				br_end = 3;
-			} else if ((data.back > 3) && (data.back <= 5)) {
-				br = DistRange.MID;
-				br_start = 4;
-				br_end = 5;
-			} else {
-				br = DistRange.LONG;
-				br_start = 6;
-				br_end = 10;
-			}
+			//search for the most accurate one first
+			filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix,
+				data.frontDist, front_type, data.backDist, "D",
+				data.leftDist, left_type, data.rightDist, right_type);
+			echo = Resources.Load ("echoes/" + filename) as AudioClip;
+			lastEcho = filename;
 
-			if (data.left <= 3) {
-				lr = DistRange.SHORT;
-				lr_start = 0;
-				lr_end = 3;
-			} else if ((data.left > 3) && (data.left <= 5)) {
-				lr = DistRange.MID;
-				lr_start = 4;
-				lr_end = 5;
-			} else {
-				lr = DistRange.LONG;
-				lr_start = 6;
-				lr_end = 10;
-			}
+			DistRange fr, br, lr, rr;
+			int fr_start, fr_end, br_start, br_end, lr_start, lr_end, rr_start, rr_end;
+			if (echo == null) {
+				if (data.front <= 3) {
+					fr = DistRange.SHORT;
+					fr_start = 0;
+					fr_end = 3;
+				} else if ((data.front > 3) && (data.front <= 5)) {
+					fr = DistRange.MID;
+					fr_start = 4;
+					fr_end = 5;
+				} else {
+					fr = DistRange.LONG;
+					fr_start = 6;
+					fr_end = 10;
+				}
 
-			if (data.right <= 3) {
-				rr = DistRange.SHORT;
-				rr_start = 0;
-				rr_end = 3;
-			} else if ((data.right > 3) && (data.right <= 5)) {
-				rr = DistRange.MID;
-				rr_start = 4;
-				rr_end = 5;
-			} else {
-				rr = DistRange.LONG;
-				rr_start = 6;
-				rr_end = 10;
-			}
+				if (data.back <= 3) {
+					br = DistRange.SHORT;
+					br_start = 0;
+					br_end = 3;
+				} else if ((data.back > 3) && (data.back <= 5)) {
+					br = DistRange.MID;
+					br_start = 4;
+					br_end = 5;
+				} else {
+					br = DistRange.LONG;
+					br_start = 6;
+					br_end = 10;
+				}
 
-			bool found = false;
-			string[] back_str = new string[3]{"D", "na", "US"};
-			string[] front_str = new string[2]{"", "D"};
-			for (int i = fr_start; i <= fr_end; ++i) {
-				for (int j = br_start; j <= br_end; ++j) {
-					for (int k = lr_start; k <= lr_end; ++k) {
-						for (int l = rr_start; l <= rr_end; ++l) {
-							front_str [0] = front_type;
-							for (int bsi = 0; bsi < back_str.Length; ++bsi) {
-								for (int fsi = 0; fsi < front_str.Length; ++fsi) {
-									filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix,
-										0.75f + 1.5f*i, front_str[fsi], 0.75f + 1.5f*j, back_str[bsi],
-										0.75f + 1.5f*k, left_type, 0.75f + 1.5f*l, right_type);
+				if (data.left <= 3) {
+					lr = DistRange.SHORT;
+					lr_start = 0;
+					lr_end = 3;
+				} else if ((data.left > 3) && (data.left <= 5)) {
+					lr = DistRange.MID;
+					lr_start = 4;
+					lr_end = 5;
+				} else {
+					lr = DistRange.LONG;
+					lr_start = 6;
+					lr_end = 10;
+				}
 
-									echo = Resources.Load ("echoes/" + filename) as AudioClip;
-									if (echo != null) {
-										lastEcho = filename;
-										found = true;
-										break;
+				if (data.right <= 3) {
+					rr = DistRange.SHORT;
+					rr_start = 0;
+					rr_end = 3;
+				} else if ((data.right > 3) && (data.right <= 5)) {
+					rr = DistRange.MID;
+					rr_start = 4;
+					rr_end = 5;
+				} else {
+					rr = DistRange.LONG;
+					rr_start = 6;
+					rr_end = 10;
+				}
+
+				bool found = false;
+				string[] back_str = new string[3]{"D", "na", "US"};
+				string[] front_str = new string[2]{"", "D"};
+				for (int i = fr_start; i <= fr_end; ++i) {
+					for (int j = br_start; j <= br_end; ++j) {
+						for (int k = lr_start; k <= lr_end; ++k) {
+							for (int l = rr_start; l <= rr_end; ++l) {
+								front_str [0] = front_type;
+								for (int bsi = 0; bsi < back_str.Length; ++bsi) {
+									for (int fsi = 0; fsi < front_str.Length; ++fsi) {
+										filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix,
+											0.75f + 1.5f*i, front_str[fsi], 0.75f + 1.5f*j, back_str[bsi],
+											0.75f + 1.5f*k, left_type, 0.75f + 1.5f*l, right_type);
+
+										echo = Resources.Load ("echoes/" + filename) as AudioClip;
+										if (echo != null) {
+											lastEcho = filename;
+											found = true;
+											break;
+										}
 									}
+									if (found)
+										break;
 								}
 								if (found)
 									break;
@@ -414,26 +474,20 @@ public class Player : MovingObject
 					if (found)
 						break;
 				}
-				if (found)
-					break;
 			}
 		}
 
-		/*
-		//ignore back
-		filename = String.Format ("{0}_F-{1:F2}-{2}_L-{3:F2}-{4}_R-{5:F2}-{6}", prefix,
-			data.frontDist, data.jun_to_string (data.fType),
-			data.leftDist, data.jun_to_string (data.lType), data.rightDist, data.jun_to_string (data.rType));
-		*/
-		if (echo == null)
+		if (echo == null) {
 			UnityEngine.Debug.Log ("Echo not found");
+			UnityEngine.Debug.Log (lastEcho);
+		}
 		else {
 			SoundManager.instance.PlayEcho (echo);
 			UnityEngine.Debug.Log (lastEcho);
 		}
 
 		/*
-		//TODO: Hotfix for test
+		//Hotfix for test
 		int temp_dist = (int)data.frontDist;
 		if (temp_dist < 1)
 			temp_dist = 1;
@@ -617,7 +671,7 @@ public class Player : MovingObject
 		if (!canMove) {
 			GameManager.instance.boardScript.gamerecord += "C";
 			//if(!SoundManager.instance.isBusy())
-			SoundManager.instance.PlaySingle (wallHit);
+			SoundManager.instance.playcrash (wallHit);
 			//Increment the crash count
 			numCrashes++;
 			//Decrement the step count (as no successful step was made)
@@ -833,7 +887,7 @@ public class Player : MovingObject
 	//tap is how many times player tap the screen
 	int tap_simple, tap_exit, tap_menu;
 	int TouchTapCount;
-	const float multiTapCD = 0.014f;//make multitap easier
+	const float multiTapCD = 0.4f;//make multitap easier
 	const float echoCD = 0.3f;//shortest time between two PlayEcho() calls
 	const float menuUpdateCD = 0.5f;//shortest time between turn on/off pause menu
 	bool echoPlayedThisTouch;//echo will only play once duriing one touch, so if you hold your finger on the screen, echo will not repeat
@@ -909,7 +963,7 @@ public class Player : MovingObject
 		//Check if we are running on iOS, Android, Windows Phone 8 or Unity iPhone
 		#elif UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
 
-		float ECHO_TOUCH_TIME = 0.1f;
+		float ECHO_TOUCH_TIME = 0.15f;
 		float TOUCH_TIME = 0.02f;
 		float MENU_TOUCH_TIME = 1.5f;
 		//Check if Input has registered more than zero touches
@@ -934,11 +988,6 @@ public class Player : MovingObject
 		if (numTouches > 0) {
 			//Store the first touch detected.
 			myTouch = Input.touches[0];
-
-			//update TouchTapCount part 2
-			if( (Time.time - multiTapStartTime) < multiTapCD ){
-				TouchTapCount += myTouch.tapCount;
-			}
 
 			debug_text.text = "numTOuches: " + numTouches.ToString() + "\n"
 							+ "PauseMenuOn: " + at_pause_menu.ToString() + "\n"
@@ -973,6 +1022,7 @@ public class Player : MovingObject
 					numSteps++;
 				}
 
+				/*
 				if((swp_dir == BoardManager.Direction.OTHER)&&(!echoPlayedThisTouch)){
 					echoPlayedThisTouch = true;
 					GameManager.instance.boardScript.gamerecord += "E{";
@@ -980,6 +1030,12 @@ public class Player : MovingObject
 					GameManager.instance.boardScript.gamerecord += lastEcho;
 					GameManager.instance.boardScript.gamerecord += "}";
 					debug_text.text += "PLAY ECHO";
+				}
+				*/
+
+				//update TouchTapCount part 2
+				if( (Time.time - multiTapStartTime) < multiTapCD ){
+					TouchTapCount += myTouch.tapCount;
 				}
 
 				swp_lock = false;//flip the lock, until we find another TouchPhase.Began
@@ -1031,12 +1087,12 @@ public class Player : MovingObject
 					SoundManager.instance.PlayVoice(menuOff, true);//shoule have another set of sound effect
 					debug_text.text += "BLACKEN SCREEN";
 				}else if(swp_dir == BoardManager.Direction.LEFT){//jump to tutorial
-					SoundManager.instance.PlaySingle(inputSFX);
+					SoundManager.instance.playcrash(inputSFX);
 					GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
 					Destroy(GameObject.Find("GameManager"));
 					SceneManager.LoadScene("Main");
 				}else if(swp_dir == BoardManager.Direction.RIGHT){//quit to main menu
-					SoundManager.instance.PlaySingle(inputSFX);
+					SoundManager.instance.playcrash(inputSFX);
 					Destroy(GameObject.Find("GameManager"));
 					SceneManager.LoadScene("Title_Screen");
 				}
@@ -1051,7 +1107,7 @@ public class Player : MovingObject
 			}
 		}else if( (numTouches == touch_menu)&&(Mathf.Abs(Time.time - touchTime) > MENU_TOUCH_TIME)&&(!menuUpdatedThisTouch) ){
 			if(Time.time - menuTapTime >= menuUpdateCD){
-				SoundManager.instance.PlaySingle(inputSFX);
+				SoundManager.instance.playcrash(inputSFX);
 				if(!at_pause_menu){//turn on/off pause menu
 					at_pause_menu = true;
 					SoundManager.instance.PlayVoice(menuOn, true);
@@ -1202,7 +1258,7 @@ public class Player : MovingObject
 		//Set hitWall to equal the component passed in as a parameter.
 		Wall hitWall = component as Wall;
 		//if(!SoundManager.instance.isBusy())
-		SoundManager.instance.PlaySingle (wallHit);
+		SoundManager.instance.playcrash (wallHit);
 	}
 
 	protected override void OnMove ()

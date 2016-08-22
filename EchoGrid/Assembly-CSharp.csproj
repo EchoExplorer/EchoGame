@@ -58,6 +58,7 @@
      <Compile Include="Assets\Scripts\UICanvas.cs" />
      <Compile Include="Assets\Scripts\Utilities.cs" />
      <Compile Include="Assets\Scripts\Wall.cs" />
+     <None Include="Assets\Resources\mission_echos.txt" />
      <None Include="Assets\Fonts\OFL.txt" />
      <None Include="Assets\Resources\GameData\test.txt" />
      <None Include="Assets\Resources\GameData\voices.txt" />

@@ -2,14 +2,14 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Player.cs">
     <Files>
-      <File FileName="Assets\Scripts\BoardManager.cs" Line="967" Column="69" />
-      <File FileName="Assets\Scripts\Player.cs" Line="1035" Column="63" />
-      <File FileName="Assets\Scripts\GM_title.cs" Line="58" Column="20" />
-      <File FileName="Assets\Scripts\GameManager.cs" Line="90" Column="1" />
+      <File FileName="Assets\Scripts\GM_main_pre.cs" Line="192" Column="24" />
+      <File FileName="Assets\Scripts\Player.cs" Line="1059" Column="55" />
+      <File FileName="Assets\Scripts\BoardManager.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\GM_title.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\GameManager.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\GameMode.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\Utilities.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\SoundManager.cs" Line="36" Column="48" />
-      <File FileName="Assets\Scripts\GM_main_pre.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\SoundManager.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\UICanvas.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
