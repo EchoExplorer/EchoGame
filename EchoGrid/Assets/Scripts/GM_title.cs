@@ -12,13 +12,27 @@ public class GM_title : MonoBehaviour {
 	AudioClip swipeLeft;
 	//AudioClip to_tutorial;
 	AudioClip to_main;
+	AudioClip[] orit;
 	AudioClip[] clips;
 	int cur_clip = 0;
+	int orti_clip = 0;
 	int total_clip = 2;
 	float time_interval = 2.0f;
+	bool isLandscape = true;
+	bool reset_audio = false;
 
 	// Use this for initialization
 	void Start () {
+		Screen.orientation = ScreenOrientation.Landscape;
+		reset_audio = false;
+		orit = new AudioClip[2];
+		orit[0] = Resources.Load ("instructions/Please hold your phone horizontally for this game") as AudioClip;
+		orit[1] = Resources.Load ("instructions/2sec_silence") as AudioClip;
+		if ((Input.deviceOrientation == DeviceOrientation.LandscapeLeft) || (Input.deviceOrientation == DeviceOrientation.LandscapeRight))
+			isLandscape = true;
+		else if (Input.deviceOrientation == DeviceOrientation.Portrait)
+			isLandscape = false;
+		
 		GameObject.Find ("GameMode").GetComponent <GameMode>().init ();
 		//load instruction clips
 		clips = new AudioClip[total_clip];
@@ -33,10 +47,18 @@ public class GM_title : MonoBehaviour {
 	}
 
 	void play_audio(){
-		if (SoundManager.instance.PlayVoice (clips[cur_clip])) {
-			cur_clip += 1;
-			if (cur_clip >= total_clip)
-				cur_clip = 0;
+		if (isLandscape) {
+			if (SoundManager.instance.PlayVoice (clips[cur_clip])) {
+				cur_clip += 1;
+				if (cur_clip >= total_clip)
+					cur_clip = 0;
+			}
+		} else {
+			if (SoundManager.instance.PlayVoice (orit [orti_clip])) {
+				orti_clip += 1;
+				if (orti_clip >= orit.Length)
+					orti_clip = 0;
+			}
 		}
 	}
 
@@ -65,6 +87,12 @@ public class GM_title : MonoBehaviour {
 
 		//Check if we are running on iOS, Android, Windows Phone 8 or Unity iPhone
 		#elif UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
+		Screen.orientation = ScreenOrientation.Landscape;
+		if ((Input.deviceOrientation == DeviceOrientation.LandscapeLeft) || (Input.deviceOrientation == DeviceOrientation.LandscapeRight))
+			isLandscape = true;
+		else if (Input.deviceOrientation == DeviceOrientation.Portrait){
+			isLandscape = false;
+		}
 
 		float TOUCH_TIME = 0.05f;
 

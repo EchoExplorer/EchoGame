@@ -427,6 +427,10 @@ public class BoardManager : MonoBehaviour {
 		for(int i = 0; i < searched.Length; ++i)
 			searched[i] = false;
 
+		searched_temp = new bool[(columns+1)*(rows+1)];
+		for(int i = 0; i < searched_temp.Length; ++i)
+			searched_temp[i] = false;
+
 		solveMaze (start_idx, "s");
 		player.transform.rotation = Quaternion.identity;
 		if (mazeSolution.Length >= 2) {
@@ -944,7 +948,7 @@ public class BoardManager : MonoBehaviour {
 
 	bool[] searched;
 
-	public bool solveMaze(Vector2 idx, string dir){
+	bool solveMaze(Vector2 idx, string dir){
 		if ((idx.x > columns) || (idx.x < 1) || (idx.y > rows) || (idx.y < 1))//just in case, so I widen the range
 			return false;
 
@@ -966,6 +970,35 @@ public class BoardManager : MonoBehaviour {
 		if (result)
 			mazeSolution += dir;
 		
+		return result;
+	}
+
+	//solve maze during gameplay
+	public string sol;
+	public bool[] searched_temp;
+
+	public bool solveMazeMid(Vector2 idx, string dir){
+		if ((idx.x > columns) || (idx.x < 1) || (idx.y > rows) || (idx.y < 1))//just in case, so I widen the range
+			return false;
+
+		if (searched_temp [(int)((columns + 1) * idx.y + idx.x)])
+			return false;
+		searched_temp [(int)((columns + 1) * idx.y + idx.x)] = true;
+
+		if (_searchWallIdxes (idx))
+			return false;
+
+		if (get_idx_from_pos (exitPos) == idx) {
+			sol += dir;
+			return true;
+		}
+
+		bool result = false || solveMazeMid (new Vector2 (idx.x, idx.y+1f), "u") || solveMazeMid (new Vector2 (idx.x, idx.y-1f), "d") ||
+			solveMazeMid (new Vector2 (idx.x+1f, idx.y), "r") || solveMazeMid (new Vector2 (idx.x-1f, idx.y), "l");
+
+		if (result)
+			sol += dir;
+
 		return result;
 	}
 }

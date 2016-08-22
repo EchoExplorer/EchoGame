@@ -1,6 +1,7 @@
 LEVEL_1
 Begin
 Welcome to the tutorial
+To hear an instruction again, swipe left with two fingers; to skip an instruction, swipe right with two fingers
 In this game, you are trapped in a maze, use echolocation to navigate
 Let's start off learning a few sound cues
 To hear an echo, tap the screen
@@ -10,6 +11,7 @@ at(s,s)_T_T_OTHER
 Good!
 The echoes you hear will give you info about your surroundings
 Currently we are in a straight hallway
+To open the pause menu at any time, press and hold with two fingers
 Swipe up to move forward
 Inend
 IN
