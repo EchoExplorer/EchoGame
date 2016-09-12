@@ -3,3 +3,4 @@ ignore Mac DS_Store files
 /Library
 *.pem
 */dataOutput
+/Server\ Scripts/dev/testEncrypt2.py
