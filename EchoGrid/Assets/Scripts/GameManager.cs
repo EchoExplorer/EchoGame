@@ -12,7 +12,7 @@ public class GameManager : MonoBehaviour {
 
 	public static GameManager instance = null;
 	public bool level_already_loaded = false;
-	public bool levelImageActive = false;
+	public static bool levelImageActive = true;
 	[HideInInspector] public bool playersTurn = true;
 
 	public float levelStartDelay = 2f;	
@@ -87,7 +87,10 @@ public class GameManager : MonoBehaviour {
 	//Initializes the game for each level.
 	//TODO(agotsis) Analyze database
 	void InitGame(){
-		Screen.orientation = ScreenOrientation.Landscape;
+		#if UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
+			Screen.sleepTimeout = SleepTimeout.NeverSleep;
+			Screen.orientation = ScreenOrientation.Landscape;
+		#endif
 
 		//Setup database for the first time
 		db = new DbAccess("data source=LocalDataBase.db");
@@ -102,7 +105,7 @@ public class GameManager : MonoBehaviour {
 		
 		//Set levelImage to block player's view of the game board during setup.
 		levelImage.SetActive(true);
-		levelImageActive = true;
+		//levelImageActive = true;
 		
 		//Call the HideLevelImage function with a delay in seconds of levelStartDelay.
 		Invoke("StartGame", levelStartDelay);
@@ -130,15 +133,21 @@ public class GameManager : MonoBehaviour {
 	//Hides black image used between levels
 	void StartGame(){
 		//Disable the levelImage gameObject.
-		HideLevelImage();
+		if (!levelImageActive)
+			HideLevelImage ();
+		else
+			UnHideLevelImage ();
 		//Set doingSetup to false allowing player to move again.
 		doingSetup = false;
 		playersTurn = true;
+		SoundManager.instance.PlayVoice ((AudioClip)Resources.Load("instructions/Level Start"), true);
 	}
 
 	public void UnHideLevelImage(){
 		levelText.text = "level " + level.ToString () + "\n";
-		levelText.text += "Game In Progress";
+		levelText.text += "Game In Progress" + "\n";
+		levelText.text += "Hold two fingers" + "\n";
+		levelText.text += "to open menu";
 		levelImage.SetActive(true);
 		levelImageActive = true;
 	}
@@ -161,7 +170,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void checkEchoFiles(){
-		String prefix = "C00-0"; //change this prefix when you change the echo files
+		String prefix = "C21-0"; //change this prefix when you change the echo files
 		String filename, filename2, filename3;
 		/*
 		float step = 1.5f;
@@ -214,6 +223,10 @@ public class GameManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		#if UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
+			Screen.sleepTimeout = SleepTimeout.NeverSleep;
+		#endif
+
 		if (playersTurn || doingSetup)
 			return;
 	}
