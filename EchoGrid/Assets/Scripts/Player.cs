@@ -181,10 +181,12 @@ public class Player : MovingObject
 		inputSFX = Resources.Load ("fx/inputSFX") as AudioClip;
 		menuOn = Resources.Load ("instructions/Menu opened") as AudioClip;
 		menuOff = Resources.Load ("instructions/Menu closed") as AudioClip;
-		menuClips = new AudioClip[3];
-		menuClips [0] = Resources.Load ("instructions/Swipe left to return to the tutorial, swipe right to return to the main menu, and swipe down to toggle the screen on and off") as AudioClip;
-		menuClips [1] = Resources.Load ("instructions/To close the menu, press and hold with two fingers") as AudioClip;
-		menuClips [2] = Resources.Load ("instructions/2sec_silence") as AudioClip;
+		menuClips = new AudioClip[5];
+		menuClips [0] = Resources.Load ("instructions/Swipe left to restart the current level") as AudioClip;
+		menuClips [1] = Resources.Load ("instructions/Swipe left to return to the tutorial, swipe right to return to the main menu, and swipe down to toggle the screen on and off") as AudioClip;
+		menuClips [2] = Resources.Load ("instructions/Swipe up to hear a hint") as AudioClip;
+		menuClips [3] = Resources.Load ("instructions/To close the menu, press and hold with two fingers") as AudioClip;
+		menuClips [4] = Resources.Load ("instructions/2sec_silence") as AudioClip;
 
 		//specify controls
 		if(Utilities.OLD_ANDROID_SUPPORT){
@@ -206,6 +208,7 @@ public class Player : MovingObject
 		}
 		multiTapStartTime = 0.0f;
 		echoTapTime = 0.0f;
+		rotateGestStartTime = 0.0f;
 		menuTapTime = 0.0f;
 		echoPlayedThisTouch = false;
 		menuUpdatedThisTouch = false;
@@ -236,6 +239,7 @@ public class Player : MovingObject
 
 			multiTapStartTime = 0.0f;
 			echoTapTime = 0.0f;
+			rotateGestStartTime = 0.0f;
 			menuTapTime = 0.0f;
 			echoPlayedThisTouch = false;
 			menuUpdatedThisTouch = false;
@@ -273,6 +277,10 @@ public class Player : MovingObject
 		return "na";
 	}
 
+	string[] frontDistS = {"2.25", "3.75"};
+	string[] frontDistM = {"5.25", "6.75"};
+	string[] frontDistL = {"8.25", "9.75", "11.25", "12.75"};
+
 	private void PlayEcho() {
 		tapped = true;
 		reportSent = true;
@@ -281,13 +289,37 @@ public class Player : MovingObject
 
 		UnityEngine.Debug.Log (data.all_jun_to_string ());
 
-		String prefix = "C00-0"; //change this prefix when you change the echo files
+		String prefix = "C00-21"; //change this prefix when you change the echo files
+		if ( (GameManager.instance.level >= 26)&&(GameManager.instance.level < 41) )
+			prefix = "C00-18";
+		else if ( (GameManager.instance.level >= 41)&&(GameManager.instance.level < 56) )
+			prefix = "C00-15";
+		else if ( (GameManager.instance.level >= 56)&&(GameManager.instance.level < 71) )
+			prefix = "C00-12";
+		else if ( (GameManager.instance.level >= 71)&&(GameManager.instance.level < 86) )
+			prefix = "C00-9";
+		else if ( (GameManager.instance.level >= 86)&&(GameManager.instance.level < 101) )
+			prefix = "C00-6";
+		else if ( (GameManager.instance.level >= 101)&&(GameManager.instance.level < 116) )
+			prefix = "C00-3";
+		else if ( (GameManager.instance.level >= 116) )
+			prefix = "C00-0";
+
 		String filename;
-		float wallDist = 0.75f, shortDist = 2.25f, midDist = 6.75f, longDist = 12.75f;
-		dist_type b_dtype, l_dtype, r_dtype;
+		float wallDist = 0.8f, shortDist = 3.8f, midDist = 6.8f, longDist = 12.8f;
+		dist_type f_dtype, b_dtype, l_dtype, r_dtype;
 		string front_type = data.jun_to_string(data.fType), back_type = "D", left_type = "D", right_type = "D";
 
 		//catogrize the distance
+		//front
+		if (data.frontDist <= wallDist)
+			f_dtype = dist_type.WALL;
+		else if ((data.frontDist > wallDist) && (data.frontDist <= shortDist))
+			f_dtype = dist_type.SHORT;
+		else if ((data.frontDist > shortDist) && (data.frontDist <= midDist))
+			f_dtype = dist_type.MID;
+		else
+			f_dtype = dist_type.LONG;
 		//back
 		if (data.backDist <= wallDist)
 			b_dtype = dist_type.WALL;
@@ -336,13 +368,168 @@ public class Player : MovingObject
 		filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix,
 			data.frontDist, front_type, _dist_type_to_string(b_dtype), "D",
 			_dist_type_to_string(l_dtype), left_type, _dist_type_to_string(r_dtype), right_type);
+
 		AudioClip echo = Resources.Load ("echoes/" + filename) as AudioClip;
+		string front_typeC = front_type, back_typeC = back_type, left_typeC = left_type, right_typeC = right_type;
+		if (echo == null) {
+			UnityEngine.Debug.Log ("replace US with Deadend");
+			switch (data.exitpos) {
+			case 1://left
+				left_typeC= "D";
+				break;
+			case 2://right
+				right_typeC = "D";
+				break;
+			case 3://front
+				front_typeC = "D";
+				break;
+			case 4://back
+				back_typeC = "D";
+				break;
+			default:
+				break;
+			}
+			filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix,
+				data.frontDist, front_typeC, _dist_type_to_string(b_dtype), "D",
+				_dist_type_to_string(l_dtype), left_typeC, _dist_type_to_string(r_dtype), right_typeC);
+			echo = Resources.Load ("echoes/" + filename) as AudioClip;
+			UnityEngine.Debug.Log (filename);
+		}
 		lastEcho = filename;
 
+		//special cases
+		//try alternative front dist
 
 		if (echo == null) {
+			UnityEngine.Debug.Log ("Secondary search_alt_front_dist");
+			string frontString = "";
+			if (Mathf.Abs (data.frontDist - 3.75f) <= 0.0001f) {
+				frontString = "2.25";
+
+				filename = String.Format ("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix,
+					frontString, front_type, _dist_type_to_string (b_dtype), "D",
+					_dist_type_to_string (l_dtype), left_type, _dist_type_to_string (r_dtype), right_type);
+				echo = Resources.Load ("echoes/" + filename) as AudioClip;
+				lastEcho = filename;
+			} 
+			/*
+			else if ( f_dtype == dist_type.LONG){
+				for (int i = 0; i < frontDistL.Length; ++i) {
+					frontString = frontDistL [i];
+					filename = String.Format ("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix,
+						frontString, front_type, _dist_type_to_string (b_dtype), "D",
+						_dist_type_to_string (l_dtype), left_type, _dist_type_to_string (r_dtype), right_type);
+					echo = Resources.Load ("echoes/" + filename) as AudioClip;
+					lastEcho = filename;
+					if (echo != null)
+						break;
+				}
+			}
+			*/
+		}
+
+
+		//try wall
+		if (echo == null) {
+			UnityEngine.Debug.Log ("Secondary search_wall");
+			string frontString = "";
+			if(f_dtype == dist_type.WALL)
+				frontString = "0.75";
+
+			filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix,
+				frontString, front_type, _dist_type_to_string(b_dtype), "D",
+				_dist_type_to_string(l_dtype), left_type, _dist_type_to_string(r_dtype), right_type);
+			echo = Resources.Load ("echoes/" + filename) as AudioClip;
+			lastEcho = filename;
+		}
+
+		//other cases
+		if (echo == null) {
+			bool found = false;
+			UnityEngine.Debug.Log ("Secondary search_other");
+			string frontString = "";
+			if (f_dtype == dist_type.SHORT) {
+				for (int i = 0; i < frontDistS.Length; ++i) {
+					filename = String.Format ("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix,
+						frontDistS [i], front_type, _dist_type_to_string (b_dtype), "D",
+						_dist_type_to_string (l_dtype), left_type, _dist_type_to_string (r_dtype), right_type);
+					echo = Resources.Load ("echoes/" + filename) as AudioClip;
+					if (echo != null)
+						found = true;
+					if (found)
+						break;
+				}
+			} else if (f_dtype == dist_type.MID) {
+				for (int i = 0; i < frontDistM.Length; ++i) {
+					filename = String.Format ("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix,
+						frontDistM [i], front_type, _dist_type_to_string (b_dtype), "D",
+						_dist_type_to_string (l_dtype), left_type, _dist_type_to_string (r_dtype), right_type);
+					echo = Resources.Load ("echoes/" + filename) as AudioClip;
+					if (echo != null)
+						found = true;
+					if (found)
+						break;
+				}
+			} else if (f_dtype == dist_type.LONG) {
+				for (int i = 0; i < frontDistL.Length; ++i) {
+					filename = String.Format ("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix,
+						frontDistL [i], front_type, _dist_type_to_string (b_dtype), "D",
+						_dist_type_to_string (l_dtype), left_type, _dist_type_to_string (r_dtype), right_type);
+					echo = Resources.Load ("echoes/" + filename) as AudioClip;
+					if (echo != null)
+						found = true;
+					if (found)
+						break;
+				}
+			}
+			lastEcho = filename;
+		}
+
+		if (echo == null) {
+			bool found = false;
+			UnityEngine.Debug.Log ("replacing everything with D");
+			string frontString = "";
+			if (f_dtype == dist_type.SHORT) {
+				for (int i = 0; i < frontDistS.Length; ++i) {
+					filename = String.Format ("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix,
+						frontDistS [i], "D", _dist_type_to_string (b_dtype), "D",
+						_dist_type_to_string (l_dtype), "D", _dist_type_to_string (r_dtype), "D");
+					echo = Resources.Load ("echoes/" + filename) as AudioClip;
+					if (echo != null)
+						found = true;
+					if (found)
+						break;
+				}
+			} else if (f_dtype == dist_type.MID) {
+				for (int i = 0; i < frontDistM.Length; ++i) {
+					filename = String.Format ("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix,
+						frontDistM [i], "D", _dist_type_to_string (b_dtype), "D",
+						_dist_type_to_string (l_dtype), "D", _dist_type_to_string (r_dtype), "D");
+					echo = Resources.Load ("echoes/" + filename) as AudioClip;
+					if (echo != null)
+						found = true;
+					if (found)
+						break;
+				}
+			} else if (f_dtype == dist_type.LONG) {
+				for (int i = 0; i < frontDistL.Length; ++i) {
+					filename = String.Format ("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix,
+						frontDistL [i], "D", _dist_type_to_string (b_dtype), "D",
+						_dist_type_to_string (l_dtype), "D", _dist_type_to_string (r_dtype), "D");
+					echo = Resources.Load ("echoes/" + filename) as AudioClip;
+					if (echo != null)
+						found = true;
+					if (found)
+						break;
+				}
+			}
+			lastEcho = filename;
+		}
+
+		//have to use the old files
+		if (echo == null) {
 			UnityEngine.Debug.Log (filename);
-			UnityEngine.Debug.Log ("did not find accurate one, searching");
+			UnityEngine.Debug.Log ("did not find accurate one, searching everything");
 				//Old version
 			//this is the full filename, if back is not D or Stairs, it will be "na"
 				back_type = "D"; front_type = ""; left_type = ""; right_type = "";
@@ -448,13 +635,47 @@ public class Player : MovingObject
 								front_str [0] = front_type;
 								for (int bsi = 0; bsi < back_str.Length; ++bsi) {
 									for (int fsi = 0; fsi < front_str.Length; ++fsi) {
+										//DistS = {"2.25", "3.75"};
+										//DistM = {"5.25", "6.75"};
+										//DistL = {"8.25", "9.75", "11.25", "12.75"};
+										string tb="",tl="",tr="";
+										//back
+										if ((0.75f + 1.5f * j) >= 2 && (0.75f + 1.5f * j) <= 4)
+											tb = "s";
+										else if ((0.75f + 1.5f * j) >= 5 && (0.75f + 1.5f * j) <= 7)
+											tb = "m";
+										else if ((0.75f + 1.5f * j) >= 8)
+											tb = "l";
+										else if ((0.75f + 1.5f * j) <= 1)
+											tb = "w";
+
+										//left
+										if ((0.75f + 1.5f * k) >= 2 && (0.75f + 1.5f * k) <= 4)
+											tl = "s";
+										else if ((0.75f + 1.5f * k) >= 5 && (0.75f + 1.5f * k) <= 7)
+											tl = "m";
+										else if ((0.75f + 1.5f * k) >= 8)
+											tl = "l";
+										else if ((0.75f + 1.5f * k) <= 1)
+											tl = "w";
+
+										//right
+										if ((0.75f + 1.5f * l) >= 2 && (0.75f + 1.5f * l) <= 4)
+											tr = "s";
+										else if ((0.75f + 1.5f * l) >= 5 && (0.75f + 1.5f * l) <= 7)
+											tr = "m";
+										else if ((0.75f + 1.5f * l) >= 8)
+											tr = "l";
+										else if ((0.75f + 1.5f * l) <= 1)
+											tr = "w";			
+
 										filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix,
-											0.75f + 1.5f*i, front_str[fsi], 0.75f + 1.5f*j, back_str[bsi],
-											0.75f + 1.5f*k, left_type, 0.75f + 1.5f*l, right_type);
+											0.75f + 1.5f*i, front_str[fsi], tb, back_str[bsi],
+											tl, left_type, tr, right_type);
 
 										echo = Resources.Load ("echoes/" + filename) as AudioClip;
 										if (echo != null) {
-											lastEcho = filename;
+											lastEcho = filename+"ERROR";
 											found = true;
 											break;
 										}
@@ -485,18 +706,6 @@ public class Player : MovingObject
 			SoundManager.instance.PlayEcho (echo);
 			UnityEngine.Debug.Log (lastEcho);
 		}
-
-		/*
-		//Hotfix for test
-		int temp_dist = (int)data.frontDist;
-		if (temp_dist < 1)
-			temp_dist = 1;
-		else if (temp_dist > 7)
-			temp_dist = 7;
-		AudioClip echo = Resources.Load ("echoes/echo_0deg_" + temp_dist.ToString() + "m") as AudioClip;
-		SoundManager.instance.PlayEcho (echo);
-		*/
-		//reportOnEcho (); //send echo report
 	}
 
 	string post_act = "";
@@ -513,9 +722,9 @@ public class Player : MovingObject
 		GameManager.instance.boardScript.sol = "";
 		for(int i = 0; i < GameManager.instance.boardScript.searched_temp.Length; ++i)
 			GameManager.instance.boardScript.searched_temp[i] = false;
-		GameManager.instance.boardScript.solveMazeMid (idx_location,"s");
-		if(GameManager.instance.boardScript.sol.Length >= 2)
-			correct_post_act = GameManager.instance.boardScript.sol[GameManager.instance.boardScript.sol.Length-2].ToString();
+		correct_post_act = GameManager.instance.boardScript.getHint (idx_location,"s");
+		//if(GameManager.instance.boardScript.sol.Length >= 2)
+		//	correct_post_act = GameManager.instance.boardScript.sol[GameManager.instance.boardScript.sol.Length-2].ToString();
 
 		Vector3 forward = old_dir;
 		Vector3 sol_dir = new Vector3 ();
@@ -528,17 +737,21 @@ public class Player : MovingObject
 		else if (correct_post_act == "r")
 			sol_dir = Vector3.right;
 
-		if (forward == sol_dir)
-			correct_post_act = "Forward";
-		else if (forward == -sol_dir)
-			correct_post_act = "Turn Around";
-		else {
-			Vector3 angle = Vector3.Cross (forward, sol_dir);
-			if(angle.z > 0)
-				correct_post_act = "Turn Left";
-			else 
-				correct_post_act = "Turn Right";
-		}
+		if(correct_post_act != ""){
+			if (forward == sol_dir)
+				correct_post_act = "Forward";
+			else if (forward == -sol_dir)
+				correct_post_act = "Turn Around";
+			else {
+				Vector3 angle = Vector3.Cross (forward, sol_dir);
+				if(angle.z > 0)
+					correct_post_act = "Turn Left";
+				else 
+					correct_post_act = "Turn Right";
+			}
+		} else 
+			correct_post_act = "Exit";
+
 
 		WWWForm echoForm = new WWWForm ();
 		echoForm.AddField ("userName", encrypt (SystemInfo.deviceUniqueIdentifier));
@@ -554,6 +767,47 @@ public class Player : MovingObject
 
 		WWW www = new WWW (echoEndpoint, echoForm);
 		StartCoroutine (WaitForRequest (www));
+	}
+
+	void getHint (){
+
+		Vector2 idx_location = GameManager.instance.boardScript.get_idx_from_pos (transform.position);
+		correct_post_act = "";
+		GameManager.instance.boardScript.sol = "";
+		for(int i = 0; i < GameManager.instance.boardScript.searched_temp.Length; ++i)
+			GameManager.instance.boardScript.searched_temp[i] = false;
+		correct_post_act = GameManager.instance.boardScript.getHint (idx_location,"s");
+
+		AudioClip clip;
+		if (correct_post_act.Length <= 0) {
+			clip = Resources.Load("instructions/You should exit") as AudioClip;
+			SoundManager.instance.PlayVoice (clip, true);
+			return;
+		}
+		Vector3 forward = old_dir;
+		Vector3 sol_dir = new Vector3 ();
+		if (correct_post_act == "u")
+			sol_dir = Vector3.up;
+		else if (correct_post_act == "d")
+			sol_dir = Vector3.down;
+		else if (correct_post_act == "l")
+			sol_dir = Vector3.left;
+		else if (correct_post_act == "r")
+			sol_dir = Vector3.right;
+
+		if (forward == sol_dir)
+			clip = Resources.Load("instructions/You should move forward") as AudioClip;
+		else if (forward == -sol_dir)
+			clip = Resources.Load("instructions/You should turn around by turning in the same direction twice") as AudioClip;
+		else {
+			Vector3 angle = Vector3.Cross (forward, sol_dir);
+			if(angle.z > 0)
+				clip = Resources.Load("instructions/You should turn left") as AudioClip;
+			else 
+				clip = Resources.Load("instructions/You should turn right") as AudioClip;
+		}
+
+		SoundManager.instance.PlayVoice (clip, true);
 	}
 
 	//due to the chaotic coord system
@@ -635,7 +889,7 @@ public class Player : MovingObject
 			rotateplayer (dir);
 			if (reportSent) {
 				post_act = "Turn ";
-				if(dir == get_player_dir("LEFT"))
+				if( (dir - get_player_dir("LEFT")).magnitude <= 0.01f )
 					post_act += "Left";
 				else
 					post_act += "Right";
@@ -650,9 +904,9 @@ public class Player : MovingObject
 		if (!changedDir) {
 			if (AttemptMove<Wall> ((int)dir.x, (int)dir.y)) {
 				tapped = false;
-				if (dir == get_player_dir ("FRONT"))
+				if (dir == get_player_dir ("FRONT")) {
 					GameManager.instance.boardScript.gamerecord += "f";
-				if (dir == get_player_dir ("BACK"))
+				}if (dir == get_player_dir ("BACK"))
 					GameManager.instance.boardScript.gamerecord += "b";
 			}
 		}
@@ -819,7 +1073,8 @@ public class Player : MovingObject
 		GameManager.instance.level += 1;
 		GameManager.instance.boardScript.write_save (GameManager.instance.level);
 		GameManager.instance.playersTurn = false;
-		AudioSource.PlayClipAtPoint (winSound, transform.localPosition, 1.0f);
+		SoundManager.instance.PlaySingle (winSound);
+		//AudioSource.PlayClipAtPoint (winSound, transform.localPosition, 1.0f);
 
 		//Reset extra data.
 		resetData ();
@@ -887,14 +1142,24 @@ public class Player : MovingObject
 	//tap is how many times player tap the screen
 	int tap_simple, tap_exit, tap_menu;
 	int TouchTapCount;
+	int numTouchlastframe = 0;
 	const float multiTapCD = 0.4f;//make multitap easier
-	const float echoCD = 0.3f;//shortest time between two PlayEcho() calls
+	const float echoCD = 0.1f;//shortest time between two PlayEcho() calls
 	const float menuUpdateCD = 0.5f;//shortest time between turn on/off pause menu
+	const float rotateGestCD = 0.3f;
 	bool echoPlayedThisTouch;//echo will only play once duriing one touch, so if you hold your finger on the screen, echo will not repeat
 	bool menuUpdatedThisTouch;
+	bool isSwipe = false;
+	public bool hasrotated = false;
 	float echoTapTime;
+	float rotateGestStartTime;
 	float multiTapStartTime;
 	float menuTapTime;
+	Vector2 swipeStartPlace = new Vector2();
+	Vector2 firstSwipePos = new Vector2();
+	Vector2 VecStart = new Vector2();
+	Vector2 VecEnd = new Vector2();
+	List<Touch> touches;
 
 	void Update ()
 	{
@@ -966,12 +1231,14 @@ public class Player : MovingObject
 		float ECHO_TOUCH_TIME = 0.15f;
 		float TOUCH_TIME = 0.02f;
 		float MENU_TOUCH_TIME = 1.5f;
+		minSwipeDist = Screen.width*0.01f;
 		//Check if Input has registered more than zero touches
 		int numTouches = Input.touchCount;
 
 		Touch myTouch;
-		Vector2 touchEndpos;
+		Vector2 touchEndpos = new Vector2();
 		BoardManager.Direction swp_dir = BoardManager.Direction.OTHER;
+		bool isRotation = false;
 
 		//update all timers
 		//update TouchTapCount part 1
@@ -986,15 +1253,30 @@ public class Player : MovingObject
 
 		//collect raw data from the device
 		if (numTouches > 0) {
+
 			//Store the first touch detected.
 			myTouch = Input.touches[0];
+			//if(touches.Contains(myTouch)){
+			//}
+			touchEndpos = myTouch.position;
 
 			debug_text.text = "numTOuches: " + numTouches.ToString() + "\n"
 							+ "PauseMenuOn: " + at_pause_menu.ToString() + "\n"
 							+ "Tap Count: " + TouchTapCount.ToString() + "\n";
 
+			if((numTouches == 2) && numTouches != numTouchlastframe){
+				VecStart = Input.touches[0].position - Input.touches[1].position;
+				menuUpdatedThisTouch = false;
+			}
+
 			//Check if the phase of that touch equals Began
 			if (myTouch.phase == TouchPhase.Began){
+				hasrotated = false;
+				swipeStartPlace = myTouch.position;
+				echoTapTime = Time.time;
+				if(numTouches == 2){
+					VecStart = Input.touches[0].position - Input.touches[1].position;
+				}
 				//If so, set touchOrigin to the position of that touch
 				touchOrigin = myTouch.position;
 				touchTime = Time.time;
@@ -1004,10 +1286,49 @@ public class Player : MovingObject
 				menuUpdatedThisTouch = false;
 			} else if ((myTouch.phase == TouchPhase.Ended) && swp_lock){//deals with swipe and multiple taps
 				//Set touchEnd to equal the position of this touch
+				hasrotated = false;
+				echoTapTime = Time.time;
 				touchEndpos = myTouch.position;
 				float x = touchEndpos.x - touchOrigin.x;
 				float y = touchEndpos.y - touchOrigin.y;
+				/*
+				if(numTouches == 2){//detect a rotate
+					isRotation = true;
+					//Vector2 firstfingerPos = Input.touches[1].position;
+					//VecStart = swipeStartPlace - firstfingerPos;
+					VecEnd = Input.touches[0].position - Input.touches[1].position;
+					//UnityEngine.Debug.DrawLine(new Vector3(firstfingerPos.x, firstfingerPos.y, 0f), new Vector3(swipeStartPlace.x, swipeStartPlace.y, 0f));
+					//UnityEngine.Debug.DrawLine(new Vector3(firstfingerPos.x, firstfingerPos.y, 0f), new Vector3(touchEndpos.x, touchEndpos.y, 0f));
+					Vector3 cross = Vector3.Cross((Vector3)VecStart.normalized, (Vector3)VecEnd.normalized);
+					float crossPz = cross.z;
+					if( (crossPz >= 0)&&(Mathf.Abs(crossPz) >= Screen.height*0.001f ) )//left
+						swp_dir = BoardManager.Direction.LEFT;
+					else if( (crossPz < 0)&&(Mathf.Abs(crossPz) >= Screen.width*0.0005f) )//right
+						swp_dir = BoardManager.Direction.RIGHT;
 
+					//if ( (firstfingerPos - firstSwipePos).magnitude >= minSwipeDist){//right & left
+					//	print("gulululululululu");
+					//	swp_dir = BoardManager.Direction.OTHER;
+					//}
+
+					//debug_text.text = "numTOuches: " + numTouches.ToString() + "\n";
+					//debug_text.text += "VecStart: (" + VecStart.x + " ," + VecStart.y + ")\n";
+					//debug_text.text += "VecEnd: (" + VecEnd.x + " ," + VecEnd.y + ")\n";
+					//debug_text.text += "Cross: (" + cross.x + " ," + cross.y + " ," + cross.z + ")\n";
+					//debug_text.text += x.ToString() + "\n";
+					//debug_text.text += (minSwipeDist*0.05f).ToString() + "\n";
+					//if(swp_dir == BoardManager.Direction.LEFT)
+					//	debug_text.text += "LEFT";
+					//else if(swp_dir == BoardManager.Direction.LEFT)
+					//	debug_text.text += "RIGHT";
+					//else
+					//	debug_text.text += "OTHER";
+					print(crossPz);
+					print(VecEnd);
+					print(VecStart);
+					VecEnd = VecStart;//to "reset" the input
+				}
+				*/
 				if (Mathf.Abs(x) > Mathf.Abs(y) && Mathf.Abs(x) >= minSwipeDist){//right & left
 					if (x > 0)//right
 						swp_dir = BoardManager.Direction.RIGHT;
@@ -1022,25 +1343,53 @@ public class Player : MovingObject
 					numSteps++;
 				}
 
-				/*
-				if((swp_dir == BoardManager.Direction.OTHER)&&(!echoPlayedThisTouch)){
-					echoPlayedThisTouch = true;
-					GameManager.instance.boardScript.gamerecord += "E{";
-					PlayEcho();
-					GameManager.instance.boardScript.gamerecord += lastEcho;
-					GameManager.instance.boardScript.gamerecord += "}";
-					debug_text.text += "PLAY ECHO";
-				}
-				*/
-
 				//update TouchTapCount part 2
 				if( (Time.time - multiTapStartTime) < multiTapCD ){
 					TouchTapCount += myTouch.tapCount;
 				}
 
 				swp_lock = false;//flip the lock, until we find another TouchPhase.Began
+			}else if( (numTouches == 2) && (!at_pause_menu) && (!hasrotated) ){
+				if(numTouches == 2){//detect a rotate
+					//enable this part for rotate turning control
+					VecEnd = Input.touches[0].position - Input.touches[1].position;
+					Vector3 cross = Vector3.Cross((Vector3)VecStart.normalized, (Vector3)VecEnd.normalized);
+					float crossPz = cross.z;
+					if( (crossPz >= 0)&&(Mathf.Abs(crossPz) >= Screen.height*0.00015f ) ){//left
+						isRotation = true;
+						hasrotated = true;
+						if(Time.time - rotateGestStartTime >= rotateGestCD){
+							rotateGestStartTime = Time.time;
+							swp_dir = BoardManager.Direction.LEFT;
+						}
+					}else if( (crossPz < 0)&&(Mathf.Abs(crossPz) >= Screen.height*0.00015f) ){//right
+						isRotation = true;
+						hasrotated = true;
+						if(Time.time - rotateGestStartTime >= rotateGestCD){
+							rotateGestStartTime = Time.time;
+							swp_dir = BoardManager.Direction.RIGHT;
+						}
+					}
+					//enable this part for rotate turning control END
+					//print(crossPz);
+					//print(VecEnd);
+					//print(VecStart);
+					//VecEnd = VecStart;//to "reset" the input
+				}
 			}
+			numTouchlastframe = numTouches;
+		} else{
+			numTouchlastframe = 0;
 		}
+
+		float touchx = touchEndpos.x - touchOrigin.x;
+		float touchy = touchEndpos.y - touchOrigin.y;
+		if (Mathf.Abs(touchx) >= minSwipeDist){//right & left
+			isSwipe = true;
+		} else if (Mathf.Abs(touchy) >= minSwipeDist) {//up & down
+			isSwipe = true;
+		} else
+			isSwipe = false;
 
 		//process the data
 		if( (numTouches == touch_exit)&&(TouchTapCount >= tap_exit)&&(swp_dir == BoardManager.Direction.OTHER) ){//exit
@@ -1052,7 +1401,10 @@ public class Player : MovingObject
 					dir = get_player_dir("FRONT");
 					SoundManager.instance.PlaySingle(swipeAhead);
 					debug_text.text += "MOVE FORWARD";
-				}else if(swp_dir == BoardManager.Direction.LEFT){
+				}
+				//enable this part for swipe control turning
+				/*
+				else if(swp_dir == BoardManager.Direction.LEFT){
 					dir = get_player_dir("LEFT");
 					SoundManager.instance.PlaySingle(swipeLeft);
 					debug_text.text += "TURN LEFT";
@@ -1060,8 +1412,18 @@ public class Player : MovingObject
 					dir = get_player_dir("RIGHT");
 					SoundManager.instance.PlaySingle(swipeRight);
 					debug_text.text += "TURN RIGHT";
-				}else if(swp_dir == BoardManager.Direction.OTHER){//play echo
-					if(Mathf.Abs(Time.time - touchTime) > ECHO_TOUCH_TIME){
+				}*/
+				//enable this part for swipe control turning END
+				else if(swp_dir == BoardManager.Direction.OTHER){//play echo
+					float x = touchEndpos.x - touchOrigin.x;
+					float y = touchEndpos.y - touchOrigin.y;
+					bool final_check_flag = true;
+					if ((Mathf.Abs(x) > Mathf.Abs(y) && Mathf.Abs(x) >= minSwipeDist) || (Mathf.Abs(y) > Mathf.Abs(x) && Mathf.Abs(y) >= minSwipeDist) || (numTouches>1) || (isRotation)){
+						final_check_flag = false;
+						isRotation = false;
+					}
+					
+					if((Mathf.Abs(Time.time - touchTime) > ECHO_TOUCH_TIME)&&final_check_flag&&(!at_pause_menu)&&(!menuUpdatedThisTouch)&&(!isRotation)&&(!hasrotated)&&(!isSwipe)){
 						//check echo timer
 						if(Time.time - echoTapTime >= echoCD){
 							echoTapTime = Time.time;
@@ -1079,34 +1441,52 @@ public class Player : MovingObject
 			}
 			else{//at the pause menu
 				if(swp_dir == BoardManager.Direction.BACK){//turn on/of black screen
-					if(GameManager.instance.levelImageActive)
+					if(GameManager.levelImageActive)
 						GameManager.instance.HideLevelImage();
 					else
 						GameManager.instance.UnHideLevelImage();
 					at_pause_menu = false;
 					SoundManager.instance.PlayVoice(menuOff, true);//shoule have another set of sound effect
 					debug_text.text += "BLACKEN SCREEN";
-				}else if(swp_dir == BoardManager.Direction.LEFT){//jump to tutorial
+				}else if(swp_dir == BoardManager.Direction.LEFT){//restart level
 					SoundManager.instance.playcrash(inputSFX);
-					GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
+					//GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
+					SoundManager.instance.PlayVoice(menuOff, true);//shoule have another set of sound effect
 					Destroy(GameObject.Find("GameManager"));
 					SceneManager.LoadScene("Main");
 				}else if(swp_dir == BoardManager.Direction.RIGHT){//quit to main menu
 					SoundManager.instance.playcrash(inputSFX);
 					Destroy(GameObject.Find("GameManager"));
 					SceneManager.LoadScene("Title_Screen");
+				}else if(swp_dir == BoardManager.Direction.FRONT){//repeat audio (duplicate)
+					getHint ();
+					debug_text.text += "GET HINT";
 				}
 			}
 		}else if( (numTouches == touch_audio)&&(swp_dir != BoardManager.Direction.OTHER) ){//skip/repeat sudio
-			if(swp_dir == BoardManager.Direction.LEFT){//repeat instruction
-				GameManager.instance.boardScript.repeat_latest_instruction();
-				debug_text.text += "REPEAT AUDIO";
-			}else if(swp_dir == BoardManager.Direction.RIGHT){//skip instruction
-				GameManager.instance.boardScript.skip_instruction();
-				debug_text.text += "SKIP AUDIO";
+			if((!at_pause_menu) && (isRotation)){
+				isRotation = false;
+				if(swp_dir == BoardManager.Direction.LEFT){
+					dir = get_player_dir("LEFT");
+					SoundManager.instance.PlaySingle(swipeLeft);
+					debug_text.text += "TURN LEFT";
+				}else if(swp_dir == BoardManager.Direction.RIGHT){
+					dir = get_player_dir("RIGHT");
+					SoundManager.instance.PlaySingle(swipeRight);
+					debug_text.text += "TURN RIGHT";
+				}
 			}
-		}else if( (numTouches == touch_menu)&&(Mathf.Abs(Time.time - touchTime) > MENU_TOUCH_TIME)&&(!menuUpdatedThisTouch) ){
-			if(Time.time - menuTapTime >= menuUpdateCD){
+			else if((!at_pause_menu) && (!isRotation)){
+				//if(swp_dir == BoardManager.Direction.LEFT){//repeat instruction
+				//	GameManager.instance.boardScript.repeat_latest_instruction();
+				//	debug_text.text += "REPEAT AUDIO";
+				//}else if(swp_dir == BoardManager.Direction.RIGHT){//skip instruction
+				//	GameManager.instance.boardScript.skip_instruction();
+				//	debug_text.text += "SKIP AUDIO";
+				//}
+			}
+		}else if( (numTouches == touch_menu)&&(Mathf.Abs(Time.time - touchTime) >= MENU_TOUCH_TIME)&&(!menuUpdatedThisTouch)&&(!isRotation)&&(!hasrotated) ){
+			if((Time.time - menuTapTime >= menuUpdateCD)&&(!isRotation)){
 				SoundManager.instance.playcrash(inputSFX);
 				if(!at_pause_menu){//turn on/off pause menu
 					at_pause_menu = true;
