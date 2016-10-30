@@ -41,7 +41,7 @@ public class GM_title : MonoBehaviour {
 		//load instruction clips
 		clips = new AudioClip[total_clip];
 		clips[0] = Resources.Load ("instructions/Welcome to Echo Adventure") as AudioClip;
-		clips[1] = Resources.Load ("instructions/Swipe right to go to the new game menu") as AudioClip;
+		clips[1] = Resources.Load ("instructions/To skip the tutorial, swipe right") as AudioClip;
 		clips[2] = Resources.Load ("instructions/Swipe left to go to the tutorial") as AudioClip;
 		clips[3] = Resources.Load ("instructions/Swipe up to hear a list of commands") as AudioClip;
 		clips[4] = Resources.Load ("instructions/2sec_silence") as AudioClip;
@@ -54,8 +54,8 @@ public class GM_title : MonoBehaviour {
 		//to_tutorial = Resources.Load ("instructions/Welcome to the tutorial") as AudioClip;
 		to_main = new AudioClip[4];
 		to_main[0] = Resources.Load ("instructions/0_5sec_silence") as AudioClip;
-		to_main[1] = Resources.Load ("instructions/Swipe right to continue from last time") as AudioClip;
-		to_main[2] = Resources.Load ("instructions/Double tap to start a new game, then, swipe left to confirm, or double tap to cancel") as AudioClip;
+		//to_main[1] = Resources.Load ("instructions/Swipe right to continue from last time") as AudioClip;
+		//to_main[2] = Resources.Load ("instructions/Double tap to start a new game, then, swipe left to confirm, or double tap to cancel") as AudioClip;
 		to_main[3] = Resources.Load ("instructions/0_5sec_silence") as AudioClip;
 
 		cmdlist = new AudioClip[9];
@@ -110,14 +110,27 @@ public class GM_title : MonoBehaviour {
 			//cur_clip = 0;
 			SoundManager.instance.PlayVoice(to_main[1], true);
 			//SoundManager.instance.PlaySingle(swipeRight);
-		} else if (Input.GetKeyUp(KeyCode.LeftArrow)) {
+		}else if (Input.GetKeyUp(KeyCode.LeftArrow)) {
 			GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
 			SceneManager.LoadScene("Main");
 			//SoundManager.instance.PlayVoice(to_tutorial, true);
 			//SoundManager.instance.PlaySingle(swipeLeft);
-		} else if (Input.GetKeyUp("f")) {
-			//SceneManager.LoadScene("Main");
-			//SoundManager.instance.PlaySingle(swipeAhead);
+		} else if (Input.GetKeyUp(KeyCode.UpArrow)){//Up
+			SoundManager.instance.PlaySingle(swipeAhead);
+			if(!listenToCmd){
+				listenToCmd = true;
+				reset_audio = true;
+				cur_clip = 0;
+				cmd_cur_clip = 0;
+			}else{
+				listenToCmd = false;
+				reset_audio = true;
+				cur_clip = 0;
+				cmd_cur_clip = 0;
+			}
+		} else if (Input.GetKeyUp(KeyCode.DownArrow)){//BACK
+			SoundManager.instance.PlaySingle(swipeAhead);
+			//credit
 		}
 
 		//Check if we are running on iOS, Android, Windows Phone 8 or Unity iPhone
@@ -190,7 +203,8 @@ public class GM_title : MonoBehaviour {
 							cmd_cur_clip = 0;
 						}
 					} else {//BACK
-						//SoundManager.instance.PlaySingle(swipeAhead);
+						SoundManager.instance.PlaySingle(swipeAhead);
+						//credit
 					}
 				} else if (Mathf.Abs(Time.time - touchTime) > TOUCH_TIME) {
 					if (numTouches == 2){
