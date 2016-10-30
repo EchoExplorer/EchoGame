@@ -236,6 +236,9 @@ public class Player : MovingObject
 			reset_audio = false;
 			tapped = false;
 			reportSent = false;
+			reachHalf = false;
+			reachQuarter = false;
+			reach3Quarter = false;
 
 			multiTapStartTime = 0.0f;
 			echoTapTime = 0.0f;
@@ -719,12 +722,14 @@ public class Player : MovingObject
 		Vector2 idx_location = GameManager.instance.boardScript.get_idx_from_pos (transform.position);
 		string location = "(" + idx_location.x.ToString () + "," + idx_location.y.ToString () + ")";
 		correct_post_act = "";
+		//manually setup, TODO: warp it into a function
 		GameManager.instance.boardScript.sol = "";
 		for(int i = 0; i < GameManager.instance.boardScript.searched_temp.Length; ++i)
 			GameManager.instance.boardScript.searched_temp[i] = false;
-		correct_post_act = GameManager.instance.boardScript.getHint (idx_location,"s");
-		//if(GameManager.instance.boardScript.sol.Length >= 2)
-		//	correct_post_act = GameManager.instance.boardScript.sol[GameManager.instance.boardScript.sol.Length-2].ToString();
+		//correct_post_act = GameManager.instance.boardScript.getHint (idx_location,"s");
+		GameManager.instance.boardScript.solveMazeMid(idx_location, "s");
+		if(GameManager.instance.boardScript.sol.Length >= 2)
+			correct_post_act = GameManager.instance.boardScript.sol[GameManager.instance.boardScript.sol.Length-2].ToString();
 
 		Vector3 forward = old_dir;
 		Vector3 sol_dir = new Vector3 ();
@@ -874,6 +879,9 @@ public class Player : MovingObject
 		}
 	}
 
+	bool reachHalf = false;
+	bool reachQuarter = false;
+	bool reach3Quarter = false;
 	private void calculateMove (Vector3 dir)
 	{
 		old_dir = get_player_dir ("FRONT");
@@ -885,18 +893,21 @@ public class Player : MovingObject
 		//print (dir);
 
 		if ((dir != get_player_dir ("FRONT")) && (dir != get_player_dir ("BACK"))) {
-			changedDir = true;
-			rotateplayer (dir);
-			if (reportSent) {
-				post_act = "Turn ";
-				if( (dir - get_player_dir("LEFT")).magnitude <= 0.01f )
-					post_act += "Left";
-				else
-					post_act += "Right";
+			if (!GameManager.instance.boardScript.turning_lock) {
+				changedDir = true;
+				rotateplayer (dir);
+				if (reportSent) {
+					post_act = "Turn ";
+					if ((dir - get_player_dir ("LEFT")).magnitude <= 0.01f)
+						post_act += "Left";
+					else
+						post_act += "Right";
 
-				reportOnEcho ();
-				reportSent = false;
-			}
+					reportOnEcho ();
+					reportSent = false;
+				}
+			} else
+				return;
 		}
 
 		dir.Normalize ();
@@ -908,6 +919,45 @@ public class Player : MovingObject
 					GameManager.instance.boardScript.gamerecord += "f";
 				}if (dir == get_player_dir ("BACK"))
 					GameManager.instance.boardScript.gamerecord += "b";
+			}
+		}
+
+		//Inform player about progress
+		if(true){
+			GameManager.instance.boardScript.sol = "";
+			for (int i = 0; i < GameManager.instance.boardScript.searched_temp.Length; ++i)
+				GameManager.instance.boardScript.searched_temp [i] = false;
+		
+			Vector2 idx_location = GameManager.instance.boardScript.get_idx_from_pos (transform.position);
+			GameManager.instance.boardScript.solveMazeMid (idx_location, "s");
+			int remaining_steps = GameManager.instance.boardScript.sol.Length;
+			if (remaining_steps >= 2)
+				remaining_steps -= 2;
+			int total_step = GameManager.instance.boardScript.mazeSolution.Length - 1;
+			float ratio = (float)remaining_steps / total_step;
+			if ((!reachQuarter) && (ratio <= 0.75f) && (ratio > 0.5f)) {
+				reachQuarter = true;
+				//if (GameManager.instance.boardScript.latest_clip != null) {
+				//	GameManager.instance.boardScript.restore_audio = true;
+				//	GameManager.instance.boardScript.latest_clip = SoundManager.instance.voiceSource.clip;
+				//}
+				//SoundManager.instance.PlayVoice (Resources.Load ("instructions/You are 25% of the way through this level") as AudioClip);
+			} else if ((!reachHalf) && (ratio <= 0.5f) && (ratio > 0.25f)) {
+				reachHalf = true;
+				if (GameManager.instance.boardScript.latest_clip != null) {
+					GameManager.instance.boardScript.restore_audio = true;
+					GameManager.instance.boardScript.latest_clip = SoundManager.instance.voiceSource.clip;
+				}
+				SoundManager.instance.PlayVoice (Resources.Load ("instructions/You are halfway there") as AudioClip);
+				print ("50%");
+			} else if ((!reach3Quarter) && (ratio <= 0.25f)) {
+				//reach3Quarter = true;
+				//if (GameManager.instance.boardScript.latest_clip != null) {
+				//	GameManager.instance.boardScript.restore_audio = true;
+				//	GameManager.instance.boardScript.latest_clip = SoundManager.instance.voiceSource.clip;
+				//}
+				//SoundManager.instance.PlayVoice (Resources.Load ("instructions/You are 75% of the way through this level") as AudioClip);
+				//print ("75%");
 			}
 		}
 	}
@@ -1223,6 +1273,14 @@ public class Player : MovingObject
 		} else if (Input.GetKeyUp ("r")) {
 			want_exit = true;
 			reset_audio = true;
+		} else if (Input.GetKeyUp ("m")) {
+			if(GameManager.levelImageActive){
+				GameManager.instance.HideLevelImage();
+				GameManager.instance.boardScript.gamerecord += "S_OFF";
+			}else{
+				GameManager.instance.UnHideLevelImage();
+				GameManager.instance.boardScript.gamerecord += "S_ON";
+			}
 		}
 
 		//Check if we are running on iOS, Android, Windows Phone 8 or Unity iPhone
@@ -1246,10 +1304,10 @@ public class Player : MovingObject
 			multiTapStartTime = Time.time;
 			TouchTapCount = 0;
 		}
-
+		/*
 		debug_text.text = "numTOuches: " + numTouches.ToString() + "\n"
 						+ "PauseMenuOn: " + at_pause_menu.ToString() + "\n"
-						+ "Tap Count: " + TouchTapCount.ToString() + "\n";
+						+ "Tap Count: " + TouchTapCount.ToString() + "\n";*/
 
 		//collect raw data from the device
 		if (numTouches > 0) {
@@ -1259,10 +1317,10 @@ public class Player : MovingObject
 			//if(touches.Contains(myTouch)){
 			//}
 			touchEndpos = myTouch.position;
-
+			/*
 			debug_text.text = "numTOuches: " + numTouches.ToString() + "\n"
 							+ "PauseMenuOn: " + at_pause_menu.ToString() + "\n"
-							+ "Tap Count: " + TouchTapCount.ToString() + "\n";
+							+ "Tap Count: " + TouchTapCount.ToString() + "\n";*/
 
 			if((numTouches == 2) && numTouches != numTouchlastframe){
 				VecStart = Input.touches[0].position - Input.touches[1].position;
@@ -1396,11 +1454,11 @@ public class Player : MovingObject
 			GameManager.instance.boardScript.gamerecord += "X";
 			attemptExitFromLevel();
 		}else if( (numTouches == touch_simple) ){//turn, get echo, etc.
-			if(!at_pause_menu){
+			if(!at_pause_menu){//not at pause menu
 				if(swp_dir == BoardManager.Direction.FRONT){
 					dir = get_player_dir("FRONT");
 					SoundManager.instance.PlaySingle(swipeAhead);
-					debug_text.text += "MOVE FORWARD";
+					//debug_text.text += "MOVE FORWARD";
 				}
 				//enable this part for swipe control turning
 				/*
@@ -1433,7 +1491,7 @@ public class Player : MovingObject
 								PlayEcho();
 								GameManager.instance.boardScript.gamerecord += lastEcho;
 								GameManager.instance.boardScript.gamerecord += "}";
-								debug_text.text += "PLAY ECHO";
+								//debug_text.text += "PLAY ECHO";
 							}
 						}
 					}
@@ -1441,13 +1499,16 @@ public class Player : MovingObject
 			}
 			else{//at the pause menu
 				if(swp_dir == BoardManager.Direction.BACK){//turn on/of black screen
-					if(GameManager.levelImageActive)
+					if(GameManager.levelImageActive){
 						GameManager.instance.HideLevelImage();
-					else
+						GameManager.instance.boardScript.gamerecord += "S_OFF";
+					}else{
 						GameManager.instance.UnHideLevelImage();
+						GameManager.instance.boardScript.gamerecord += "S_ON";
+					}
 					at_pause_menu = false;
 					SoundManager.instance.PlayVoice(menuOff, true);//shoule have another set of sound effect
-					debug_text.text += "BLACKEN SCREEN";
+					//debug_text.text += "BLACKEN SCREEN";
 				}else if(swp_dir == BoardManager.Direction.LEFT){//restart level
 					SoundManager.instance.playcrash(inputSFX);
 					//GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
@@ -1460,20 +1521,22 @@ public class Player : MovingObject
 					SceneManager.LoadScene("Title_Screen");
 				}else if(swp_dir == BoardManager.Direction.FRONT){//repeat audio (duplicate)
 					getHint ();
-					debug_text.text += "GET HINT";
+					//debug_text.text += "GET HINT";
 				}
 			}
-		}else if( (numTouches == touch_audio)&&(swp_dir != BoardManager.Direction.OTHER) ){//skip/repeat sudio
+		}else if( (numTouches == touch_audio)&&(swp_dir != BoardManager.Direction.OTHER) ){//rotate player
 			if((!at_pause_menu) && (isRotation)){
 				isRotation = false;
 				if(swp_dir == BoardManager.Direction.LEFT){
 					dir = get_player_dir("LEFT");
-					SoundManager.instance.PlaySingle(swipeLeft);
-					debug_text.text += "TURN LEFT";
+					if (!GameManager.instance.boardScript.turning_lock)
+						SoundManager.instance.PlaySingle(swipeLeft);
+					//debug_text.text += "TURN LEFT";
 				}else if(swp_dir == BoardManager.Direction.RIGHT){
 					dir = get_player_dir("RIGHT");
-					SoundManager.instance.PlaySingle(swipeRight);
-					debug_text.text += "TURN RIGHT";
+					if (!GameManager.instance.boardScript.turning_lock)
+						SoundManager.instance.PlaySingle(swipeRight);
+					//debug_text.text += "TURN RIGHT";
 				}
 			}
 			else if((!at_pause_menu) && (!isRotation)){
@@ -1490,13 +1553,17 @@ public class Player : MovingObject
 				SoundManager.instance.playcrash(inputSFX);
 				if(!at_pause_menu){//turn on/off pause menu
 					at_pause_menu = true;
+					if(SoundManager.instance.voiceSource.isPlaying){
+						GameManager.instance.boardScript.restore_audio = true;
+						GameManager.instance.boardScript.latest_clip = SoundManager.instance.voiceSource.clip;
+					}
 					SoundManager.instance.PlayVoice(menuOn, true);
 				}else{
 					at_pause_menu = false;
 					SoundManager.instance.PlayVoice(menuOff, true);
 				}
 
-				debug_text.text += "UPDATE MENU";
+				//debug_text.text += "UPDATE MENU";
 				menuTapTime= Time.time;
 				menuUpdatedThisTouch = true;
 			}

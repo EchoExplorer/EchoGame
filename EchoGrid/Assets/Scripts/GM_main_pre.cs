@@ -27,7 +27,7 @@ public class GM_main_pre : MonoBehaviour {
 		GameObject.Find ("GameMode").GetComponent <GameMode>().init ();
 		//load instruction clips
 		clips = new AudioClip[total_clip];
-		clips[0] = Resources.Load ("instructions/Swipe right to continue from last time") as AudioClip;
+		clips[0] = Resources.Load ("instructions/To continue from where you left off, swipe right ") as AudioClip;
 		clips[1] = Resources.Load ("instructions/0_5sec_silence") as AudioClip;
 		clips[2] = Resources.Load ("instructions/Double tap to start a new game, then, swipe left to confirm, or double tap to cancel") as AudioClip;
 		clips[3] = Resources.Load ("instructions/2sec_silence") as AudioClip;

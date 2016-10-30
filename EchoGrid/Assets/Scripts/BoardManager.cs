@@ -166,13 +166,14 @@ public class BoardManager : MonoBehaviour {
 	public GameObject exit;
 	GameObject player_ref;
 	Player player_script;
+	public bool turning_lock = false;
 
 	private Transform boardHolder;
 	private List <Vector3> gridPositions = new List<Vector3> ();
 	private List <int> wallIdxes = new List<int> ();
 	public List <Vector3> wallPositions = new List<Vector3> ();
 	private List<Vector3> playerPositions = new List<Vector3> ();
-	string mazeSolution = "";
+	public string mazeSolution = "";
 	level_voice_list level_voices = new level_voice_list();
 	Vector3 exitPos;
 	Vector3 startPos;
@@ -181,7 +182,7 @@ public class BoardManager : MonoBehaviour {
 	int cur_clip = 1;
 	int cur_level;
 	int total_clip = 11;
-	List<AudioClip> latest_clips;//used to repeat instructions
+	public AudioClip latest_clip = new AudioClip();//used to repeat instructions
 	int latest_clip_idx;
 	AudioClip lv_1_move, lv_1_exit;
 
@@ -237,46 +238,66 @@ public class BoardManager : MonoBehaviour {
 		}
 	}
 
-	public int play_audio(List<AudioClip> audios, int cur, bool isReturn = false){
+	public bool restore_audio = false;
+	public int play_audio(List<AudioClip> audios, int cur, bool restore = false, bool isReturn = false){
+		if (!SoundManager.instance.voiceSource.isPlaying)
+			SoundManager.instance.voiceSource.clip = null;
 
-		if (!skip_clip) {
-			if ((cur == 0) && (!isReturn)) {
-				SoundManager.instance.PlayVoice (audios [cur], true);
-				//update history clip list
-				latest_clips.Add (audios [cur]);
-				latest_clip_idx = latest_clips.Count - 1;
-				return (cur + 1);
-			} else if ((cur == 0) && (isReturn)) {
-				SoundManager.instance.PlayVoice (audios [cur], true);
-				//update history clip list
-				return -1;
-			} else if ((cur == -1) && (isReturn)) {
-				SoundManager.instance.PlayVoice (audios [0], false);
-				//update history clip list
-				return -1;
-			} else if (SoundManager.instance.PlayVoice (audios [cur])) {
-				//update history clip list
-				latest_clips.Add (audios [cur]);
-				latest_clip_idx = latest_clips.Count - 1;
-				return (cur + 1);
+		if (restore_audio) {
+			if (latest_clip != null) {
+				if (SoundManager.instance.PlayVoice (latest_clip)) {
+					restore_audio = false;
+					latest_clip = null;
+				}
+			} else
+				restore_audio = false;
+		}else{
+			if (!skip_clip) {
+				if ((cur == 0) && (!isReturn)) {
+					if (restore) {
+						latest_clip = SoundManager.instance.voiceSource.clip;
+						restore_audio = true;
+					}
+					SoundManager.instance.PlayVoice (audios [cur], true);
+					//update history clip list
+					return (cur + 1);
+				} else if ((cur == 0) && (isReturn)) {
+					if (restore) {
+						latest_clip = SoundManager.instance.voiceSource.clip;
+						restore_audio = true;
+					}
+					SoundManager.instance.PlayVoice (audios [cur], true);
+					//update history clip list
+					return -1;
+				} else if ((cur == -1) && (isReturn)) {
+					SoundManager.instance.PlayVoice (audios [0], false);
+					//update history clip list
+					return -1;
+				} else if (SoundManager.instance.PlayVoice (audios [cur])) {
+					//update history clip list
+					return (cur + 1);
+				}
+			} else {//skip instruction
+				/*
+				restore_audio = true;
+				skip_clip = false;
+				if (cur + 1 < audios.Count){
+					SoundManager.instance.PlayVoice (audios [cur + 1], true);
+					return (cur + 2);
+				}else
+					return (cur + 1);
+					*/
 			}
-		} else {//skip instruction
-			skip_clip = false;
-			if (cur + 1 < audios.Count){
-				SoundManager.instance.PlayVoice (audios [cur + 1], true);
-				return (cur + 2);
-			}else
-				return (cur + 1);
 		}
 		
 		return cur;
 	}
 
 	public void repeat_latest_instruction(){
-		if (latest_clip_idx >= 0) {
-			SoundManager.instance.PlayVoice (latest_clips [latest_clip_idx], true);
-			latest_clip_idx -= 1;
-		}
+		//if (latest_clip_idx >= 0) {
+		//	SoundManager.instance.PlayVoice (latest_clips [latest_clip_idx], true);
+		//	latest_clip_idx -= 1;
+		//}
 	}
 
 	public void skip_instruction(){
@@ -300,7 +321,7 @@ public class BoardManager : MonoBehaviour {
 				level_voices.clip_exit = play_audio (level_voices.clip_at_exit, level_voices.clip_exit);
 		}else if (((idx_pos - get_idx_from_pos (startPos)).magnitude <= threshold)&&left_start_pt) {
 			if (level_voices.clip_return < level_voices.clip_when_return.Count)
-				level_voices.clip_return = play_audio (level_voices.clip_when_return, level_voices.clip_return, true);
+				level_voices.clip_return = play_audio (level_voices.clip_when_return, level_voices.clip_return, true, true);
 		}else{
 			for(int i = 0; i < level_voices.ingame.Count; ++i){//find out that if player is in specific position and dir
 				if ( ((idx_pos - level_voices.ingame[i].pos).magnitude <= threshold)&&
@@ -310,11 +331,15 @@ public class BoardManager : MonoBehaviour {
 						ingame_playing = true;
 						//play voice
 						if (level_voices.ingame_cur_clip [i] < level_voices.ingame [i].clips.Count)
-							level_voices.ingame_cur_clip [i] = play_audio (level_voices.ingame [i].clips, level_voices.ingame_cur_clip [i]);
+							level_voices.ingame_cur_clip [i] = play_audio (level_voices.ingame [i].clips, level_voices.ingame_cur_clip [i], true);
+						else
+							ingame_playing = false;
 					} else if (!level_voices.ingame [i].tap) {
 						ingame_playing = true;
 						if (level_voices.ingame_cur_clip [i] < level_voices.ingame [i].clips.Count)
-							level_voices.ingame_cur_clip[i] = play_audio (level_voices.ingame [i].clips, level_voices.ingame_cur_clip [i]);				
+							level_voices.ingame_cur_clip[i] = play_audio (level_voices.ingame [i].clips, level_voices.ingame_cur_clip [i], true);	
+						else
+							ingame_playing = false;
 					}
 				}
 			}
@@ -404,6 +429,11 @@ public class BoardManager : MonoBehaviour {
 		wallPositions.Clear ();
 		wallIdxes.Clear ();
 		playerPositions.Clear ();
+
+		if (level <= 2)
+			turning_lock = true;
+		else
+			turning_lock = false;
 
 		float scale = (float)Utilities.SCALE_REF / (float)Utilities.MAZE_SIZE;
 
@@ -741,8 +771,8 @@ public class BoardManager : MonoBehaviour {
 		//write_local_stats ();
 
 		//setup clip history list
-		latest_clips = new List<AudioClip>();
-		latest_clips.Clear();
+		//latest_clips = new List<AudioClip>();
+		//latest_clips.Clear();
 		latest_clip_idx = 0;
 		skip_clip = false;
 	}
