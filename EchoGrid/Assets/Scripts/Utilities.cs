@@ -22,7 +22,10 @@ public class Utilities : MonoBehaviour {
 
 	public static bool writefile(string fname, string toWrite){
 		string filename = Application.persistentDataPath + fname;
-		System.IO.File.WriteAllText (filename, toWrite);
+		if (System.IO.File.Exists (filename)) {
+			//TODO: this is a temp solution, we should take down the content of consent
+			System.IO.File.WriteAllText (filename, toWrite);
+		}
 		return true;
 	}
 }

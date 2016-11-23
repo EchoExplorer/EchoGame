@@ -12,14 +12,19 @@ public class GM_TC : MonoBehaviour {
 	int cur_clip = 0;
 	bool isLandscape = true;
 	bool finished_reading = false;
+	bool URL_opened = false;
 	AudioClip swipeAhead;
-	public Scrollbar sb;
+	//public Scrollbar sb;
 	bool android_window_displayed = false;
 
 	AndroidDialogue ad;
-	string msg = "Show the online consent form";
+	string msg = "Please hold your phone horizontally for this game, \n " +
+		         "and please read the online consent form; \n " +
+		         "after finish, you can click back button to " +
+		         "return to the game";
 
 	void Awake () {
+		URL_opened = false;
 		android_window_displayed = false;
 		ad = GetComponent<AndroidDialogue> ();
 		swipeAhead = Resources.Load("fx/swipe-ahead") as AudioClip;
@@ -39,6 +44,20 @@ public class GM_TC : MonoBehaviour {
 				SceneManager.LoadScene("Title_screen");
 		}
 	}
+	/*
+	private void reportConsent(string code) {
+		string echoEndpoint = "http://echolock.andrew.cmu.edu/cgi-bin/acceptConsent.py";
+
+		WWWForm echoForm = new WWWForm ();
+		echoForm.AddField ("userName", encrypt (SystemInfo.deviceUniqueIdentifier));
+		echoForm.AddField ("consentID", encrypt (code));
+
+		UnityEngine.Debug.Log (System.Text.Encoding.ASCII.GetString (echoForm.data));
+
+		WWW www = new WWW (echoEndpoint, echoForm);
+		StartCoroutine (WaitForRequest (www));
+	}
+	*/
 
 	bool reset_audio = false;
 	void play_audio(){
@@ -63,18 +82,22 @@ public class GM_TC : MonoBehaviour {
 	private float minSwipeDist = 100f;
 	// Update is called once per frame
 	void Update () {
-		if ( (sb.value <= 0.5f)&&(!android_window_displayed) ) {
+		if ( (!android_window_displayed) ) {
 			android_window_displayed = true;
 			finished_reading = true;
-			ad.DisplayAndroidWindow (msg);
+			ad.DisplayAndroidWindow (msg, false);
 		}
 
-		if (ad.yesclicked ()) {
+		if ( !URL_opened && ad.yesclicked ()) {
 			//open URL
-			//Application.OpenURL ("");
+			URL_opened = true;
+			Application.OpenURL ("http://echolock.andrew.cmu.edu/consent/");//"http://echolock.andrew.cmu.edu/consent/?"
 		} else if (ad.noclicked ()) {
 			SceneManager.LoadScene("T&C");
+			SceneManager.LoadScene("Agreement");
 		}
+		//report code from popup using reportConsent()
+
 		
 		play_audio ();
 

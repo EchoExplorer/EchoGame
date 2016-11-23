@@ -26,8 +26,8 @@ public class AndroidDialogue : MonoBehaviour {
 	}
 
 	//the connector from outside
-	public void DisplayAndroidWindow(string msg){
-		showDialog(msg);
+	public void DisplayAndroidWindow(string msg, bool hasNo = true){
+		showDialog(msg, hasNo);
 	}
 
 	public bool yesclicked(){
@@ -85,7 +85,7 @@ public class AndroidDialogue : MonoBehaviour {
 
 	#endif
 
-	private void showDialog(string msg) {
+	private void showDialog(string msg, bool hasNo) {
 
 		#if UNITY_ANDROID
 		// Obtain activity
@@ -103,8 +103,8 @@ public class AndroidDialogue : MonoBehaviour {
 			// Call setMessage on the builder
 			alertDialogBuilder.Call< AndroidJavaObject> ("setMessage", msg);
 
-			// Call setCancelable on the builder
-			alertDialogBuilder.Call< AndroidJavaObject> ("setCancelable", true);
+			//You must answer it before proceed
+			alertDialogBuilder.Call< AndroidJavaObject> ("setCancelable", false);
 
 			// Call setPositiveButton and set the message along with the listner
 			// Listner is a proxy class
@@ -112,7 +112,8 @@ public class AndroidDialogue : MonoBehaviour {
 
 			// Call setPositiveButton and set the message along with the listner
 			// Listner is a proxy class
-			alertDialogBuilder.Call< AndroidJavaObject> ("setNegativeButton", "No", new NegativeButtonListner(this));
+			if(hasNo)
+				alertDialogBuilder.Call< AndroidJavaObject> ("setNegativeButton", "No", new NegativeButtonListner(this));
 
 			// Finally get the dialog instance and show it
 			AndroidJavaObject dialog = alertDialogBuilder.Call< AndroidJavaObject> ("create");

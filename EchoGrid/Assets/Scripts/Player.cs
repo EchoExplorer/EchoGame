@@ -70,8 +70,11 @@ public class Player : MovingObject
 	private Stopwatch stopWatch;
 	private DateTime startTime;
 	private DateTime endTime;
+	AndroidDialogue ad;
 
 	bool want_exit;
+	bool survey_shown = false;
+	bool URL_shown = false;
 	bool swp_lock = false;//stop very fast input
 	bool at_pause_menu = false;//indicating if the player activated pause menu
 	static bool level_already_loaded = false;
@@ -176,16 +179,19 @@ public class Player : MovingObject
 		reset_audio = false;
 		tapped = false;
 		reportSent = false;
+		survey_shown = false;
+		URL_shown = false;
+		ad = GetComponent<AndroidDialogue> ();
 
 		//load audio
 		inputSFX = Resources.Load ("fx/inputSFX") as AudioClip;
 		menuOn = Resources.Load ("instructions/Menu opened") as AudioClip;
 		menuOff = Resources.Load ("instructions/Menu closed") as AudioClip;
 		menuClips = new AudioClip[5];
-		menuClips [0] = Resources.Load ("instructions/Swipe left to restart the current level") as AudioClip;
-		menuClips [1] = Resources.Load ("instructions/Swipe left to return to the tutorial, swipe right to return to the main menu, and swipe down to toggle the screen on and off") as AudioClip;
-		menuClips [2] = Resources.Load ("instructions/Swipe up to hear a hint") as AudioClip;
-		menuClips [3] = Resources.Load ("instructions/To close the menu, press and hold with two fingers") as AudioClip;
+		menuClips [0] = Resources.Load ("instructions/To close the menu, press and hold with two fingers") as AudioClip;
+		menuClips [1] = Resources.Load ("instructions/Swipe left to restart the current level") as AudioClip;
+		menuClips [2] = Resources.Load ("instructions/Swipe left to return to the tutorial, swipe right to return to the main menu, and swipe down to toggle the screen on and off") as AudioClip;
+		menuClips [3] = Resources.Load ("instructions/Swipe up to hear a hint") as AudioClip;
 		menuClips [4] = Resources.Load ("instructions/2sec_silence") as AudioClip;
 
 		//specify controls
@@ -239,6 +245,9 @@ public class Player : MovingObject
 			reachHalf = false;
 			reachQuarter = false;
 			reach3Quarter = false;
+			survey_shown = false;
+			URL_shown = false;
+			ad = GetComponent<AndroidDialogue> ();
 
 			multiTapStartTime = 0.0f;
 			echoTapTime = 0.0f;
@@ -1035,7 +1044,7 @@ public class Player : MovingObject
 	}
 
 	private void attemptExitFromLevel ()
-	{
+	{		
 		exitAttempts++;
 		GameObject exitSign = GameObject.FindGameObjectWithTag ("Exit");
 		Vector2 distFromExit = transform.position - exitSign.transform.position;
@@ -1175,6 +1184,20 @@ public class Player : MovingObject
 		}
 	}
 
+	private void reportsurvey(string code) {
+		string echoEndpoint = "http://echolock.andrew.cmu.edu/cgi-bin/acceptSurvey.py";
+
+		WWWForm echoForm = new WWWForm ();
+		echoForm.AddField ("userName", encrypt (SystemInfo.deviceUniqueIdentifier));
+		echoForm.AddField ("surveyID", encrypt (code));
+		//the code is the first digit of device id
+
+		UnityEngine.Debug.Log (System.Text.Encoding.ASCII.GetString (echoForm.data));
+
+		WWW www = new WWW (echoEndpoint, echoForm);
+		StartCoroutine (WaitForRequest (www));
+	}
+
 	void play_audio ()
 	{
 		if(at_pause_menu){
@@ -1285,6 +1308,23 @@ public class Player : MovingObject
 
 		//Check if we are running on iOS, Android, Windows Phone 8 or Unity iPhone
 		#elif UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
+		//pop up the survey at the end of tutorial
+		Vector2 distFromExit = transform.position - GameManager.instance.boardScript.exitPos;
+		if (Vector2.SqrMagnitude (distFromExit) < 0.25) {
+			if( (GameManager.instance.level == 11)&&(!survey_shown) ){
+				ad.DisplayAndroidWindow ("Would you like to take \n a short survey about the game?");
+				survey_shown = true;
+			}
+
+			if(survey_shown && !URL_shown && ad.yesclicked()){
+
+				//display a code, and submit it reportSurvey()
+				// Please enter code (first six digits of UDID) on the survey page
+
+				URL_shown = true;
+				Application.OpenURL("http://echolock.andrew.cmu.edu/survey/");//"http://echolock.andrew.cmu.edu/survey/?"
+			}
+		}
 
 		float ECHO_TOUCH_TIME = 0.15f;
 		float TOUCH_TIME = 0.02f;
