@@ -23,6 +23,9 @@ public class GM_TC : MonoBehaviour {
 		         "after finish, you can click back button to " +
 		         "return to the game";
 
+	string msgCode = "Your consent code is: \n";
+	string consentCode = "";
+
 	void Awake () {
 		URL_opened = false;
 		android_window_displayed = false;
@@ -31,10 +34,10 @@ public class GM_TC : MonoBehaviour {
 		orit = new AudioClip[2];
 		orit[0] = Resources.Load ("instructions/Please hold your phone horizontally for this game") as AudioClip;
 		orit[1] = Resources.Load ("instructions/2sec_silence") as AudioClip;	
-		clips = new AudioClip[3];
-		clips[0] = Resources.Load ("instructions/Swipe left to confirm") as AudioClip;
+		clips = new AudioClip[2];
+		//clips[0] = Resources.Load ("instructions/Swipe left to confirm") as AudioClip;
+		clips[0] = Resources.Load ("instructions/2sec_silence") as AudioClip;
 		clips[1] = Resources.Load ("instructions/2sec_silence") as AudioClip;
-		clips[2] = Resources.Load ("instructions/2sec_silence") as AudioClip;
 
 		string[] consentResult = Utilities.Loadfile ("consentRecord");
 		int[] intResult = new int[1];
@@ -43,21 +46,23 @@ public class GM_TC : MonoBehaviour {
 			if(intResult[0] == 1)
 				SceneManager.LoadScene("Title_screen");
 		}
+
+		Utilities.initEncrypt ();
 	}
-	/*
+
 	private void reportConsent(string code) {
 		string echoEndpoint = "http://echolock.andrew.cmu.edu/cgi-bin/acceptConsent.py";
 
 		WWWForm echoForm = new WWWForm ();
-		echoForm.AddField ("userName", encrypt (SystemInfo.deviceUniqueIdentifier));
-		echoForm.AddField ("consentID", encrypt (code));
+		echoForm.AddField ("userName", Utilities.encrypt (SystemInfo.deviceUniqueIdentifier));
+		echoForm.AddField ("consentID", Utilities.encrypt (code));
 
 		UnityEngine.Debug.Log (System.Text.Encoding.ASCII.GetString (echoForm.data));
 
 		WWW www = new WWW (echoEndpoint, echoForm);
-		StartCoroutine (WaitForRequest (www));
+		StartCoroutine (Utilities.WaitForRequest (www));
 	}
-	*/
+
 
 	bool reset_audio = false;
 	void play_audio(){
@@ -69,11 +74,11 @@ public class GM_TC : MonoBehaviour {
 					orti_clip = 0;
 			}
 		} else if (finished_reading) {
-			if (SoundManager.instance.PlayVoice (clips [cur_clip])) {
-				cur_clip += 1;
-				if (cur_clip >= orit.Length)
-					cur_clip = 0;
-			}
+			//if (SoundManager.instance.PlayVoice (clips [cur_clip])) {
+			//	cur_clip += 1;
+			//	if (cur_clip >= orit.Length)
+			//		cur_clip = 0;
+			//}
 		}
 	}
 
@@ -84,19 +89,29 @@ public class GM_TC : MonoBehaviour {
 	void Update () {
 		if ( (!android_window_displayed) ) {
 			android_window_displayed = true;
-			finished_reading = true;
-			ad.DisplayAndroidWindow (msg, false);
+			finished_reading = false;
+			ad.clearflag();
+			ad.DisplayAndroidWindow (msg, AndroidDialogue.DialogueType.YESONLY);
 		}
 
-		if ( !URL_opened && ad.yesclicked ()) {
+		if (!URL_opened && ad.yesclicked () && finished_reading) {
 			//open URL
 			URL_opened = true;
 			Application.OpenURL ("http://echolock.andrew.cmu.edu/consent/");//"http://echolock.andrew.cmu.edu/consent/?"
-		} else if (ad.noclicked ()) {
-			SceneManager.LoadScene("T&C");
-			SceneManager.LoadScene("Agreement");
+			ad.clearflag ();
+		} else if (!URL_opened && ad.yesclicked () && !finished_reading) {
+			ad.clearflag ();
+			if (SystemInfo.deviceUniqueIdentifier.Length <= 4)
+				consentCode = SystemInfo.deviceUniqueIdentifier;
+			else
+				consentCode = SystemInfo.deviceUniqueIdentifier.Substring (0, 4);
+			string codemsg = msgCode + consentCode + "\n please enter this in the consent form.";
+			ad.DisplayAndroidWindow (codemsg, AndroidDialogue.DialogueType.YESONLY);
+			finished_reading = true;
+		} else if (URL_opened) {//report code from popup using reportConsent()
+			reportConsent(consentCode);
+			SceneManager.LoadScene("Title_Screen");
 		}
-		//report code from popup using reportConsent()
 
 		
 		play_audio ();
@@ -108,7 +123,7 @@ public class GM_TC : MonoBehaviour {
 		if (Input.GetKeyUp(KeyCode.RightArrow)) {
 			//SoundManager.instance.PlaySingle(swipeRight);
 		}else if (Input.GetKeyUp(KeyCode.LeftArrow)) {
-			SceneManager.LoadScene("Agreement");
+			SceneManager.LoadScene("Title_Screen");
 			SoundManager.instance.PlaySingle(swipeAhead);
 		} else if (Input.GetKeyUp(KeyCode.UpArrow)){//Up
 		} else if (Input.GetKeyUp(KeyCode.DownArrow)){//BACK
@@ -163,8 +178,8 @@ public class GM_TC : MonoBehaviour {
 					if (x > 0) {//RIGHT
 					//SoundManager.instance.PlaySingle(swipeRight);
 					} else {//LEFT
-						SceneManager.LoadScene("Agreement");
-						SoundManager.instance.PlaySingle(swipeAhead);
+						SceneManager.LoadScene("Title_Screen");
+						//SoundManager.instance.PlaySingle(swipeAhead);
 					}
 				} else if (Mathf.Abs(y) > Mathf.Abs(x) && Mathf.Abs(y) >= minSwipeDist) {
 					//If y is greater than zero, set vertical to 1, otherwise set it to -1

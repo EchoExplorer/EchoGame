@@ -180,7 +180,7 @@ public class GM_Agreement : MonoBehaviour {
 	void gotoNextAgreement(){
 		if (cur_text < total_num_agreements) {
 			if( (cur_text == 5)||(cur_text == 6) )
-				ad.DisplayAndroidWindow (questions [cur_text], false);
+				ad.DisplayAndroidWindow (questions [cur_text], AndroidDialogue.DialogueType.YESONLY);
 			else
 				ad.DisplayAndroidWindow (questions [cur_text]);
 		}

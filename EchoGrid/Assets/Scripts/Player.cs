@@ -75,6 +75,8 @@ public class Player : MovingObject
 	bool want_exit;
 	bool survey_shown = false;
 	bool URL_shown = false;
+	bool code_entered = false;
+	bool survey_activated = true;
 	bool swp_lock = false;//stop very fast input
 	bool at_pause_menu = false;//indicating if the player activated pause menu
 	static bool level_already_loaded = false;
@@ -92,38 +94,6 @@ public class Player : MovingObject
 		numCrashes = 0;
 		numSteps = 0;
 		crashLocs = "";
-	}
-
-	private void initEncrypt ()
-	{
-		string publicKeyString = "MIGdMA0GCSqGSIb3DQEBAQUAA4GLADCBhwKBgQC1hBlMytDpiLGqCNGfx+IvbRH9edqFcxJoL5CuEPOjr31u9PXTgtSuZhldKc9KpPR4j62M6+UxSs9abDd1/C0txQEB4Jxe/FPMOBmlvNHNHLw6htPx5JRHzN1cegi3W6Qd8YRMi3XfSx5tGx0NNLxuf+EDrE5NIVUdp0hpQ7yMFQIBAw==";
-		byte[] publicKeyBytes = Convert.FromBase64String (publicKeyString);
-
-		byte[] Exponent = {3};
-
-
-		//Create a new instance of RSAParameters.
-		RSAParameters RSAKeyInfo = new RSAParameters ();
-
-		//Set RSAKeyInfo to the public key values.
-		RSAKeyInfo.Modulus = publicKeyBytes;
-		RSAKeyInfo.Exponent = Exponent;
-
-		//Import key parameters into RSA.
-		encrypter.ImportParameters (RSAKeyInfo);
-
-		//UnityEngine.Debug.Log (encrypt ("This is a test String"));
-	}
-
-	private String encrypt (String encryptThis)
-	{
-		string b64EncryptThis = Base64Encode (encryptThis);
-
-		//Encrypt the symmetric key and IV.
-		byte[] encryptedString = encrypter.EncryptValue (Convert.FromBase64String (b64EncryptThis));
-
-		//Add the encrypted test string to the form
-		return Convert.ToBase64String (encryptedString);
 	}
 
 	void Awake(){
@@ -147,7 +117,7 @@ public class Player : MovingObject
 
 		//Initialize data collection variables
 		initData ();
-		initEncrypt ();
+		Utilities.initEncrypt ();
 
 		/*
 		//TODO(agotsis/wenyuw1) Once the local database is integrated this hardcoding will go away.
@@ -181,6 +151,8 @@ public class Player : MovingObject
 		reportSent = false;
 		survey_shown = false;
 		URL_shown = false;
+		code_entered = false;
+		survey_activated = true;
 		ad = GetComponent<AndroidDialogue> ();
 
 		//load audio
@@ -247,6 +219,8 @@ public class Player : MovingObject
 			reach3Quarter = false;
 			survey_shown = false;
 			URL_shown = false;
+			code_entered = false;
+			survey_activated = true;
 			ad = GetComponent<AndroidDialogue> ();
 
 			multiTapStartTime = 0.0f;
@@ -768,19 +742,19 @@ public class Player : MovingObject
 
 
 		WWWForm echoForm = new WWWForm ();
-		echoForm.AddField ("userName", encrypt (SystemInfo.deviceUniqueIdentifier));
-		echoForm.AddField ("currentLevel", encrypt (curLevel.ToString ()));
-		echoForm.AddField ("trackCount", encrypt (GameManager.instance.boardScript.local_stats[curLevel].ToString()));
+		echoForm.AddField ("userName", Utilities.encrypt (SystemInfo.deviceUniqueIdentifier));
+		echoForm.AddField ("currentLevel", Utilities.encrypt (curLevel.ToString ()));
+		echoForm.AddField ("trackCount", Utilities.encrypt (GameManager.instance.boardScript.local_stats[curLevel].ToString()));
 		echoForm.AddField ("echo", lastEcho); //fix
-		echoForm.AddField ("echoLocation", encrypt (location));
-		echoForm.AddField ("postEchoAction", encrypt (post_act));
-		echoForm.AddField ("correctAction", encrypt (correct_post_act));
-		echoForm.AddField ("dateTimeStamp", encrypt (System.DateTime.Now.ToString ()));
+		echoForm.AddField ("echoLocation", Utilities.encrypt (location));
+		echoForm.AddField ("postEchoAction", Utilities.encrypt (post_act));
+		echoForm.AddField ("correctAction", Utilities.encrypt (correct_post_act));
+		echoForm.AddField ("dateTimeStamp", Utilities.encrypt (System.DateTime.Now.ToString ()));
 
 		UnityEngine.Debug.Log (System.Text.Encoding.ASCII.GetString (echoForm.data));
 
 		WWW www = new WWW (echoEndpoint, echoForm);
-		StartCoroutine (WaitForRequest (www));
+		StartCoroutine (Utilities.WaitForRequest (www));
 	}
 
 	void getHint (){
@@ -1030,17 +1004,17 @@ public class Player : MovingObject
 		string location = "(" + idx_pos.x.ToString () + "," + idx_pos.y.ToString () + ")";
 
 		WWWForm crashForm = new WWWForm ();
-		crashForm.AddField ("userName", encrypt (SystemInfo.deviceUniqueIdentifier));
-		crashForm.AddField ("currentLevel", encrypt (curLevel.ToString ()));
-		crashForm.AddField ("trackCount", encrypt (GameManager.instance.boardScript.local_stats[curLevel].ToString()));
-		crashForm.AddField ("crashNumber", encrypt (numCrashes.ToString ()));
-		crashForm.AddField ("crashLocation", encrypt (location));
-		crashForm.AddField ("dateTimeStamp", encrypt (System.DateTime.Now.ToString ()));
+		crashForm.AddField ("userName", Utilities.encrypt (SystemInfo.deviceUniqueIdentifier));
+		crashForm.AddField ("currentLevel", Utilities.encrypt (curLevel.ToString ()));
+		crashForm.AddField ("trackCount", Utilities.encrypt (GameManager.instance.boardScript.local_stats[curLevel].ToString()));
+		crashForm.AddField ("crashNumber", Utilities.encrypt (numCrashes.ToString ()));
+		crashForm.AddField ("crashLocation", Utilities.encrypt (location));
+		crashForm.AddField ("dateTimeStamp", Utilities.encrypt (System.DateTime.Now.ToString ()));
 
 		UnityEngine.Debug.Log (System.Text.Encoding.ASCII.GetString (crashForm.data));
 
 		WWW www = new WWW (crashEndpoint, crashForm);
-		StartCoroutine (WaitForRequest (www));
+		StartCoroutine (Utilities.WaitForRequest (www));
 	}
 
 	private void attemptExitFromLevel ()
@@ -1098,16 +1072,16 @@ public class Player : MovingObject
 		int temp = GameManager.instance.boardScript.local_stats [curLevel];
 
 		WWWForm levelCompleteForm = new WWWForm ();
-		levelCompleteForm.AddField ("userName", encrypt (SystemInfo.deviceUniqueIdentifier));
-		levelCompleteForm.AddField ("currentLevel", encrypt (curLevel.ToString ()));
-		levelCompleteForm.AddField ("trackCount", encrypt (temp.ToString()));
-		levelCompleteForm.AddField ("crashCount", encrypt (numCrashes.ToString ()));
-		levelCompleteForm.AddField ("stepCount", encrypt (numSteps.ToString ()));
-		levelCompleteForm.AddField ("startTime", encrypt (startTime.ToString ()));
-		levelCompleteForm.AddField ("endTime", encrypt (endTime.ToString ()));
-		levelCompleteForm.AddField ("timeElapsed", encrypt (accurateElapsed.ToString ("F3")));
-		levelCompleteForm.AddField ("exitAttempts", encrypt (exitAttempts.ToString ()));
-		levelCompleteForm.AddField ("asciiLevelRep", encrypt (GameManager.instance.boardScript.asciiLevelRep));
+		levelCompleteForm.AddField ("userName", Utilities.encrypt (SystemInfo.deviceUniqueIdentifier));
+		levelCompleteForm.AddField ("currentLevel", Utilities.encrypt (curLevel.ToString ()));
+		levelCompleteForm.AddField ("trackCount", Utilities.encrypt (temp.ToString()));
+		levelCompleteForm.AddField ("crashCount", Utilities.encrypt (numCrashes.ToString ()));
+		levelCompleteForm.AddField ("stepCount", Utilities.encrypt (numSteps.ToString ()));
+		levelCompleteForm.AddField ("startTime", Utilities.encrypt (startTime.ToString ()));
+		levelCompleteForm.AddField ("endTime", Utilities.encrypt (endTime.ToString ()));
+		levelCompleteForm.AddField ("timeElapsed", Utilities.encrypt (accurateElapsed.ToString ("F3")));
+		levelCompleteForm.AddField ("exitAttempts", Utilities.encrypt (exitAttempts.ToString ()));
+		levelCompleteForm.AddField ("asciiLevelRep", Utilities.encrypt (GameManager.instance.boardScript.asciiLevelRep));
 		levelCompleteForm.AddField ("levelRecord", (GameManager.instance.boardScript.gamerecord));
 
 		UnityEngine.Debug.Log (System.Text.Encoding.ASCII.GetString (levelCompleteForm.data));
@@ -1121,7 +1095,7 @@ public class Player : MovingObject
 		levelCompleteForm.AddField ("score", score);
 
 		WWW www = new WWW (levelDataEndpoint, levelCompleteForm);
-		StartCoroutine (WaitForRequest (www));
+		StartCoroutine (Utilities.WaitForRequest (www));
 
 		//Invoke the Restart function to start the next level with a delay of restartLevelDelay (default 1 second).
 		restarted = true;
@@ -1145,12 +1119,6 @@ public class Player : MovingObject
 		exitAttempts = 0;
 	}
 
-	public static string Base64Encode (string plainText)
-	{
-		var plainTextBytes = System.Text.Encoding.UTF8.GetBytes (plainText);
-		return System.Convert.ToBase64String (plainTextBytes);
-	}
-
 	//	//Creates a comma delimited string containing all the echo file names used in the level
 	//	//and the corresponding number of times the echo was played
 	//	private string getEchoNames() {
@@ -1167,35 +1135,18 @@ public class Player : MovingObject
 	//		return allNames;
 	//	}
 
-
-	//Makes HTTP requests and waits for response and checks for errors
-	IEnumerator WaitForRequest (WWW www)
-	{
-		yield return www;
-
-		//Check for errors
-		if (www.error == null) {
-			JSONNode data = JSON.Parse (www.data);
-			//Debug.Log("this is the parsed json data: " + data["testData"]);
-			//Debug.Log(data["testData"]);
-			UnityEngine.Debug.Log ("WWW.Ok! " + www.data);
-		} else {
-			UnityEngine.Debug.Log ("WWWError: " + www.error);
-		}
-	}
-
 	private void reportsurvey(string code) {
 		string echoEndpoint = "http://echolock.andrew.cmu.edu/cgi-bin/acceptSurvey.py";
 
 		WWWForm echoForm = new WWWForm ();
-		echoForm.AddField ("userName", encrypt (SystemInfo.deviceUniqueIdentifier));
-		echoForm.AddField ("surveyID", encrypt (code));
+		echoForm.AddField ("userName", Utilities.encrypt (SystemInfo.deviceUniqueIdentifier));
+		echoForm.AddField ("surveyID", Utilities.encrypt (code));
 		//the code is the first digit of device id
 
 		UnityEngine.Debug.Log (System.Text.Encoding.ASCII.GetString (echoForm.data));
 
 		WWW www = new WWW (echoEndpoint, echoForm);
-		StartCoroutine (WaitForRequest (www));
+		StartCoroutine (Utilities.WaitForRequest (www));
 	}
 
 	void play_audio ()
@@ -1310,8 +1261,9 @@ public class Player : MovingObject
 		#elif UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
 		//pop up the survey at the end of tutorial
 		Vector2 distFromExit = transform.position - GameManager.instance.boardScript.exitPos;
-		if (Vector2.SqrMagnitude (distFromExit) < 0.25) {
+		if ( (Vector2.SqrMagnitude (distFromExit) < 0.25f) && survey_activated ) {
 			if( (GameManager.instance.level == 11)&&(!survey_shown) ){
+				ad.clearflag();
 				ad.DisplayAndroidWindow ("Would you like to take \n a short survey about the game?");
 				survey_shown = true;
 			}
@@ -1320,9 +1272,18 @@ public class Player : MovingObject
 
 				//display a code, and submit it reportSurvey()
 				// Please enter code (first six digits of UDID) on the survey page
-
+				ad.clearflag();
 				URL_shown = true;
 				Application.OpenURL("http://echolock.andrew.cmu.edu/survey/");//"http://echolock.andrew.cmu.edu/survey/?"
+			}else if (URL_shown && !ad.yesclicked() && !code_entered){
+				code_entered = true;
+				ad.clearflag();
+				ad.DisplayAndroidWindow("Please enter code provided on the survey site:", AndroidDialogue.DialogueType.INPUT);
+			}else if (URL_shown && ad.yesclicked() && code_entered){
+				reportsurvey(ad.getInputStr());
+				survey_activated = false;
+				ad.clearflag();
+				ad.DisplayAndroidWindow("Your data has been reported,\nThank you!", AndroidDialogue.DialogueType.YESONLY);
 			}
 		}
 
