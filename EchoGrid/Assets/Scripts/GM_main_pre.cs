@@ -14,8 +14,8 @@ public class GM_main_pre : MonoBehaviour {
 	AudioClip[] confirm_list;
 	AudioClip continue_game, new_game;
 	int cur_clip = 0;
-	int total_clip = 1;
-	int total_confirm_clip = 2;
+	int total_clip = 4;
+	int total_confirm_clip = 3;
 	float time_interval = 2.0f;
 	bool at_confirm = false;
 	bool reset_audio = false;
@@ -27,10 +27,14 @@ public class GM_main_pre : MonoBehaviour {
 		GameObject.Find ("GameMode").GetComponent <GameMode>().init ();
 		//load instruction clips
 		clips = new AudioClip[total_clip];
-		clips[0] = Resources.Load ("instructions/Swipe right to continue from last time or double tap to start a new game") as AudioClip;
+		clips[0] = Resources.Load ("instructions/To continue from where you left off, swipe right ") as AudioClip;
+		clips[1] = Resources.Load ("instructions/0_5sec_silence") as AudioClip;
+		clips[2] = Resources.Load ("instructions/Double tap to start a new game, then, swipe left to confirm, or double tap to cancel") as AudioClip;
+		clips[3] = Resources.Load ("instructions/2sec_silence") as AudioClip;
 		confirm_list = new AudioClip[total_confirm_clip];
 		confirm_list [0] = Resources.Load ("instructions/Are you sure you want to start a new game, this will overwrite existing saves") as AudioClip;
 		confirm_list [1] = Resources.Load ("instructions/Swipe left to confirm or double tap to cancel") as AudioClip;
+		confirm_list [2] = Resources.Load ("instructions/2sec_silence") as AudioClip;
 		swipeAhead = Resources.Load("fx/swipe-ahead") as AudioClip;
 		swipeRight = Resources.Load("fx/swipe-right") as AudioClip;
 		swipeLeft = Resources.Load("fx/swipe-left") as AudioClip;
@@ -117,7 +121,8 @@ public class GM_main_pre : MonoBehaviour {
 
 		//Check if we are running on iOS, Android, Windows Phone 8 or Unity iPhone
 		#elif UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
-			
+		Screen.sleepTimeout = SleepTimeout.NeverSleep;
+
 		float ECHO_TOUCH_TIME = 0.2f;
 		float TOUCH_TIME = 0.02f;
 		float MENU_TOUCH_TIME = 1.5f;

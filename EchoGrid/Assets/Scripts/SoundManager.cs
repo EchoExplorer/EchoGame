@@ -45,6 +45,7 @@ public class SoundManager : MonoBehaviour {
 			}
 			if (voiceSource != null) {
 				voiceSource.volume = 0.1f;
+				//voiceSource.pitch = 0.9f;
 				voice_adjusted = true;
 			} else
 				voice_adjusted = false;
