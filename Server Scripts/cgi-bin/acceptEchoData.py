@@ -5,10 +5,10 @@ import sqlite3, cgi, cgitb
 from Crypto.PublicKey import RSA
 from base64 import b64decode
 
-fOpen = open('/srv/maze/key.txt', 'r')
-longkey = bytes(fOpen.read())
+fOpen = open('/srv/maze/private.pem', 'r')
+privateKey = fOpen.read()
 
-rsakey = RSA.importKey(b64decode(longkey))
+rsakey = RSA.importKey(privateKey)
 
 def decrypt(decryptThis):
     raw_cipher_data = b64decode(decryptThis)
@@ -25,15 +25,16 @@ echoForm = cgi.FieldStorage()
 userName = decrypt(echoForm.getvalue('userName'))
 currentLevel = int(decrypt(echoForm.getvalue('currentLevel')))
 trackCount = int(decrypt(echoForm.getvalue('trackCount')))
-echo = decrypt(echoForm.getvalue('echo'))
+echo = (echoForm.getvalue('echo')) #decrypt
 echoLocation = decrypt(echoForm.getvalue('echoLocation'))
 postEchoAction = decrypt(echoForm.getvalue('postEchoAction'))
-correctAction = "blarg. Placeholder" #decrypt(echoForm.getvalue('correctAction'))
+correctAction = decrypt(echoForm.getvalue('correctAction'))
 dateTimeStamp = decrypt(echoForm.getvalue('dateTimeStamp'))
 
 cursor.execute('''INSERT INTO EchoData(userName, currentLevel, trackCount, echo,
-echoLocation, postEchoAction, correctAction, dateTimeStamp) 
-VALUES(?,?,?,?,?,?,?,?)''', (userName, currentLevel, trackCount, echo, echoLocation, postEchoAction, correctAction, dateTimeStamp))
+echoLocation, postEchoAction, correctAction, dateTimeStamp)
+VALUES(?,?,?,?,?,?,?,?)''', (userName, currentLevel, trackCount, echo,
+  echoLocation, postEchoAction, correctAction, dateTimeStamp))
 
 db.commit() #changes are committed to database
 db.close()
