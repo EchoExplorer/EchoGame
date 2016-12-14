@@ -3,7 +3,7 @@
 import sqlite3, cgi, cgitb, pickle, random, datetime
 
 def findCode():
-  with open('/srv/maze/consent.set', 'rb') as f:
+  with open('/srv/maze/consent.set', 'rb') as f: #set of already used ID #'s
     consentIDS = pickle.load(f)
   while (True):
     code = random.randint(100000, 999999)
@@ -20,7 +20,7 @@ def storeConsent(code):
 
   time = str(datetime.datetime.now())
 
-  cursor.execute('''INSERT INTO SurveyData(surveyID, dateTimeStamp)
+  cursor.execute('''INSERT INTO ConsentData(surveyID, dateTimeStamp)
   VALUES(?,?)''', (code, time))
 
   db.commit() #changes are committed to database
@@ -60,7 +60,9 @@ def main():
   print 'Content-Type: text/html\n'
   print head
 
-  if "agecheck" not in consentForm or "researchcheck" not in consentForm or "understandcheck" not in consentForm:
+  fields = {'agecheck', 'researchcheck', 'understandcheck'}
+
+  if not fields.issubset(consentForm.keys()):
     print "<h3> Please go back and fill out the form completely.</h3>"
     print tail
     exit()

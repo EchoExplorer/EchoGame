@@ -46,8 +46,13 @@ cursor.execute('''
 
 cursor.execute("DROP TABLE IF EXISTS SurveyData")
 cursor.execute('''
-            CREATE TABLE SurveyData(id INTEGER PRIMARY KEY,
-            surveyID TEXT, dateTimeStamp TEXT)''')
+            CREATE TABLE SurveyData(id INTEGER PRIMARY KEY, surveyID TEXT,
+            controls TEXT, easy TEXT, echonavigate TEXT, enjoy TEXT,
+            frustrating TEXT, hearingimpaired TEXT, hints TEXT,
+            instructions TEXT, look TEXT, lost TEXT, playmore TEXT,
+            tutorial TEXT, tutorialhelp TEXT, understandecho TEXT,
+            visuallyimpaired TEXT, email TEXT, likes TEXT, confusions TEXT,
+            suggestions TEXT, dateTimeStamp TEXT)''')
 
 db.close()
 

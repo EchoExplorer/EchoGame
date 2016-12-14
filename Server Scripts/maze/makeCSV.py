@@ -43,10 +43,17 @@ with open(dataRoot + surveyOut, 'wb') as f:
     writer.writerows(data)
 
 data = cursor.execute("SELECT * FROM SurveyIDData")
-surveyIDOut = "surveyOutput " + time + ".csv"
+surveyIDOut = "surveyIDOutput " + time + ".csv"
 with open(dataRoot + surveyIDOut, 'wb') as f:
     writer = csv.writer(f)
     writer.writerow(['rowID', 'userName', 'surveyID', 'dateTimeStamp'])
+    writer.writerows(data)
+
+data = cursor.execute("SELECT * FROM ConsentIDData")
+ConsentIDOut = "consentIDOutput " + time + ".csv"
+with open(dataRoot + ConsentIDOut, 'wb') as f:
+    writer = csv.writer(f)
+    writer.writerow(['rowID', 'userName', 'consentID', 'dateTimeStamp'])
     writer.writerows(data)
 
 db.close()
