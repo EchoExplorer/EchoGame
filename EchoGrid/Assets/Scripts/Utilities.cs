@@ -65,10 +65,16 @@ public class Utilities : MonoBehaviour {
 
 	public static bool writefile(string fname, string toWrite){
 		string filename = Application.persistentDataPath + fname;
-		if (System.IO.File.Exists (filename)) {
-			//TODO: this is a temp solution, we should take down the content of consent
+		//it is possible to meet exceptions
+		try
+		{
 			System.IO.File.WriteAllText (filename, toWrite);
 		}
+		catch (Exception ex)
+		{
+			return false;
+		}
+
 		return true;
 	}
 
@@ -93,5 +99,17 @@ public class Utilities : MonoBehaviour {
 	{
 		var plainTextBytes = System.Text.Encoding.UTF8.GetBytes (plainText);
 		return System.Convert.ToBase64String (plainTextBytes);
+	}
+
+	public static bool write_save (int lv){
+		string filename = "";
+
+		if(GameMode.instance.get_mode () != GameMode.Game_Mode.TUTORIAL)
+			filename = Application.persistentDataPath + "echosaved";
+		else//load specific save for tutorial
+			filename = Application.persistentDataPath + "echosaved_tutorial";
+
+		System.IO.File.WriteAllText (filename, lv.ToString ());
+		return true;
 	}
 }

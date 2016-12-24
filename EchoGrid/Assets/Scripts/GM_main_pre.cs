@@ -178,9 +178,9 @@ public class GM_main_pre : MonoBehaviour {
 			}
 		}
 
-		debug_text.text = "numTouches:" + numTouches.ToString() + "\n"
-						+ "TouchTapCount: " + TouchTapCount.ToString() + "\n"
-						+ "at_confirm: " + at_confirm.ToString() + "\n";
+		//debug_text.text = "numTouches:" + numTouches.ToString() + "\n"
+		//				+ "TouchTapCount: " + TouchTapCount.ToString() + "\n"
+		//				+ "at_confirm: " + at_confirm.ToString() + "\n";
 
 		//process the data
 		if(Time.time - menuTapTime >= menuUpdateCD){
@@ -213,6 +213,7 @@ public class GM_main_pre : MonoBehaviour {
 					at_confirm = false;
 					SoundManager.instance.PlaySingle(inputSFX);
 					GameMode.instance.gamemode = GameMode.Game_Mode.MAIN;
+					Utilities.write_save(0);
 					SceneManager.LoadScene("Main");
 					SoundManager.instance.PlayVoice(new_game, true);					
 				}

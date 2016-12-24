@@ -55,9 +55,9 @@ public class Player : MovingObject
 	//private SpriteRenderer spriteRenderer;
 
 	// variables to implement data collection
-	private int numCrashes;
+	public int numCrashes;
 	//Keep track of number of times user crashed into wall
-	private int numSteps;
+	public int numSteps;
 	//Keep track of number of steps taken per level
 	private int exitAttempts;
 
@@ -81,8 +81,10 @@ public class Player : MovingObject
 	bool at_pause_menu = false;//indicating if the player activated pause menu
 	static bool level_already_loaded = false;
 	bool localRecordWritten = false;
+	//int score;
 
 	public Text debug_text;
+	string surveyCode = "";
 
 	//Create a new instance of RSACryptoServiceProvider.
 	private RSACryptoServiceProvider encrypter = new RSACryptoServiceProvider ();
@@ -106,6 +108,7 @@ public class Player : MovingObject
 			Destroy (gameObject);
 
 		enabled = true;
+		surveyCode = "";
 		DontDestroyOnLoad (gameObject);
 
 	}
@@ -192,6 +195,7 @@ public class Player : MovingObject
 		menuUpdatedThisTouch = false;
 		TouchTapCount = 0;
 		level_already_loaded = false;
+		//score = 1000;
 
 		base.Start ();
 	}
@@ -231,6 +235,7 @@ public class Player : MovingObject
 			menuUpdatedThisTouch = false;
 			TouchTapCount = 0;
 			localRecordWritten = false;
+			//score = 1000;
 
 			base.Start ();
 		//}
@@ -274,22 +279,21 @@ public class Player : MovingObject
 			GameManager.instance.boardScript.getEchoDistData (transform.position, get_player_dir ("FRONT"), get_player_dir ("LEFT"));
 
 		UnityEngine.Debug.Log (data.all_jun_to_string ());
-
 		String prefix = "C00-21"; //change this prefix when you change the echo files
 		if ( (GameManager.instance.level >= 26)&&(GameManager.instance.level < 41) )
-			prefix = "C00-18";
+			prefix = "19 dB/C00-19";
 		else if ( (GameManager.instance.level >= 41)&&(GameManager.instance.level < 56) )
-			prefix = "C00-15";
+			prefix = "17 dB/C00-17";
 		else if ( (GameManager.instance.level >= 56)&&(GameManager.instance.level < 71) )
-			prefix = "C00-12";
+			prefix = "15 dB/C00-15";
 		else if ( (GameManager.instance.level >= 71)&&(GameManager.instance.level < 86) )
-			prefix = "C00-9";
+			prefix = "13 dB/C00-13";
 		else if ( (GameManager.instance.level >= 86)&&(GameManager.instance.level < 101) )
-			prefix = "C00-6";
+			prefix = "11 dB/C00-11";
 		else if ( (GameManager.instance.level >= 101)&&(GameManager.instance.level < 116) )
-			prefix = "C00-3";
+			prefix = "9 dB/C00-9";
 		else if ( (GameManager.instance.level >= 116) )
-			prefix = "C00-0";
+			prefix = "7 dB/C00-7";
 
 		String filename;
 		float wallDist = 0.8f, shortDist = 3.8f, midDist = 6.8f, longDist = 12.8f;
@@ -953,7 +957,7 @@ public class Player : MovingObject
 	{
 		//Call the AttemptMove method of the base class, passing in the component T (in this case Wall) and x and y direction to move.
 		bool canMove = base.AttemptMove <T> (xDir, yDir);
-		numSteps++;
+		numSteps += 1;
 		//If player could not move to that location, play the crash sound
 		if (!canMove) {
 			GameManager.instance.boardScript.gamerecord += "C";
@@ -962,7 +966,6 @@ public class Player : MovingObject
 			//Increment the crash count
 			numCrashes++;
 			//Decrement the step count (as no successful step was made)
-			numSteps--;
 			reportOnCrash (); //send crash report
 
 			//Add the crash location details
@@ -1019,6 +1022,8 @@ public class Player : MovingObject
 
 	private void attemptExitFromLevel ()
 	{		
+		//Increment step count
+		//numSteps += 1;
 		exitAttempts++;
 		GameObject exitSign = GameObject.FindGameObjectWithTag ("Exit");
 		Vector2 distFromExit = transform.position - exitSign.transform.position;
@@ -1049,22 +1054,28 @@ public class Player : MovingObject
 		//For every crash, lose 150 points
 		//For every step taken over the optimal steps, lose 50 points
 		//Max score currently is 1500 points
-		int score = 1500;
+		int score = 5000;
+		/*
 		if (timeElapsed > 15) {
 			score = score - (((timeElapsed - 16) / 10) + 1) * 100;
 		}
-		if (numCrashes > 0) {
-			score = score - numCrashes * 150;
-		}
-		//Check if the score went below 0
-		if (score < 0) {
-			score = 0;
-		}
-		//TODO
+		*/
 		//if numSteps > numOptimalSteps, then adjust score
 		//Calculate optimal steps by getting start position and end position
 		//and calculate the number of steps
+		if (numCrashes > 0) {
+			score = score - numCrashes * 300;
+		}
 
+		if (numSteps - GameManager.instance.boardScript.mazeSolution.Length + 1 > 0)
+			score -= 100 * (numSteps - GameManager.instance.boardScript.mazeSolution.Length + 1);
+		//Check if the score went below 0
+		if (score < 1000) {
+			score = 1000;
+		}
+		print (numSteps);
+		print (GameManager.instance.boardScript.mazeSolution.Length - 1);
+		print (numCrashes);
 
 		//TODO(agotsis) understand this. Reimplement.
 		//Send the crash count data and level information to server
@@ -1096,6 +1107,17 @@ public class Player : MovingObject
 
 		WWW www = new WWW (levelDataEndpoint, levelCompleteForm);
 		StartCoroutine (Utilities.WaitForRequest (www));
+
+		//display score
+		#if UNITY_ANDROID
+		ad.clearflag();
+		ad.DisplayAndroidWindow (
+			"Your Score is:" + score.ToString() + ".\n" + 
+			"Crashed " + numCrashes.ToString() + " times.\n" +
+			"Used " + numSteps.ToString() + " Steps.\n"+ 
+			"Optimal number of steps is: " + (GameManager.instance.boardScript.mazeSolution.Length - 1).ToString() + "\n", 
+			AndroidDialogue.DialogueType.YESONLY);
+		#endif
 
 		//Invoke the Restart function to start the next level with a delay of restartLevelDelay (default 1 second).
 		restarted = true;
@@ -1141,6 +1163,7 @@ public class Player : MovingObject
 		WWWForm echoForm = new WWWForm ();
 		echoForm.AddField ("userName", Utilities.encrypt (SystemInfo.deviceUniqueIdentifier));
 		echoForm.AddField ("surveyID", Utilities.encrypt (code));
+		echoForm.AddField ("dateTimeStamp", Utilities.encrypt (System.DateTime.Now.ToString ()));
 		//the code is the first digit of device id
 
 		UnityEngine.Debug.Log (System.Text.Encoding.ASCII.GetString (echoForm.data));
@@ -1268,22 +1291,27 @@ public class Player : MovingObject
 				survey_shown = true;
 			}
 
-			if(survey_shown && !URL_shown && ad.yesclicked()){
+			if(survey_shown && !URL_shown && ad.yesclicked() && !code_entered){
 
 				//display a code, and submit it reportSurvey()
 				// Please enter code (first six digits of UDID) on the survey page
-				ad.clearflag();
+				code_entered = true;
+
+				if (SystemInfo.deviceUniqueIdentifier.Length <= 6)
+					surveyCode = SystemInfo.deviceUniqueIdentifier;
+				else
+					surveyCode = SystemInfo.deviceUniqueIdentifier.Substring (0, 6);
+				string codemsg = "Your survey code is: \n" + surveyCode + "\n please enter this in the survey.";
+				ad.clearflag ();
+				ad.DisplayAndroidWindow (codemsg, AndroidDialogue.DialogueType.YESONLY);
+			}else if (!URL_shown && ad.yesclicked() && code_entered){
 				URL_shown = true;
 				Application.OpenURL("http://echolock.andrew.cmu.edu/survey/");//"http://echolock.andrew.cmu.edu/survey/?"
-			}else if (URL_shown && !ad.yesclicked() && !code_entered){
-				code_entered = true;
+			}else if (URL_shown){
 				ad.clearflag();
-				ad.DisplayAndroidWindow("Please enter code provided on the survey site:", AndroidDialogue.DialogueType.INPUT);
-			}else if (URL_shown && ad.yesclicked() && code_entered){
-				reportsurvey(ad.getInputStr());
+				ad.DisplayAndroidWindow("Thank you for taking the survey!", AndroidDialogue.DialogueType.YESONLY);
+				reportsurvey(surveyCode);
 				survey_activated = false;
-				ad.clearflag();
-				ad.DisplayAndroidWindow("Your data has been reported,\nThank you!", AndroidDialogue.DialogueType.YESONLY);
 			}
 		}
 
@@ -1398,8 +1426,6 @@ public class Player : MovingObject
 						swp_dir = BoardManager.Direction.FRONT;
 					else//down/back
 						swp_dir = BoardManager.Direction.BACK;
-					//Increment step count
-					numSteps++;
 				}
 
 				//update TouchTapCount part 2

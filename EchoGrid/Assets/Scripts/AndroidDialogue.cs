@@ -44,6 +44,11 @@ public class AndroidDialogue : MonoBehaviour {
 	}
 
 	public string getInputStr(){
+		if (inputStr == null)
+			return " ";
+		else if (inputStr.Length == 0)
+			return " ";
+		
 		return inputStr;
 	}
 

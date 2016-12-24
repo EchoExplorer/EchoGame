@@ -56,6 +56,7 @@ public class GM_TC : MonoBehaviour {
 		WWWForm echoForm = new WWWForm ();
 		echoForm.AddField ("userName", Utilities.encrypt (SystemInfo.deviceUniqueIdentifier));
 		echoForm.AddField ("consentID", Utilities.encrypt (code));
+		echoForm.AddField ("dateTimeStamp", Utilities.encrypt (System.DateTime.Now.ToString ()));
 
 		UnityEngine.Debug.Log (System.Text.Encoding.ASCII.GetString (echoForm.data));
 
@@ -87,29 +88,26 @@ public class GM_TC : MonoBehaviour {
 	private float minSwipeDist = 100f;
 	// Update is called once per frame
 	void Update () {
-		if ( (!android_window_displayed) ) {
+		if (!android_window_displayed) {
 			android_window_displayed = true;
 			finished_reading = false;
 			ad.clearflag();
 			ad.DisplayAndroidWindow (msg, AndroidDialogue.DialogueType.YESONLY);
 		}
 
-		if (!URL_opened && ad.yesclicked () && finished_reading) {
+		if (!URL_opened && ad.yesclicked () && !finished_reading) {
 			//open URL
 			URL_opened = true;
 			Application.OpenURL ("http://echolock.andrew.cmu.edu/consent/");//"http://echolock.andrew.cmu.edu/consent/?"
-			ad.clearflag ();
-		} else if (!URL_opened && ad.yesclicked () && !finished_reading) {
-			ad.clearflag ();
-			if (SystemInfo.deviceUniqueIdentifier.Length <= 4)
-				consentCode = SystemInfo.deviceUniqueIdentifier;
-			else
-				consentCode = SystemInfo.deviceUniqueIdentifier.Substring (0, 4);
-			string codemsg = msgCode + consentCode + "\n please enter this in the consent form.";
-			ad.DisplayAndroidWindow (codemsg, AndroidDialogue.DialogueType.YESONLY);
+		} else if (URL_opened && !finished_reading) {//report code from popup using reportConsent()
 			finished_reading = true;
-		} else if (URL_opened) {//report code from popup using reportConsent()
-			reportConsent(consentCode);
+			ad.clearflag ();
+			ad.DisplayAndroidWindow ("Enter code provided from \n the consent form:", AndroidDialogue.DialogueType.INPUT);
+		} else if (URL_opened && finished_reading && ad.yesclicked ()) {
+			Utilities.writefile ("consentRecord","1");
+			reportConsent(ad.getInputStr());
+			ad.clearflag ();
+			ad.DisplayAndroidWindow ("Thank you!", AndroidDialogue.DialogueType.YESONLY);
 			SceneManager.LoadScene("Title_Screen");
 		}
 
