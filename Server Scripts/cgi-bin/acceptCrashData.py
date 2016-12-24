@@ -5,10 +5,10 @@ import sqlite3, cgi, cgitb
 from Crypto.PublicKey import RSA
 from base64 import b64decode
 
-fOpen = open('/srv/maze/key.txt', 'r')
-longkey = bytes(fOpen.read())
+fOpen = open('/srv/maze/private.pem', 'r')
+privateKey = fOpen.read()
 
-rsakey = RSA.importKey(b64decode(longkey))
+rsakey = RSA.importKey(privateKey)
 
 def decrypt(decryptThis):
     raw_cipher_data = b64decode(decryptThis)
