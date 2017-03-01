@@ -1,13 +1,11 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System;
-
-using System.Collections.Generic;
-using SimpleJSON;
-using System.Security.Cryptography;
 using System;
 using System.Text;
 using System.Diagnostics;
+using System.Collections;
+using System.Collections.Generic;
+using System.Security.Cryptography;
+using SimpleJSON;
 
 public class Utilities : MonoBehaviour {
 	public static int MAZE_SIZE = 9;
@@ -112,4 +110,58 @@ public class Utilities : MonoBehaviour {
 		System.IO.File.WriteAllText (filename, lv.ToString ());
 		return true;
 	}
+
+	//return value: empty string means fine
+	public static string check_InternetConnection(){
+		ConnectionTesterStatus connectionTestResult = ConnectionTesterStatus.Undetermined;
+		connectionTestResult = Network.TestConnection();
+		string testMessage = "";
+		bool probingPublicIP = false;
+		int serverPort = 9999;
+
+		switch (connectionTestResult) {
+		case ConnectionTesterStatus.Error: 
+			testMessage = "Problem determining NAT capabilities";
+			break;
+
+		case ConnectionTesterStatus.Undetermined: 
+			testMessage = "Undetermined NAT capabilities";
+			break;
+
+		case ConnectionTesterStatus.PublicIPIsConnectable:
+			testMessage = "";
+			//testMessage = "Directly connectable public IP address.";
+			break;
+
+			// This case is a bit special as we now need to check if we can 
+			// circumvent the blocking by using NAT punchthrough
+		case ConnectionTesterStatus.PublicIPPortBlocked:
+			testMessage = "Non-connectable public IP address (port " +
+				serverPort + " blocked), running a server is impossible.";
+			break;
+
+		case ConnectionTesterStatus.PublicIPNoServerStarted:
+			testMessage = "Public IP address but server not initialized, " +
+				"it must be started to check server accessibility. Restart " +
+				"connection test when ready.";
+			break;
+
+		default: 
+			//testMessage = "Error in test routine, got " + connectionTestResult;
+			break;
+		}
+
+		return testMessage;
+	}
+		
+	public static bool isDeviceLandscape(){
+		if ((Input.deviceOrientation == DeviceOrientation.LandscapeLeft) || (Input.deviceOrientation == DeviceOrientation.LandscapeRight))
+			return false;
+
+		return true;
+	}
+
+	//Platform specific Utility
+	#if UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
+	#endif
 }

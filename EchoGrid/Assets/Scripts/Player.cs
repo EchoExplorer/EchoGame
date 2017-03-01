@@ -21,32 +21,21 @@ public class Player : MovingObject
 		LONG,
 	}
 
-	public static Player instance;
-	public float restartLevelDelay = 3.0f;
-	//Delay time in seconds to restart level.
-	private Vector2 touchOrigin = -Vector2.one;
+	public enum DistRange{
+		SHORT,
+		MID,
+		LONG,
+	}
 
-	private float touchTime = 0f;
-	private float minSwipeDist = 100f;
+	public static Player instance;
+	//Delay time in seconds to restart level.
+	public float restartLevelDelay = 3.0f;
+
 	bool restarted = false;
 	bool is_freezed;//is player not allowed to do anything?
 	bool tapped;//did player tap to hear an echo at this position?
 	bool reportSent;
 	private int curLevel;
-
-	//TODO(agotsis/wenyuw1) This needs to be integrated with the local database so these are not hardcoded
-
-	public AudioClip wallHit;
-	public AudioClip winSound;
-	public AudioClip walking;
-	AudioClip inputSFX;
-	AudioClip menuOn, menuOff;
-	AudioClip[] menuClips;
-
-	//TODO(agotsis/wenyuw1) This volume of these sounds may need to go down
-	public AudioClip swipeAhead;
-	public AudioClip swipeRight;
-	public AudioClip swipeLeft;
 
 	int cur_clip = 0;
 	int max_quit_clip = 2;
@@ -77,11 +66,11 @@ public class Player : MovingObject
 	bool URL_shown = false;
 	bool code_entered = false;
 	bool survey_activated = true;
-	bool swp_lock = false;//stop very fast input
 	bool at_pause_menu = false;//indicating if the player activated pause menu
 	static bool level_already_loaded = false;
 	bool localRecordWritten = false;
 	//int score;
+	eventHandler eh;
 
 	public Text debug_text;
 	string surveyCode = "";
@@ -121,18 +110,6 @@ public class Player : MovingObject
 		//Initialize data collection variables
 		initData ();
 		Utilities.initEncrypt ();
-
-		/*
-		//TODO(agotsis/wenyuw1) Once the local database is integrated this hardcoding will go away.
-		numEcho1 = 0;
-		numEcho2 = 0;
-		numEcho3 = 0;
-		numEcho4 = 0;
-		numEcho5 = 0;
-		numEcho6 = 0;
-		numEcho7 = 0;
-		*/
-
 		//Initialize list of crash locations
 		crashLocs = "";
 
@@ -148,7 +125,6 @@ public class Player : MovingObject
 
 		want_exit = false;
 		at_pause_menu = false;
-		swp_lock = false;
 		reset_audio = false;
 		tapped = false;
 		reportSent = false;
@@ -156,47 +132,26 @@ public class Player : MovingObject
 		URL_shown = false;
 		code_entered = false;
 		survey_activated = true;
+		echoLock = false;
 		ad = GetComponent<AndroidDialogue> ();
 
-		//load audio
-		inputSFX = Resources.Load ("fx/inputSFX") as AudioClip;
-		menuOn = Resources.Load ("instructions/Menu opened") as AudioClip;
-		menuOff = Resources.Load ("instructions/Menu closed") as AudioClip;
-		menuClips = new AudioClip[5];
-		menuClips [0] = Resources.Load ("instructions/To close the menu, press and hold with two fingers") as AudioClip;
-		menuClips [1] = Resources.Load ("instructions/Swipe left to restart the current level") as AudioClip;
-		menuClips [2] = Resources.Load ("instructions/Swipe left to return to the tutorial, swipe right to return to the main menu, and swipe down to toggle the screen on and off") as AudioClip;
-		menuClips [3] = Resources.Load ("instructions/Swipe up to hear a hint") as AudioClip;
-		menuClips [4] = Resources.Load ("instructions/2sec_silence") as AudioClip;
+		touch_simple = 1;
+		touch_audio = 2;
+		touch_exit = 1;
+		touch_menu = 2;
+		tap_simple = 1;
+		tap_exit = 2;
+		tap_menu = 2;
 
-		//specify controls
-		if(Utilities.OLD_ANDROID_SUPPORT){
-			touch_simple = 1;
-			touch_audio = 2;
-			touch_exit = 1;
-			touch_menu = 2;
-			tap_simple = 1;
-			tap_exit = 2;
-			tap_menu = 2;
-		} else{
-			touch_simple = 1;
-			touch_audio = 2;
-			touch_exit = 2;
-			touch_menu = 3;
-			tap_simple = 1;
-			tap_exit = 2;
-			tap_menu = 1;
-		}
-		multiTapStartTime = 0.0f;
-		echoTapTime = 0.0f;
-		rotateGestStartTime = 0.0f;
-		menuTapTime = 0.0f;
-		echoPlayedThisTouch = false;
-		menuUpdatedThisTouch = false;
-		TouchTapCount = 0;
 		level_already_loaded = false;
 		//score = 1000;
-
+		eh = new eventHandler(InputModule.instance);
+		TriggerechoTimer = new CDTimer(Const.echoCD, InputModule.instance);
+		TriggermenuTimer = new CDTimer(Const.menuUpdateCD, InputModule.instance);
+		TriggerrotateTimer = new CDTimer(Const.rotateGestCD, InputModule.instance);
+		TriggerechoTimer.TakeDownTime();
+		TriggermenuTimer.TakeDownTime();
+		TriggerrotateTimer.TakeDownTime();
 		base.Start ();
 	}
 
@@ -214,7 +169,6 @@ public class Player : MovingObject
 
 			want_exit = false;
 			at_pause_menu = false;
-			swp_lock = false;
 			reset_audio = false;
 			tapped = false;
 			reportSent = false;
@@ -225,26 +179,21 @@ public class Player : MovingObject
 			URL_shown = false;
 			code_entered = false;
 			survey_activated = true;
+			echoLock = false;
 			ad = GetComponent<AndroidDialogue> ();
 
-			multiTapStartTime = 0.0f;
-			echoTapTime = 0.0f;
-			rotateGestStartTime = 0.0f;
-			menuTapTime = 0.0f;
-			echoPlayedThisTouch = false;
-			menuUpdatedThisTouch = false;
-			TouchTapCount = 0;
 			localRecordWritten = false;
 			//score = 1000;
+			eh = new eventHandler(InputModule.instance);
+			TriggerechoTimer = new CDTimer(Const.echoCD, InputModule.instance);
+			TriggermenuTimer = new CDTimer(Const.menuUpdateCD, InputModule.instance);
+			TriggerrotateTimer = new CDTimer(Const.rotateGestCD, InputModule.instance);
+			TriggerechoTimer.TakeDownTime();
+			TriggermenuTimer.TakeDownTime();
+			TriggerrotateTimer.TakeDownTime();
 
 			base.Start ();
 		//}
-	}
-
-	public enum DistRange{
-		SHORT,
-		MID,
-		LONG,
 	}
 
 	private string _dist_type_to_string(dist_type type){
@@ -280,12 +229,15 @@ public class Player : MovingObject
 
 		UnityEngine.Debug.Log (data.all_jun_to_string ());
 		String prefix = "C00-21"; //change this prefix when you change the echo files
-		if ( (GameManager.instance.level >= 26)&&(GameManager.instance.level < 41) )
+		if (GameManager.instance.level < 26)
+			prefix = "C00 - 21";
+		else if ( (GameManager.instance.level >= 26)&&(GameManager.instance.level < 41) )
 			prefix = "19 dB/C00-19";
 		else if ( (GameManager.instance.level >= 41)&&(GameManager.instance.level < 56) )
 			prefix = "17 dB/C00-17";
-		else if ( (GameManager.instance.level >= 56)&&(GameManager.instance.level < 71) )
+		else //if( (GameManager.instance.level >= 56)&&(GameManager.instance.level < 71) )
 			prefix = "15 dB/C00-15";
+		/*
 		else if ( (GameManager.instance.level >= 71)&&(GameManager.instance.level < 86) )
 			prefix = "13 dB/C00-13";
 		else if ( (GameManager.instance.level >= 86)&&(GameManager.instance.level < 101) )
@@ -294,6 +246,7 @@ public class Player : MovingObject
 			prefix = "9 dB/C00-9";
 		else if ( (GameManager.instance.level >= 116) )
 			prefix = "7 dB/C00-7";
+			*/
 
 		String filename;
 		float wallDist = 0.8f, shortDist = 3.8f, midDist = 6.8f, longDist = 12.8f;
@@ -338,6 +291,8 @@ public class Player : MovingObject
 		else
 			r_dtype = dist_type.LONG;
 
+		//mark exist position as "US"
+		/*
 		switch (data.exitpos) {
 		case 1://left
 			left_type= "US";
@@ -354,6 +309,7 @@ public class Player : MovingObject
 		default:
 			break;
 		}
+		*/
 
 		filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix,
 			data.frontDist, front_type, _dist_type_to_string(b_dtype), "D",
@@ -383,7 +339,6 @@ public class Player : MovingObject
 				data.frontDist, front_typeC, _dist_type_to_string(b_dtype), "D",
 				_dist_type_to_string(l_dtype), left_typeC, _dist_type_to_string(r_dtype), right_typeC);
 			echo = Resources.Load ("echoes/" + filename) as AudioClip;
-			UnityEngine.Debug.Log (filename);
 		}
 		lastEcho = filename;
 
@@ -518,11 +473,11 @@ public class Player : MovingObject
 
 		//have to use the old files
 		if (echo == null) {
-			UnityEngine.Debug.Log (filename);
 			UnityEngine.Debug.Log ("did not find accurate one, searching everything");
 				//Old version
 			//this is the full filename, if back is not D or Stairs, it will be "na"
-				back_type = "D"; front_type = ""; left_type = ""; right_type = "";
+			prefix = "C00-21";
+			back_type = "D"; front_type = ""; left_type = ""; right_type = "";
 			if( (data.bType != BoardManager.JunctionType.DEADEND)&&(data.exitpos != 4) )
 				back_type = "na";
 			if (data.exitpos != 1)
@@ -531,7 +486,7 @@ public class Player : MovingObject
 				right_type = "D";
 			if (data.exitpos != 3)
 				front_type = data.jun_to_string (data.fType);
-
+			/*
 			switch (data.exitpos) {
 			case 1://left
 				left_type = "US";
@@ -544,6 +499,24 @@ public class Player : MovingObject
 				break;
 			case 4://back
 				back_type = "US";
+				break;
+			default:
+				break;
+			}
+			*/
+			//TODO this is only a dummy one, use the one above when ready
+			switch (data.exitpos) {
+			case 1://left
+				left_type = "D";
+				break;
+			case 2://right
+				right_type = "D";
+				break;
+			case 3://front
+				front_type = "D";
+				break;
+			case 4://back
+				back_type = "D";
 				break;
 			default:
 				break;
@@ -617,7 +590,7 @@ public class Player : MovingObject
 
 				bool found = false;
 				string[] back_str = new string[3]{"D", "na", "US"};
-				string[] front_str = new string[2]{"", "D"};
+				string[] front_str = new string[2]{"","D"};
 				for (int i = fr_start; i <= fr_end; ++i) {
 					for (int j = br_start; j <= br_end; ++j) {
 						for (int k = lr_start; k <= lr_end; ++k) {
@@ -962,7 +935,7 @@ public class Player : MovingObject
 		if (!canMove) {
 			GameManager.instance.boardScript.gamerecord += "C";
 			//if(!SoundManager.instance.isBusy())
-			SoundManager.instance.playcrash (wallHit);
+			SoundManager.instance.playcrash (Database.instance.wallHit);
 			//Increment the crash count
 			numCrashes++;
 			//Decrement the step count (as no successful step was made)
@@ -1025,6 +998,16 @@ public class Player : MovingObject
 		//Increment step count
 		//numSteps += 1;
 		exitAttempts++;
+
+		BoardManager.echoDistData data =
+			GameManager.instance.boardScript.getEchoDistData (transform.position, get_player_dir ("FRONT"), get_player_dir ("LEFT"));
+
+		float wallDist = 0.8f;
+		//catogrize the distance
+		//front
+		if ( (data.frontDist <= wallDist)&&(data.leftDist <= wallDist)&&(data.rightDist <= wallDist) )
+			UnityEngine.Debug.Log ("Not exit, in Wrong Dead end!");
+
 		GameObject exitSign = GameObject.FindGameObjectWithTag ("Exit");
 		Vector2 distFromExit = transform.position - exitSign.transform.position;
 		if (Vector2.SqrMagnitude (distFromExit) < 0.25) {
@@ -1110,6 +1093,7 @@ public class Player : MovingObject
 
 		//display score
 		#if UNITY_ANDROID
+		/*
 		ad.clearflag();
 		ad.DisplayAndroidWindow (
 			"Your Score is:" + score.ToString() + ".\n" + 
@@ -1117,6 +1101,7 @@ public class Player : MovingObject
 			"Used " + numSteps.ToString() + " Steps.\n"+ 
 			"Optimal number of steps is: " + (GameManager.instance.boardScript.mazeSolution.Length - 1).ToString() + "\n", 
 			AndroidDialogue.DialogueType.YESONLY);
+		*/
 		#endif
 
 		//Invoke the Restart function to start the next level with a delay of restartLevelDelay (default 1 second).
@@ -1128,7 +1113,7 @@ public class Player : MovingObject
 		GameManager.instance.level += 1;
 		GameManager.instance.boardScript.write_save (GameManager.instance.level);
 		GameManager.instance.playersTurn = false;
-		SoundManager.instance.PlaySingle (winSound);
+		SoundManager.instance.PlaySingle (Database.instance.winSound);
 		//AudioSource.PlayClipAtPoint (winSound, transform.localPosition, 1.0f);
 
 		//Reset extra data.
@@ -1140,22 +1125,6 @@ public class Player : MovingObject
 		numCrashes = 0;
 		exitAttempts = 0;
 	}
-
-	//	//Creates a comma delimited string containing all the echo file names used in the level
-	//	//and the corresponding number of times the echo was played
-	//	private string getEchoNames() {
-	//		//TODO(agotsis/wenyuw1) Once the local database is integrated, this hardcoding will go away.
-	//		string allNames = "";
-	//		allNames = allNames + echo1m.name + ":" + numEcho1.ToString() + ",";
-	//		allNames = allNames + echo2m.name + ":" + numEcho2.ToString() + ",";
-	//		allNames = allNames + echo3m.name + ":" + numEcho3.ToString() + ",";
-	//		allNames = allNames + echo4m.name + ":" + numEcho4.ToString() + ",";
-	//		allNames = allNames + echo5m.name + ":" + numEcho5.ToString() + ",";
-	//		allNames = allNames + echo6m.name + ":" + numEcho6.ToString() + ",";
-	//		allNames = allNames + echo7m.name + ":" + numEcho7.ToString();
-	//
-	//		return allNames;
-	//	}
 
 	private void reportsurvey(string code) {
 		string echoEndpoint = "http://echolock.andrew.cmu.edu/cgi-bin/acceptSurvey.py";
@@ -1175,9 +1144,9 @@ public class Player : MovingObject
 	void play_audio ()
 	{
 		if(at_pause_menu){
-			if (SoundManager.instance.PlayVoice (menuClips[cur_clip])) {
+			if (SoundManager.instance.PlayVoice (Database.instance.menuClips[cur_clip])) {
 				cur_clip += 1;
-				if (cur_clip >= menuClips.Length)
+				if (cur_clip >= Database.instance.menuClips.Length)
 					cur_clip = 0;
 			}
 		}
@@ -1188,25 +1157,15 @@ public class Player : MovingObject
 	int touch_simple, touch_audio, touch_exit, touch_menu;
 	//tap is how many times player tap the screen
 	int tap_simple, tap_exit, tap_menu;
-	int TouchTapCount;
-	int numTouchlastframe = 0;
-	const float multiTapCD = 0.4f;//make multitap easier
-	const float echoCD = 0.1f;//shortest time between two PlayEcho() calls
-	const float menuUpdateCD = 0.5f;//shortest time between turn on/off pause menu
-	const float rotateGestCD = 0.3f;
-	bool echoPlayedThisTouch;//echo will only play once duriing one touch, so if you hold your finger on the screen, echo will not repeat
-	bool menuUpdatedThisTouch;
-	bool isSwipe = false;
-	public bool hasrotated = false;
-	float echoTapTime;
-	float rotateGestStartTime;
-	float multiTapStartTime;
-	float menuTapTime;
+	bool echoLock = false;
 	Vector2 swipeStartPlace = new Vector2();
 	Vector2 firstSwipePos = new Vector2();
 	Vector2 VecStart = new Vector2();
 	Vector2 VecEnd = new Vector2();
 	List<Touch> touches;
+	CDTimer TriggerechoTimer;
+	CDTimer TriggermenuTimer;
+	CDTimer TriggerrotateTimer;
 
 	void Update ()
 	{
@@ -1228,58 +1187,68 @@ public class Player : MovingObject
 
 		//Check if we are running either in the Unity editor or in a standalone build.
 		#if UNITY_STANDALONE || UNITY_WEBPLAYER
-
-		//Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
-		if (Input.GetKeyUp (KeyCode.RightArrow)) {
-			if(!want_exit){
-				dir = -transform.up;
-				SoundManager.instance.PlaySingle (swipeRight);
-			}else{
-				GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
-				Destroy (GameObject.Find ("GameManager"));
-				SceneManager.LoadScene ("Main");
+		//Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction\
+		if(eh.isActivate()){
+			InputEvent ie = eh.getEventData();
+			switch(ie.keycode){
+			case KeyCode.RightArrow:
+				if(!want_exit){
+					dir = -transform.up;
+					SoundManager.instance.PlaySingle (Database.instance.swipeRight);
+				}else{
+					GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
+					Destroy (GameObject.Find ("GameManager"));
+					SceneManager.LoadScene ("Main");
+				}
+				break;
+			case KeyCode.LeftArrow:
+				if (!want_exit) {
+					dir = get_player_dir ("LEFT");
+					SoundManager.instance.PlaySingle (Database.instance.swipeLeft);
+				} else {
+					//SceneManager.UnloadScene("Main");
+					Destroy (GameObject.Find ("GameManager"));
+					SceneManager.LoadScene ("Title_Screen");
+				}
+				break;
+			case KeyCode.UpArrow:
+				dir = transform.right;
+				SoundManager.instance.PlaySingle (Database.instance.swipeAhead);
+				break;
+			case KeyCode.DownArrow:
+				dir = -transform.right;
+				SoundManager.instance.PlaySingle (Database.instance.swipeAhead);
+				break;
+			case KeyCode.F:
+				GameManager.instance.boardScript.gamerecord += "E{";
+				PlayEcho ();
+				GameManager.instance.boardScript.gamerecord += lastEcho;
+				GameManager.instance.boardScript.gamerecord += "}";
+				break;
+			case KeyCode.E:
+				if (!want_exit) {
+					GameManager.instance.boardScript.gamerecord += "X";
+					attemptExitFromLevel ();
+				} else
+					want_exit = false;
+				break;
+			case KeyCode.R:
+				want_exit = true;
+				reset_audio = true;
+				break;
+			case KeyCode.M:
+				if(GameManager.levelImageActive){
+					GameManager.instance.HideLevelImage();
+					GameManager.instance.boardScript.gamerecord += "S_OFF";
+				}else{
+					GameManager.instance.UnHideLevelImage();
+					GameManager.instance.boardScript.gamerecord += "S_ON";
+				}
+				break;
+			default:
+				break;
 			}
-		} else if (Input.GetKeyUp (KeyCode.LeftArrow)) {
-			if (!want_exit) {
-				dir = get_player_dir ("LEFT");
-				SoundManager.instance.PlaySingle (swipeLeft);
-			} else {
-				//SceneManager.UnloadScene("Main");
-				Destroy (GameObject.Find ("GameManager"));
-				SceneManager.LoadScene ("Title_Screen");
-			}
-		} else if (Input.GetKeyUp (KeyCode.UpArrow)) {
-			dir = transform.right;
-			SoundManager.instance.PlaySingle (swipeAhead);
-		} else if (Input.GetKeyUp (KeyCode.DownArrow)) {
-			dir = -transform.right;
-			SoundManager.instance.PlaySingle (swipeAhead);
 		}
-
-		if (Input.GetKeyUp ("f")) {
-			GameManager.instance.boardScript.gamerecord += "E{";
-			PlayEcho ();
-			GameManager.instance.boardScript.gamerecord += lastEcho;
-			GameManager.instance.boardScript.gamerecord += "}";
-		} else if (Input.GetKeyUp ("e")) {
-			if (!want_exit) {
-				GameManager.instance.boardScript.gamerecord += "X";
-				attemptExitFromLevel ();
-			} else
-				want_exit = false;
-		} else if (Input.GetKeyUp ("r")) {
-			want_exit = true;
-			reset_audio = true;
-		} else if (Input.GetKeyUp ("m")) {
-			if(GameManager.levelImageActive){
-				GameManager.instance.HideLevelImage();
-				GameManager.instance.boardScript.gamerecord += "S_OFF";
-			}else{
-				GameManager.instance.UnHideLevelImage();
-				GameManager.instance.boardScript.gamerecord += "S_ON";
-			}
-		}
-
 		//Check if we are running on iOS, Android, Windows Phone 8 or Unity iPhone
 		#elif UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
 		//pop up the survey at the end of tutorial
@@ -1306,7 +1275,7 @@ public class Player : MovingObject
 				ad.DisplayAndroidWindow (codemsg, AndroidDialogue.DialogueType.YESONLY);
 			}else if (!URL_shown && ad.yesclicked() && code_entered){
 				URL_shown = true;
-				Application.OpenURL("http://echolock.andrew.cmu.edu/survey/");//"http://echolock.andrew.cmu.edu/survey/?"
+				Application.OpenURL("https://echolock.andrew.cmu.edu/survey/");//"http://echolock.andrew.cmu.edu/survey/?"
 			}else if (URL_shown){
 				ad.clearflag();
 				ad.DisplayAndroidWindow("Thank you for taking the survey!", AndroidDialogue.DialogueType.YESONLY);
@@ -1315,289 +1284,106 @@ public class Player : MovingObject
 			}
 		}
 
-		float ECHO_TOUCH_TIME = 0.15f;
-		float TOUCH_TIME = 0.02f;
-		float MENU_TOUCH_TIME = 1.5f;
-		minSwipeDist = Screen.width*0.01f;
-		//Check if Input has registered more than zero touches
-		int numTouches = Input.touchCount;
-
-		Touch myTouch;
-		Vector2 touchEndpos = new Vector2();
-		BoardManager.Direction swp_dir = BoardManager.Direction.OTHER;
-		bool isRotation = false;
-
-		//update all timers
-		//update TouchTapCount part 1
-		if( (Time.time - multiTapStartTime) >= multiTapCD ){
-			multiTapStartTime = Time.time;
-			TouchTapCount = 0;
-		}
-		/*
-		debug_text.text = "numTOuches: " + numTouches.ToString() + "\n"
-						+ "PauseMenuOn: " + at_pause_menu.ToString() + "\n"
-						+ "Tap Count: " + TouchTapCount.ToString() + "\n";*/
-
-		//collect raw data from the device
-		if (numTouches > 0) {
-
-			//Store the first touch detected.
-			myTouch = Input.touches[0];
-			//if(touches.Contains(myTouch)){
-			//}
-			touchEndpos = myTouch.position;
-			/*
-			debug_text.text = "numTOuches: " + numTouches.ToString() + "\n"
-							+ "PauseMenuOn: " + at_pause_menu.ToString() + "\n"
-							+ "Tap Count: " + TouchTapCount.ToString() + "\n";*/
-
-			if((numTouches == 2) && numTouches != numTouchlastframe){
-				VecStart = Input.touches[0].position - Input.touches[1].position;
-				menuUpdatedThisTouch = false;
-			}
-
-			//Check if the phase of that touch equals Began
-			if (myTouch.phase == TouchPhase.Began){
-				hasrotated = false;
-				swipeStartPlace = myTouch.position;
-				echoTapTime = Time.time;
-				if(numTouches == 2){
-					VecStart = Input.touches[0].position - Input.touches[1].position;
-				}
-				//If so, set touchOrigin to the position of that touch
-				touchOrigin = myTouch.position;
-				touchTime = Time.time;
-				swp_lock = true;
-				//update flags
-				echoPlayedThisTouch = false;
-				menuUpdatedThisTouch = false;
-			} else if ((myTouch.phase == TouchPhase.Ended) && swp_lock){//deals with swipe and multiple taps
-				//Set touchEnd to equal the position of this touch
-				hasrotated = false;
-				echoTapTime = Time.time;
-				touchEndpos = myTouch.position;
-				float x = touchEndpos.x - touchOrigin.x;
-				float y = touchEndpos.y - touchOrigin.y;
-				/*
-				if(numTouches == 2){//detect a rotate
-					isRotation = true;
-					//Vector2 firstfingerPos = Input.touches[1].position;
-					//VecStart = swipeStartPlace - firstfingerPos;
-					VecEnd = Input.touches[0].position - Input.touches[1].position;
-					//UnityEngine.Debug.DrawLine(new Vector3(firstfingerPos.x, firstfingerPos.y, 0f), new Vector3(swipeStartPlace.x, swipeStartPlace.y, 0f));
-					//UnityEngine.Debug.DrawLine(new Vector3(firstfingerPos.x, firstfingerPos.y, 0f), new Vector3(touchEndpos.x, touchEndpos.y, 0f));
-					Vector3 cross = Vector3.Cross((Vector3)VecStart.normalized, (Vector3)VecEnd.normalized);
-					float crossPz = cross.z;
-					if( (crossPz >= 0)&&(Mathf.Abs(crossPz) >= Screen.height*0.001f ) )//left
-						swp_dir = BoardManager.Direction.LEFT;
-					else if( (crossPz < 0)&&(Mathf.Abs(crossPz) >= Screen.width*0.0005f) )//right
-						swp_dir = BoardManager.Direction.RIGHT;
-
-					//if ( (firstfingerPos - firstSwipePos).magnitude >= minSwipeDist){//right & left
-					//	print("gulululululululu");
-					//	swp_dir = BoardManager.Direction.OTHER;
-					//}
-
-					//debug_text.text = "numTOuches: " + numTouches.ToString() + "\n";
-					//debug_text.text += "VecStart: (" + VecStart.x + " ," + VecStart.y + ")\n";
-					//debug_text.text += "VecEnd: (" + VecEnd.x + " ," + VecEnd.y + ")\n";
-					//debug_text.text += "Cross: (" + cross.x + " ," + cross.y + " ," + cross.z + ")\n";
-					//debug_text.text += x.ToString() + "\n";
-					//debug_text.text += (minSwipeDist*0.05f).ToString() + "\n";
-					//if(swp_dir == BoardManager.Direction.LEFT)
-					//	debug_text.text += "LEFT";
-					//else if(swp_dir == BoardManager.Direction.LEFT)
-					//	debug_text.text += "RIGHT";
-					//else
-					//	debug_text.text += "OTHER";
-					print(crossPz);
-					print(VecEnd);
-					print(VecStart);
-					VecEnd = VecStart;//to "reset" the input
-				}
-				*/
-				if (Mathf.Abs(x) > Mathf.Abs(y) && Mathf.Abs(x) >= minSwipeDist){//right & left
-					if (x > 0)//right
-						swp_dir = BoardManager.Direction.RIGHT;
-					else//left
-						swp_dir = BoardManager.Direction.LEFT;
-				} else if (Mathf.Abs(y) > Mathf.Abs(x) && Mathf.Abs(y) >= minSwipeDist) {//up & down
-					if (y > 0)//up/front
-						swp_dir = BoardManager.Direction.FRONT;
-					else//down/back
-						swp_dir = BoardManager.Direction.BACK;
-				}
-
-				//update TouchTapCount part 2
-				if( (Time.time - multiTapStartTime) < multiTapCD ){
-					TouchTapCount += myTouch.tapCount;
-				}
-
-				swp_lock = false;//flip the lock, until we find another TouchPhase.Began
-			}else if( (numTouches == 2) && (!at_pause_menu) && (!hasrotated) ){
-				if(numTouches == 2){//detect a rotate
-					//enable this part for rotate turning control
-					VecEnd = Input.touches[0].position - Input.touches[1].position;
-					Vector3 cross = Vector3.Cross((Vector3)VecStart.normalized, (Vector3)VecEnd.normalized);
-					float crossPz = cross.z;
-					if( (crossPz >= 0)&&(Mathf.Abs(crossPz) >= Screen.height*0.00015f ) ){//left
-						isRotation = true;
-						hasrotated = true;
-						if(Time.time - rotateGestStartTime >= rotateGestCD){
-							rotateGestStartTime = Time.time;
-							swp_dir = BoardManager.Direction.LEFT;
-						}
-					}else if( (crossPz < 0)&&(Mathf.Abs(crossPz) >= Screen.height*0.00015f) ){//right
-						isRotation = true;
-						hasrotated = true;
-						if(Time.time - rotateGestStartTime >= rotateGestCD){
-							rotateGestStartTime = Time.time;
-							swp_dir = BoardManager.Direction.RIGHT;
-						}
+		//process input
+		if(eh.isActivate()){
+			InputEvent ie = eh.getEventData();
+			if ((ie.touchNum == touch_simple)&&(ie.hasDir())){//a swipe
+				flipEchoLock(true);
+				if(!at_pause_menu){
+					if(ie.isUp){
+						dir = get_player_dir("FRONT");
+						SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
 					}
-					//enable this part for rotate turning control END
-					//print(crossPz);
-					//print(VecEnd);
-					//print(VecStart);
-					//VecEnd = VecStart;//to "reset" the input
+				} else {//at pause menu
+					if(ie.isDown){//turn on/of black screen
+						if(GameManager.levelImageActive){
+							GameManager.instance.HideLevelImage();
+							GameManager.instance.boardScript.gamerecord += "S_OFF";
+						}else{
+							GameManager.instance.UnHideLevelImage();
+							GameManager.instance.boardScript.gamerecord += "S_ON"; // dont forget to turn these two back on!
+						}
+						at_pause_menu = false;
+						SoundManager.instance.PlayVoice(Database.instance.menuOff, true);//shoule have another set of sound effect
+					}else if(ie.isLeft){//restart level
+						SoundManager.instance.playcrash(Database.instance.inputSFX);
+						//GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
+						SoundManager.instance.PlayVoice(Database.instance.menuOff, true);//shoule have another set of sound effect
+						Destroy(GameObject.Find("GameManager"));
+						//Destroy(this);
+						SceneManager.LoadScene("Main");
+					}else if(ie.isRight){//return to main menu
+						SoundManager.instance.playcrash(Database.instance.inputSFX);
+						Destroy(GameObject.Find("GameManager"));
+						SceneManager.LoadScene("Title_Screen");
+					}else if(ie.isUp){//repeat audio (duplicate)
+						//getHint ();
+					}					
 				}
-			}
-			numTouchlastframe = numTouches;
-		} else{
-			numTouchlastframe = 0;
-		}
-
-		float touchx = touchEndpos.x - touchOrigin.x;
-		float touchy = touchEndpos.y - touchOrigin.y;
-		if (Mathf.Abs(touchx) >= minSwipeDist){//right & left
-			isSwipe = true;
-		} else if (Mathf.Abs(touchy) >= minSwipeDist) {//up & down
-			isSwipe = true;
-		} else
-			isSwipe = false;
-
-		//process the data
-		if( (numTouches == touch_exit)&&(TouchTapCount >= tap_exit)&&(swp_dir == BoardManager.Direction.OTHER) ){//exit
-			GameManager.instance.boardScript.gamerecord += "X";
-			attemptExitFromLevel();
-		}else if( (numTouches == touch_simple) ){//turn, get echo, etc.
-			if(!at_pause_menu){//not at pause menu
-				if(swp_dir == BoardManager.Direction.FRONT){
-					dir = get_player_dir("FRONT");
-					SoundManager.instance.PlaySingle(swipeAhead);
-					//debug_text.text += "MOVE FORWARD";
-				}
-				//enable this part for swipe control turning
-				/*
-				else if(swp_dir == BoardManager.Direction.LEFT){
-					dir = get_player_dir("LEFT");
-					SoundManager.instance.PlaySingle(swipeLeft);
-					debug_text.text += "TURN LEFT";
-				}else if(swp_dir == BoardManager.Direction.RIGHT){
-					dir = get_player_dir("RIGHT");
-					SoundManager.instance.PlaySingle(swipeRight);
-					debug_text.text += "TURN RIGHT";
-				}*/
-				//enable this part for swipe control turning END
-				else if(swp_dir == BoardManager.Direction.OTHER){//play echo
-					float x = touchEndpos.x - touchOrigin.x;
-					float y = touchEndpos.y - touchOrigin.y;
-					bool final_check_flag = true;
-					if ((Mathf.Abs(x) > Mathf.Abs(y) && Mathf.Abs(x) >= minSwipeDist) || (Mathf.Abs(y) > Mathf.Abs(x) && Mathf.Abs(y) >= minSwipeDist) || (numTouches>1) || (isRotation)){
-						final_check_flag = false;
-						isRotation = false;
-					}
-					
-					if((Mathf.Abs(Time.time - touchTime) > ECHO_TOUCH_TIME)&&final_check_flag&&(!at_pause_menu)&&(!menuUpdatedThisTouch)&&(!isRotation)&&(!hasrotated)&&(!isSwipe)){
-						//check echo timer
-						if(Time.time - echoTapTime >= echoCD){
-							echoTapTime = Time.time;
-							if(!echoPlayedThisTouch){
-								echoPlayedThisTouch = true;
-								GameManager.instance.boardScript.gamerecord += "E{";
-								PlayEcho();
-								GameManager.instance.boardScript.gamerecord += lastEcho;
-								GameManager.instance.boardScript.gamerecord += "}";
-								//debug_text.text += "PLAY ECHO";
+			} else if ((ie.touchNum == 2) && (!ie.hasDir())){//turn on/off menu
+				flipEchoLock(true);
+				if(ie.elapsedTime >= Const.MENU_TOUCH_TIME) {
+					if(TriggermenuTimer.CDfinish()) {//turn on/off pause menu
+						if(!at_pause_menu){
+							at_pause_menu = true;
+							if(SoundManager.instance.voiceSource.isPlaying){
+								GameManager.instance.boardScript.restore_audio = true;
+								GameManager.instance.boardScript.latest_clip = SoundManager.instance.voiceSource.clip;
 							}
+							SoundManager.instance.PlayVoice(Database.instance.menuOn, true);
+						}else{//menu already open, now close it
+							at_pause_menu = false;
+							SoundManager.instance.PlayVoice(Database.instance.menuOff, true);
 						}
+						TriggermenuTimer.reset();
+					}
+				}
+			} else if ( (ie.isRotate)&&(ie.hasDir()) ){
+				flipEchoLock(true);
+				if(!at_pause_menu && TriggerrotateTimer.CDfinish()){
+					if(ie.isLeft){
+						dir = get_player_dir("LEFT");
+						if (!GameManager.instance.boardScript.turning_lock)
+							SoundManager.instance.PlaySingle(Database.instance.swipeLeft);
+					}else if(ie.isRight){
+						dir = get_player_dir("RIGHT");
+						if (!GameManager.instance.boardScript.turning_lock)
+							SoundManager.instance.PlaySingle(Database.instance.swipeLeft);
+					}
+					TriggerrotateTimer.reset();
+				}
+			} else if( (ie.touchNum == touch_simple)&&(!ie.hasDir()) ){//a tap
+				if(!at_pause_menu){
+					if (ie.cumulativeTouchNum >= touch_exit){
+						GameManager.instance.boardScript.gamerecord += "X";
+						attemptExitFromLevel();
+					} else if((ie.elapsedTime > Const.opsToEchoCD)&&(ie.elapsedTime < Const.opsToEchoCD+0.02f)&&TriggerechoTimer.CDfinish()&&(!echoLock)){
+						GameManager.instance.boardScript.gamerecord += "E{";
+						PlayEcho();
+						GameManager.instance.boardScript.gamerecord += lastEcho;
+						GameManager.instance.boardScript.gamerecord += "}";
+						TriggerechoTimer.reset();
+						flipEchoLock(true);
 					}
 				}
 			}
-			else{//at the pause menu
-				if(swp_dir == BoardManager.Direction.BACK){//turn on/of black screen
-					if(GameManager.levelImageActive){
-						GameManager.instance.HideLevelImage();
-						GameManager.instance.boardScript.gamerecord += "S_OFF";
-					}else{
-						GameManager.instance.UnHideLevelImage();
-						GameManager.instance.boardScript.gamerecord += "S_ON";
-					}
-					at_pause_menu = false;
-					SoundManager.instance.PlayVoice(menuOff, true);//shoule have another set of sound effect
-					//debug_text.text += "BLACKEN SCREEN";
-				}else if(swp_dir == BoardManager.Direction.LEFT){//restart level
-					SoundManager.instance.playcrash(inputSFX);
-					//GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
-					SoundManager.instance.PlayVoice(menuOff, true);//shoule have another set of sound effect
-					Destroy(GameObject.Find("GameManager"));
-					SceneManager.LoadScene("Main");
-				}else if(swp_dir == BoardManager.Direction.RIGHT){//quit to main menu
-					SoundManager.instance.playcrash(inputSFX);
-					Destroy(GameObject.Find("GameManager"));
-					SceneManager.LoadScene("Title_Screen");
-				}else if(swp_dir == BoardManager.Direction.FRONT){//repeat audio (duplicate)
-					getHint ();
-					//debug_text.text += "GET HINT";
-				}
-			}
-		}else if( (numTouches == touch_audio)&&(swp_dir != BoardManager.Direction.OTHER) ){//rotate player
-			if((!at_pause_menu) && (isRotation)){
-				isRotation = false;
-				if(swp_dir == BoardManager.Direction.LEFT){
-					dir = get_player_dir("LEFT");
-					if (!GameManager.instance.boardScript.turning_lock)
-						SoundManager.instance.PlaySingle(swipeLeft);
-					//debug_text.text += "TURN LEFT";
-				}else if(swp_dir == BoardManager.Direction.RIGHT){
-					dir = get_player_dir("RIGHT");
-					if (!GameManager.instance.boardScript.turning_lock)
-						SoundManager.instance.PlaySingle(swipeRight);
-					//debug_text.text += "TURN RIGHT";
-				}
-			}
-			else if((!at_pause_menu) && (!isRotation)){
-				//if(swp_dir == BoardManager.Direction.LEFT){//repeat instruction
-				//	GameManager.instance.boardScript.repeat_latest_instruction();
-				//	debug_text.text += "REPEAT AUDIO";
-				//}else if(swp_dir == BoardManager.Direction.RIGHT){//skip instruction
-				//	GameManager.instance.boardScript.skip_instruction();
-				//	debug_text.text += "SKIP AUDIO";
-				//}
-			}
-		}else if( (numTouches == touch_menu)&&(Mathf.Abs(Time.time - touchTime) >= MENU_TOUCH_TIME)&&(!menuUpdatedThisTouch)&&(!isRotation)&&(!hasrotated) ){
-			if((Time.time - menuTapTime >= menuUpdateCD)&&(!isRotation)){
-				SoundManager.instance.playcrash(inputSFX);
-				if(!at_pause_menu){//turn on/off pause menu
-					at_pause_menu = true;
-					if(SoundManager.instance.voiceSource.isPlaying){
-						GameManager.instance.boardScript.restore_audio = true;
-						GameManager.instance.boardScript.latest_clip = SoundManager.instance.voiceSource.clip;
-					}
-					SoundManager.instance.PlayVoice(menuOn, true);
-				}else{
-					at_pause_menu = false;
-					SoundManager.instance.PlayVoice(menuOff, true);
-				}
-
-				//debug_text.text += "UPDATE MENU";
-				menuTapTime= Time.time;
-				menuUpdatedThisTouch = true;
-			}
+			flipEchoLock(false);
 		}
+			
 
 		#endif //End of mobile platform dependendent compilation section started above with #elif
 		calculateMove (dir);
+	}
+
+	private float lockStartTime;
+	private void flipEchoLock(bool flg){
+		if (flg) {
+			echoLock = flg;
+			lockStartTime = Time.time;
+		}else if (Time.time - lockStartTime > Const.opsToEchoCD) {
+			echoLock = flg;
+			lockStartTime = Time.time;
+		}
 	}
 
 	//Returns a description of the location of the crash (for analysis)
@@ -1732,15 +1518,7 @@ public class Player : MovingObject
 		//Set hitWall to equal the component passed in as a parameter.
 		Wall hitWall = component as Wall;
 		//if(!SoundManager.instance.isBusy())
-		SoundManager.instance.playcrash (wallHit);
-	}
-
-	protected override void OnMove ()
-	{
-	}
-
-	private void OnTriggerEnter2D (Collider2D other)
-	{
+		SoundManager.instance.playcrash (Database.instance.wallHit);
 	}
 
 	private void OnDisable ()
@@ -1756,5 +1534,10 @@ public class Player : MovingObject
 		//Load the last scene loaded, in this case Main, the only scene in the game.
 		SceneManager.LoadScene("Main");
 		restarted = false;
+	}
+
+	protected override void OnMove ()
+	{
+		
 	}
 }
