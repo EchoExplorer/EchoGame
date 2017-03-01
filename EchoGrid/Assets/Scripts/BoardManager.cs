@@ -175,7 +175,7 @@ public class BoardManager : MonoBehaviour {
 	private List<Vector3> playerPositions = new List<Vector3> ();
 	public string mazeSolution = "";
 	level_voice_list level_voices = new level_voice_list();
-	Vector3 exitPos;
+	public Vector3 exitPos;
 	Vector3 startPos;
 
 	//audios

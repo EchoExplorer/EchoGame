@@ -65,14 +65,6 @@ Notice that the echo is louder in your left ear
 Turn turn right, rotate two fingers clockwise, like you are turning a dial
 Inend
 IN
-at(9,9)_T_F_LEFT
-You should turn left
-Inend
-IN
-at(9,9)_T_F_FRONT
-You should turn around by turning in the same direction twice
-Inend
-IN
 at(9,9)_T_F_BACK
 1sec_silence
 You have turned right 90 degrees 
@@ -107,14 +99,6 @@ at(1,9)_T_F_LEFT
 1sec_silence
 Now you are at the left turn
 Turn turn left, rotate two fingers counterclockwise, like you are turning a dial
-Inend
-IN
-at(1,9)_T_F_RIGHT
-You should turn right
-Inend
-IN
-at(1,9)_T_F_FRONT
-You should turn around by turning in the same direction twice
 Inend
 IN
 at(1,9)_T_F_BACK

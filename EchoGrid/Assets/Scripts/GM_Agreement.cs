@@ -16,7 +16,7 @@ public class GM_Agreement : MonoBehaviour {
 	//bool finished_reading = false;
 	AudioClip swipeAhead;
 	public GameObject AgreementTexts;
-	int total_num_agreements;
+	int total_num_agreements = 7;
 	int cur_text = 0;
 	AndroidDialogue ad;
 
@@ -33,14 +33,18 @@ public class GM_Agreement : MonoBehaviour {
 		clips[1] = Resources.Load ("instructions/2sec_silence") as AudioClip;
 		clips[2] = Resources.Load ("instructions/2sec_silence") as AudioClip;
 
-		total_num_agreements = AgreementTexts.transform.childCount;
+		//total_num_agreements = AgreementTexts.transform.childCount;
 		cur_text = 0;
 
 		//load questions;
-		questions = new string[3];
+		questions = new string[7];
 		questions [0] = "I am 18 or older.";
-		questions [1] = "I have read and understand \nall the information presented earlier";
-		questions [2] = "I want to participate this research \nand continue the game\n";
+		questions [1] = "Do you have normal vision\n or vision that is corrected to normal?";
+		questions [2] = "Do you have visual impairment\n that can't be corrected by glasses?";
+		questions [3] = "Are you blind?";
+		questions [4] = "I have normal hearing.";
+		questions [5] = "I have read and understand \nall the information presented earlier.";
+		questions [6] = "I want to participate this research \nand continue the game.\n";
 
 		string[] consentResult = Utilities.Loadfile ("consentRecord");
 		int[] intResult = new int[1];
@@ -62,11 +66,11 @@ public class GM_Agreement : MonoBehaviour {
 					orti_clip = 0;
 			}
 		} else{
-			if (SoundManager.instance.PlayVoice (clips [cur_clip])) {
-				cur_clip += 1;
-				if (cur_clip >= orit.Length)
-					cur_clip = 0;
-			}
+			//if (SoundManager.instance.PlayVoice (clips [cur_clip])) {
+			//	cur_clip += 1;
+			//	if (cur_clip >= orit.Length)
+			//		cur_clip = 0;
+			//}
 		}
 	}
 
@@ -96,8 +100,10 @@ public class GM_Agreement : MonoBehaviour {
 		#elif UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
 		//AndroidDialogue
 		if(ad.noclicked()){
-			SceneManager.LoadScene("T&C");
+			ad.clearflag();
+			gotoNextAgreement();
 		} else if (ad.yesclicked()){
+			ad.clearflag();
 			gotoNextAgreement();
 		}
 
@@ -172,18 +178,22 @@ public class GM_Agreement : MonoBehaviour {
 	}
 
 	void gotoNextAgreement(){
-		if (cur_text < total_num_agreements)
-			ad.DisplayAndroidWindow (questions[cur_text]);
+		if (cur_text < total_num_agreements) {
+			if( (cur_text == 5)||(cur_text == 6) )
+				ad.DisplayAndroidWindow (questions [cur_text], AndroidDialogue.DialogueType.YESONLY);
+			else
+				ad.DisplayAndroidWindow (questions [cur_text]);
+		}
 
 		if (cur_text >= total_num_agreements) {
 			Utilities.writefile ("consentRecord", "1");
 			SceneManager.LoadScene("Title_screen");
 		} else {
 			for (int i = 0; i < total_num_agreements; ++i) {
-				if (i == cur_text)
-					AgreementTexts.transform.GetChild (i).gameObject.SetActive (true);
-				else
-					AgreementTexts.transform.GetChild (i).gameObject.SetActive (false);
+				//if (i == cur_text)
+				//	AgreementTexts.transform.GetChild (i).gameObject.SetActive (true);
+				//else
+				//	AgreementTexts.transform.GetChild (i).gameObject.SetActive (false);
 			}
 			cur_text += 1;
 		}
