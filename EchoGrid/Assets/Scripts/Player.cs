@@ -72,20 +72,7 @@ public class Player : MovingObject
 	//int score;
 	eventHandler eh;
 
-	public Text debug_text;
 	string surveyCode = "";
-
-	//Create a new instance of RSACryptoServiceProvider.
-	private RSACryptoServiceProvider encrypter = new RSACryptoServiceProvider ();
-
-	//public bool soundPlaying = false;
-
-	private void initData ()
-	{
-		numCrashes = 0;
-		numSteps = 0;
-		crashLocs = "";
-	}
 
 	void Awake(){
 
@@ -102,22 +89,14 @@ public class Player : MovingObject
 
 	}
 
-	protected override void Start ()
+	private void init ()
 	{
-		curLevel = GameManager.instance.level;
-		//spriteRenderer = GetComponent<SpriteRenderer>();
-
-		//Initialize data collection variables
-		initData ();
+		numCrashes = 0;
+		numSteps = 0;
+		crashLocs = "";
 		Utilities.initEncrypt ();
 		//Initialize list of crash locations
 		crashLocs = "";
-
-		//Adjust player scale
-		Vector3 new_scale = transform.localScale;
-		new_scale *= (float)Utilities.SCALE_REF / (float)Utilities.MAZE_SIZE;
-		transform.localScale = new_scale;
-
 		//Start the time for the game level
 		stopWatch = new Stopwatch ();
 		stopWatch.Start ();
@@ -155,44 +134,20 @@ public class Player : MovingObject
 		base.Start ();
 	}
 
+	protected override void Start ()
+	{
+		curLevel = GameManager.instance.level;
+		init ();
+		//Adjust player scale
+		Vector3 new_scale = transform.localScale;
+		new_scale *= (float)Utilities.SCALE_REF / (float)Utilities.MAZE_SIZE;
+		transform.localScale = new_scale;
+	}
+
 	void OnLevelWasLoaded(int index){
 		//if (!level_already_loaded) {
 		//	level_already_loaded = true;
-			//Initialize data collection variables
-			initData ();
-			//Initialize list of crash locations
-			crashLocs = "";
-			curLevel = GameManager.instance.level;
-			stopWatch = new Stopwatch ();
-			stopWatch.Start ();
-			startTime = System.DateTime.Now;
-
-			want_exit = false;
-			at_pause_menu = false;
-			reset_audio = false;
-			tapped = false;
-			reportSent = false;
-			reachHalf = false;
-			reachQuarter = false;
-			reach3Quarter = false;
-			survey_shown = false;
-			URL_shown = false;
-			code_entered = false;
-			survey_activated = true;
-			echoLock = false;
-			ad = GetComponent<AndroidDialogue> ();
-
-			localRecordWritten = false;
-			//score = 1000;
-			eh = new eventHandler(InputModule.instance);
-			TriggerechoTimer = new CDTimer(Const.echoCD, InputModule.instance);
-			TriggermenuTimer = new CDTimer(Const.menuUpdateCD, InputModule.instance);
-			TriggerrotateTimer = new CDTimer(Const.rotateGestCD, InputModule.instance);
-			TriggerechoTimer.TakeDownTime();
-			TriggermenuTimer.TakeDownTime();
-			TriggerrotateTimer.TakeDownTime();
-
-			base.Start ();
+			init ();
 		//}
 	}
 
@@ -1348,7 +1303,7 @@ public class Player : MovingObject
 					}else if(ie.isRight){
 						dir = get_player_dir("RIGHT");
 						if (!GameManager.instance.boardScript.turning_lock)
-							SoundManager.instance.PlaySingle(Database.instance.swipeLeft);
+							SoundManager.instance.PlaySingle(Database.instance.swipeRight);
 					}
 					TriggerrotateTimer.reset();
 				}

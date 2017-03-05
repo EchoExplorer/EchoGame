@@ -177,6 +177,7 @@ public class BoardManager : MonoBehaviour {
 	level_voice_list level_voices = new level_voice_list();
 	public Vector3 exitPos;
 	Vector3 startPos;
+	Vector3 startDir;
 
 	//audios
 	int cur_clip = 1;
@@ -319,7 +320,7 @@ public class BoardManager : MonoBehaviour {
 		if ((idx_pos - get_idx_from_pos (exitPos)).magnitude <= threshold) {
 			if (level_voices.clip_exit < level_voices.clip_at_exit.Count)
 				level_voices.clip_exit = play_audio (level_voices.clip_at_exit, level_voices.clip_exit);
-		}else if (((idx_pos - get_idx_from_pos (startPos)).magnitude <= threshold)&&left_start_pt) {
+		}else if (((idx_pos - get_idx_from_pos (startPos)).magnitude <= threshold)&&left_start_pt&&(player_script.get_player_dir("BACK") == startDir)) {
 			if (level_voices.clip_return < level_voices.clip_when_return.Count)
 				level_voices.clip_return = play_audio (level_voices.clip_when_return, level_voices.clip_return, true, true);
 		}else{
@@ -508,6 +509,7 @@ public class BoardManager : MonoBehaviour {
 			if(mazeSolution[mazeSolution.Length-2] == 'r')
 				player_script.rotateplayer_no_update (StringToDir("RIGHT"));
 		}
+		startDir = player_script.get_player_dir ("FRONT");
 	}
 
 	//private help function to replace list.contain()
