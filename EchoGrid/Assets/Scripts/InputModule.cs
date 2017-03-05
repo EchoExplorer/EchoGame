@@ -33,7 +33,7 @@ public struct InputEvent{
 public class InputModule : MonoBehaviour {
 	//consts
 	const float TOUCH_TIME = 0.02f;
-	float minSwipeDist = Screen.width*0.001f;
+	float minSwipeDist = Screen.width*0.01f;
 	const float multiTapCD = 0.4f;//make multitap easier, num of tap made within this time period
 	const float rotateGestCD = 0.3f;
 

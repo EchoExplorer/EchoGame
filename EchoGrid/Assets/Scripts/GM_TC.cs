@@ -14,14 +14,8 @@ public class GM_TC : MonoBehaviour {
 	bool doneTesting = false;
 
 	AndroidDialogue ad;
-	string msg = "Please hold your phone horizontally for this game, \n " +
-		         "and please read the online consent form; \n " +
-		         "after finish, you can click back button to " +
-		         "return to the game";
 
-	string msgCode = "Your consent code is: \n";
-	string consentCode = "";
-	eventHandler eh;
+	//eventHandler eh;
 
 	void Awake () {
 		URL_opened = false;
@@ -41,11 +35,11 @@ public class GM_TC : MonoBehaviour {
 	}
 
 	void Start(){
-		eh = new eventHandler (InputModule.instance);
+		//eh = new eventHandler (InputModule.instance);
 	}
 		
 	void OnLevelWasLoaded(int index){
-		eh = new eventHandler (InputModule.instance);
+		//eh = new eventHandler (InputModule.instance);
 	}
 
 	private void reportConsent(string code) {
@@ -84,23 +78,24 @@ public class GM_TC : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		//MUST have internet connection
-		/*
-		if (!doneTesting){
-			string str = Utilities.check_InternetConnection ();
-			if (str.Length == 0) {//we're good to go
-				doneTesting = true;
-				titleText.text = Database.tcText_main;
-			}else
-				titleText.text = str;
+		if (Const.TEST_CONNECTION) {
+			if (!doneTesting) {
+				string str = Utilities.check_InternetConnection ();
+				if (str.Length == 0) {//we're good to go
+					doneTesting = true;
+					titleText.text = Database.tcText_main;
+				} else
+					titleText.text = str;
+			}
 		}
-		*/
+
 
 		#if UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
 		if (!android_window_displayed) {
 			android_window_displayed = true;
 			finished_reading = false;
 			ad.clearflag();
-			ad.DisplayAndroidWindow (msg, AndroidDialogue.DialogueType.YESONLY);
+			ad.DisplayAndroidWindow (Database.tcmsg, AndroidDialogue.DialogueType.YESONLY);
 		}
 
 		if (!URL_opened && ad.yesclicked () && !finished_reading) {

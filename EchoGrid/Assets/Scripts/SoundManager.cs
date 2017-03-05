@@ -36,7 +36,7 @@ public class SoundManager : MonoBehaviour {
 		if (!voice_adjusted) {
 			for (int i = 0; i < efxSource.Length; ++i) {
 				if (efxSource [i] != null) {
-					efxSource [i].volume = 0.8f;
+					efxSource [i].volume = 0.5f;
 					voice_adjusted = true;
 				} else {
 					voice_adjusted = false;

@@ -70,6 +70,7 @@ public class Utilities : MonoBehaviour {
 		}
 		catch (Exception ex)
 		{
+			UnityEngine.Debug.Log (ex.Message);
 			return false;
 		}
 
@@ -83,10 +84,10 @@ public class Utilities : MonoBehaviour {
 
 		//Check for errors
 		if (www.error == null) {
-			JSONNode data = JSON.Parse (www.data);
+			//JSONNode data = JSON.Parse (www.text);
 			//Debug.Log("this is the parsed json data: " + data["testData"]);
 			//Debug.Log(data["testData"]);
-			UnityEngine.Debug.Log ("WWW.Ok! " + www.data);
+			UnityEngine.Debug.Log ("WWW.Ok! " + www.text);
 		} else {
 			UnityEngine.Debug.Log ("WWWError: " + www.error);
 		}
@@ -116,7 +117,7 @@ public class Utilities : MonoBehaviour {
 		ConnectionTesterStatus connectionTestResult = ConnectionTesterStatus.Undetermined;
 		connectionTestResult = Network.TestConnection();
 		string testMessage = "";
-		bool probingPublicIP = false;
+		//bool probingPublicIP = false;
 		int serverPort = 9999;
 
 		switch (connectionTestResult) {

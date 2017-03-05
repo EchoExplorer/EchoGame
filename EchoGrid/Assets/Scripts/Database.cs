@@ -65,6 +65,10 @@ public class Database : MonoBehaviour {
 
 	//T&C screen
 	public static string tcText_main = "T & C\nSwipe Left to Continue";
+	public static string tcmsg = "Please hold your phone horizontally for this game, \n " +
+								 "and please read the online consent form; \n " +
+								 "after finish, you can click back button to " +
+								 "return to the game";
 
 	//Main
 

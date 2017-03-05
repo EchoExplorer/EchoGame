@@ -9,7 +9,7 @@ public class GM_main_pre : MonoBehaviour {
 	bool reset_audio = false;
 
 	eventHandler eh;
-	CDTimer TriggerStartNewGame = new CDTimer(1f, InputModule.instance);
+	CDTimer TriggerStartNewGame;
 
 	// Use this for initialization
 	void Start () {
