@@ -270,6 +270,13 @@ public class Player : MovingObject
 			data.frontDist, front_type, _dist_type_to_string(b_dtype), "D",
 			_dist_type_to_string(l_dtype), left_type, _dist_type_to_string(r_dtype), right_type);
 
+        if (filename.Equals("C00-21_F-6.75-DS_B-s-D_L-w-D_R-w-D.wav")) {
+            filename = "C00-21_F-2.25-DS_B-m-D_L-w-D_R-w-D.wav";
+        }
+        else if (filename.Equals("C00-21_F-6.75-DS_B-m-D_L-w-D_R-w-D.wav")) {
+            filename = "C00-21_F-5.25-DS_B-l-D_L-w-D_R-w-D.wav";
+        }
+
 		AudioClip echo = Resources.Load ("echoes/" + filename) as AudioClip;
 		string front_typeC = front_type, back_typeC = back_type, left_typeC = left_type, right_typeC = right_type;
 		if (echo == null) {

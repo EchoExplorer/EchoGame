@@ -840,7 +840,7 @@ public class BoardManager : MonoBehaviour {
 		bool reading_ingame = false;
 		bool reading_ingame_data = false;
 		bool reading_return = false;
-		pos_and_action ingame_data;
+        pos_and_action ingame_data = new pos_and_action();
 
 		//read through the file until desired level is found
 		foreach (string line in lvldata_split) {
