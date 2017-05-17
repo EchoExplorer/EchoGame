@@ -1,0 +1,27 @@
+var annotated_dup =
+[
+    [ "AndroidDialogue", "class_android_dialogue.html", "class_android_dialogue" ],
+    [ "BoardManager", "class_board_manager.html", "class_board_manager" ],
+    [ "CDTimer", "class_c_d_timer.html", "class_c_d_timer" ],
+    [ "Const", "class_const.html", "class_const" ],
+    [ "Database", "class_database.html", "class_database" ],
+    [ "DbAccess", "class_db_access.html", "class_db_access" ],
+    [ "eventHandler", "classevent_handler.html", "classevent_handler" ],
+    [ "GameData", "class_game_data.html", null ],
+    [ "GameManager", "class_game_manager.html", "class_game_manager" ],
+    [ "GameMode", "class_game_mode.html", "class_game_mode" ],
+    [ "GM_Agreement", "class_g_m___agreement.html", "class_g_m___agreement" ],
+    [ "GM_main_pre", "class_g_m__main__pre.html", null ],
+    [ "GM_TC", "class_g_m___t_c.html", "class_g_m___t_c" ],
+    [ "GM_title", "class_g_m__title.html", "class_g_m__title" ],
+    [ "InputEvent", "struct_input_event.html", "struct_input_event" ],
+    [ "InputModule", "class_input_module.html", "class_input_module" ],
+    [ "Loader", "class_loader.html", "class_loader" ],
+    [ "Logging", "class_logging.html", "class_logging" ],
+    [ "MovingObject", "class_moving_object.html", "class_moving_object" ],
+    [ "Player", "class_player.html", "class_player" ],
+    [ "SoundManager", "class_sound_manager.html", "class_sound_manager" ],
+    [ "UICanvas", "class_u_i_canvas.html", "class_u_i_canvas" ],
+    [ "Utilities", "class_utilities.html", "class_utilities" ],
+    [ "Wall", "class_wall.html", null ]
+];

@@ -76,17 +76,19 @@
     <Reference Include="UnityEditor">
       <HintPath>Library\UnityAssemblies\UnityEditor.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Data.Sqlite">
-      <HintPath>Assets\Database\Mono.Data.Sqlite.dll</HintPath>
-    </Reference>
     <Reference Include="System.Data">
       <HintPath>Assets\Plugins\System.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Data.Sqlite">
+      <HintPath>Assets\Scripts\Database\Mono.Data.Sqlite.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Plugins\SimpleJSON.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Editor\Doxygen\ReadMe.txt" />
+    <None Include="Assets\Editor\Doxygen\Resources\BaseDoxyfile.txt" />
     <None Include="Assets\Fonts\OFL.txt" />
     <None Include="Assets\Resources\GameData\levels.txt" />
     <None Include="Assets\Resources\GameData\levels_T_tutorial.txt" />

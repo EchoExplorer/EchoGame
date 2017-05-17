@@ -76,11 +76,11 @@
     <Reference Include="UnityEditor">
       <HintPath>Library\UnityAssemblies\UnityEditor.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Data.Sqlite">
-      <HintPath>Assets\Database\Mono.Data.Sqlite.dll</HintPath>
-    </Reference>
     <Reference Include="System.Data">
       <HintPath>Assets\Plugins\System.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Data.Sqlite">
+      <HintPath>Assets\Scripts\Database\Mono.Data.Sqlite.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -90,11 +90,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Database\DbAccess.cs" />
     <Compile Include="Assets\Scripts\AndroidDialogue.cs" />
     <Compile Include="Assets\Scripts\BoardManager.cs" />
     <Compile Include="Assets\Scripts\Const.cs" />
     <Compile Include="Assets\Scripts\Database.cs" />
+    <Compile Include="Assets\Scripts\Database\DbAccess.cs" />
     <Compile Include="Assets\Scripts\GM_Agreement.cs" />
     <Compile Include="Assets\Scripts\GM_TC.cs" />
     <Compile Include="Assets\Scripts\GM_main_pre.cs" />
@@ -104,6 +104,7 @@
     <Compile Include="Assets\Scripts\GameMode.cs" />
     <Compile Include="Assets\Scripts\InputModule.cs" />
     <Compile Include="Assets\Scripts\Loader.cs" />
+    <Compile Include="Assets\Scripts\Logging.cs" />
     <Compile Include="Assets\Scripts\MovingObject.cs" />
     <Compile Include="Assets\Scripts\Player.cs" />
     <Compile Include="Assets\Scripts\SoundManager.cs" />
@@ -112,6 +113,8 @@
     <Compile Include="Assets\Scripts\Wall.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Editor\Doxygen\ReadMe.txt" />
+    <None Include="Assets\Editor\Doxygen\Resources\BaseDoxyfile.txt" />
     <None Include="Assets\Fonts\OFL.txt" />
     <None Include="Assets\Resources\GameData\levels.txt" />
     <None Include="Assets\Resources\GameData\levels_T_tutorial.txt" />

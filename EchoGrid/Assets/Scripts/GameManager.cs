@@ -90,7 +90,7 @@ public class GameManager : MonoBehaviour {
 		#endif
 
 		//Setup database for the first time
-		db = new DbAccess("data source=LocalDataBase.db");
+		db = new DbAccess("Data Source=LocalDataBase.db");
 		//db.CreateTable("PlayerInfo",new string[]{"id","name","high_score"}, new string[]{"integer","text","integer"});
 		//db.CreateTable("AudioFiles",new string[]{"id","echo name","file_path", "game_level"}, new string[]{"integer","text","text", "integer"});
 		//db.CloseSqlConnection();
