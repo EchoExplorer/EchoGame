@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using System.Text;
 using System.IO;
 
+
 public class GameManager : MonoBehaviour {
 
 	public BoardManager boardScript;

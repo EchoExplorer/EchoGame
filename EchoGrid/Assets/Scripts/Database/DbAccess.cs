@@ -122,7 +122,7 @@ public class DbAccess: IDisposable
     }
 
     /* Method to update an item in the database
-     * TODO: Implement this function. */
+     * TODO: Implement this function.
     public SqliteCommand UpdateInto(string tableName, string[] cols, string[] colsvalues, string selectkey, string selectvalue)
     {
         throw new NotImplementedException();
@@ -139,7 +139,7 @@ public class DbAccess: IDisposable
     }
 
     /* Method to delete an item from the database
-     * TODO: Implement this function. */
+     * TODO: Implement this function.
     public SqliteCommand Delete(string tableName, string[] cols, string[] colsvalues)
     {
         throw new NotImplementedException();
@@ -154,7 +154,7 @@ public class DbAccess: IDisposable
     }
 
     /* Insert field item into a specific row in a table
-     * TODO: Implement this function. */
+     * TODO: Implement this function.
     public SqliteCommand InsertIntoSpecific(string tableName, string[] cols, string[] values)
     {
         throw new NotImplementedException();
@@ -184,7 +184,7 @@ public class DbAccess: IDisposable
     }
 
     /* Delete a table from the database
-     * TODO: Implement this function. */
+     * TODO: Implement this function.
     public SqliteCommand DeleteContents(string tableName)
     {
         throw new NotImplementedException();
@@ -194,7 +194,7 @@ public class DbAccess: IDisposable
     }
 
     /* Create a new table in the database
-     * TODO: Implement this function. */
+     * TODO: Implement this function.
     public SqliteCommand CreateTable(string name, string[] col, string[] colType)
     {
         throw new NotImplementedException();
@@ -216,7 +216,7 @@ public class DbAccess: IDisposable
     }
 
     /* Search an item in the database and print to console
-     * TODO: Implement this function. */
+     * TODO: Implement this function.
     public SqliteCommand searchItem(string tableName, string[] items, string[] col, string[] operation, string[] values)
     {
         throw new NotImplementedException();
@@ -240,7 +240,7 @@ public class DbAccess: IDisposable
         }
 
         return CreateCommand(query);
-    }
+    } */
 
     // Also what in the world, the original code was copied elsewhere.
     // Found an exact match from http://www.itwendao.com/article/detail/381506.html. This is irresponsible.

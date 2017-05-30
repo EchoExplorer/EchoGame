@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// A completely empty class.
+/// </summary>
 public class GameData : MonoBehaviour {
 
 	// Use this for initialization
