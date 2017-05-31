@@ -3,6 +3,10 @@ using System.Collections;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+/// <summary>
+/// A script to display the user agreement dialogues.
+/// This is attached to the ``GameManager`` GameObject in the main_pre scene.
+/// </summary>
 public class GM_main_pre : MonoBehaviour {
 	int cur_clip = 0;
 	bool at_confirm = false;
@@ -30,6 +34,9 @@ public class GM_main_pre : MonoBehaviour {
 		TriggerStartNewGame.TakeDownTime ();
 	}
 
+    /// <summary>
+    /// Plays instruction clips to select game modes.
+    /// </summary>
 	void play_audio(){
 		if (!at_confirm) {
 			if (SoundManager.instance.PlayVoice (Database.instance.MainPreGameClips[cur_clip], reset_audio)) {
@@ -48,12 +55,14 @@ public class GM_main_pre : MonoBehaviour {
 		}
 	}
 
-	// Update is called once per frame
+	/// <summary>
+    /// Checks user input with raw touch data and transitions to the next scene according to the input.
+    /// </summary>
 	void Update () {
 		play_audio ();
 
 		//Check if we are running either in the Unity editor or in a standalone build.
-		#if UNITY_STANDALONE || UNITY_WEBPLAYER
+		#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
 
 		if(eh.isActivate()){
 			InputEvent ie = eh.getEventData();

@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// A simple class to load the game and sound managers.
+/// </summary>
 public class Loader : MonoBehaviour {
 
 	public GameObject gameManager;

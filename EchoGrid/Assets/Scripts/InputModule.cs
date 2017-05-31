@@ -2,88 +2,157 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public struct InputEvent{
-	public bool isRight;
-	public bool isLeft;
-	public bool isUp;
-	public bool isDown;
-	public int touchNum;
-	public int cumulativeTouchNum;//within a short period of time, how many time user touches
-	public bool isRotate;
-	public KeyCode keycode;
-	public float elapsedTime;//how long the user has hold
+/// <summary>
+/// A struct containing a large number of fields about user input data. 
+/// </summary>
+public struct InputEvent
+{
+    public bool isRight;
+    public bool isLeft;
+    public bool isUp;
+    public bool isDown;
+    public int touchNum;
+    public int cumulativeTouchNum;//within a short period of time, how many time user touches
+    public bool isRotate;
+    public KeyCode keycode;
+    public float elapsedTime;//how long the user has hold
 
-	public void init(){
-		isRight = false; isLeft = false; isUp = false; isDown = false;
-		touchNum = 0; isRotate = false; keycode = KeyCode.None;
-		elapsedTime = 0;
-		cumulativeTouchNum = 0;
-	}
+    /// <summary>
+    /// Initializes all the fields to default values.
+    /// </summary>
+	public void init()
+    {
+        isRight = false; isLeft = false; isUp = false; isDown = false;
+        touchNum = 0; isRotate = false; keycode = KeyCode.None;
+        elapsedTime = 0;
+        cumulativeTouchNum = 0;
+    }
 
-	public bool hasDir(){
-		return isRight || isLeft || isUp || isDown;
-	}
+    /// <summary>
+    /// Determines whether any directional input was received.
+    /// </summary>
+	public bool hasDir()
+    {
+        return isRight || isLeft || isUp || isDown;
+    }
 
-	public bool hasEffectiveInput(){
-		return isRight || isLeft || isUp || isDown || isRotate || (keycode != KeyCode.None) || (touchNum > 0) || (cumulativeTouchNum > 0);
-	}
+    /// <summary>
+    /// Determines if any meaningful input was received.
+    /// </summary>
+    /// <returns></returns>
+	public bool hasEffectiveInput()
+    {
+        return isRight || isLeft || isUp || isDown || isRotate || (keycode != KeyCode.None) || (touchNum > 0) || (cumulativeTouchNum > 0);
+    }
 }
 
-//Class to receive input
-public class InputModule : MonoBehaviour {
-	//consts
-	const float TOUCH_TIME = 0.02f;
-	float minSwipeDist = Screen.width*0.01f;
-	const float multiTapCD = 0.4f;//make multitap easier, num of tap made within this time period
-	const float rotateGestCD = 0.3f;
+/// <summary>
+/// A class that maintains event handlers for input events and countdown timers.
+/// </summary>
+public class InputModule : MonoBehaviour
+{
+    //consts
+    const float TOUCH_TIME = 0.02f;
+    float minSwipeDist = Screen.width * 0.01f;
+    const float multiTapCD = 0.4f;//make multitap easier, num of tap made within this time period
+    const float rotateGestCD = 0.3f;
 
-	//storage needed for recognizing different input
-	bool hasrotated = false;
-	bool swp_lock = false;//stop very fast input
-	bool isSwipe = false;
-	int TouchTapCount;
-	int numTouchlastframe = 0;
- 	float touchTime = 0f;
-	float rotateGestStartTime;
-	float multiTapStartTime;
-	Vector2 swipeStartPlace = new Vector2();
-	Vector2 firstSwipePos = new Vector2();
-	Vector2 VecStart = new Vector2();
-	Vector2 VecEnd = new Vector2();
-	Vector2 touchOrigin = new Vector2();
+    //storage needed for recognizing different input
+    bool hasrotated = false;
+    bool swp_lock = false;//stop very fast input
+    bool isSwipe = false;
+    int TouchTapCount;
+    int numTouchlastframe = 0;
+    float touchTime = 0f;
+    float rotateGestStartTime;
+    float multiTapStartTime;
+    Vector2 swipeStartPlace = new Vector2();
+    Vector2 firstSwipePos = new Vector2();
+    Vector2 VecStart = new Vector2();
+    Vector2 VecEnd = new Vector2();
+    Vector2 touchOrigin = new Vector2();
 
-	List<eventHandler> listeners = new List<eventHandler>();
-	List<CDTimer> cdtiemrs = new List<CDTimer>();
-	
-	public static InputModule instance;
-	void Awake ()
-	{
-		if (instance == null)
-			instance = this;
-		else if (instance != this)
-			Destroy (gameObject);
+    List<eventHandler> listeners = new List<eventHandler>();
+    List<CDTimer> cdtimers = new List<CDTimer>();
 
-		DontDestroyOnLoad (gameObject);
-	}
+    public static InputModule instance;
+    void Awake()
+    {
+        if (instance == null)
+            instance = this;
+        else if (instance != this)
+            Destroy(gameObject);
 
-	public void RegisterEventHandler(eventHandler eh){
-		listeners.Add (eh);
-	}
+        DontDestroyOnLoad(gameObject);
+    }
 
-	public void RegisterCDTimer(CDTimer ct){
-		cdtiemrs.Add (ct);
-	}
+    /// <summary>
+    /// Registers an event handler to all input events.
+    /// </summary>
+    public void RegisterEventHandler(eventHandler eh)
+    {
+        listeners.Add(eh);
+    }
 
-	// Update is called once per frame
-	void Update () {
-		GetInput ();
-	}
+    /// <summary>
+    /// Registers a new countdown timer.
+    /// </summary>
+    public void RegisterCDTimer(CDTimer ct)
+    {
+        cdtimers.Add(ct);
+    }
 
-	void GetInput(){
-		InputEvent ievent = new InputEvent ();
-		ievent.init ();
+    /// <summary>
+    /// Checks for new input data every frame.
+    /// </summary>
+    void Update()
+    {
+        GetInput();
+    }
 
-		#if UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
+    /// <summary>
+    /// Checks each key individually to determine if there is input data.
+    /// </summary>
+    void GetInput()
+    {
+        InputEvent ievent = new InputEvent();
+        ievent.init();
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
+        if (Input.GetKeyUp(KeyCode.RightArrow))
+        {
+            ievent.keycode = KeyCode.RightArrow;
+        }
+        else if (Input.GetKeyUp(KeyCode.LeftArrow))
+        {
+            ievent.keycode = KeyCode.LeftArrow;
+        }
+        else if (Input.GetKeyUp(KeyCode.UpArrow))
+        {
+            ievent.keycode = KeyCode.UpArrow;
+        }
+        else if (Input.GetKeyUp(KeyCode.DownArrow))
+        {
+            ievent.keycode = KeyCode.DownArrow;
+        }
+        else if (Input.GetKeyUp("f"))
+        {
+            ievent.keycode = KeyCode.F;
+        }
+        else if (Input.GetKeyUp("e"))
+        {
+            ievent.keycode = KeyCode.E;
+        }
+        else if (Input.GetKeyUp("r"))
+        {
+            ievent.keycode = KeyCode.R;
+        }
+        else if (Input.GetKeyUp("m"))
+        {
+            ievent.keycode = KeyCode.M;
+        }
+        else
+            return;
+#elif UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
 
 		//Check if Input has registered more than zero touches
 		int numTouches = Input.touchCount;
@@ -200,120 +269,169 @@ public class InputModule : MonoBehaviour {
 			isSwipe = false;
 		
 		ievent.cumulativeTouchNum = TouchTapCount;
-		#elif UNITY_STANDALONE || UNITY_WEBPLAYER
-			if (Input.GetKeyUp (KeyCode.RightArrow)) {
-				ievent.keycode = KeyCode.RightArrow;
-			} else if (Input.GetKeyUp (KeyCode.LeftArrow)) {
-				ievent.keycode = KeyCode.LeftArrow;
-			} else if (Input.GetKeyUp (KeyCode.UpArrow)) {
-				ievent.keycode = KeyCode.UpArrow;
-			} else if (Input.GetKeyUp (KeyCode.DownArrow)) {
-				ievent.keycode = KeyCode.DownArrow;
-			} else if (Input.GetKeyUp ("f")) {
-				ievent.keycode = KeyCode.F;
-			} else if (Input.GetKeyUp ("e")) {
-				ievent.keycode = KeyCode.E;
-			} else if (Input.GetKeyUp ("r")) {
-				ievent.keycode = KeyCode.R;
-			} else if (Input.GetKeyUp ("m")) {
-				ievent.keycode = KeyCode.M;
-			} else
-				return;
-		#endif
-		//print(touchTime);
-		//if no input, code should not reach here
-		PassDataToListeners(ievent);
-		NotifyLlisteners ();
-	}
+#endif
+        //print(touchTime);
+        //if no input, code should not reach here
+        PassDataToListeners(ievent);
+        NotifyLlisteners();
+    }
 
-	void PassDataToListeners(InputEvent _ie){
-		foreach (eventHandler eh in listeners) {
-			if (eh != null)
-				eh.SetData (_ie);
-		}
-	}
+    /// <summary>
+    /// Sets an internal variable in all event handlers to notify them of the nature of an input event.
+    /// </summary>
+    void PassDataToListeners(InputEvent _ie)
+    {
+        foreach (eventHandler eh in listeners)
+        {
+            if (eh != null)
+                eh.SetData(_ie);
+        }
+    }
 
-	void NotifyLlisteners(){
-		foreach (eventHandler eh in listeners) {
-			if (eh != null)
-				eh.Activate ();
-		}
-	}
+    /// <summary>
+    /// Notifies all event handlers of the arrival of input data.
+    /// </summary>
+    void NotifyLlisteners()
+    {
+        foreach (eventHandler eh in listeners)
+        {
+            if (eh != null)
+                eh.Activate();
+        }
+    }
 
-	void ResetCDTimers(){
-		foreach (CDTimer ctimer in cdtiemrs) {
-			if (ctimer != null)
-				ctimer.resetLock();
-		}
-	}
+    /// <summary>
+    /// Reinitializes all countdown timers under the control of this module.
+    /// </summary>
+    void ResetCDTimers()
+    {
+        foreach (CDTimer ctimer in cdtimers)
+        {
+            if (ctimer != null)
+                ctimer.resetLock();
+        }
+    }
 }
 
-public class eventHandler{
-	bool hasNewEvent;
-	InputEvent inputevetData;
+/// <summary>
+/// A class for handling input events with user specified actions.
+/// </summary>
+public class eventHandler
+{
+    bool hasNewEvent;
+    InputEvent inputevetData;
 
-	//so when you new() it's automatically registered
-	public eventHandler(InputModule Iinstance){
-		Iinstance.RegisterEventHandler(this);
-	}
+    /// <summary>
+    /// Constructs the event handler and also registers it to the given input module.
+    /// </summary>
+    /// <param name="Iinstance"></param>
+    public eventHandler(InputModule Iinstance)
+    {
+        Iinstance.RegisterEventHandler(this);
+    }
 
-	public void Activate(){
-		hasNewEvent = true;
-	}
+    /// <summary>
+    /// Sets a flag to signal the fact that a new input event has been received.
+    /// </summary>
+    public void Activate()
+    {
+        hasNewEvent = true;
+    }
 
-	//this quary clears flag
-	//Note: currently this function always return true for first qury of each frame
-	//This is due to the gestures needed for this game
-	//inputEvent has a function called hasEffectiveInput that actually does what this function does
-	public bool isActivate(){
-		bool result = hasNewEvent;
-		deActivate ();
-		return result;
-	}
+    //this quary clears flag
+    //Note: currently this function always return true for first qury of each frame
+    //This is due to the gestures needed for this game
+    //inputEvent has a function called hasEffectiveInput that actually does what this function does
+    /// <summary>
+    /// Determines whether a new input event has been received. As a quirk, the
+    ///  the function returns true for the first query in a frame.
+    /// </summary>
+    public bool isActivate()
+    {
+        bool result = hasNewEvent;
+        deActivate();
+        return result;
+    }
 
-	public void deActivate(){
-		hasNewEvent = false;
-	}
+    /// <summary>
+    /// Sets up the handler to be ready for a new input event.
+    /// </summary>
+    public void deActivate()
+    {
+        hasNewEvent = false;
+    }
 
-	public InputEvent getEventData(){
-		return inputevetData;
-	}
+    /// <summary>
+    /// A function to determine the nature of an input event.
+    /// </summary>
+    public InputEvent getEventData()
+    {
+        return inputevetData;
+    }
 
-	public void SetData(InputEvent _ie){
-		inputevetData = _ie;
-	}
+    /// <summary>
+    /// Sets the nature of the input event.
+    /// </summary>
+    public void SetData(InputEvent _ie)
+    {
+        inputevetData = _ie;
+    }
 }
 
 //not only CD, but also lock operation per touch
-public class CDTimer{
-	float startTime;
-	float CD;
-	bool isLock;
+/// <summary>
+/// A count down timer which can be used to lock certain operations.
+/// </summary>
+public class CDTimer
+{
+    float startTime;
+    float CD;
+    bool isLock;
 
-	public CDTimer(float _cd, InputModule Iinstance){
-		CD = _cd;
-		isLock = false;
-		Iinstance.RegisterCDTimer (this);
-	}
+    public CDTimer(float _cd, InputModule Iinstance)
+    {
+        CD = _cd;
+        isLock = false;
+        Iinstance.RegisterCDTimer(this);
+    }
 
-	public void TakeDownTime(){
-		startTime = Time.time;
-	}
+    /// <summary>
+    /// Sets the timer's start time to the current time.
+    /// </summary>
+    public void TakeDownTime()
+    {
+        startTime = Time.time;
+    }
 
-	public bool CDfinish(){
-		if((Time.time - startTime >= CD)&&!isLock){
-			isLock = true;
-			return true; 
-		}
+    /// <summary>
+    /// Halts the timer and sets a lock if the time elapsed since activation
+    ///  is longer than the countdown value.
+    /// </summary>
+    public bool CDfinish()
+    {
+        if ((Time.time - startTime >= CD) && !isLock)
+        {
+            isLock = true;
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	public void reset(){
-		startTime = Time.time;
-	}
+    /// <summary>
+    /// Sets the timer's start time to the current time.
+    /// </summary>
+    public void reset()
+    {
+        //FIXME: This is code duplication.
+        startTime = Time.time;
+    }
 
-	public void resetLock(){
-		isLock = false;
-	}
+    /// <summary>
+    /// Undoes the lock state of the timer.
+    /// </summary>
+    public void resetLock()
+    {
+        isLock = false;
+    }
 }

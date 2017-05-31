@@ -1,10 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-//The abstract keyword enables you to create classes and class members that are incomplete and must be implemented in a derived class.
+/// <summary>
+/// A skeletal implementation of moving objects, with smooth easing between positions.
+/// </summary>
 public abstract class MovingObject : MonoBehaviour
 {
-	public float moveTime = 0.4f;			//Time it will take object to move, in seconds.
+    // Seems to be copied from https://unity3d.com/learn/tutorials/projects/2d-roguelike-tutorial/moving-object-script
+    public float moveTime = 0.4f;			//Time it will take object to move, in seconds.
 	public LayerMask blockingLayer;			//Layer on which collision will be checked.
 	
 	
@@ -26,9 +29,11 @@ public abstract class MovingObject : MonoBehaviour
 		inverseMoveTime = 1f / moveTime;
 	}
 
-	//Move returns true if it is able to move and false if not. 
-	//Move takes parameters for x direction, y direction and a RaycastHit2D to check collision.
-	protected bool Move (int xDir, int yDir, out RaycastHit2D hit)
+    /// <summary>
+    /// Move returns true if it is able to move and false if not. 
+    ///  Move takes parameters for x direction, y direction and a RaycastHit2D to check collision.
+    /// </summary>
+    protected bool Move (int xDir, int yDir, out RaycastHit2D hit)
 	{
 		float scale = (float)Utilities.SCALE_REF / (float)Utilities.MAZE_SIZE;
 
@@ -59,10 +64,12 @@ public abstract class MovingObject : MonoBehaviour
 		//If something was hit, return false, Move was unsuccesful.
 		return false;
 	}
-	
-	
-	//Co-routine for moving units from one space to next, takes a parameter end to specify where to move to.
-	protected IEnumerator SmoothMovement (Vector3 end)
+
+
+    /// <summary>
+    /// Co-routine for moving units from one space to next, takes a parameter end to specify where to move to.
+    /// </summary>
+    protected IEnumerator SmoothMovement (Vector3 end)
 	{
 		//Calculate the remaining distance to move based on the square magnitude of the difference between current position and end parameter. 
 		//Square magnitude is used instead of magnitude because it's computationally cheaper.
@@ -85,11 +92,13 @@ public abstract class MovingObject : MonoBehaviour
 		}
 		GameManager.instance.boardScript.set_left_start_pt (true);
 	}
-	
-	
-	//The virtual keyword means AttemptMove can be overridden by inheriting classes using the override keyword.
-	//AttemptMove takes a generic parameter T to specify the type of component we expect our unit to interact with if blocked (Player for Enemies, Wall for Player).
-	protected virtual bool AttemptMove <T> (int xDir, int yDir)
+
+
+    /// <summary>
+    /// AttemptMove takes a generic parameter T to specify the type of component we
+    ///  expect our unit to interact with if blocked (Player for Enemies, Wall for Player).
+    /// </summary>
+    protected virtual bool AttemptMove <T> (int xDir, int yDir)
 		where T : Component
 	{
 		//Hit will store whatever our linecast hits when Move is called.
@@ -117,12 +126,15 @@ public abstract class MovingObject : MonoBehaviour
 		return canMove;
 	}
 	
-	
-	//The abstract modifier indicates that the thing being modified has a missing or incomplete implementation.
-	//OnCantMove will be overriden by functions in the inheriting classes.
+    /// <summary>
+    /// Abstract method determining what the object does when it cannot move.
+    /// </summary>
 	protected abstract void OnCantMove <T> (T component)
 		where T : Component;
 
+    /// <summary>
+    /// Abstract method determining what the object does when it moves.
+    /// </summary>
 	protected abstract void OnMove();
 
 }

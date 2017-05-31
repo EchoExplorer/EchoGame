@@ -3,6 +3,10 @@ using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// A script to display the user agreement dialogues.
+/// This is attached to the ``GameManager`` GameObject in the Title scene.
+/// </summary>
 public class GM_title : MonoBehaviour {
 	int cur_clip = 0;
 	int orti_clip = 0;
@@ -16,9 +20,12 @@ public class GM_title : MonoBehaviour {
 	bool doneTesting = false;
 	eventHandler eh;
 
-	// Use this for initialization
+	/// <summary>
+    /// Sets up a reference to the GameMode module so it can set up its singleton.
+    /// </summary>
 	void Start () {
 		reset_audio = false;
+        //FIXME: This is a horrible way to initialize a singleton.
 		GameObject.Find ("GameMode").GetComponent <GameMode>().init ();
 		eh = new eventHandler(InputModule.instance);
 	}
@@ -48,7 +55,11 @@ public class GM_title : MonoBehaviour {
 		}
 	}
 
-	// Update is called once per frame
+	/// <summary>
+    /// Checks for an internet connection, and plays instructions.
+    ///  Progresses to the main_pre scene for regular gameplay, or the main scene
+    ///  for the tutorial by analyzing the touch data.
+    /// </summary>
 	void Update () {
 		if (Const.TEST_CONNECTION) {
 			if (!doneTesting) {
@@ -64,7 +75,7 @@ public class GM_title : MonoBehaviour {
 		play_audio ();
 
 		//Check if we are running either in the Unity editor or in a standalone build.
-		#if UNITY_STANDALONE || UNITY_WEBPLAYER
+		#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
 
 		if(eh.isActivate()){
 			InputEvent ie = eh.getEventData();

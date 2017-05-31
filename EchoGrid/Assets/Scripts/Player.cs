@@ -1148,7 +1148,7 @@ public class Player : MovingObject
 		Vector3 dir = Vector3.zero;
 
 		//Check if we are running either in the Unity editor or in a standalone build.
-		#if UNITY_STANDALONE || UNITY_WEBPLAYER
+		#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
 		//Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction\
 		if(eh.isActivate()){
 			InputEvent ie = eh.getEventData();

@@ -366,6 +366,9 @@ public class BoardManager : MonoBehaviour
         return cur;
     }
 
+    /// <summary>
+    /// Replays the previous instruction voice clip.
+    /// </summary>
     public void repeat_latest_instruction()
     {
         //if (latest_clip_idx >= 0) {
@@ -374,18 +377,26 @@ public class BoardManager : MonoBehaviour
         //}
     }
 
+    /// <summary>
+    /// Sets up the object such that the next instruction will be skipped.
+    /// </summary>
     public void skip_instruction()
     {
         skip_clip = true;
     }
 
-    //loop during the game
+    /// <summary>
+    /// A function to signal the fact that the player has moved at least once.
+    /// </summary>
     bool left_start_pt = false;
     public void set_left_start_pt(bool newf)
     {
         left_start_pt = newf;
     }
 
+    /// <summary>
+    /// At every frame, the player's position and game state is used to determine if certain sounds should be played.
+    /// </summary>
     void Update()
     {
 

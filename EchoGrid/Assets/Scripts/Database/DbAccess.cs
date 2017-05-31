@@ -28,7 +28,8 @@ public class DbAccess: IDisposable
         try
         {
             dbConnection = new SqliteConnection(connectionString);
-            dbConnection.Open();
+           // dbConnection.Open();
+           // This open call seems to cause problems. Research into it?ty
         }
         catch (Exception e)
         {
