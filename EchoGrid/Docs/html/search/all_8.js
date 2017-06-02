@@ -10,7 +10,6 @@ var searchData=
   ['inputmodule_2ecs',['InputModule.cs',['../_input_module_8cs.html',1,'']]],
   ['inputsfx',['inputSFX',['../class_database.html#abbc9fa65dd1e8c37ff866ad1cecb94c7',1,'Database']]],
   ['insertinto',['InsertInto',['../class_db_access.html#add18f4e2be2920ad2d0f37887fda19e3',1,'DbAccess']]],
-  ['insertintospecific',['InsertIntoSpecific',['../class_db_access.html#a89a2b6b1c0e9533b7120bb818eacfc19',1,'DbAccess']]],
   ['instance',['instance',['../class_const.html#a321b7d418073db1954b742656d581a1a',1,'Const.instance()'],['../class_database.html#a1759ba50b7dcb293e260793850356a08',1,'Database.instance()'],['../class_game_manager.html#a7666e8468dac197b9eb32dd32128524f',1,'GameManager.instance()'],['../class_game_mode.html#a93f4260962dc90a105106d428633a78b',1,'GameMode.instance()'],['../class_input_module.html#a45a7534e5a4441af01904b9f165febcb',1,'InputModule.instance()'],['../class_player.html#ab6f37ee8efe0ca124019749ad8aa4587',1,'Player.instance()'],['../class_sound_manager.html#a56244c0e0264a4884669fb389c37afe1',1,'SoundManager.instance()'],['../class_u_i_canvas.html#a91b7f84961c5d93ae81295f8ae6f0caa',1,'UICanvas.instance()']]],
   ['invalid',['INVALID',['../class_board_manager.html#a425f3a37046e0d352d37a9583e04a579accc0377a8afbf50e7094f5c23a8af223',1,'BoardManager']]],
   ['isactivate',['isActivate',['../classevent_handler.html#a9876c7c8ab94f959cc6b8b4f83641d51',1,'eventHandler']]],

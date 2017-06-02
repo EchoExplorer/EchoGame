@@ -66,7 +66,7 @@ public class GM_TC : MonoBehaviour
         echoForm.AddField("consentID", Utilities.encrypt(code));
         echoForm.AddField("dateTimeStamp", Utilities.encrypt(System.DateTime.Now.ToString()));
 
-        UnityEngine.Debug.Log(System.Text.Encoding.ASCII.GetString(echoForm.data));
+        Logging.Log(System.Text.Encoding.ASCII.GetString(echoForm.data), Logging.LogLevel.LOW_PRIORITY);
 
         WWW www = new WWW(echoEndpoint, echoForm);
         StartCoroutine(Utilities.WaitForRequest(www));
@@ -158,29 +158,31 @@ public class GM_TC : MonoBehaviour
         //Check if we are running either in the Unity editor or in a standalone build.
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
 
-        if (eh.isActivate()){
-			InputEvent ie = eh.getEventData();
-			switch(ie.keycode){
-				//Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
-				case KeyCode.RightArrow:
-					//SoundManager.instance.PlaySingle(swipeRight);
-					break;
-				case KeyCode.LeftArrow:
-					SceneManager.LoadScene("Title_Screen");
-					SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
-					break;
-				case KeyCode.UpArrow:
-					break;
-				case KeyCode.DownArrow://BACK
-					//SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
-					//credit
-					break;
-				default:
-					break;
-			}
-		}
+        if (eh.isActivate())
+        {
+            InputEvent ie = eh.getEventData();
+            switch (ie.keycode)
+            {
+                //Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
+                case KeyCode.RightArrow:
+                    //SoundManager.instance.PlaySingle(swipeRight);
+                    break;
+                case KeyCode.LeftArrow:
+                    SceneManager.LoadScene("Title_Screen");
+                    SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
+                    break;
+                case KeyCode.UpArrow:
+                    break;
+                case KeyCode.DownArrow://BACK
+                                       //SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
+                                       //credit
+                    break;
+                default:
+                    break;
+            }
+        }
 
-		//Check if we are running on iOS, Android, Windows Phone 8 or Unity iPhone
+        //Check if we are running on iOS, Android, Windows Phone 8 or Unity iPhone
 #elif UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
         Screen.orientation = ScreenOrientation.Landscape;

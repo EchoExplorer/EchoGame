@@ -1,0 +1,28 @@
+May 16:
+	Added a System.Data dll file to satisfy new dependencies caused by having a newer version of Unity.
+	Added a few conditionals in Player.cs to temporarily replace some echo files that had strange sounds.
+	
+May 17:
+	Set up Doxygen documentation. Documentation files are located in the Docs subdirectory.
+	Began documentation for the DbAccess class and fixed some issues present in it.
+	Added a Logging class for logging with multiple priority levels.
+	Compiled documentation files.
+	
+May 30:
+	Documented files alphabetically, up to GameManager.cs
+	All documentation is accompanied by automatic re-styling
+	
+May 31:
+	Documented files alphabetically, up to MovingObject.cs
+	Discovered that the exception swallowing behavior in DBAccess was essential to the correctness of the program.
+		Temporarily avoided the exception, though it's not known if the DBAccess module has been fully fixed.
+	Changed some preprocessing conditionals to allow playing the game in the Unity Editor
+	Added sqlite3.dll as a new dependency in the newer versions of Unity
+	Changed project settings to use .NET 2.0 rather than .NET 2.0 Subset to allow debugging in Visual Studio.
+	
+July 1:
+	Finished documenting the script files.
+	Moved the echo files to Resources-tempMoved to allow faster building and testing at the expense of not having echoes
+		A future solution is to use AssetBundles so that the building process does not have to handle all the echo files.
+	Changed Debug.Log calls to use the Logging class.
+	

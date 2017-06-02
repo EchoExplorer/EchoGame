@@ -1,7 +1,7 @@
 var searchData=
 [
   ['latest_5fclip',['latest_clip',['../class_board_manager.html#a3c7e474976c9cc5c9b390b655790a505',1,'BoardManager']]],
-  ['left',['left',['../struct_board_manager_1_1echo_dist_data.html#af25b992107e7e414156395af85101ca0',1,'BoardManager.echoDistData.left()'],['../class_board_manager.html#a65a34fc1aa8e3dfac20ffcbbcd8c9705a684d325a7303f52e64011467ff5c5758',1,'BoardManager.LEFT()']]],
+  ['left',['LEFT',['../class_board_manager.html#a65a34fc1aa8e3dfac20ffcbbcd8c9705a684d325a7303f52e64011467ff5c5758',1,'BoardManager.LEFT()'],['../struct_board_manager_1_1echo_dist_data.html#af25b992107e7e414156395af85101ca0',1,'BoardManager.echoDistData.left()']]],
   ['leftdist',['leftDist',['../struct_board_manager_1_1echo_dist_data.html#a08786aa075fef4e2f0747b30924f37a1',1,'BoardManager::echoDistData']]],
   ['level',['level',['../class_game_manager.html#a097c52937fbd398b11bd06bd8d126348',1,'GameManager']]],
   ['level_5falready_5floaded',['level_already_loaded',['../class_game_manager.html#ab3b20bce5fa207c1d35c5bf84bc28e82',1,'GameManager']]],
@@ -17,7 +17,7 @@ var searchData=
   ['loader_2ecs',['Loader.cs',['../_loader_8cs.html',1,'']]],
   ['loadfile',['Loadfile',['../class_utilities.html#a3522bbaa43e471cb979bb78594e284ef',1,'Utilities']]],
   ['local_5fstats',['local_stats',['../class_board_manager.html#a748f62815e85e9bc8d1ba24708c8d89b',1,'BoardManager']]],
-  ['log',['Log',['../class_logging.html#ab6a400b21d6adfde53c03a256d6ea7c0',1,'Logging']]],
+  ['log',['Log',['../class_logging.html#ab6a400b21d6adfde53c03a256d6ea7c0',1,'Logging.Log(string message, LogLevel priority)'],['../class_logging.html#ac10dcca798c1dbe792204fd027eef93b',1,'Logging.Log(long message, LogLevel priority)']]],
   ['logging',['Logging',['../class_logging.html',1,'']]],
   ['logging_2ecs',['Logging.cs',['../_logging_8cs.html',1,'']]],
   ['loglevel',['LogLevel',['../class_logging.html#afe811a7054935e07f1e70c516dead08b',1,'Logging']]],

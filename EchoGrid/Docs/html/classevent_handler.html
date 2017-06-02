@@ -88,23 +88,34 @@ $(document).ready(function(){initNavTree('classevent_handler.html','');});
 <div class="title">eventHandler Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>A class for handling input events with user specified actions.  
+ <a href="classevent_handler.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:aae21e2a5949fd9020c42919dfe6600da"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classevent_handler.html#aae21e2a5949fd9020c42919dfe6600da">eventHandler</a> (<a class="el" href="class_input_module.html">InputModule</a> Iinstance)</td></tr>
+<tr class="memdesc:aae21e2a5949fd9020c42919dfe6600da"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs the event handler and also registers it to the given input module.  <a href="#aae21e2a5949fd9020c42919dfe6600da">More...</a><br /></td></tr>
 <tr class="separator:aae21e2a5949fd9020c42919dfe6600da"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a02678333c35f6d9339fc9afca601b1c2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classevent_handler.html#a02678333c35f6d9339fc9afca601b1c2">Activate</a> ()</td></tr>
+<tr class="memdesc:a02678333c35f6d9339fc9afca601b1c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a flag to signal the fact that a new input event has been received.  <a href="#a02678333c35f6d9339fc9afca601b1c2">More...</a><br /></td></tr>
 <tr class="separator:a02678333c35f6d9339fc9afca601b1c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9876c7c8ab94f959cc6b8b4f83641d51"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classevent_handler.html#a9876c7c8ab94f959cc6b8b4f83641d51">isActivate</a> ()</td></tr>
+<tr class="memdesc:a9876c7c8ab94f959cc6b8b4f83641d51"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determines whether a new input event has been received.  <a href="#a9876c7c8ab94f959cc6b8b4f83641d51">More...</a><br /></td></tr>
 <tr class="separator:a9876c7c8ab94f959cc6b8b4f83641d51"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ada12486ef05e8ff436e08aed51093e35"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classevent_handler.html#ada12486ef05e8ff436e08aed51093e35">deActivate</a> ()</td></tr>
+<tr class="memdesc:ada12486ef05e8ff436e08aed51093e35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets up the handler to be ready for a new input event.  <a href="#ada12486ef05e8ff436e08aed51093e35">More...</a><br /></td></tr>
 <tr class="separator:ada12486ef05e8ff436e08aed51093e35"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a847b068f63d47e8c2e94c76dc1af6e00"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_input_event.html">InputEvent</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classevent_handler.html#a847b068f63d47e8c2e94c76dc1af6e00">getEventData</a> ()</td></tr>
+<tr class="memdesc:a847b068f63d47e8c2e94c76dc1af6e00"><td class="mdescLeft">&#160;</td><td class="mdescRight">A function to determine the nature of an input event.  <a href="#a847b068f63d47e8c2e94c76dc1af6e00">More...</a><br /></td></tr>
 <tr class="separator:a847b068f63d47e8c2e94c76dc1af6e00"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aad1468f4d86a20f7c72265fc4cdace66"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classevent_handler.html#aad1468f4d86a20f7c72265fc4cdace66">SetData</a> (<a class="el" href="struct_input_event.html">InputEvent</a> _ie)</td></tr>
+<tr class="memdesc:aad1468f4d86a20f7c72265fc4cdace66"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the nature of the input event.  <a href="#aad1468f4d86a20f7c72265fc4cdace66">More...</a><br /></td></tr>
 <tr class="separator:aad1468f4d86a20f7c72265fc4cdace66"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>A class for handling input events with user specified actions. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="aae21e2a5949fd9020c42919dfe6600da"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aae21e2a5949fd9020c42919dfe6600da">&#9670;&nbsp;</a></span>eventHandler()</h2>
 
@@ -120,6 +131,14 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Constructs the event handler and also registers it to the given input module. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">Iinstance</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -139,6 +158,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Sets a flag to signal the fact that a new input event has been received. </p>
+
 </div>
 </div>
 <a id="ada12486ef05e8ff436e08aed51093e35"></a>
@@ -155,6 +176,8 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Sets up the handler to be ready for a new input event. </p>
 
 </div>
 </div>
@@ -173,6 +196,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>A function to determine the nature of an input event. </p>
+
 </div>
 </div>
 <a id="a9876c7c8ab94f959cc6b8b4f83641d51"></a>
@@ -189,6 +214,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Determines whether a new input event has been received. </p>
+<p>As a quirk, the the function returns true for the first query in a frame. </p>
 
 </div>
 </div>
@@ -208,6 +236,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Sets the nature of the input event. </p>
+
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
@@ -219,7 +249,7 @@ Public Member Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="classevent_handler.html">eventHandler</a></li>
-    <li class="footer">Generated on Wed May 17 2017 19:19:31 for EchoGrid by
+    <li class="footer">Generated on Thu Jun 1 2017 20:51:17 for EchoGrid by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

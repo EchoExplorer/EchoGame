@@ -89,13 +89,16 @@ $(document).ready(function(){initNavTree('class_moving_object.html','');});
 <div class="title">MovingObject Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>A skeletal implementation of moving objects, with smooth easing between positions.  
+ <a href="class_moving_object.html#details">More...</a></p>
 <div class="dynheader">
 Inheritance diagram for MovingObject:</div>
 <div class="dyncontent">
  <div class="center">
   <img src="class_moving_object.png" usemap="#MovingObject_map" alt=""/>
   <map id="MovingObject_map" name="MovingObject_map">
-<area href="class_player.html" alt="Player" shape="rect" coords="0,112,102,136"/>
+<area href="class_player.html" title="A class representing the player object in the game. " alt="Player" shape="rect" coords="0,112,102,136"/>
 </map>
  </div></div>
 <table class="memberdecls">
@@ -111,17 +114,24 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:a2b6026a8e7e4313764cb876fd99ae1cd"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_moving_object.html#a2b6026a8e7e4313764cb876fd99ae1cd">Start</a> ()</td></tr>
 <tr class="separator:a2b6026a8e7e4313764cb876fd99ae1cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0a7da7115f17445fcfe898d3ce16b85b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_moving_object.html#a0a7da7115f17445fcfe898d3ce16b85b">Move</a> (int xDir, int yDir, out RaycastHit2D hit)</td></tr>
+<tr class="memdesc:a0a7da7115f17445fcfe898d3ce16b85b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move returns true if it is able to move and false if not.  <a href="#a0a7da7115f17445fcfe898d3ce16b85b">More...</a><br /></td></tr>
 <tr class="separator:a0a7da7115f17445fcfe898d3ce16b85b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab5b0553c2da577c976c7f1416ff6605a"><td class="memItemLeft" align="right" valign="top">IEnumerator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_moving_object.html#ab5b0553c2da577c976c7f1416ff6605a">SmoothMovement</a> (Vector3 end)</td></tr>
+<tr class="memdesc:ab5b0553c2da577c976c7f1416ff6605a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Co-routine for moving units from one space to next, takes a parameter end to specify where to move to.  <a href="#ab5b0553c2da577c976c7f1416ff6605a">More...</a><br /></td></tr>
 <tr class="separator:ab5b0553c2da577c976c7f1416ff6605a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7a40091638220b88a653bf3c5a5d2b27"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_moving_object.html#a7a40091638220b88a653bf3c5a5d2b27">AttemptMove&lt; T &gt;</a> (int xDir, int yDir)</td></tr>
+<tr class="memdesc:a7a40091638220b88a653bf3c5a5d2b27"><td class="mdescLeft">&#160;</td><td class="mdescRight">AttemptMove takes a generic parameter T to specify the type of component we expect our unit to interact with if blocked (<a class="el" href="class_player.html" title="A class representing the player object in the game. ">Player</a> for Enemies, <a class="el" href="class_wall.html" title="An empty class. ">Wall</a> for <a class="el" href="class_player.html" title="A class representing the player object in the game. ">Player</a>).  <a href="#a7a40091638220b88a653bf3c5a5d2b27">More...</a><br /></td></tr>
 <tr class="separator:a7a40091638220b88a653bf3c5a5d2b27"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af20de314364d109abfad1fe0f15d4732"><td class="memItemLeft" align="right" valign="top">abstract void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_moving_object.html#af20de314364d109abfad1fe0f15d4732">OnCantMove&lt; T &gt;</a> (T component)</td></tr>
+<tr class="memdesc:af20de314364d109abfad1fe0f15d4732"><td class="mdescLeft">&#160;</td><td class="mdescRight">Abstract method determining what the object does when it cannot move.  <a href="#af20de314364d109abfad1fe0f15d4732">More...</a><br /></td></tr>
 <tr class="separator:af20de314364d109abfad1fe0f15d4732"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad729d8442320254f90a688f2bd5b9a14"><td class="memItemLeft" align="right" valign="top">abstract void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_moving_object.html#ad729d8442320254f90a688f2bd5b9a14">OnMove</a> ()</td></tr>
+<tr class="memdesc:ad729d8442320254f90a688f2bd5b9a14"><td class="mdescLeft">&#160;</td><td class="mdescRight">Abstract method determining what the object does when it moves.  <a href="#ad729d8442320254f90a688f2bd5b9a14">More...</a><br /></td></tr>
 <tr class="separator:ad729d8442320254f90a688f2bd5b9a14"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Member Function Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>A skeletal implementation of moving objects, with smooth easing between positions. </p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a7a40091638220b88a653bf3c5a5d2b27"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7a40091638220b88a653bf3c5a5d2b27">&#9670;&nbsp;</a></span>AttemptMove< T >()</h2>
 
@@ -155,6 +165,8 @@ Protected Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>AttemptMove takes a generic parameter T to specify the type of component we expect our unit to interact with if blocked (<a class="el" href="class_player.html" title="A class representing the player object in the game. ">Player</a> for Enemies, <a class="el" href="class_wall.html" title="An empty class. ">Wall</a> for <a class="el" href="class_player.html" title="A class representing the player object in the game. ">Player</a>). </p>
 
 <p>Reimplemented in <a class="el" href="class_player.html#a6897bb3f48c7b03c68aa14772d49dbc5">Player</a>.</p>
 <div class="typeconstraint">
@@ -208,6 +220,9 @@ Protected Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Move returns true if it is able to move and false if not. </p>
+<p>Move takes parameters for x direction, y direction and a RaycastHit2D to check collision. </p>
+
 </div>
 </div>
 <a id="af20de314364d109abfad1fe0f15d4732"></a>
@@ -233,6 +248,8 @@ Protected Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Abstract method determining what the object does when it cannot move. </p>
 
 <p>Implemented in <a class="el" href="class_player.html#a85e4063fe9798c527c79d8ef287d3ac5">Player</a>.</p>
 <div class="typeconstraint">
@@ -269,6 +286,8 @@ Protected Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Abstract method determining what the object does when it moves. </p>
+
 <p>Implemented in <a class="el" href="class_player.html#a6b13cfdeccc9c337ab0caeb93192c75e">Player</a>.</p>
 
 </div>
@@ -296,6 +315,8 @@ Protected Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Co-routine for moving units from one space to next, takes a parameter end to specify where to move to. </p>
 
 </div>
 </div>
@@ -364,7 +385,7 @@ Protected Member Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_moving_object.html">MovingObject</a></li>
-    <li class="footer">Generated on Wed May 17 2017 19:19:31 for EchoGrid by
+    <li class="footer">Generated on Thu Jun 1 2017 20:51:18 for EchoGrid by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

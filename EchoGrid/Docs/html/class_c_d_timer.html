@@ -88,21 +88,30 @@ $(document).ready(function(){initNavTree('class_c_d_timer.html','');});
 <div class="title">CDTimer Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>A count down timer which can be used to lock certain operations.  
+ <a href="class_c_d_timer.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a5fa8193e9a96696cbbd05e93424dd4db"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_d_timer.html#a5fa8193e9a96696cbbd05e93424dd4db">CDTimer</a> (float _cd, <a class="el" href="class_input_module.html">InputModule</a> Iinstance)</td></tr>
 <tr class="separator:a5fa8193e9a96696cbbd05e93424dd4db"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b49bcc1a298e1b50fc18db3bfeea34a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_d_timer.html#a1b49bcc1a298e1b50fc18db3bfeea34a">TakeDownTime</a> ()</td></tr>
+<tr class="memdesc:a1b49bcc1a298e1b50fc18db3bfeea34a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the timer's start time to the current time.  <a href="#a1b49bcc1a298e1b50fc18db3bfeea34a">More...</a><br /></td></tr>
 <tr class="separator:a1b49bcc1a298e1b50fc18db3bfeea34a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a96aab2cf3b47741a83a8fdd5f54d9706"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_d_timer.html#a96aab2cf3b47741a83a8fdd5f54d9706">CDfinish</a> ()</td></tr>
+<tr class="memdesc:a96aab2cf3b47741a83a8fdd5f54d9706"><td class="mdescLeft">&#160;</td><td class="mdescRight">Halts the timer and sets a lock if the time elapsed since activation is longer than the countdown value.  <a href="#a96aab2cf3b47741a83a8fdd5f54d9706">More...</a><br /></td></tr>
 <tr class="separator:a96aab2cf3b47741a83a8fdd5f54d9706"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a75238d63f915723dbbdbb4b6e07efa62"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_d_timer.html#a75238d63f915723dbbdbb4b6e07efa62">reset</a> ()</td></tr>
+<tr class="memdesc:a75238d63f915723dbbdbb4b6e07efa62"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the timer's start time to the current time.  <a href="#a75238d63f915723dbbdbb4b6e07efa62">More...</a><br /></td></tr>
 <tr class="separator:a75238d63f915723dbbdbb4b6e07efa62"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a40055394645ac3d71126166aa31da407"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_d_timer.html#a40055394645ac3d71126166aa31da407">resetLock</a> ()</td></tr>
+<tr class="memdesc:a40055394645ac3d71126166aa31da407"><td class="mdescLeft">&#160;</td><td class="mdescRight">Undoes the lock state of the timer.  <a href="#a40055394645ac3d71126166aa31da407">More...</a><br /></td></tr>
 <tr class="separator:a40055394645ac3d71126166aa31da407"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>A count down timer which can be used to lock certain operations. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a5fa8193e9a96696cbbd05e93424dd4db"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a5fa8193e9a96696cbbd05e93424dd4db">&#9670;&nbsp;</a></span>CDTimer()</h2>
 
@@ -147,6 +156,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Halts the timer and sets a lock if the time elapsed since activation is longer than the countdown value. </p>
+
 </div>
 </div>
 <a id="a75238d63f915723dbbdbb4b6e07efa62"></a>
@@ -163,6 +174,8 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Sets the timer's start time to the current time. </p>
 
 </div>
 </div>
@@ -181,6 +194,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Undoes the lock state of the timer. </p>
+
 </div>
 </div>
 <a id="a1b49bcc1a298e1b50fc18db3bfeea34a"></a>
@@ -198,6 +213,8 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Sets the timer's start time to the current time. </p>
+
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
@@ -209,7 +226,7 @@ Public Member Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_c_d_timer.html">CDTimer</a></li>
-    <li class="footer">Generated on Wed May 17 2017 19:19:31 for EchoGrid by
+    <li class="footer">Generated on Thu Jun 1 2017 20:51:17 for EchoGrid by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

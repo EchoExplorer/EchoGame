@@ -108,18 +108,25 @@ public class GM_Agreement : MonoBehaviour
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
 
         //Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
-        if (Input.GetKeyUp(KeyCode.RightArrow)) {
-		//SoundManager.instance.PlaySingle(swipeRight);
-		}else if (Input.GetKeyUp(KeyCode.LeftArrow)) {
-			gotoNextAgreement();
-			SoundManager.instance.PlaySingle(swipeAhead);
-		} else if (Input.GetKeyUp(KeyCode.UpArrow)){//Up
-		} else if (Input.GetKeyUp(KeyCode.DownArrow)){//BACK
-		//SoundManager.instance.PlaySingle(swipeAhead);
-		//credit
-		}
+        if (Input.GetKeyUp(KeyCode.RightArrow))
+        {
+            //SoundManager.instance.PlaySingle(swipeRight);
+        }
+        else if (Input.GetKeyUp(KeyCode.LeftArrow))
+        {
+            gotoNextAgreement();
+            SoundManager.instance.PlaySingle(swipeAhead);
+        }
+        else if (Input.GetKeyUp(KeyCode.UpArrow))
+        {//Up
+        }
+        else if (Input.GetKeyUp(KeyCode.DownArrow))
+        {//BACK
+         //SoundManager.instance.PlaySingle(swipeAhead);
+         //credit
+        }
 
-		//Check if we are running on iOS, Android, Windows Phone 8 or Unity iPhone
+        //Check if we are running on iOS, Android, Windows Phone 8 or Unity iPhone
 #elif UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
         //AndroidDialogue
         if (ad.noclicked())

@@ -92,6 +92,9 @@ $(document).ready(function(){initNavTree('class_board_manager.html','');});
 <div class="title">BoardManager Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>A class that handles mostly things related to the board and some unrelated.  
+ <a href="class_board_manager.html#details">More...</a></p>
 <div class="dynheader">
 Inheritance diagram for BoardManager:</div>
 <div class="dyncontent">
@@ -106,10 +109,13 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_board_manager_1_1_count.html">Count</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_board_manager_1_1echo_dist_data.html">echoDistData</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stores information about an echo to be played.  <a href="struct_board_manager_1_1echo_dist_data.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_board_manager_1_1level__voice__list.html">level_voice_list</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains a set of instruction voices to be played at various points in the game.  <a href="struct_board_manager_1_1level__voice__list.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_board_manager_1_1pos__and__action.html">pos_and_action</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A struct holding audio clips and other miscellaneous information of some kind.  <a href="struct_board_manager_1_1pos__and__action.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
@@ -139,28 +145,39 @@ Public Types</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a237555659dd0b129542505659bf62855"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_board_manager.html#a237555659dd0b129542505659bf62855">play_audio</a> (List&lt; AudioClip &gt; audios, int cur, bool restore=false, bool isReturn=false)</td></tr>
+<tr class="memdesc:a237555659dd0b129542505659bf62855"><td class="mdescLeft">&#160;</td><td class="mdescRight">Plays an audio clip with some playback properties stored in the parameters.  <a href="#a237555659dd0b129542505659bf62855">More...</a><br /></td></tr>
 <tr class="separator:a237555659dd0b129542505659bf62855"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a209aa8d4ec3f280428b907b8b1fed8e7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_board_manager.html#a209aa8d4ec3f280428b907b8b1fed8e7">repeat_latest_instruction</a> ()</td></tr>
+<tr class="memdesc:a209aa8d4ec3f280428b907b8b1fed8e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Replays the previous instruction voice clip.  <a href="#a209aa8d4ec3f280428b907b8b1fed8e7">More...</a><br /></td></tr>
 <tr class="separator:a209aa8d4ec3f280428b907b8b1fed8e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae96fc2fbea28eee996a16e11939a35b4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_board_manager.html#ae96fc2fbea28eee996a16e11939a35b4">skip_instruction</a> ()</td></tr>
+<tr class="memdesc:ae96fc2fbea28eee996a16e11939a35b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets up the object such that the next instruction will be skipped.  <a href="#ae96fc2fbea28eee996a16e11939a35b4">More...</a><br /></td></tr>
 <tr class="separator:ae96fc2fbea28eee996a16e11939a35b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a45ad4ddfd14f798d3e82c9d0de6c6477"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_board_manager.html#a45ad4ddfd14f798d3e82c9d0de6c6477">set_left_start_pt</a> (bool newf)</td></tr>
 <tr class="separator:a45ad4ddfd14f798d3e82c9d0de6c6477"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9d0a358f336ecfed76f0fe0b18accdae"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_board_manager.html#a65a34fc1aa8e3dfac20ffcbbcd8c9705">Direction</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_board_manager.html#a9d0a358f336ecfed76f0fe0b18accdae">get_player_dir_world</a> ()</td></tr>
+<tr class="memdesc:a9d0a358f336ecfed76f0fe0b18accdae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the player's direction in the grid space.  <a href="#a9d0a358f336ecfed76f0fe0b18accdae">More...</a><br /></td></tr>
 <tr class="separator:a9d0a358f336ecfed76f0fe0b18accdae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a373f55d59df64d3aebd992bacbfb8f10"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_board_manager.html#a65a34fc1aa8e3dfac20ffcbbcd8c9705">Direction</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_board_manager.html#a373f55d59df64d3aebd992bacbfb8f10">StringToDir</a> (string str)</td></tr>
+<tr class="memdesc:a373f55d59df64d3aebd992bacbfb8f10"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deserializes a string representing a direction.  <a href="#a373f55d59df64d3aebd992bacbfb8f10">More...</a><br /></td></tr>
 <tr class="separator:a373f55d59df64d3aebd992bacbfb8f10"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a976f4dc72db8ef8828681fee5ddecca0"><td class="memItemLeft" align="right" valign="top">Vector2&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_board_manager.html#a976f4dc72db8ef8828681fee5ddecca0">get_idx_from_pos</a> (Vector3 pos)</td></tr>
+<tr class="memdesc:a976f4dc72db8ef8828681fee5ddecca0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a position from Unity coordinates to a grid position.  <a href="#a976f4dc72db8ef8828681fee5ddecca0">More...</a><br /></td></tr>
 <tr class="separator:a976f4dc72db8ef8828681fee5ddecca0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad22ad2351d3267bdd233073b0254315b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_board_manager_1_1echo_dist_data.html">echoDistData</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_board_manager.html#ad22ad2351d3267bdd233073b0254315b">getEchoDistData</a> (Vector3 playerPos, Vector3 playerFront, Vector3 playerLeft)</td></tr>
+<tr class="memdesc:ad22ad2351d3267bdd233073b0254315b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the fields for the proper echo sound to play.  <a href="#ad22ad2351d3267bdd233073b0254315b">More...</a><br /></td></tr>
 <tr class="separator:ad22ad2351d3267bdd233073b0254315b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a07d475660f7f41c57bc8cf0ddd115d60"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_board_manager.html#a425f3a37046e0d352d37a9583e04a579">JunctionType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_board_manager.html#a07d475660f7f41c57bc8cf0ddd115d60">getJunctionType</a> (Vector2 pos, Vector2 entrance)</td></tr>
+<tr class="memdesc:a07d475660f7f41c57bc8cf0ddd115d60"><td class="mdescLeft">&#160;</td><td class="mdescRight">Finds the type of junction present at an intersection.  <a href="#a07d475660f7f41c57bc8cf0ddd115d60">More...</a><br /></td></tr>
 <tr class="separator:a07d475660f7f41c57bc8cf0ddd115d60"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae361ac57a3c87227f59602c42e7be3ce"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_board_manager.html#ae361ac57a3c87227f59602c42e7be3ce">SetupScene</a> (int level)</td></tr>
+<tr class="memdesc:ae361ac57a3c87227f59602c42e7be3ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets up the game board (grid positions), sound clips and save data as an initialization step.  <a href="#ae361ac57a3c87227f59602c42e7be3ce">More...</a><br /></td></tr>
 <tr class="separator:ae361ac57a3c87227f59602c42e7be3ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a14d886f7c5f8f89695579dde1d114c00"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_board_manager.html#a14d886f7c5f8f89695579dde1d114c00">write_save</a> (int lv)</td></tr>
+<tr class="memdesc:a14d886f7c5f8f89695579dde1d114c00"><td class="mdescLeft">&#160;</td><td class="mdescRight">Saves information about the game state as persistent data.  <a href="#a14d886f7c5f8f89695579dde1d114c00">More...</a><br /></td></tr>
 <tr class="separator:a14d886f7c5f8f89695579dde1d114c00"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a02a7cd2b295e51e0f2f49f68e1ad203d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_board_manager.html#a02a7cd2b295e51e0f2f49f68e1ad203d">write_local_stats</a> ()</td></tr>
+<tr class="memdesc:a02a7cd2b295e51e0f2f49f68e1ad203d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes some game statistics into persistent data.  <a href="#a02a7cd2b295e51e0f2f49f68e1ad203d">More...</a><br /></td></tr>
 <tr class="separator:a02a7cd2b295e51e0f2f49f68e1ad203d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0a57119fd9d9c078e29c8c4854d6d46b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_board_manager.html#a0a57119fd9d9c078e29c8c4854d6d46b">load_level_voices_from_file</a> (string filename, <a class="el" href="struct_board_manager_1_1level__voice__list.html">level_voice_list</a> data, int level_wanted=1)</td></tr>
 <tr class="separator:a0a57119fd9d9c078e29c8c4854d6d46b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -169,8 +186,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a081e5a1147065f13db7b58d14d05ff62"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_board_manager.html#a081e5a1147065f13db7b58d14d05ff62">get_level_count</a> (string filename)</td></tr>
 <tr class="separator:a081e5a1147065f13db7b58d14d05ff62"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa6ae37f0cd39faf1516bcbd048ccd601"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_board_manager.html#aa6ae37f0cd39faf1516bcbd048ccd601">solveMazeMid</a> (Vector2 idx, string dir)</td></tr>
+<tr class="memdesc:aa6ae37f0cd39faf1516bcbd048ccd601"><td class="mdescLeft">&#160;</td><td class="mdescRight">Solves the maze with a depth-first search.  <a href="#aa6ae37f0cd39faf1516bcbd048ccd601">More...</a><br /></td></tr>
 <tr class="separator:aa6ae37f0cd39faf1516bcbd048ccd601"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a714f5844d5d5b00e502c5ab574de12d6"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_board_manager.html#a714f5844d5d5b00e502c5ab574de12d6">getHint</a> (Vector2 idx, string dir)</td></tr>
+<tr class="memdesc:a714f5844d5d5b00e502c5ab574de12d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Presents the full solution to the maze as a string.  <a href="#a714f5844d5d5b00e502c5ab574de12d6">More...</a><br /></td></tr>
 <tr class="separator:a714f5844d5d5b00e502c5ab574de12d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
@@ -193,13 +212,13 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a61aaa59130e951ca94a6c444c547fa8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa48fc2f768dfdbb95ea8161ae8e0b2fe"><td class="memItemLeft" align="right" valign="top">GameObject []&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_board_manager.html#aa48fc2f768dfdbb95ea8161ae8e0b2fe">outerWallTiles</a></td></tr>
 <tr class="separator:aa48fc2f768dfdbb95ea8161ae8e0b2fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab17fef907cca6807cdefa93482005cb3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_board_manager_1_1_count.html">Count</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_board_manager.html#ab17fef907cca6807cdefa93482005cb3">wallCount</a> = new <a class="el" href="class_board_manager_1_1_count.html">Count</a> (5, 9)</td></tr>
+<tr class="memitem:ab17fef907cca6807cdefa93482005cb3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_board_manager_1_1_count.html">Count</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_board_manager.html#ab17fef907cca6807cdefa93482005cb3">wallCount</a> = new <a class="el" href="class_board_manager_1_1_count.html">Count</a>(5, 9)</td></tr>
 <tr class="separator:ab17fef907cca6807cdefa93482005cb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aba1e3c84134fe1dd29d22409a25a178d"><td class="memItemLeft" align="right" valign="top">GameObject&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_board_manager.html#aba1e3c84134fe1dd29d22409a25a178d">exit</a></td></tr>
 <tr class="separator:aba1e3c84134fe1dd29d22409a25a178d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a076ef5fba5398d70bd810e4578793d5f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_board_manager.html#a076ef5fba5398d70bd810e4578793d5f">turning_lock</a> = false</td></tr>
 <tr class="separator:a076ef5fba5398d70bd810e4578793d5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a912adb770a1ee236d2a6d13c0ee7aa39"><td class="memItemLeft" align="right" valign="top">List&lt; Vector3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_board_manager.html#a912adb770a1ee236d2a6d13c0ee7aa39">wallPositions</a> = new List&lt;Vector3&gt; ()</td></tr>
+<tr class="memitem:a912adb770a1ee236d2a6d13c0ee7aa39"><td class="memItemLeft" align="right" valign="top">List&lt; Vector3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_board_manager.html#a912adb770a1ee236d2a6d13c0ee7aa39">wallPositions</a> = new List&lt;Vector3&gt;()</td></tr>
 <tr class="separator:a912adb770a1ee236d2a6d13c0ee7aa39"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae16cc606665d2d66699c71f8834d4b86"><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_board_manager.html#ae16cc606665d2d66699c71f8834d4b86">mazeSolution</a> = &quot;&quot;</td></tr>
 <tr class="separator:ae16cc606665d2d66699c71f8834d4b86"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -219,7 +238,13 @@ Static Public Attributes</h2></td></tr>
 <tr class="memitem:a29bf0f0d5cbc510a2053cbfaea54b79e"><td class="memItemLeft" align="right" valign="top">static float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_board_manager.html#a29bf0f0d5cbc510a2053cbfaea54b79e">tileSize</a> = 1.5f</td></tr>
 <tr class="separator:a29bf0f0d5cbc510a2053cbfaea54b79e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Member Enumeration Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>A class that handles mostly things related to the board and some unrelated. </p>
+<p>It mostly seems to handle aspects of the global game state. For more information on some functions used, see the Unity 2D Roguelike Tutorial. </p>
+<p>One of the functions of this class is to set up the board from a text file, solve the maze internally, and save player progress.</p>
+<p>Another is to play the instruction voice clips in the game.</p>
+<p>Floating point arithmetic is also used to determine which cell the player is closest to, and which direction the player is facing.</p>
+</div><h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="a65a34fc1aa8e3dfac20ffcbbcd8c9705"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a65a34fc1aa8e3dfac20ffcbbcd8c9705">&#9670;&nbsp;</a></span>Direction</h2>
 
@@ -296,6 +321,8 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Converts a position from Unity coordinates to a grid position. </p>
+
 </div>
 </div>
 <a id="a081e5a1147065f13db7b58d14d05ff62"></a>
@@ -331,6 +358,9 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Gets the player's direction in the grid space. </p>
+<dl class="section return"><dt>Returns</dt><dd>A <code>Direction</code> enum representing the player's direction.</dd></dl>
+
 </div>
 </div>
 <a id="ad22ad2351d3267bdd233073b0254315b"></a>
@@ -365,6 +395,8 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Computes the fields for the proper echo sound to play. </p>
+
 </div>
 </div>
 <a id="a714f5844d5d5b00e502c5ab574de12d6"></a>
@@ -393,6 +425,8 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Presents the full solution to the maze as a string. </p>
+
 </div>
 </div>
 <a id="a07d475660f7f41c57bc8cf0ddd115d60"></a>
@@ -420,6 +454,8 @@ Static Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Finds the type of junction present at an intersection. </p>
 
 </div>
 </div>
@@ -523,6 +559,8 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Plays an audio clip with some playback properties stored in the parameters. </p>
+
 </div>
 </div>
 <a id="a209aa8d4ec3f280428b907b8b1fed8e7"></a>
@@ -539,6 +577,8 @@ Static Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Replays the previous instruction voice clip. </p>
 
 </div>
 </div>
@@ -576,6 +616,8 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Sets up the game board (grid positions), sound clips and save data as an initialization step. </p>
+
 </div>
 </div>
 <a id="ae96fc2fbea28eee996a16e11939a35b4"></a>
@@ -592,6 +634,8 @@ Static Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Sets up the object such that the next instruction will be skipped. </p>
 
 </div>
 </div>
@@ -621,6 +665,9 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Solves the maze with a depth-first search. </p>
+<p>FIXME: This is code duplication. </p>
+
 </div>
 </div>
 <a id="a373f55d59df64d3aebd992bacbfb8f10"></a>
@@ -639,6 +686,8 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Deserializes a string representing a direction. </p>
+
 </div>
 </div>
 <a id="a02a7cd2b295e51e0f2f49f68e1ad203d"></a>
@@ -655,6 +704,8 @@ Static Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Writes some game statistics into persistent data. </p>
 
 </div>
 </div>
@@ -673,6 +724,8 @@ Static Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Saves information about the game state as persistent data. </p>
 
 </div>
 </div>
@@ -930,7 +983,7 @@ Static Public Attributes</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_board_manager_1_1_count.html">Count</a> BoardManager.wallCount = new <a class="el" href="class_board_manager_1_1_count.html">Count</a> (5, 9)</td>
+          <td class="memname"><a class="el" href="class_board_manager_1_1_count.html">Count</a> BoardManager.wallCount = new <a class="el" href="class_board_manager_1_1_count.html">Count</a>(5, 9)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -944,7 +997,7 @@ Static Public Attributes</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">List&lt;Vector3&gt; BoardManager.wallPositions = new List&lt;Vector3&gt; ()</td>
+          <td class="memname">List&lt;Vector3&gt; BoardManager.wallPositions = new List&lt;Vector3&gt;()</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -974,7 +1027,7 @@ Static Public Attributes</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_board_manager.html">BoardManager</a></li>
-    <li class="footer">Generated on Wed May 17 2017 19:19:31 for EchoGrid by
+    <li class="footer">Generated on Thu Jun 1 2017 20:51:17 for EchoGrid by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

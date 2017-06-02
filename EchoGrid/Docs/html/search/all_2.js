@@ -19,7 +19,6 @@ var searchData=
   ['count',['Count',['../class_board_manager_1_1_count.html',1,'BoardManager.Count'],['../class_board_manager_1_1_count.html#ababb77e592ab1710f2b23d41178eb79b',1,'BoardManager.Count.Count()']]],
   ['crashsource',['crashSource',['../class_sound_manager.html#aa5d9374a60573eea0dbdbd3d630b63ba',1,'SoundManager']]],
   ['createcommand',['CreateCommand',['../class_db_access.html#af64fbb63cc9cdb6d11f24a1f297b6799',1,'DbAccess']]],
-  ['createtable',['CreateTable',['../class_db_access.html#a3ec3734129936bb6d61da0385e94d529',1,'DbAccess']]],
   ['critical',['CRITICAL',['../class_logging.html#afe811a7054935e07f1e70c516dead08ba99cd1c61610c76a57cb8d10d6df6b870',1,'Logging']]],
   ['cross',['CROSS',['../class_board_manager.html#a425f3a37046e0d352d37a9583e04a579a04dd53a8e6c2306e9bbf944c1d6047f2',1,'BoardManager']]],
   ['cumulativetouchnum',['cumulativeTouchNum',['../struct_input_event.html#a225bade90cfc47c75e74c7e05973e795',1,'InputEvent']]]

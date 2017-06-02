@@ -8,8 +8,6 @@ var searchData=
   ['deactivate',['deActivate',['../classevent_handler.html#ada12486ef05e8ff436e08aed51093e35',1,'eventHandler']]],
   ['deadend',['DEADEND',['../class_board_manager.html#a425f3a37046e0d352d37a9583e04a579ab233b5349db818d43c210895156829e0',1,'BoardManager']]],
   ['debug',['DEBUG',['../_logging_8cs.html#ad72dbcf6d0153db1b8d8a58001feed83',1,'Logging.cs']]],
-  ['delete',['Delete',['../class_db_access.html#a13f99c941a025ca3b8b719deb937b3c1',1,'DbAccess']]],
-  ['deletecontents',['DeleteContents',['../class_db_access.html#ae1d1cb589d9a49897eaa4835d18f89b5',1,'DbAccess']]],
   ['dialoguetype',['DialogueType',['../class_android_dialogue.html#a94393d4a8f4bf61365b976a2bfb74609',1,'AndroidDialogue']]],
   ['dir',['dir',['../struct_board_manager_1_1pos__and__action.html#a9ec793ff7ea3ffad70bead74adae2ddc',1,'BoardManager::pos_and_action']]],
   ['direction',['Direction',['../class_board_manager.html#a65a34fc1aa8e3dfac20ffcbbcd8c9705',1,'BoardManager']]],

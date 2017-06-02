@@ -118,18 +118,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:add18f4e2be2920ad2d0f37887fda19e3"><td class="memItemLeft" align="right" valign="top">SqliteCommand&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_db_access.html#add18f4e2be2920ad2d0f37887fda19e3">InsertInto</a> (string tableName, object[] values)</td></tr>
 <tr class="memdesc:add18f4e2be2920ad2d0f37887fda19e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Method to insert items into some table in the database.  <a href="#add18f4e2be2920ad2d0f37887fda19e3">More...</a><br /></td></tr>
 <tr class="separator:add18f4e2be2920ad2d0f37887fda19e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a04141d681ec2547856c22717ee14a0da"><td class="memItemLeft" align="right" valign="top">SqliteCommand&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_db_access.html#a04141d681ec2547856c22717ee14a0da">UpdateInto</a> (string tableName, string[] cols, string[] colsvalues, string selectkey, string selectvalue)</td></tr>
-<tr class="separator:a04141d681ec2547856c22717ee14a0da"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a13f99c941a025ca3b8b719deb937b3c1"><td class="memItemLeft" align="right" valign="top">SqliteCommand&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_db_access.html#a13f99c941a025ca3b8b719deb937b3c1">Delete</a> (string tableName, string[] cols, string[] colsvalues)</td></tr>
-<tr class="separator:a13f99c941a025ca3b8b719deb937b3c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a89a2b6b1c0e9533b7120bb818eacfc19"><td class="memItemLeft" align="right" valign="top">SqliteCommand&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_db_access.html#a89a2b6b1c0e9533b7120bb818eacfc19">InsertIntoSpecific</a> (string tableName, string[] cols, string[] values)</td></tr>
-<tr class="separator:a89a2b6b1c0e9533b7120bb818eacfc19"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae1d1cb589d9a49897eaa4835d18f89b5"><td class="memItemLeft" align="right" valign="top">SqliteCommand&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_db_access.html#ae1d1cb589d9a49897eaa4835d18f89b5">DeleteContents</a> (string tableName)</td></tr>
-<tr class="separator:ae1d1cb589d9a49897eaa4835d18f89b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3ec3734129936bb6d61da0385e94d529"><td class="memItemLeft" align="right" valign="top">SqliteCommand&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_db_access.html#a3ec3734129936bb6d61da0385e94d529">CreateTable</a> (string name, string[] col, string[] colType)</td></tr>
-<tr class="separator:a3ec3734129936bb6d61da0385e94d529"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac796401cce03723aef75dec479cc6250"><td class="memItemLeft" align="right" valign="top">SqliteCommand&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_db_access.html#ac796401cce03723aef75dec479cc6250">searchItem</a> (string tableName, string[] items, string[] col, string[] operation, string[] values)</td></tr>
-<tr class="separator:ac796401cce03723aef75dec479cc6250"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Class that manages a connection to an SQL database. </p>
@@ -200,92 +188,6 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The <code>SqliteCommand</code>instance created from the query</dd></dl>
-
-</div>
-</div>
-<a id="a3ec3734129936bb6d61da0385e94d529"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3ec3734129936bb6d61da0385e94d529">&#9670;&nbsp;</a></span>CreateTable()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">SqliteCommand DbAccess.CreateTable </td>
-          <td>(</td>
-          <td class="paramtype">string&#160;</td>
-          <td class="paramname"><em>name</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">string []&#160;</td>
-          <td class="paramname"><em>col</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">string []&#160;</td>
-          <td class="paramname"><em>colType</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a13f99c941a025ca3b8b719deb937b3c1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a13f99c941a025ca3b8b719deb937b3c1">&#9670;&nbsp;</a></span>Delete()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">SqliteCommand DbAccess.Delete </td>
-          <td>(</td>
-          <td class="paramtype">string&#160;</td>
-          <td class="paramname"><em>tableName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">string []&#160;</td>
-          <td class="paramname"><em>cols</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">string []&#160;</td>
-          <td class="paramname"><em>colsvalues</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ae1d1cb589d9a49897eaa4835d18f89b5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae1d1cb589d9a49897eaa4835d18f89b5">&#9670;&nbsp;</a></span>DeleteContents()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">SqliteCommand DbAccess.DeleteContents </td>
-          <td>(</td>
-          <td class="paramtype">string&#160;</td>
-          <td class="paramname"><em>tableName</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
 
 </div>
 </div>
@@ -379,40 +281,6 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a89a2b6b1c0e9533b7120bb818eacfc19"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a89a2b6b1c0e9533b7120bb818eacfc19">&#9670;&nbsp;</a></span>InsertIntoSpecific()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">SqliteCommand DbAccess.InsertIntoSpecific </td>
-          <td>(</td>
-          <td class="paramtype">string&#160;</td>
-          <td class="paramname"><em>tableName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">string []&#160;</td>
-          <td class="paramname"><em>cols</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">string []&#160;</td>
-          <td class="paramname"><em>values</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="abd49e178ce708222492d8f30cc625162"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abd49e178ce708222492d8f30cc625162">&#9670;&nbsp;</a></span>ReadFullTable()</h2>
 
@@ -441,98 +309,6 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ac796401cce03723aef75dec479cc6250"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac796401cce03723aef75dec479cc6250">&#9670;&nbsp;</a></span>searchItem()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">SqliteCommand DbAccess.searchItem </td>
-          <td>(</td>
-          <td class="paramtype">string&#160;</td>
-          <td class="paramname"><em>tableName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">string []&#160;</td>
-          <td class="paramname"><em>items</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">string []&#160;</td>
-          <td class="paramname"><em>col</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">string []&#160;</td>
-          <td class="paramname"><em>operation</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">string []&#160;</td>
-          <td class="paramname"><em>values</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a04141d681ec2547856c22717ee14a0da"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a04141d681ec2547856c22717ee14a0da">&#9670;&nbsp;</a></span>UpdateInto()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">SqliteCommand DbAccess.UpdateInto </td>
-          <td>(</td>
-          <td class="paramtype">string&#160;</td>
-          <td class="paramname"><em>tableName</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">string []&#160;</td>
-          <td class="paramname"><em>cols</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">string []&#160;</td>
-          <td class="paramname"><em>colsvalues</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">string&#160;</td>
-          <td class="paramname"><em>selectkey</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">string&#160;</td>
-          <td class="paramname"><em>selectvalue</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>K:/Personal Projects/EchoGame_Files/EchoGame/EchoGrid/Assets/Scripts/Database/<a class="el" href="_db_access_8cs.html">DbAccess.cs</a></li>
 </ul>
@@ -542,7 +318,7 @@ Public Member Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_db_access.html">DbAccess</a></li>
-    <li class="footer">Generated on Wed May 17 2017 19:19:31 for EchoGrid by
+    <li class="footer">Generated on Thu Jun 1 2017 20:51:17 for EchoGrid by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

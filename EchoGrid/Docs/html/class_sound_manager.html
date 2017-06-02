@@ -90,6 +90,9 @@ $(document).ready(function(){initNavTree('class_sound_manager.html','');});
 <div class="title">SoundManager Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>A central manager for playing voice instrctions, certain sound effects and echo sounds (provided as <code>AudioClip</code> instances).  
+ <a href="class_sound_manager.html#details">More...</a></p>
 <div class="dynheader">
 Inheritance diagram for SoundManager:</div>
 <div class="dyncontent">
@@ -102,12 +105,16 @@ Inheritance diagram for SoundManager:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a5ad1175ce8acad3b9d38c0f0275ad066"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_sound_manager.html#a5ad1175ce8acad3b9d38c0f0275ad066">PlaySingle</a> (AudioClip clip)</td></tr>
+<tr class="memdesc:a5ad1175ce8acad3b9d38c0f0275ad066"><td class="mdescLeft">&#160;</td><td class="mdescRight">Plays an arbitrary audio clip.  <a href="#a5ad1175ce8acad3b9d38c0f0275ad066">More...</a><br /></td></tr>
 <tr class="separator:a5ad1175ce8acad3b9d38c0f0275ad066"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aea8352b4b225ae3b27393509bf7c2eb2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_sound_manager.html#aea8352b4b225ae3b27393509bf7c2eb2">playcrash</a> (AudioClip clip)</td></tr>
+<tr class="memdesc:aea8352b4b225ae3b27393509bf7c2eb2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Plays the crash sound effect.  <a href="#aea8352b4b225ae3b27393509bf7c2eb2">More...</a><br /></td></tr>
 <tr class="separator:aea8352b4b225ae3b27393509bf7c2eb2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a78fa7dce74e24c45c00c570d0d783ad7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_sound_manager.html#a78fa7dce74e24c45c00c570d0d783ad7">PlayEcho</a> (AudioClip clip)</td></tr>
+<tr class="memdesc:a78fa7dce74e24c45c00c570d0d783ad7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Plays an echo sound.  <a href="#a78fa7dce74e24c45c00c570d0d783ad7">More...</a><br /></td></tr>
 <tr class="separator:a78fa7dce74e24c45c00c570d0d783ad7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a42b73114410faca9f2461bdb1f23691c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_sound_manager.html#a42b73114410faca9f2461bdb1f23691c">PlayVoice</a> (AudioClip clip, bool reset=false)</td></tr>
+<tr class="memdesc:a42b73114410faca9f2461bdb1f23691c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Plays an instruction voice.  <a href="#a42b73114410faca9f2461bdb1f23691c">More...</a><br /></td></tr>
 <tr class="separator:a42b73114410faca9f2461bdb1f23691c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
@@ -126,7 +133,9 @@ Static Public Attributes</h2></td></tr>
 <tr class="memitem:a56244c0e0264a4884669fb389c37afe1"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_sound_manager.html">SoundManager</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_sound_manager.html#a56244c0e0264a4884669fb389c37afe1">instance</a> = null</td></tr>
 <tr class="separator:a56244c0e0264a4884669fb389c37afe1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Member Function Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>A central manager for playing voice instrctions, certain sound effects and echo sounds (provided as <code>AudioClip</code> instances). </p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="aea8352b4b225ae3b27393509bf7c2eb2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aea8352b4b225ae3b27393509bf7c2eb2">&#9670;&nbsp;</a></span>playcrash()</h2>
 
@@ -142,6 +151,8 @@ Static Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Plays the crash sound effect. </p>
 
 </div>
 </div>
@@ -161,6 +172,8 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Plays an echo sound. </p>
+
 </div>
 </div>
 <a id="a5ad1175ce8acad3b9d38c0f0275ad066"></a>
@@ -178,6 +191,8 @@ Static Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Plays an arbitrary audio clip. </p>
 
 </div>
 </div>
@@ -206,6 +221,8 @@ Static Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Plays an instruction voice. </p>
 
 </div>
 </div>
@@ -297,7 +314,7 @@ Static Public Attributes</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_sound_manager.html">SoundManager</a></li>
-    <li class="footer">Generated on Wed May 17 2017 19:19:32 for EchoGrid by
+    <li class="footer">Generated on Thu Jun 1 2017 20:51:18 for EchoGrid by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

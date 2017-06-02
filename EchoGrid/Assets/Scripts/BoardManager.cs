@@ -1004,8 +1004,8 @@ public class BoardManager : MonoBehaviour
         TextAsset lvldata = Resources.Load(filename) as TextAsset;
         if (lvldata == null)
         {
-            UnityEngine.Debug.Log("Cannot open file at:");
-            UnityEngine.Debug.Log(filename);
+            Logging.Log("Cannot open file at:", Logging.LogLevel.CRITICAL);
+            Logging.Log(filename, Logging.LogLevel.CRITICAL);
             return false;
         }
         string[] lvldata_split = lvldata.text.Split('\n');
@@ -1159,8 +1159,8 @@ public class BoardManager : MonoBehaviour
         TextAsset lvldata = Resources.Load(filename) as TextAsset;
         if (lvldata == null)
         {
-            UnityEngine.Debug.Log("Cannot open file at:");
-            UnityEngine.Debug.Log(filename);
+            Logging.Log("Cannot open file at:", Logging.LogLevel.CRITICAL);
+            Logging.Log(filename, Logging.LogLevel.CRITICAL);
             return false;
         }
         string[] lvldata_split = lvldata.text.Split('\n');
@@ -1234,8 +1234,8 @@ public class BoardManager : MonoBehaviour
         TextAsset lvldata = Resources.Load(filename) as TextAsset;
         if (lvldata == null)
         {
-            UnityEngine.Debug.Log("Cannot open file at:");
-            UnityEngine.Debug.Log(filename);
+            Logging.Log("Cannot open file at:", Logging.LogLevel.CRITICAL);
+            Logging.Log(filename, Logging.LogLevel.CRITICAL);
             return 0;
         }
         string[] lvldata_split = lvldata.text.Split('\n');

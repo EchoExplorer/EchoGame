@@ -2,7 +2,6 @@ var searchData=
 [
   ['scale_5fref',['SCALE_REF',['../class_utilities.html#a6277275409e96e548a03ab58e289fb3b',1,'Utilities']]],
   ['searched_5ftemp',['searched_temp',['../class_board_manager.html#a9b051c7fd83c014d23231e348aa63f4c',1,'BoardManager']]],
-  ['searchitem',['searchItem',['../class_db_access.html#ac796401cce03723aef75dec479cc6250',1,'DbAccess']]],
   ['set_5fleft_5fstart_5fpt',['set_left_start_pt',['../class_board_manager.html#a45ad4ddfd14f798d3e82c9d0de6c6477',1,'BoardManager']]],
   ['set_5fmode',['set_mode',['../class_game_mode.html#a0582c2d7190da66d87034a12e102cec1',1,'GameMode']]],
   ['setdata',['SetData',['../classevent_handler.html#aad1468f4d86a20f7c72265fc4cdace66',1,'eventHandler']]],
