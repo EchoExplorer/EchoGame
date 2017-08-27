@@ -16,7 +16,8 @@ using UnityEngine.SceneManagement;
 /// A class representing the player object in the game.
 ///  It also is responsible for determining which echo sound to when the user
 ///  requests an echo, and for keeping track of and sending usage data
-///  to a remote server when certain events occur in the game.
+///  to a remote server when certain events occur in the game. It takes the
+///  role of the GM_xyz objects for the Main scene too.
 /// </summary>
 public class Player : MovingObject
 {
@@ -96,7 +97,7 @@ public class Player : MovingObject
 
         enabled = true;
         surveyCode = "";
-        DontDestroyOnLoad(gameObject);
+        // DontDestroyOnLoad(gameObject); // I don't understand why this is here, please check for bugs.
 
     }
 
@@ -823,8 +824,9 @@ public class Player : MovingObject
         SoundManager.instance.PlayVoice(clip, true);
     }
 
-    //due to the chaotic coord system
-    //return the relative direction
+    // For legacy compatibility reasons, the transform direction does not match
+    // the direction of the player sprite. This conversion method is needed
+    // to find the direction of the player. FIXME.
     public Vector3 get_player_dir(string dir)
     {
         if (dir == "FRONT")
@@ -1323,6 +1325,7 @@ public class Player : MovingObject
                     }
                     else
                     {
+                        SoundManager.instance.playcrash(Database.instance.inputSFX);
                         GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
                         Destroy(GameObject.Find("GameManager"));
                         SceneManager.LoadScene("Main");
@@ -1336,14 +1339,22 @@ public class Player : MovingObject
                     }
                     else
                     {
+                        SoundManager.instance.playcrash(Database.instance.inputSFX);
                         //SceneManager.UnloadScene("Main");
                         Destroy(GameObject.Find("GameManager"));
                         SceneManager.LoadScene("Title_Screen");
                     }
                     break;
                 case KeyCode.UpArrow:
-                    dir = transform.right;
-                    SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
+                    if (!want_exit)
+                    {
+                        dir = transform.right;
+                        SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
+                    } else
+                    {
+                        getHint();
+                        want_exit = false;
+                    }
                     break;
                 case KeyCode.DownArrow:
                     dir = -transform.right;
@@ -1452,7 +1463,8 @@ public class Player : MovingObject
 						Destroy(GameObject.Find("GameManager"));
 						SceneManager.LoadScene("Title_Screen");
 					}else if(ie.isUp){//repeat audio (duplicate)
-						//getHint ();
+						getHint ();
+                		at_pause_menu = false;
 					}					
 				}
 			} else if ((ie.touchNum == 2) && (!ie.hasDir())){//turn on/off menu

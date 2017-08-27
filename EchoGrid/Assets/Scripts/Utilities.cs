@@ -160,7 +160,7 @@ public class Utilities : MonoBehaviour
         connectionTestResult = Network.TestConnection();
         string testMessage = "";
         //bool probingPublicIP = false;
-        int serverPort = 9999;
+        int serverPort = 1337;
 
         switch (connectionTestResult)
         {
@@ -181,12 +181,12 @@ public class Utilities : MonoBehaviour
             // circumvent the blocking by using NAT punchthrough
             case ConnectionTesterStatus.PublicIPPortBlocked:
                 testMessage = "Non-connectable public IP address (port " +
-                    serverPort + " blocked), running a server is impossible.";
+                    serverPort + " blocked),\nrunning a server is impossible.";
                 break;
 
             case ConnectionTesterStatus.PublicIPNoServerStarted:
-                testMessage = "Public IP address but server not initialized, " +
-                    "it must be started to check server accessibility. Restart " +
+                testMessage = "Public IP address but server not initialized,\n" +
+                    "it must be started to check server accessibility.\nRestart " +
                     "connection test when ready.";
                 break;
 
@@ -203,11 +203,14 @@ public class Utilities : MonoBehaviour
     /// </summary>
     public static bool isDeviceLandscape()
     {
-        if ((Input.deviceOrientation == DeviceOrientation.LandscapeLeft)
-            || (Input.deviceOrientation == DeviceOrientation.LandscapeRight))
+        #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
+                return true;
+        #else
+            if ((Input.deviceOrientation == DeviceOrientation.LandscapeLeft)
+                || (Input.deviceOrientation == DeviceOrientation.LandscapeRight))
+                return true;
             return false;
-
-        return true;
+        #endif
     }
 
     //Platform specific Utility

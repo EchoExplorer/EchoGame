@@ -34,7 +34,7 @@ public class GM_title : MonoBehaviour
 
     void play_audio()
     {
-        if (!Utilities.isDeviceLandscape() && !listenToCmd)
+        if (Utilities.isDeviceLandscape() && !listenToCmd)
         {
             if (SoundManager.instance.PlayVoice(Database.instance.TitleClips[cur_clip], reset_audio))
             {
@@ -93,7 +93,7 @@ public class GM_title : MonoBehaviour
         //Check if we are running either in the Unity editor or in a standalone build.
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
 
-        if (eh.isActivate())
+        if (eh.isActivate() && doneTesting) // isActivate() has side effects so this order is required...
         {
             InputEvent ie = eh.getEventData();
             switch (ie.keycode)
@@ -143,7 +143,7 @@ public class GM_title : MonoBehaviour
 		Screen.sleepTimeout = SleepTimeout.NeverSleep;
 		Screen.orientation = ScreenOrientation.Landscape;
 
-		if(eh.isActivate()){
+		if(eh.isActivate() && doneTesting) {  // isActivate() has side effects so this order is required...
 			InputEvent ie = eh.getEventData();
 
 			if( (ie.touchNum == 1)&&(!ie.isRotate) ){

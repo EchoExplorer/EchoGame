@@ -20,9 +20,33 @@ May 31:
 	Added sqlite3.dll as a new dependency in the newer versions of Unity
 	Changed project settings to use .NET 2.0 rather than .NET 2.0 Subset to allow debugging in Visual Studio.
 	
-July 1:
+June 1:
 	Finished documenting the script files.
 	Moved the echo files to Resources-tempMoved to allow faster building and testing at the expense of not having echoes
 		A future solution is to use AssetBundles so that the building process does not have to handle all the echo files.
 	Changed Debug.Log calls to use the Logging class.
-	
+   
+June 20:
+    Small bug fixes with the main menu.
+    
+July 15:
+    Created alternative sprite sheet for the game
+    Could not figure out how to update sprite sheet just by changing files.
+
+July 18:
+    Updated sprites and made it possible to revert by changing files.
+
+August 1:
+    Added directional sound source at the exit.
+    Moved the AudioListener object to the player object.
+    
+August 10:
+    Implemented the getHint functionality in the in-game menu.
+    Made network access required to enter the game.
+    Added a hint page for future maintainers.
+    
+August 27:
+    Made the terms and conditions page the first scene, and fixed issues with landscape orientation detection.
+    Comprehensive adjustment of the codebase and image files.
+    Re-added the sounds for a with-echo build.
+    Set the version number to 1.3 and set up a valid bundle ID for the release APK.
