@@ -4,6 +4,22 @@
 # Instructions
 ##Running the Unity Android App
 
-1. To start development on the training app, download the Unity Game Engine from https://unity3d.com/
-2. Set up the Android SDK for Unity. Follow the instructions from http://docs.unity3d.com/Manual/android-sdksetup.html
-3. Clone the repository, and open the EchoGrid/ project in Unity
+###Unity Game Engine
+If you haven't installed any version of Unity3D, download version 5.4.1:
+1.https://unity3d.com/get-unity/download/archive
+
+Using higher version or MacOS High Sierra may cause problem. Please Unistall the original version and install the 5.4.1 version. 
+If this causes black screen problem, check this steps to fix:
+cd ~/Library/Unity/Packages
+mkdir -p node_modules/unity-editor-home node_modules/unityeditor-cloud-hub
+tar -zxvf unityeditor-cloud-hub-0.0.1.tgz
+mv package/* node_modules/unityeditor-cloud-hub/
+tar -zxvf unity-editor-home.0.0.13.tgz
+mv package/* node_modules/unity-editor-home/
+rmdir package
+
+###Android SDK
+Set up the Android SDK for Unity. Follow the instructions from http://docs.unity3d.com/Manual/android-sdksetup.html
+
+###Project
+Clone the repository, and open the EchoGrid/ project in Unity
