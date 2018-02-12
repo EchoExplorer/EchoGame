@@ -46,7 +46,7 @@ public class GM_TC : MonoBehaviour
 
     void Start()
     {
-        //eh = new eventHandler (InputModule.instance);
+        eh = new eventHandler (InputModule.instance);
     }
 
     void OnLevelWasLoaded(int index)
@@ -123,6 +123,8 @@ public class GM_TC : MonoBehaviour
 
 
 #if UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
+        // Consent function temporarily disabled.
+        /*
         if (!android_window_displayed)
         {
             android_window_displayed = true;
@@ -151,6 +153,13 @@ public class GM_TC : MonoBehaviour
             ad.DisplayAndroidWindow("Thank you!", AndroidDialogue.DialogueType.YESONLY);
             SceneManager.LoadScene("Title_Screen");
         }
+        */
+        // Assume consented
+        android_window_displayed = true;
+        URL_opened = true;
+        finished_reading = true;
+        Utilities.writefile("consentRecord", "1");
+        SceneManager.LoadScene("Title_Screen");
 #endif
 
         play_audio();

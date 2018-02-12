@@ -118,14 +118,23 @@
     <Reference Include="System.Data">
       <HintPath>Assets\Plugins\System.Data.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Data.Sqlite">
-      <HintPath>Assets\Scripts\Database\Mono.Data.Sqlite.dll</HintPath>
+    <Reference Include="System.Web.Abstractions">
+      <HintPath>Assets\Plugins\System.Web.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="System.Web">
       <HintPath>Assets\Plugins\System.Web.dll</HintPath>
     </Reference>
+    <Reference Include="System.Web.DynamicData">
+      <HintPath>Assets\Plugins\System.Web.DynamicData.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Extensions.Design">
+      <HintPath>Assets\Plugins\System.Web.Extensions.Design.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.Extensions">
       <HintPath>Assets\Plugins\System.Web.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc">
+      <HintPath>Assets\Plugins\System.Web.Mvc.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Routing">
       <HintPath>Assets\Plugins\System.Web.Routing.dll</HintPath>
@@ -133,17 +142,8 @@
     <Reference Include="System.Web.Services">
       <HintPath>Assets\Plugins\System.Web.Services.dll</HintPath>
     </Reference>
-    <Reference Include="System.Web.Extensions.Design">
-      <HintPath>Assets\Plugins\System.Web.Extensions.Design.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.DynamicData">
-      <HintPath>Assets\Plugins\System.Web.DynamicData.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Abstractions">
-      <HintPath>Assets\Plugins\System.Web.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Mvc">
-      <HintPath>Assets\Plugins\System.Web.Mvc.dll</HintPath>
+    <Reference Include="Mono.Data.Sqlite">
+      <HintPath>Assets\Scripts\Database\Mono.Data.Sqlite.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

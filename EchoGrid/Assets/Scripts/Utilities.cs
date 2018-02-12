@@ -156,6 +156,12 @@ public class Utilities : MonoBehaviour
     /// </summary>
     public static string check_InternetConnection()
     {
+        // Always return an empty string, temporarily.
+        // Network.TestConnection() is suspected not capable for testing internet connectivity. 
+        // See reference: https://stackoverflow.com/a/34140417
+        return "";
+
+
         ConnectionTesterStatus connectionTestResult = ConnectionTesterStatus.Undetermined;
         connectionTestResult = Network.TestConnection();
         string testMessage = "";
