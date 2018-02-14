@@ -76,21 +76,40 @@ public class GameManager : MonoBehaviour
         switch (gm)
         {
             case GameMode.Game_Mode.MAIN:
-                level = 12;
+                level = 1;
+                // Set game mode to CONTINUE for next levels
+                GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
+                // Write level to enforce start level here
+                write_save(level);
                 break;
             case GameMode.Game_Mode.TUTORIAL:
                 if ((level == 0) || (level < 1) || (level > 11))
                     level = 1;
                 break;
             case GameMode.Game_Mode.CONTINUE:
-                if ((level == 0) || (level < 12) || (level > 150))
+                if ((level == 0) || (level > 150))
                     level = 12;
                 break;
             default:
                 level = 12;
                 return false;
         }
+        return true;
+    }
 
+    /// <summary>
+    /// Saves information about the game state as persistent data.
+    /// </summary>
+    bool write_save(int lv)
+    {
+        string filename = "";
+
+        if (GameMode.instance.get_mode() != GameMode.Game_Mode.TUTORIAL)
+            filename = Application.persistentDataPath + "echosaved";
+        else//load specific save for tutorial
+            filename = Application.persistentDataPath + "echosaved_tutorial";
+
+        System.IO.File.WriteAllText(filename, lv.ToString());
         return true;
     }
 
@@ -124,7 +143,7 @@ public class GameManager : MonoBehaviour
         if (GameMode.instance.get_mode() == GameMode.Game_Mode.MAIN)
         {//MAIN
             boardScript.max_level = boardScript.get_level_count("GameData/levels");
-            boardScript.min_level = 12;
+            boardScript.min_level = 1;
         }
         else if (GameMode.instance.get_mode() == GameMode.Game_Mode.TUTORIAL)
         {//TUTORIAL
@@ -134,7 +153,7 @@ public class GameManager : MonoBehaviour
         else if (GameMode.instance.get_mode() == GameMode.Game_Mode.CONTINUE)
         {
             boardScript.max_level = boardScript.get_level_count("GameData/levels");
-            boardScript.min_level = 12;
+            boardScript.min_level = 1;
         }
 
         levelText.text = "Loading level " + level.ToString();
