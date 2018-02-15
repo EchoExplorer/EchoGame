@@ -191,9 +191,7 @@ public class BoardManager : MonoBehaviour
     //HACK: lots of public values with little encapsulation.
     int columns = Utilities.MAZE_SIZE;
     int rows = Utilities.MAZE_SIZE;
-    public int max_level;
     public int max_total_level;//same as max_level in Main mode, for local stats use only
-    public int min_level;
     public int[] local_stats;
 
     // number of walls and such
@@ -559,10 +557,6 @@ public class BoardManager : MonoBehaviour
         //Determine a random position for the player on the path
         GameObject player = GameObject.Find("Player");
 
-        //return to level 1 if the index is not correct
-        if ((level < min_level) || (level > max_level))
-            level = min_level;
-
         //give the right instruction to play
         cur_clip = level;
         cur_level = level;
@@ -793,7 +787,6 @@ public class BoardManager : MonoBehaviour
         }
 
         result.updateDistances();
-
         return result;
     }
 
@@ -867,7 +860,7 @@ public class BoardManager : MonoBehaviour
             toPrint += " " + (wallIdxes[i + 1]).ToString();
             toPrint += "] ";
         }
-        Logging.Log(toPrint, Logging.LogLevel.VERBOSE);
+        // Logging.Log(toPrint, Logging.LogLevel.VERBOSE);
     }
 
     //RandomPosition returns a random position from our list gridPositions.

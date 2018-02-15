@@ -93,7 +93,7 @@ public class GM_main_pre : MonoBehaviour
                 case KeyCode.LeftArrow:
                     if (at_confirm)
                     {
-                        GameMode.instance.gamemode = GameMode.Game_Mode.MAIN;
+                        GameMode.instance.gamemode = GameMode.Game_Mode.RESTART;
                         SoundManager.instance.PlayVoice(Database.instance.MainPreNewGame, true);
                         SceneManager.LoadScene("Main");
                     }

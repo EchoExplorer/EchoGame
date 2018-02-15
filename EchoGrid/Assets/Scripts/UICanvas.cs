@@ -35,6 +35,8 @@ public class UICanvas : MonoBehaviour
 
     void OnLevelWasLoaded(int index)
     {
+        // Since the gameObject is not destroyed automatically, the instance should be checked before calling this method.
+        if (this != instance) return;
         //Call InitGame to initialize our level.
         //transform.FindChild("LevelImage").gameObject.SetActive(true);
     }

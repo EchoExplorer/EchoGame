@@ -10,7 +10,7 @@ public class GameMode : MonoBehaviour
     public enum Game_Mode
     {
         TUTORIAL,
-        MAIN,
+        RESTART,
         CONTINUE
     }
 
@@ -29,7 +29,7 @@ public class GameMode : MonoBehaviour
 
     public void init()
     {
-        gamemode = Game_Mode.MAIN;
+        gamemode = Game_Mode.RESTART;
     }
 
     public Game_Mode get_mode()

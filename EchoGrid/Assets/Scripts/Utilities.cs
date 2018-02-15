@@ -115,7 +115,7 @@ public class Utilities : MonoBehaviour
             //JSONNode data = JSON.Parse (www.text);
             //Debug.Log("this is the parsed json data: " + data["testData"]);
             //Debug.Log(data["testData"]);
-            Logging.Log("WWW.Ok! " + www.text, Logging.LogLevel.LOW_PRIORITY);
+            // Logging.Log("WWW.Ok! " + www.text, Logging.LogLevel.LOW_PRIORITY);
         }
         else
         {

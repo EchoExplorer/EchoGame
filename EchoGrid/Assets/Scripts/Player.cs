@@ -78,7 +78,6 @@ public class Player : MovingObject
     bool code_entered = false;
     bool survey_activated = true;
     bool at_pause_menu = false;//indicating if the player activated pause menu
-    static bool level_already_loaded = false;
     bool localRecordWritten = false;
     //int score;
     eventHandler eh;
@@ -87,9 +86,6 @@ public class Player : MovingObject
 
     void Awake()
     {
-
-        level_already_loaded = false;
-
         if (instance == null)
             instance = this;
         else if (instance != this)
@@ -134,7 +130,6 @@ public class Player : MovingObject
         tap_exit = 2;
         tap_menu = 2;
 
-        level_already_loaded = false;
         //score = 1000;
         eh = new eventHandler(InputModule.instance);
         TriggerechoTimer = new CDTimer(Const.echoCD, InputModule.instance);
@@ -158,10 +153,9 @@ public class Player : MovingObject
 
     void OnLevelWasLoaded(int index)
     {
-        //if (!level_already_loaded) {
-        //	level_already_loaded = true;
+        // Since the gameObject is not destroyed automatically, the instance should be checked before calling this method.
+        if (this != instance) return;
         init();
-        //}
     }
 
     private string _dist_type_to_string(dist_type type)
@@ -202,7 +196,7 @@ public class Player : MovingObject
         BoardManager.echoDistData data =
             GameManager.instance.boardScript.getEchoDistData(transform.position, get_player_dir("FRONT"), get_player_dir("LEFT"));
 
-        Logging.Log(data.all_jun_to_string(), Logging.LogLevel.NORMAL);
+        // Logging.Log(data.all_jun_to_string(), Logging.LogLevel.NORMAL);
         String prefix = "C00-21"; //change this prefix when you change the echo files
         if (GameManager.instance.level < 26)
             prefix = "C00 - 21";
@@ -303,7 +297,7 @@ public class Player : MovingObject
         string front_typeC = front_type, back_typeC = back_type, left_typeC = left_type, right_typeC = right_type;
         if (echo == null)
         {
-            Logging.Log("replace US with Deadend", Logging.LogLevel.NORMAL);
+            // Logging.Log("replace US with Deadend", Logging.LogLevel.NORMAL);
             switch (data.exitpos)
             {
                 case 1://left
@@ -431,7 +425,7 @@ public class Player : MovingObject
         if (echo == null)
         {
             bool found = false;
-            Logging.Log("replacing everything with D", Logging.LogLevel.NORMAL);
+            // Logging.Log("replacing everything with D", Logging.LogLevel.NORMAL);
             string frontString = "";
             if (f_dtype == dist_type.SHORT)
             {
@@ -774,7 +768,7 @@ public class Player : MovingObject
         echoForm.AddField("correctAction", Utilities.encrypt(correct_post_act));
         echoForm.AddField("dateTimeStamp", Utilities.encrypt(System.DateTime.Now.ToString()));
 
-        Logging.Log(System.Text.Encoding.ASCII.GetString(echoForm.data), Logging.LogLevel.LOW_PRIORITY);
+        // Logging.Log(System.Text.Encoding.ASCII.GetString(echoForm.data), Logging.LogLevel.LOW_PRIORITY);
 
         WWW www = new WWW(echoEndpoint, echoForm);
         StartCoroutine(Utilities.WaitForRequest(www));
@@ -995,7 +989,7 @@ public class Player : MovingObject
                     GameManager.instance.boardScript.latest_clip = SoundManager.instance.voiceSource.clip;
                 }
                 SoundManager.instance.PlayVoice(Resources.Load("instructions/You are halfway there") as AudioClip);
-                Logging.Log("50%", Logging.LogLevel.NORMAL);
+                // Logging.Log("50%", Logging.LogLevel.NORMAL);
             }
             else if ((!reach3Quarter) && (ratio <= 0.25f))
             {
@@ -1088,7 +1082,7 @@ public class Player : MovingObject
         crashForm.AddField("crashLocation", Utilities.encrypt(location));
         crashForm.AddField("dateTimeStamp", Utilities.encrypt(System.DateTime.Now.ToString()));
 
-        Logging.Log(System.Text.Encoding.ASCII.GetString(crashForm.data), Logging.LogLevel.LOW_PRIORITY);
+        // Logging.Log(System.Text.Encoding.ASCII.GetString(crashForm.data), Logging.LogLevel.LOW_PRIORITY);
 
         WWW www = new WWW(crashEndpoint, crashForm);
         StartCoroutine(Utilities.WaitForRequest(www));
@@ -1109,8 +1103,8 @@ public class Player : MovingObject
         float wallDist = 0.8f;
         //catogrize the distance
         //front
-        if ((data.frontDist <= wallDist) && (data.leftDist <= wallDist) && (data.rightDist <= wallDist))
-            Logging.Log("Not exit, in Wrong Dead end!", Logging.LogLevel.LOW_PRIORITY);
+        // if ((data.frontDist <= wallDist) && (data.leftDist <= wallDist) && (data.rightDist <= wallDist))
+            // Logging.Log("Not exit, in Wrong Dead end!", Logging.LogLevel.LOW_PRIORITY);
 
         GameObject exitSign = GameObject.FindGameObjectWithTag("Exit");
         Vector2 distFromExit = transform.position - exitSign.transform.position;
@@ -1167,9 +1161,9 @@ public class Player : MovingObject
         {
             score = 1000;
         }
-        Logging.Log(numSteps, Logging.LogLevel.NORMAL);
-        Logging.Log(GameManager.instance.boardScript.mazeSolution.Length - 1, Logging.LogLevel.NORMAL);
-        Logging.Log(numCrashes, Logging.LogLevel.NORMAL);
+        // Logging.Log(numSteps, Logging.LogLevel.NORMAL);
+        // Logging.Log(GameManager.instance.boardScript.mazeSolution.Length - 1, Logging.LogLevel.NORMAL);
+        // Logging.Log(numCrashes, Logging.LogLevel.NORMAL);
 
         //TODO(agotsis) understand this. Reimplement.
         //Send the crash count data and level information to server
@@ -1189,7 +1183,7 @@ public class Player : MovingObject
         levelCompleteForm.AddField("asciiLevelRep", Utilities.encrypt(GameManager.instance.boardScript.asciiLevelRep));
         levelCompleteForm.AddField("levelRecord", (GameManager.instance.boardScript.gamerecord));
 
-        Logging.Log(System.Text.Encoding.ASCII.GetString(levelCompleteForm.data), Logging.LogLevel.LOW_PRIORITY);
+        // Logging.Log(System.Text.Encoding.ASCII.GetString(levelCompleteForm.data), Logging.LogLevel.LOW_PRIORITY);
 
         //Send the name of the echo files used in this level and the counts
         //form.AddField("echoFileNames", getEchoNames());
@@ -1253,7 +1247,7 @@ public class Player : MovingObject
         echoForm.AddField("dateTimeStamp", Utilities.encrypt(System.DateTime.Now.ToString()));
         //the code is the first digit of device id
 
-        Logging.Log(System.Text.Encoding.ASCII.GetString(echoForm.data), Logging.LogLevel.LOW_PRIORITY);
+        // Logging.Log(System.Text.Encoding.ASCII.GetString(echoForm.data), Logging.LogLevel.LOW_PRIORITY);
 
         WWW www = new WWW(echoEndpoint, echoForm);
         StartCoroutine(Utilities.WaitForRequest(www));

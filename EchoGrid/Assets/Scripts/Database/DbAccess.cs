@@ -52,7 +52,7 @@ public class DbAccess: IDisposable
         }
         dbConnection = null;
 
-        Logging.Log("Disconnected from db.", Logging.LogLevel.NORMAL);
+        // Logging.Log("Disconnected from db.", Logging.LogLevel.NORMAL);
     }
 
     /// <summary>

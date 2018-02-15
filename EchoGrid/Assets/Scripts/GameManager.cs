@@ -17,11 +17,12 @@ public class GameManager : MonoBehaviour
     public BoardManager boardScript;
 
     public static GameManager instance = null;
-    public bool level_already_loaded = false;
     public static bool levelImageActive = true;
     [HideInInspector]
     public bool playersTurn = true;
 
+    private const int MAX_TUTORIAL_LEVEL = 11;
+    private const int MAX_LEVEL = 150;
     public float levelStartDelay = 2f;
     public int level = 0;
     public Text levelText;
@@ -37,10 +38,10 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
 
         DontDestroyOnLoad(gameObject);
-
-        level_already_loaded = false;
+        
         boardScript = GetComponent<BoardManager>();
-        LoadSaved();
+        // Duplicated loading: LoadSaved() will be called in InitGame().
+        // LoadSaved();
     }
 
     bool LoadSaved()
@@ -57,41 +58,43 @@ public class GameManager : MonoBehaviour
         if (System.IO.File.Exists(filename))
         {
             svdata_split = System.IO.File.ReadAllLines(filename);
+            //read existing data
+            level = Int32.Parse(svdata_split[0]);
         }
         else
         {
             if (GameMode.instance.get_mode() != GameMode.Game_Mode.TUTORIAL)
-                level = 12;
-            else//load specific save for tutorial
+                level = MAX_TUTORIAL_LEVEL + 1;
+            else
                 level = 1;
-
             return false;
         }
-
-        //read existing data
-        int saved_level = Int32.Parse(svdata_split[0]);
         GameMode.Game_Mode gm = GameMode.instance.get_mode();
-        //assign level from file
-        level = saved_level;
         switch (gm)
         {
-            case GameMode.Game_Mode.MAIN:
-                level = 1;
+            case GameMode.Game_Mode.RESTART:
+                level = MAX_TUTORIAL_LEVEL + 1;
                 // Set game mode to CONTINUE for next levels
                 GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
-                // Write level to enforce start level here
-                write_save(level);
                 break;
             case GameMode.Game_Mode.TUTORIAL:
-                if ((level == 0) || (level < 1) || (level > 11))
+                if (level < 1)
                     level = 1;
+                else if (level > MAX_TUTORIAL_LEVEL)
+                {
+                    // Start Normal levels
+                    level = MAX_TUTORIAL_LEVEL + 1;
+                    GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
+                    // Reset tutorial level and write to saved_tutorial file
+                    write_save_mode(1, GameMode.Game_Mode.TUTORIAL);
+                }
                 break;
             case GameMode.Game_Mode.CONTINUE:
-                if ((level == 0) || (level > 150))
-                    level = 12;
+                if (level < 1 || level > MAX_LEVEL)
+                    level = MAX_TUTORIAL_LEVEL + 1;
                 break;
             default:
-                level = 12;
+                level = MAX_TUTORIAL_LEVEL + 1;
                 return false;
         }
         return true;
@@ -100,15 +103,14 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Saves information about the game state as persistent data.
     /// </summary>
-    bool write_save(int lv)
+    bool write_save_mode(int lv, GameMode.Game_Mode mode)
     {
         string filename = "";
 
-        if (GameMode.instance.get_mode() != GameMode.Game_Mode.TUTORIAL)
+        if (mode != GameMode.Game_Mode.TUTORIAL)
             filename = Application.persistentDataPath + "echosaved";
-        else//load specific save for tutorial
+        else
             filename = Application.persistentDataPath + "echosaved_tutorial";
-
         System.IO.File.WriteAllText(filename, lv.ToString());
         return true;
     }
@@ -139,25 +141,9 @@ public class GameManager : MonoBehaviour
         Invoke("StartGame", levelStartDelay);
 
         boardScript.max_total_level = boardScript.get_level_count("GameData/levels");
-        //Call the SetupScene function of the BoardManager script, pass it current level number.
-        if (GameMode.instance.get_mode() == GameMode.Game_Mode.MAIN)
-        {//MAIN
-            boardScript.max_level = boardScript.get_level_count("GameData/levels");
-            boardScript.min_level = 1;
-        }
-        else if (GameMode.instance.get_mode() == GameMode.Game_Mode.TUTORIAL)
-        {//TUTORIAL
-            boardScript.max_level = 11;
-            boardScript.min_level = 1;
-        }
-        else if (GameMode.instance.get_mode() == GameMode.Game_Mode.CONTINUE)
-        {
-            boardScript.max_level = boardScript.get_level_count("GameData/levels");
-            boardScript.min_level = 1;
-        }
 
-        levelText.text = "Loading level " + level.ToString();
         LoadSaved();
+        levelText.text = "Loading level " + level.ToString();
         boardScript.SetupScene(level);
     }
 
@@ -201,13 +187,12 @@ public class GameManager : MonoBehaviour
     //This is called each time a scene is loaded.
     void OnLevelWasLoaded(int index)
     {
+        // Since the gameObject is not destroyed automatically, the instance should be checked before calling this method.
+        if (this != instance) return;
         //Call InitGame to initialize our level.
-        //if (!level_already_loaded) {
         levelImage = UICanvas.instance.transform.FindChild("LevelImage").gameObject;
         levelText = levelImage.transform.FindChild("LevelText").gameObject.GetComponent<Text>();
         InitGame();
-        level_already_loaded = true;
-        //}
     }
 
     /// <summary>
