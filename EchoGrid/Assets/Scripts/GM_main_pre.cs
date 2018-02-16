@@ -13,13 +13,14 @@ public class GM_main_pre : MonoBehaviour
     bool at_confirm = false;
     bool reset_audio = false;
 
+    enum SelectMode { NONE, CONTINUE, NEW, CONFIRM }
+
     eventHandler eh;
     CDTimer TriggerStartNewGame;
 
     // Use this for initialization
     void Start()
     {
-        GameObject.Find("GameMode").GetComponent<GameMode>().init();
         init();
     }
 
@@ -72,6 +73,8 @@ public class GM_main_pre : MonoBehaviour
     {
         play_audio();
 
+        SelectMode selectMode = SelectMode.NONE;
+
         //Check if we are running either in the Unity editor or in a standalone build.
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
 
@@ -84,35 +87,17 @@ public class GM_main_pre : MonoBehaviour
                 case KeyCode.RightArrow:
                     if (!at_confirm)
                     {
-                        GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
-                        SoundManager.instance.PlayVoice(Database.instance.MainPreContinueGame, true);
-                        SceneManager.LoadScene("Main");
+                        selectMode = SelectMode.CONTINUE;
                     }
-                    //SoundManager.instance.PlaySingle(swipeRight);
                     break;
                 case KeyCode.LeftArrow:
                     if (at_confirm)
                     {
-                        GameMode.instance.gamemode = GameMode.Game_Mode.RESTART;
-                        SoundManager.instance.PlayVoice(Database.instance.MainPreNewGame, true);
-                        SceneManager.LoadScene("Main");
+                        selectMode = SelectMode.NEW;
                     }
-                    //SoundManager.instance.PlaySingle(swipeLeft);
                     break;
                 case KeyCode.E:
-                    if (!at_confirm)
-                    {
-                        at_confirm = true;
-                        cur_clip = 0;
-                        reset_audio = true;
-                    }
-                    else
-                    {
-                        at_confirm = false;
-                        cur_clip = 0;
-                        reset_audio = true;
-                    }
-                    //SoundManager.instance.PlaySingle(swipeAhead);
+                    selectMode = SelectMode.CONFIRM;
                     break;
                 default:
                     break;
@@ -129,7 +114,7 @@ public class GM_main_pre : MonoBehaviour
 			//SoundManager.instance.PlaySingle(swipeRight);
 		} else if (Input.GetKeyUp(KeyCode.LeftArrow)) {
 			if(at_confirm){
-				GameMode.instance.gamemode = GameMode.Game_Mode.MAIN;
+				GameMode.instance.gamemode = GameMode.Game_Mode.RESTART;
 				SoundManager.instance.PlayVoice(new_game, true);
 				SceneManager.LoadScene("Main");
 			}
@@ -162,42 +147,53 @@ public class GM_main_pre : MonoBehaviour
 			if( (ie.touchNum == 1)&&(!ie.isRotate) ){
 				if(ie.isRight){
 					if(!at_confirm){
-						SoundManager.instance.PlaySingle(Database.instance.inputSFX);
-						GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
-						SceneManager.LoadScene("Main");
-						SoundManager.instance.PlayVoice(Database.instance.MainPreContinueGame, true);						
+                        selectMode = SelectMode.CONTINUE;
 					}
 				} else if (ie.isLeft){
 					if(!at_confirm){
 						//nothing
 					}else{//at_confirm
-						at_confirm = false;
-						SoundManager.instance.PlaySingle(Database.instance.inputSFX);
-						GameMode.instance.gamemode = GameMode.Game_Mode.MAIN;
-						Utilities.write_save(0);
-						SceneManager.LoadScene("Main");
-						SoundManager.instance.PlayVoice(Database.instance.MainPreNewGame, true);	
+                        selectMode = SelectMode.NEW;
 					}
 				}
 				
 			}
-			else if ( (ie.cumulativeTouchNum >= 2)&&(!ie.hasDir()) ){
-				if (!at_confirm && TriggerStartNewGame.CDfinish()){
-					cur_clip = 0;
-					reset_audio = true;
-					at_confirm = true;
-					SoundManager.instance.PlaySingle(Database.instance.inputSFX);
-					TriggerStartNewGame.reset();
-				}else if (TriggerStartNewGame.CDfinish()){//at_confirm
-					cur_clip = 0;
-					reset_audio = true;
-					at_confirm = false;
-					SoundManager.instance.PlaySingle(Database.instance.inputSFX);
-					TriggerStartNewGame.reset();
-				}
+			else if ( (ie.cumulativeTouchNum >= 2)&&(!ie.hasDir()) && TriggerStartNewGame.CDfinish()){
+                selectMode = SelectMode.CONFIRM;
 			}
 		}
 
-#endif //End of mobile platform dependendent compilation section started above with #elif	
+#endif //End of mobile platform dependendent compilation section started above with #elif
+
+        switch (selectMode)
+        {
+            case SelectMode.CONTINUE:
+                SoundManager.instance.PlaySingle(Database.instance.inputSFX);
+                SoundManager.instance.PlayVoice(Database.instance.MainPreContinueGame, true);
+                SceneManager.LoadScene("Main");
+                break;
+            case SelectMode.NEW:
+                SoundManager.instance.PlaySingle(Database.instance.inputSFX);
+                if (GameMode.instance.gamemode == GameMode.Game_Mode.TUTORIAL)
+                    GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL_RESTART;
+                else
+                    GameMode.instance.gamemode = GameMode.Game_Mode.RESTART;
+                SoundManager.instance.PlayVoice(Database.instance.MainPreNewGame, true);
+                // Utilities.write_save(0); ???
+                SceneManager.LoadScene("Main");
+                break;
+            case SelectMode.CONFIRM:
+                cur_clip = 0;
+                reset_audio = true;
+                at_confirm = !at_confirm;
+                SoundManager.instance.PlaySingle(Database.instance.inputSFX);
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
+#elif UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
+                TriggerStartNewGame.reset();
+#endif
+                break;
+            default:
+                break;
+        }
     }
 }

@@ -50,7 +50,7 @@ public class GameManager : MonoBehaviour
         string[] svdata_split;
 
         //choose save for tutorial and normal game
-        if (GameMode.instance.get_mode() != GameMode.Game_Mode.TUTORIAL)
+        if (GameMode.instance.get_mode() == GameMode.Game_Mode.RESTART || GameMode.instance.get_mode() == GameMode.Game_Mode.CONTINUE)
             filename = Application.persistentDataPath + "echosaved";
         else//load specific save for tutorial
             filename = Application.persistentDataPath + "echosaved_tutorial";
@@ -63,7 +63,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            if (GameMode.instance.get_mode() != GameMode.Game_Mode.TUTORIAL)
+            if (GameMode.instance.get_mode() == GameMode.Game_Mode.RESTART || GameMode.instance.get_mode() == GameMode.Game_Mode.CONTINUE)
                 level = MAX_TUTORIAL_LEVEL + 1;
             else
                 level = 1;
@@ -72,10 +72,10 @@ public class GameManager : MonoBehaviour
         GameMode.Game_Mode gm = GameMode.instance.get_mode();
         switch (gm)
         {
-            case GameMode.Game_Mode.RESTART:
-                level = MAX_TUTORIAL_LEVEL + 1;
-                // Set game mode to CONTINUE for next levels
-                GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
+            case GameMode.Game_Mode.TUTORIAL_RESTART:
+                level = 1;
+                // Set game mode to TUTORIAL for next levels
+                GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
                 break;
             case GameMode.Game_Mode.TUTORIAL:
                 if (level < 1)
@@ -88,6 +88,11 @@ public class GameManager : MonoBehaviour
                     // Reset tutorial level and write to saved_tutorial file
                     write_save_mode(1, GameMode.Game_Mode.TUTORIAL);
                 }
+                break;
+            case GameMode.Game_Mode.RESTART:
+                level = MAX_TUTORIAL_LEVEL + 1;
+                // Set game mode to CONTINUE for next levels
+                GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
                 break;
             case GameMode.Game_Mode.CONTINUE:
                 if (level < 1 || level > MAX_LEVEL)
@@ -107,7 +112,7 @@ public class GameManager : MonoBehaviour
     {
         string filename = "";
 
-        if (mode != GameMode.Game_Mode.TUTORIAL)
+        if (mode == GameMode.Game_Mode.RESTART || mode == GameMode.Game_Mode.CONTINUE)
             filename = Application.persistentDataPath + "echosaved";
         else
             filename = Application.persistentDataPath + "echosaved_tutorial";

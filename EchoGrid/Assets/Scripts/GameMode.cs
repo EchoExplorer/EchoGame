@@ -9,13 +9,15 @@ public class GameMode : MonoBehaviour
 {
     public enum Game_Mode
     {
+        NONE,
+        TUTORIAL_RESTART,
         TUTORIAL,
         RESTART,
         CONTINUE
     }
 
     public static GameMode instance = null;		//Allows other scripts to call functions from SoundManager.			
-    public Game_Mode gamemode;
+    public Game_Mode gamemode = Game_Mode.NONE;
 
     void Awake()
     {
@@ -25,11 +27,6 @@ public class GameMode : MonoBehaviour
             Destroy(gameObject);
 
         DontDestroyOnLoad(gameObject);
-    }
-
-    public void init()
-    {
-        gamemode = Game_Mode.RESTART;
     }
 
     public Game_Mode get_mode()

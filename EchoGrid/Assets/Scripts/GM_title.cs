@@ -21,14 +21,14 @@ public class GM_title : MonoBehaviour
     bool doneTesting = false;
     eventHandler eh;
 
+    enum Direction { NONE, UP, DOWN, LEFT, RIGHT }
+
     /// <summary>
     /// Sets up a reference to the GameMode module so it can set up its singleton.
     /// </summary>
     void Start()
     {
         reset_audio = false;
-        //FIXME: This is a horrible way to initialize a singleton.
-        GameObject.Find("GameMode").GetComponent<GameMode>().init();
         eh = new eventHandler(InputModule.instance);
     }
 
@@ -90,6 +90,8 @@ public class GM_title : MonoBehaviour
 
         play_audio();
 
+        Direction inputDirection = Direction.NONE;
+
         //Check if we are running either in the Unity editor or in a standalone build.
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
 
@@ -99,39 +101,16 @@ public class GM_title : MonoBehaviour
             switch (ie.keycode)
             {
                 case KeyCode.RightArrow:
-                    GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
-                    SceneManager.LoadScene("Main_pre");
-                    //toMainflag = true;
-                    //cur_clip = 0;
-                    SoundManager.instance.PlayVoice(Database.instance.TitletoMainClips[1], true);
-                    //SoundManager.instance.PlaySingle(swipeRight);
+                    inputDirection = Direction.RIGHT;
                     break;
                 case KeyCode.LeftArrow:
-                    GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
-                    SceneManager.LoadScene("Main");
-                    //SoundManager.instance.PlayVoice(to_tutorial, true);
-                    //SoundManager.instance.PlaySingle(swipeLeft);
+                    inputDirection = Direction.LEFT;
                     break;
                 case KeyCode.UpArrow://Up
-                    SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
-                    if (!listenToCmd)
-                    {
-                        listenToCmd = true;
-                        reset_audio = true;
-                        cur_clip = 0;
-                        cmd_cur_clip = 0;
-                    }
-                    else
-                    {
-                        listenToCmd = false;
-                        reset_audio = true;
-                        cur_clip = 0;
-                        cmd_cur_clip = 0;
-                    }
+                    inputDirection = Direction.UP;
                     break;
                 case KeyCode.DownArrow://BACK
-                    SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
-                    //credit
+                    inputDirection = Direction.DOWN;
                     break;
                 default:
                     break;
@@ -145,34 +124,53 @@ public class GM_title : MonoBehaviour
 
 		if(eh.isActivate() && doneTesting) {  // isActivate() has side effects so this order is required...
 			InputEvent ie = eh.getEventData();
-
 			if( (ie.touchNum == 1)&&(!ie.isRotate) ){
 				if (ie.isRight){
-					GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
-					SceneManager.LoadScene("Main_pre");
-					SoundManager.instance.PlayVoice(Database.instance.TitletoMainClips[0], true);
+					inputDirection = Direction.RIGHT;
 				} else if (ie.isLeft){
-					GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
-					SceneManager.LoadScene("Main");
+					inputDirection = Direction.LEFT;
 				} else if (ie.isUp){
-					SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
-					if(!listenToCmd){
-						listenToCmd = true;
-						reset_audio = true;
-						cur_clip = 0;
-						cmd_cur_clip = 0;
-					}else{
-						listenToCmd = false;
-						reset_audio = true;
-						cur_clip = 0;
-						cmd_cur_clip = 0;
-					}
+					inputDirection = Direction.UP;
 				} else if (ie.isDown){
-					SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
-					//credit
+					inputDirection = Direction.DOWN;
 				}
 			}
 		}
-#endif //End of mobile platform dependendent compilation section started above with #elif	
+#endif //End of mobile platform dependendent compilation section started above with #elif
+
+        switch (inputDirection)
+        {
+            case Direction.RIGHT:
+                GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
+				SceneManager.LoadScene("Main_pre");
+				SoundManager.instance.PlayVoice(Database.instance.TitletoMainClips[0], true);
+                break;
+            case Direction.LEFT:
+                GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
+                SceneManager.LoadScene("Main_pre");
+				SoundManager.instance.PlayVoice(Database.instance.TitletoMainClips[0], true);
+				//SceneManager.LoadScene("Main");
+                break;
+            case Direction.UP:
+                SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
+				if(!listenToCmd){
+					listenToCmd = true;
+					reset_audio = true;
+					cur_clip = 0;
+					cmd_cur_clip = 0;
+				}else{
+					listenToCmd = false;
+					reset_audio = true;
+					cur_clip = 0;
+					cmd_cur_clip = 0;
+				}
+                break;
+            case Direction.DOWN:
+                SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
+				//credit
+                break;
+            default:
+                break;
+        }
     }
 }

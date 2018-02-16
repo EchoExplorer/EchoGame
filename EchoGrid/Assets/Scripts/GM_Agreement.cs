@@ -214,7 +214,7 @@ public class GM_Agreement : MonoBehaviour
                 {
                     if (numTouches == 2)
                     {
-                        //GameMode.gamemode = GameMode.Game_Mode.MAIN;
+                        //GameMode.gamemode = GameMode.Game_Mode.RESTART;
                         //SceneManager.LoadScene("Main");
                     }
                     else

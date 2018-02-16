@@ -917,7 +917,7 @@ public class BoardManager : MonoBehaviour
         BoardSetup();
         LoadLoaclStats();
         setup_level(level);
-        //if( (GameMode.instance.get_mode() == GameMode.Game_Mode.MAIN)||
+        //if( (GameMode.instance.get_mode() == GameMode.Game_Mode.RESTART)||
         //	(GameMode.instance.get_mode() == GameMode.Game_Mode.CONTINUE) )
         write_save(level);
 
@@ -938,7 +938,7 @@ public class BoardManager : MonoBehaviour
     {
         string filename = "";
 
-        if (GameMode.instance.get_mode() != GameMode.Game_Mode.TUTORIAL)
+        if (GameMode.instance.get_mode() == GameMode.Game_Mode.RESTART || GameMode.instance.get_mode() == GameMode.Game_Mode.CONTINUE)
             filename = Application.persistentDataPath + "echosaved";
         else//load specific save for tutorial
             filename = Application.persistentDataPath + "echosaved_tutorial";

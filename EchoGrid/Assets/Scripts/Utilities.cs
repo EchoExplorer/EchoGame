@@ -140,7 +140,7 @@ public class Utilities : MonoBehaviour
     {
         string filename = "";
 
-        if (GameMode.instance.get_mode() != GameMode.Game_Mode.TUTORIAL)
+        if (GameMode.instance.get_mode() == GameMode.Game_Mode.RESTART || GameMode.instance.get_mode() == GameMode.Game_Mode.CONTINUE)
             filename = Application.persistentDataPath + "echosaved";
         else//load specific save for tutorial
             filename = Application.persistentDataPath + "echosaved_tutorial";
