@@ -56,7 +56,13 @@ public abstract class MovingObject : MonoBehaviour
         if (hit.transform == null)
         {
             //If nothing was hit, start SmoothMovement co-routine passing in the Vector2 end as destination
-            StartCoroutine(SmoothMovement(end));
+            //StartCoroutine(SmoothMovement(end));
+
+            // SmoothMovement() is DISABLED due to a FATAL flaw:
+            // The position of the moving object is not thread safe. When one movement is still on processing, 
+            // an immediate second command of movement will calculate its "end position" based on
+            // the current temporary position, which results into an expected end position.
+            rb2D.MovePosition(end);
 
             //Return true to say that Move was successful
             return true;
