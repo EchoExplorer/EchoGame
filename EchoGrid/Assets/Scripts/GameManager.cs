@@ -48,9 +48,10 @@ public class GameManager : MonoBehaviour
     {
         string filename = "";
         string[] svdata_split;
+        GameMode.Game_Mode current = GameMode.instance.get_mode();
 
         //choose save for tutorial and normal game
-        if (GameMode.instance.get_mode() == GameMode.Game_Mode.RESTART || GameMode.instance.get_mode() == GameMode.Game_Mode.CONTINUE)
+        if (current == GameMode.Game_Mode.RESTART || current == GameMode.Game_Mode.CONTINUE)
             filename = Application.persistentDataPath + "echosaved";
         else//load specific save for tutorial
             filename = Application.persistentDataPath + "echosaved_tutorial";
@@ -63,14 +64,12 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            if (GameMode.instance.get_mode() == GameMode.Game_Mode.RESTART || GameMode.instance.get_mode() == GameMode.Game_Mode.CONTINUE)
+            if (current == GameMode.Game_Mode.RESTART || current == GameMode.Game_Mode.CONTINUE)
                 level = MAX_TUTORIAL_LEVEL + 1;
             else
                 level = 1;
-            return false;
         }
-        GameMode.Game_Mode gm = GameMode.instance.get_mode();
-        switch (gm)
+        switch (current)
         {
             case GameMode.Game_Mode.TUTORIAL_RESTART:
                 level = 1;

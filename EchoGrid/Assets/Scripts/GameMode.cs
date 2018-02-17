@@ -10,10 +10,10 @@ public class GameMode : MonoBehaviour
     public enum Game_Mode
     {
         NONE,
-        TUTORIAL_RESTART,
-        TUTORIAL,
-        RESTART,
-        CONTINUE
+        TUTORIAL_RESTART, // Start a new tutorial
+        TUTORIAL, // Continue saved tutorial
+        RESTART, // Start a new normal game
+        CONTINUE, // Coninue saved normal game 
     }
 
     public static GameMode instance = null;		//Allows other scripts to call functions from SoundManager.			

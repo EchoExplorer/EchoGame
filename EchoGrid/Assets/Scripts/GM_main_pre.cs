@@ -35,7 +35,7 @@ public class GM_main_pre : MonoBehaviour
         at_confirm = false;
         reset_audio = false;
         eh = new eventHandler(InputModule.instance);
-        CDTimer TriggerStartNewGame = new CDTimer(1f, InputModule.instance);
+        TriggerStartNewGame = new CDTimer(1f, InputModule.instance);
         TriggerStartNewGame.TakeDownTime();
     }
 
@@ -156,7 +156,6 @@ public class GM_main_pre : MonoBehaviour
                         selectMode = SelectMode.NEW;
 					}
 				}
-				
 			}
 			else if ( (ie.cumulativeTouchNum >= 2)&&(!ie.hasDir()) && TriggerStartNewGame.CDfinish()){
                 selectMode = SelectMode.CONFIRM;
