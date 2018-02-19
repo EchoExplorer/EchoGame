@@ -134,8 +134,8 @@ public class GameManager : MonoBehaviour
         //db.CreateTable("AudioFiles",new string[]{"id","echo name","file_path", "game_level"}, new string[]{"integer","text","text", "integer"});
 
         doingSetup = true;
-        levelImage = UICanvas.instance.transform.FindChild("LevelImage").gameObject; //GameObject.Find("LevelImage");
-        levelText = levelImage.transform.FindChild("LevelText").gameObject.GetComponent<Text>();
+        levelImage = UICanvas.instance.transform.Find("LevelImage").gameObject; //GameObject.Find("LevelImage");
+        levelText = levelImage.transform.Find("LevelText").gameObject.GetComponent<Text>();
         //Set the text of levelText to the string "Day" and append the current level number.;
 
         //Set levelImage to block player's view of the game board during setup.
@@ -194,8 +194,8 @@ public class GameManager : MonoBehaviour
         // Since the gameObject is not destroyed automatically, the instance should be checked before calling this method.
         if (this != instance) return;
         //Call InitGame to initialize our level.
-        levelImage = UICanvas.instance.transform.FindChild("LevelImage").gameObject;
-        levelText = levelImage.transform.FindChild("LevelText").gameObject.GetComponent<Text>();
+        levelImage = UICanvas.instance.transform.Find("LevelImage").gameObject;
+        levelText = levelImage.transform.Find("LevelText").gameObject.GetComponent<Text>();
         InitGame();
     }
 

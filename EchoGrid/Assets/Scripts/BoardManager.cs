@@ -489,7 +489,7 @@ public class BoardManager : MonoBehaviour
     void BoardSetup()
     {
         //Instantiate Board and set boardHolder to its transform.
-        boardHolder = transform.FindChild("Board");
+        boardHolder = transform.Find("Board");
         for (int i = 0; i < boardHolder.childCount; ++i)
         {
             Destroy(boardHolder.GetChild(i).gameObject);
@@ -548,7 +548,7 @@ public class BoardManager : MonoBehaviour
         float scale = (float)Utilities.SCALE_REF / (float)Utilities.MAZE_SIZE;
 
         //clear existing walls and exit
-        GameObject wall_parent = transform.FindChild("Walls").gameObject;
+        GameObject wall_parent = transform.Find("Walls").gameObject;
         for (int i = 0; i < wall_parent.transform.childCount; ++i)
         {
             Destroy(wall_parent.transform.GetChild(i).gameObject);
