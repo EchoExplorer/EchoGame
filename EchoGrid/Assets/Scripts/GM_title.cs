@@ -54,7 +54,7 @@ public class GM_title : MonoBehaviour
                     cmd_cur_clip = 0;
             }
         }
-        else
+        /*se
         {//not landscape!
             if (SoundManager.instance.PlayVoice(Database.instance.oritClip[orti_clip], reset_audio))
             {
@@ -63,7 +63,7 @@ public class GM_title : MonoBehaviour
                 if (orti_clip >= Database.instance.oritClip.Length)
                     orti_clip = 0;
             }
-        }
+        }*/
     }
 
     /// <summary>

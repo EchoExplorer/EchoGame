@@ -23,7 +23,7 @@ public class Database : MonoBehaviour
     //audios
     //General
     [HideInInspector]
-    public AudioClip[] oritClip = new AudioClip[2];
+    public AudioClip[] settingClips = new AudioClip[3];
     //main
     [HideInInspector]
     public AudioClip[] menuClips = new AudioClip[5];
@@ -80,8 +80,9 @@ public class Database : MonoBehaviour
     void LoadData()
     {
         //general
-        oritClip[0] = Resources.Load("instructions/Please hold your phone horizontally for this game") as AudioClip;
-        oritClip[1] = Resources.Load("instructions/2sec_silence") as AudioClip;
+        settingClips[0] = Resources.Load("Instruction/earphone_hint") as AudioClip;
+        settingClips[1] = Resources.Load("Instruction/orient_hint") as AudioClip;
+        settingClips[2] = Resources.Load("Instruction/orient_main") as AudioClip;
         //Main
         menuOn = Resources.Load("instructions/Menu opened") as AudioClip;
         menuOff = Resources.Load("instructions/Menu closed") as AudioClip;

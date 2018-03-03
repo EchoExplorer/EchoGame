@@ -7,6 +7,10 @@ using UnityEngine.SceneManagement;
 /// <summary>
 /// A script to display the user agreement dialogues.
 /// This is attached to the ``GameManager`` GameObject in the T&C scene.
+/// 
+/// This file includes two checking item of user settings.
+/// First is asking user to plugin earphones, tap to continue.
+/// Second is asking user to hold the phone horizontaly once, tap to continue.
 /// </summary>
 public class GM_TC : MonoBehaviour
 {
@@ -73,23 +77,40 @@ public class GM_TC : MonoBehaviour
     }
 
 
-    bool reset_audio = false;
+    //bool reset_audio = true;
+    bool plugin_earphone = false;
+    bool orient_correction = false;
+    bool settings_done = false;
+    bool clip0_reset=true;
+    bool clip1_reset = true;
+    bool clip2_reset = true;
     /// <summary>
     /// Plays voice instructions concerning the terms and conditions page.
     /// </summary>
 	void play_audio()
     {
-        if (!Utilities.isDeviceLandscape())
-        {//not landscape!
-            if (SoundManager.instance.PlayVoice(Database.instance.oritClip[orti_clip], reset_audio))
+
+        if(!plugin_earphone){
+            if (SoundManager.instance.PlayVoice(Database.instance.settingClips[0], clip0_reset))
             {
-                reset_audio = false;
-                orti_clip += 1;
-                if (orti_clip >= Database.instance.oritClip.Length)
-                    orti_clip = 0;
+                clip0_reset = false;
             }
+            return;
         }
-        else if (finished_reading)
+        if (!Utilities.isDeviceLandscape() && !orient_correction )
+        {//not landscape!
+            orient_correction = true;
+            if (SoundManager.instance.PlayVoice(Database.instance.settingClips[1], clip1_reset))
+            {
+                clip1_reset = false;
+            }
+            return;
+
+        } else{
+            settings_done = true;
+        }
+
+        if (finished_reading)
         {
             //if (SoundManager.instance.PlayVoice (clips [cur_clip])) {
             //	cur_clip += 1;
@@ -158,36 +179,30 @@ public class GM_TC : MonoBehaviour
         android_window_displayed = true;
         URL_opened = true;
         finished_reading = true;
-        Utilities.writefile("consentRecord", "1");
-        SceneManager.LoadScene("Title_Screen");
+        
 #endif
 
         play_audio();
 
         //Check if we are running either in the Unity editor or in a standalone build.
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
-
         if (eh.isActivate())
         {
             InputEvent ie = eh.getEventData();
-            switch (ie.keycode)
-            {
-                //Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
-                case KeyCode.RightArrow:
-                    //SoundManager.instance.PlaySingle(swipeRight);
-                    break;
-                case KeyCode.LeftArrow:
-                    SceneManager.LoadScene("Title_Screen");
-                    SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
-                    break;
-                case KeyCode.UpArrow:
-                    break;
-                case KeyCode.DownArrow://BACK
-                                       //SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
-                                       //credit
-                    break;
-                default:
-                    break;
+            if (ie.keycode==KeyCode.F)
+            {   
+                //First tap means plgin earphone correctly
+                if (!plugin_earphone)
+                {
+                    plugin_earphone = true;
+                }
+                    //If settings 
+                else if (settings_done)
+                {
+                  SceneManager.LoadScene("Title_Screen");
+                  SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
+                 
+                }
             }
         }
 
@@ -195,7 +210,29 @@ public class GM_TC : MonoBehaviour
 #elif UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
         Screen.orientation = ScreenOrientation.Landscape;
+         if (eh.isActivate())
+        {
+            InputEvent ie = eh.getEventData();
+            if (ie.touchNum>=1)
+            {   
+                //First tap means plgin earphone correctly
+                if (!plugin_earphone)
+                {
+                    plugin_earphone = true;
+                }
+                    //If settings 
+                else if (settings_done)
+                {
+                  Utilities.writefile("consentRecord", "1");
+                  SceneManager.LoadScene("Title_Screen");
+                  SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
+                 
+                }
+            }
+        }
 
-#endif //End of mobile platform dependendent compilation section started above with #elif	
+
+
+#endif //End of mobile platform dependendent compilation section started above with #elif
     }
 }
