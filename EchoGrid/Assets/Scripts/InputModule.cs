@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 /// <summary>
 /// A struct containing a large number of fields about user input data. 
@@ -53,8 +54,10 @@ public class InputModule : MonoBehaviour
 {
     //consts
     const float TOUCH_TIME = 0.02f;
-    float minSwipeDist = Screen.width * 0.01f;
+    float minSwipeVerticalDist = Screen.width * 0.07f;
+	float minSwipeHorizontalDist = Screen.height * 0.10f;
     const float multiTapCD = 0.4f;//make multitap easier, num of tap made within this time period
+	const float swipeGestCD = 0.3f;
     const float rotateGestCD = 0.3f;
 
     //storage needed for recognizing different input
@@ -63,25 +66,54 @@ public class InputModule : MonoBehaviour
     bool isSwipe = false;
     int TouchTapCount;
     int numTouchlastframe = 0;
-    float touchTime = 0f;
+    float touchTime = 0.0f;
     float rotateGestStartTime;
     float multiTapStartTime;
     Vector2 swipeStartPlace = new Vector2();
     Vector2 firstSwipePos = new Vector2();
-    Vector2 VecStart = new Vector2();
-    Vector2 VecEnd = new Vector2();
     Vector2 touchOrigin = new Vector2();
 
     List<eventHandler> listeners = new List<eventHandler>();
     List<CDTimer> cdtimers = new List<CDTimer>();
 
+	public Text debugInputInfo;
+	public Text debugPlayerInfo;
+	public Text touch0Info;
+	public Text touch1Info;
+	public Text touch2Info;
+	public Text touchDurationInfo;
+
+	Vector2[] touchStart = {new Vector2(), new Vector2(), new Vector2()};
+	Vector2[] touchEnd = {new Vector2(), new Vector2(), new Vector2()};
+	Vector2 vecStart1 = new Vector2();
+	Vector2 vecEnd1 = new Vector2();
+	Vector2 vecStart2 = new Vector2();
+	Vector2 vecEnd2 = new Vector2();
+	Vector2 VecStart = new Vector2();
+	Vector2 VecEnd = new Vector2();
+
+	float touchDuration = 0.0f;
+	int tapRegister = 0;
+	bool[] hasRegistered = {false, false, false};
+
+	int swipeLeftTimes = 0;
+	int swipeRightTimes = 0;
+	int swipeUpTimes = 0;
+	int swipeDownTimes = 0;
+	int rotateLeftTimes = 0;
+	int rotateRightTimes = 0;
+
     public static InputModule instance;
     void Awake()
     {
-        if (instance == null)
-            instance = this;
-        else if (instance != this)
-            Destroy(gameObject);
+		if (instance == null) 
+		{
+			instance = this;
+		} 
+		else if (instance != this) 
+		{
+			Destroy(gameObject);
+		}
 
         DontDestroyOnLoad(gameObject);
     }
@@ -107,6 +139,13 @@ public class InputModule : MonoBehaviour
     /// </summary>
     void Update()
     {
+		debugInputInfo = GameObject.FindGameObjectWithTag("DebugInput").GetComponent<Text>();
+		debugPlayerInfo = GameObject.FindGameObjectWithTag("DebugPlayer").GetComponent<Text>();
+		touch0Info = GameObject.FindGameObjectWithTag("Touch0").GetComponent<Text>();
+		touch1Info = GameObject.FindGameObjectWithTag("Touch1").GetComponent<Text>();
+		touch2Info = GameObject.FindGameObjectWithTag("Touch2").GetComponent<Text>();
+		touchDurationInfo = GameObject.FindGameObjectWithTag("TouchDuration").GetComponent<Text>();
+
         GetInput();
     }
 
@@ -154,27 +193,201 @@ public class InputModule : MonoBehaviour
         {
             ievent.keycode = KeyCode.M;
         }
+		else if (Input.GetKeyUp("p"))
+		{
+			ievent.keycode = KeyCode.P;
+		}
         else
+		{
             return;
-#elif UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
-
+		}
+#endif
+#if UNITY_IOS || UNITY_ANDROID
 		//Check if Input has registered more than zero touches
 		int numTouches = Input.touchCount;
 		ievent.touchNum = numTouches;
 
+		foreach (Touch thisTouch in Input.touches) 
+		{
+			if (thisTouch.fingerId == 0) 
+			{
+				if (hasRegistered[0] == false) 
+				{
+					touchStart[0] = thisTouch.position;
+					touchEnd[0] = thisTouch.position;
+					vecStart1 = thisTouch.position;
+					vecEnd1 = thisTouch.position;
+					touch0Info.text = "Start X: " + touchStart[0].x + "\n" + "Start Y: " + touchStart[0].y + "\n" + "End X: " + touchEnd[0].x + "\n" + "End Y: " + touchEnd[0].y; 
+					tapRegister = 0;
+					hasRegistered[0] = true;
+				}
+				else if ((thisTouch.phase == TouchPhase.Stationary) && (hasRegistered[0] == true)) 
+				{
+					touchEnd[0] = thisTouch.position;
+					vecEnd1 = thisTouch.position;
+					touch0Info.text = "Start X: " + touchStart[0].x + "\n" + "Start Y: " + touchStart[0].y + "\n" + "End X: " + touchEnd[0].x + "\n" + "End Y: " + touchEnd[0].y; 
+				}
+				else if ((thisTouch.phase == TouchPhase.Moved) && (hasRegistered[0] == true)) 
+				{
+					touchEnd[0] = thisTouch.position;
+					vecEnd1 = thisTouch.position;
+					touch0Info.text = "Start X: " + touchStart[0].x + "\n" + "Start Y: " + touchStart[0].y + "\n" + "End X: " + touchEnd[0].x + "\n" + "End Y: " + touchEnd[0].y; 
+				}
+				else if ((thisTouch.phase == TouchPhase.Ended) && (hasRegistered[0] == true)) 
+				{
+					tapRegister += 1;
+					touchEnd[0] = thisTouch.position;
+					vecEnd1 = thisTouch.position;
+					touch0Info.text = "Start X: " + touchStart[0].x + "\n" + "Start Y: " + touchStart[0].y + "\n" + "End X: " + touchEnd[0].x + "\n" + "End Y: " + touchEnd[0].y; 
+
+					// update TouchTapCount part 2
+					if ((Time.time - multiTapStartTime) < multiTapCD) 
+					{
+						if ((tapRegister == 3) && (TouchTapCount <= 3)) 
+						{
+							TouchTapCount += tapRegister;
+						}
+						ievent.elapsedTime = Time.time - touchTime;
+					}
+				}
+				else if (thisTouch.phase == TouchPhase.Canceled) 
+				{
+					touch0Info.text = "touch0 canceled";
+				}
+				else 
+				{
+					touch0Info.text = "Cannot compute";
+				}
+			}
+
+			else if (thisTouch.fingerId == 1) 
+			{
+				if (hasRegistered[1] == false) 
+				{
+					touchStart[1] = thisTouch.position;
+					touchEnd[1] = thisTouch.position;
+					vecStart2 = thisTouch.position;
+					vecEnd2 = thisTouch.position;
+					touch1Info.text = "Start X: " + touchStart[1].x + "\n" + "Start Y: " + touchStart[1].y + "\n" + "End X: " + touchEnd[1].x + "\n" + "End Y: " + touchEnd[1].y;
+					hasRegistered[1] = true;
+				}
+				else if ((thisTouch.phase == TouchPhase.Stationary) && (hasRegistered[1] == true)) 
+				{
+					touchEnd[1] = thisTouch.position;
+					vecEnd2 = thisTouch.position;
+					touch1Info.text = "Start X: " + touchStart[1].x + "\n" + "Start Y: " + touchStart[1].y + "\n" + "End X: " + touchEnd[1].x + "\n" + "End Y: " + touchEnd[1].y;
+				}
+				else if ((thisTouch.phase == TouchPhase.Moved) && (hasRegistered[1] == true)) 
+				{
+					touchEnd[1] = thisTouch.position;
+					vecEnd2 = thisTouch.position;
+					touch1Info.text = "Start X: " + touchStart[1].x + "\n" + "Start Y: " + touchStart[1].y + "\n" + "End X: " + touchEnd[1].x + "\n" + "End Y: " + touchEnd[1].y;
+				}
+				else if ((thisTouch.phase == TouchPhase.Ended) && (hasRegistered[1] == true)) 
+				{
+					tapRegister += 1;
+					touchEnd[1] = thisTouch.position;
+					vecEnd2 = thisTouch.position;
+					touch1Info.text = "Start X: " + touchStart[1].x + "\n" + "Start Y: " + touchStart[1].y + "\n" + "End X: " + touchEnd[1].x + "\n" + "End Y: " + touchEnd[1].y;
+
+					// update TouchTapCount part 2
+					if ((Time.time - multiTapStartTime) < multiTapCD) 
+					{
+						if ((tapRegister == 3) && (TouchTapCount <= 3)) 
+						{
+							TouchTapCount += tapRegister;	
+						}
+						ievent.elapsedTime = Time.time - touchTime;
+					}
+				}
+				else if (thisTouch.phase == TouchPhase.Canceled) 
+				{
+					touch1Info.text = "touch1 canceled";
+				}
+				else 
+				{
+					touch1Info.text = "Cannot compute";
+				}
+			}
+			else if (thisTouch.fingerId == 2) 
+			{
+				if (hasRegistered[2] == false) 
+				{
+					touchStart[2] = thisTouch.position;
+					touchEnd[2] = thisTouch.position;
+					touch2Info.text = "Start X: " + touchStart[2].x + "\n" + "Start Y: " + touchStart[2].y + "\n" + "End X: " + touchEnd[2].x + "\n" + "End Y: " + touchEnd[2].y;
+					hasRegistered[2] = true;
+
+					// update TouchTapCount part 1
+					if ((Time.time - multiTapStartTime) >= multiTapCD)
+					{
+						multiTapStartTime = Time.time;
+						TouchTapCount = 0;
+					}
+
+					touchTime = Time.time;
+					ResetCDTimers();
+				}
+				else if ((thisTouch.phase == TouchPhase.Stationary) && (hasRegistered[2] == true)) 
+				{
+					touchEnd[2] = thisTouch.position;
+					touch2Info.text = "Start X: " + touchStart[2].x + "\n" + "Start Y: " + touchStart[2].y + "\n" + "End X: " + touchEnd[2].x + "\n" + "End Y: " + touchEnd[2].y;
+				}
+				else if ((thisTouch.phase == TouchPhase.Moved) && (hasRegistered[2] == true)) 
+				{
+					touchEnd[2] = thisTouch.position;
+					touch2Info.text = "Start X: " + touchStart[2].x + "\n" + "Start Y: " + touchStart[2].y + "\n" + "End X: " + touchEnd[2].x + "\n" + "End Y: " + touchEnd[2].y;
+				}
+				else if ((thisTouch.phase == TouchPhase.Ended) && (hasRegistered[2] == true)) 
+				{
+					tapRegister += 1;
+					touchEnd[2] = thisTouch.position;
+					touch2Info.text = "Start X: " + touchStart[2].x + "\n" + "Start Y: " + touchStart[2].y + "\n" + "End X: " + touchEnd[2].x + "\n" + "End Y: " + touchEnd[2].y;
+
+					// update TouchTapCount part 2
+					if ((Time.time - multiTapStartTime) < multiTapCD) 
+					{
+						if ((tapRegister == 3) && (TouchTapCount <= 3)) 
+						{
+							TouchTapCount += tapRegister;	
+						}
+						ievent.elapsedTime = Time.time - touchTime;
+					}
+				}
+				else if (thisTouch.phase == TouchPhase.Canceled) 
+				{
+					touch1Info.text = "touch1 canceled";
+				}
+				else 
+				{
+					touch1Info.text = "Cannot compute";
+				}
+			}
+		}
+
+		if (Input.touchCount == 0) 
+		{
+			if (tapRegister == 3)
+			{
+				debugInputInfo.text = "Registered 3 fingers";
+			}
+
+			touchDuration = 0.0f;
+
+			hasRegistered[0] = false;
+			hasRegistered[1] = false;
+			hasRegistered[2] = false;
+		}
+
+		ievent.cumulativeTouchNum = TouchTapCount;
+			
+		/*
 		//temp storage
 		Touch myTouch;
 		Vector2 touchEndpos = new Vector2();
 		BoardManager.Direction swp_dir = BoardManager.Direction.OTHER;
-		bool isRotation = false;
-
-		//update all timers
-		//update TouchTapCount part 1
-		if( (Time.time - multiTapStartTime) >= multiTapCD ){
-			multiTapStartTime = Time.time;
-			TouchTapCount = 0;
-		}
-
+		bool isRotation = false; 
+		 
 		//collect raw data from the device
 		if (numTouches > 0) {
 			//Store the first touch detected.
@@ -273,6 +486,7 @@ public class InputModule : MonoBehaviour
 			isSwipe = false;
 		
 		ievent.cumulativeTouchNum = TouchTapCount;
+		*/
 #endif
         //print(touchTime);
         //if no input, code should not reach here
@@ -287,8 +501,10 @@ public class InputModule : MonoBehaviour
     {
         foreach (eventHandler eh in listeners)
         {
-            if (eh != null)
-                eh.SetData(_ie);
+			if (eh != null) 
+			{
+				eh.SetData(_ie);
+			}
         }
     }
 
@@ -299,8 +515,10 @@ public class InputModule : MonoBehaviour
     {
         foreach (eventHandler eh in listeners)
         {
-            if (eh != null)
-                eh.Activate();
+			if (eh != null) 
+			{
+				eh.Activate();
+			}
         }
     }
 
@@ -311,8 +529,10 @@ public class InputModule : MonoBehaviour
     {
         foreach (CDTimer ctimer in cdtimers)
         {
-            if (ctimer != null)
-                ctimer.resetLock();
+			if (ctimer != null) 
+			{
+				ctimer.resetLock();
+			}
         }
     }
 }

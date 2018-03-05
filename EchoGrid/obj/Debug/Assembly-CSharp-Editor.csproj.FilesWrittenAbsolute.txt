@@ -1,36 +1,34 @@
-/Users/agotsis/EchoGame/EchoGrid/Temp/bin/Debug/UnityEngine.dll
-/Users/agotsis/EchoGame/EchoGrid/Temp/bin/Debug/UnityEditor.dll
-/Users/agotsis/EchoGame/EchoGrid/Temp/bin/Debug/UnityEngine.Networking.dll
-/Users/agotsis/EchoGame/EchoGrid/Temp/bin/Debug/UnityEngine.UI.dll
-/Users/agotsis/EchoGame/EchoGrid/Temp/bin/Debug/Mono.Data.Sqlite.dll
-/Users/agotsis/EchoGame/EchoGrid/Temp/bin/Debug/Assembly-CSharp-firstpass.dll
-/Users/agotsis/EchoGame/EchoGrid/Temp/bin/Debug/Assembly-CSharp-firstpass.dll.mdb
-/Users/agotsis/EchoGame/EchoGrid/Temp/bin/Debug/Mono.Cecil.dll
-/Users/agotsis/EchoGame/EchoGrid/Temp/bin/Debug/Unity.SerializationLogic.dll
-/Users/agotsis/EchoGame/EchoGrid/Temp/bin/Debug/Unity.DataContract.dll
-/Users/agotsis/EchoGame/EchoGrid/Temp/bin/Debug/ICSharpCode.NRefactory.dll
-/Users/agotsis/EchoGame/EchoGrid/Temp/bin/Debug/Unity.UNetWeaver.dll
-/Users/agotsis/EchoGame/EchoGrid/Temp/bin/Debug/Unity.UNetWeaver.dll.mdb
-/Users/agotsis/EchoGame/EchoGrid/Temp/bin/Debug/Unity.CecilTools.dll
-/Users/agotsis/EchoGame/EchoGrid/Temp/bin/Debug/Mono.Cecil.Pdb.dll
-/Users/agotsis/EchoGame/EchoGrid/Temp/bin/Debug/Mono.Cecil.Mdb.dll
-/Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/Assembly-CSharp.dll.mdb
-/Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/Assembly-CSharp.dll
-/Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/obj/Debug/Assembly-CSharp.dll
-/Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/obj/Debug/Assembly-CSharp.dll.mdb
+/Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/Assembly-CSharp-Editor.dll.mdb
+/Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/Assembly-CSharp-Editor.dll
+/Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/obj/Debug/Assembly-CSharp-Editor.dll
+/Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/obj/Debug/Assembly-CSharp-Editor.dll.mdb
 /Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/UnityEngine.dll
 /Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/UnityEditor.dll
 /Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/UnityEngine.Analytics.dll
+/Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/UnityEditor.Analytics.dll
+/Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/UnityEditor.TestRunner.dll
 /Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/UnityEngine.TestRunner.dll
 /Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/nunit.framework.dll
 /Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/UnityEngine.Networking.dll
+/Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/UnityEditor.Networking.dll
 /Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/UnityEngine.UI.dll
+/Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/UnityEditor.UI.dll
+/Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/UnityEditor.Advertisements.dll
+/Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/UnityEditor.TreeEditor.dll
+/Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/UnityEditor.HoloLens.dll
 /Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/UnityEngine.HoloLens.dll
+/Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/UnityEditor.Purchasing.dll
+/Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/UnityEditor.VR.dll
 /Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/UnityEngine.VR.dll
+/Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/UnityEditor.Graphs.dll
+/Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/UnityEditor.Android.Extensions.dll
+/Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/UnityEditor.OSXStandalone.Extensions.dll
 /Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/System.Data.dll
 /Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/Mono.Data.Sqlite.dll
 /Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/Assembly-CSharp-firstpass.dll
 /Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/Assembly-CSharp-firstpass.dll.mdb
+/Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/Assembly-CSharp.dll
+/Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/Assembly-CSharp.dll.mdb
 /Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/Mono.Cecil.dll
 /Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/Unity.SerializationLogic.dll
 /Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/Unity.DataContract.dll
@@ -40,3 +38,5 @@
 /Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/Unity.CecilTools.dll
 /Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/Mono.Cecil.Pdb.dll
 /Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/Mono.Cecil.Mdb.dll
+/Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/UnityEditor.iOS.Extensions.Xcode.dll
+/Users/hellerlab/Desktop/EchoGame Repository/EchoGame/EchoGrid/Temp/bin/Debug/UnityEditor.iOS.Extensions.Xcode.xml

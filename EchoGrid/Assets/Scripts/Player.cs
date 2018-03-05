@@ -1390,12 +1390,19 @@ public class Player : MovingObject
                         GameManager.instance.boardScript.gamerecord += "S_ON";
                     }
                     break;
+				case KeyCode.P: 
+					SoundManager.instance.playcrash(Database.instance.inputSFX);
+					//SceneManager.UnloadScene("Main");
+					Destroy(GameObject.Find("GameManager"));
+					SceneManager.LoadScene("Title_Screen");
+					break;
                 default:
                     break;
             }
-        }
-        //Check if we are running on iOS, Android, Windows Phone 8 or Unity iPhone
-#elif UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
+		}
+#endif
+// Check if we are running on iOS or Android
+#if UNITY_IOS || UNITY_ANDROID
 		//pop up the survey at the end of tutorial
 		Vector2 distFromExit = transform.position - GameManager.instance.boardScript.exitPos;
 		if ( (Vector2.SqrMagnitude (distFromExit) < 0.25f) && survey_activated ) {
