@@ -142,6 +142,10 @@ public class InputModule : MonoBehaviour
         {
             ievent.keycode = KeyCode.E;
         }
+        else if (Input.GetKeyUp("g"))
+        {
+            ievent.keycode = KeyCode.G;
+        }
         else if (Input.GetKeyUp("r"))
         {
             ievent.keycode = KeyCode.R;

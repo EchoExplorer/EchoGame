@@ -21,6 +21,9 @@ public class Database : MonoBehaviour
     }
 
     //audios
+    // Tutorials
+    [HideInInspector]
+    public AudioClip[] tutorialClip = new AudioClip[28];
     //General
     [HideInInspector]
     public AudioClip[] settingClips = new AudioClip[3];
@@ -79,6 +82,11 @@ public class Database : MonoBehaviour
 
     void LoadData()
     {
+        // Tutorials
+        for (int i = 0; i < 28; i++)
+        {
+            tutorialClip[i] = Resources.Load("Instruction/Tutorials/" + i) as AudioClip;
+        }
         //general
         settingClips[0] = Resources.Load("Instruction/earphone_hint") as AudioClip;
         settingClips[1] = Resources.Load("Instruction/orient_hint") as AudioClip;

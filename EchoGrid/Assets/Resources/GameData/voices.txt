@@ -3,26 +3,11 @@ Begin
 2sec_silence
 1sec_silence
 Welcome to echo adventure, in this game you are in a dark maze, in order to escape, you will learn to use echolocation to navigate
-Let's start off learning a few sound cues
-To hear an echo, tap the screen
+Swipe up to move forward
 IN
 at(s,s)_T_T_OTHER
 1sec_silence
-Good!
-The echoes you hear will give you information about your surroundings
 Currently we are in a straight hallway
-To open the pause menu, press two fingers on the screen and hold
-Swipe up to move forward
-Inend
-IN
-at(n,s)_T_F_RIGHT
-1sec_silence
-Good!
-1sec_silence
-Tap again to hear another echo
-1sec_silence
-Notice how the echo has changed as you move forward
-Keep moving forward
 Inend
 RETURN
 You are back at the entrance, please turn around
@@ -62,7 +47,6 @@ IN
 at(9,9)_T_F_RIGHT
 Now you are at a right turn
 Notice that the echo is louder in your left ear
-Turn turn right, rotate two fingers clockwise, like you are turning a dial
 Inend
 IN
 at(9,9)_T_F_BACK

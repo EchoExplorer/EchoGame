@@ -226,6 +226,9 @@ public class BoardManager : MonoBehaviour
     bool resest_audio = true;
     bool skip_clip = false;
 
+    // Intercept the game
+    bool hasIntercepted;
+
     //Clears our list gridPositions and prepares it to generate a new board.
     void InitialiseList()
     {
@@ -391,7 +394,7 @@ public class BoardManager : MonoBehaviour
     {
         left_start_pt = newf;
     }
-
+    
     /// <summary>
     /// At every frame, the player's position and game state is used to determine if certain sounds should be played.
     /// </summary>
@@ -400,6 +403,23 @@ public class BoardManager : MonoBehaviour
 
         float threshold = 0.001f;
         Vector2 idx_pos = get_idx_from_pos(player_ref.transform.position);
+        // Intercept the game on specific levels
+        // Level 1
+        if (!hasIntercepted && cur_level == 1)
+        {
+            player_script.Intercept(1);
+            hasIntercepted = true;
+        }
+        // Level 3
+        Vector2 level3_corner = new Vector2(9, 9);
+        if (!hasIntercepted && cur_level == 3 && (idx_pos - level3_corner).magnitude <= threshold)
+        {
+            player_script.Intercept(3);
+            hasIntercepted = true;
+        }
+        if (hasIntercepted && player_script.intercepted)
+            return;
+
         bool ingame_playing = false;
         //play sounds according to positions
         if ((idx_pos - get_idx_from_pos(exitPos)).magnitude <= threshold)
@@ -433,7 +453,9 @@ public class BoardManager : MonoBehaviour
                     {
                         ingame_playing = true;
                         if (level_voices.ingame_cur_clip[i] < level_voices.ingame[i].clips.Count)
+                        {
                             level_voices.ingame_cur_clip[i] = play_audio(level_voices.ingame[i].clips, level_voices.ingame_cur_clip[i], true);
+                        }
                         else
                             ingame_playing = false;
                     }
@@ -560,6 +582,7 @@ public class BoardManager : MonoBehaviour
         //give the right instruction to play
         cur_clip = level;
         cur_level = level;
+        hasIntercepted = false;
 
         //build level
         load_level_from_file("GameData/levels", level);

@@ -1301,8 +1301,13 @@ public class Player : MovingObject
             localRecordWritten = true;
         }
 
-        Vector3 dir = Vector3.zero;
+        if (intercepted && eh.isActivate())
+        {
+            if (!InterceptMission(eh.getEventData())) 
+                return;
+        }
 
+        Vector3 dir = Vector3.zero;
         //Check if we are running either in the Unity editor or in a standalone build.
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
         //Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction\
@@ -1713,5 +1718,241 @@ public class Player : MovingObject
     protected override void OnMove()
     {
 
+    }
+
+
+    
+
+    public bool intercepted = false;
+    List<AudioClip> clips;
+    public void Intercept(int level)
+    {
+        if (curLevel != level) return;
+        intercepted = true;
+        switch (level)
+        {
+            case 1:
+                /*
+                This tutorial will go over gestures used in the game. When making gestures, please try to keep them in the middle of the screen.
+                The first gesture is tapping, which generates a click and echo based on the player's location in the game.
+                PlayEcho()
+                This sound will change according to your surroundings.
+                Please tap the screen 3 times, holding down for about half a second, and pausing about a second between taps.
+                */
+                clips = new List<AudioClip>() { Database.instance.tutorialClip[0], Database.instance.tutorialClip[1], Database.instance.tutorialClip[2], Database.instance.tutorialClip[3]};
+                SoundManager.instance.PlayClips(clips, 0, () => PlayEcho(), 2);
+                level1_remaining_taps = 3;
+                break;
+            case 3:
+                /*
+                This is level 3. In this level there is a right corner you must navigate to reach the end. Notice how the echo changes as you approach corners.
+                You have reached the corner! As you may have heard the, echo changed at this point. In order to proceed, you will need to rotate yourself to move without hitting a wall. To rotate yourself, tap and hold with two fingers and rotate them clockwise to turn right or counter-clockwise to turn left. After rotating in a direction, you will hear a sound like this in the ear corresponding to the direction you rotated.
+                Tapping to hear an echo after rotating could be helpful in determining where you need to go and or if you should keep turning.
+                Please rotate to the right or left 4 times, pausing about a second between rotations. This will bring you back to the same position you started at.
+                */
+                clips = new List<AudioClip>() { Database.instance.tutorialClip[4], Database.instance.tutorialClip[5], Database.instance.tutorialClip[6], Database.instance.tutorialClip[7] };
+                SoundManager.instance.PlayClips(clips);
+                level3_remaining_turns = 4;
+                break;
+            default:
+                break;
+        }
+    }
+    int level1_remaining_taps = 3;
+    int level1_remaining_ups = 3;
+    int level1_remaining_menus = 2;
+    int level3_remaining_turns = 4;
+    enum InterceptAction {NONE, UP, DOWN, LEFT, RIGHT, TAP, DOUBLE_TAP, TRIPLE_TAP, MENU};
+    bool InterceptMission(InputEvent ie)
+    {
+        InterceptAction action = InterceptAction.NONE;
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
+        switch (ie.keycode)
+        {
+            case KeyCode.RightArrow:
+                action = InterceptAction.RIGHT;
+                break;
+            case KeyCode.LeftArrow:
+                action = InterceptAction.LEFT;
+                break;
+            case KeyCode.UpArrow:
+                action = InterceptAction.UP;
+                break;
+            case KeyCode.DownArrow:
+                action = InterceptAction.DOWN;
+                break;
+            case KeyCode.F:
+                action = InterceptAction.TAP;
+                break;
+            case KeyCode.E:
+                action = InterceptAction.DOUBLE_TAP;
+                break;
+            case KeyCode.G:
+                action = InterceptAction.TRIPLE_TAP;
+                break;
+            case KeyCode.R:
+                return true;
+            case KeyCode.M:
+                action = InterceptAction.MENU;
+                break;
+            default:
+                break;
+        }
+#elif UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
+		if ((ie.touchNum == 1)&&(ie.hasDir())){//a swipe
+            if(ie.isUp) {
+                action = InterceptAction.UP;
+            }
+            else if(ie.isDown) {
+                action = InterceptAction.DOWN;
+            }
+		} else if ((ie.touchNum == 2) && (!ie.hasDir())){
+			if(ie.elapsedTime >= Const.MENU_TOUCH_TIME) {
+				if(TriggermenuTimer.CDfinish()) {//turn on/off pause menu
+					action = InterceptAction.MENU;
+					TriggermenuTimer.reset();
+				}
+			}
+		} else if ((ie.isRotate)&&(ie.hasDir()) ){
+			if(TriggerrotateTimer.CDfinish()){
+				if(ie.isLeft){
+					action = InterceptAction.LEFT;
+				}else if(ie.isRight){
+					action = InterceptAction.RIGHT;
+				}
+				TriggerrotateTimer.reset();
+			}
+		} else if((ie.touchNum == 1)&&(!ie.hasDir()) ){//a tap
+			if (ie.cumulativeTouchNum == 1 && ie.elapsedTime > Const.opsToEchoCD && ie.elapsedTime < Const.opsToEchoCD + 0.02f && TriggerechoTimer.CDfinish()){
+				action = InterceptAction.TAP;
+                TriggerechoTimer.reset();
+			} else if(ie.cumulativeTouchNum == 2){
+				action = InterceptAction.DOUBLE_TAP;
+			} else if(ie.cumulativeTouchNum == 3){
+				action = InterceptAction.TRIPLE_TAP;
+			}
+		}
+#endif
+
+        switch (curLevel)
+        {
+            case 1:
+                if (level1_remaining_taps > 0)
+                {
+                    if (action == InterceptAction.TAP)
+                    {
+                        level1_remaining_taps--;
+                        if (level1_remaining_taps > 0)
+                            SoundManager.instance.PlayVoice(Database.instance.tutorialClip[8 + 2 - level1_remaining_taps], true); // This tap was correct. Please tap X more times.
+                    }
+                    else
+                    {
+                        // This tap was too long/short. Please tap again.
+                        SoundManager.instance.PlayVoice(Database.instance.tutorialClip[10], true);
+                    }
+                    if (level1_remaining_taps <= 0)
+                    {
+                        /*
+                        Good job! now we will move on to swiping.
+                        Swiping upward with three fingers moves you forward in the game and generates a sound like this.
+                        SoundManager.instance.PlaySingle(Database.instance.swipeAhead)
+                        Please swipe upward 3 times, pausing about a second between swipes.
+                        */
+                        clips = new List<AudioClip> { Database.instance.tutorialClip[11], Database.instance.tutorialClip[12], Database.instance.tutorialClip[13] };
+                        SoundManager.instance.PlayClips(clips, 0, () => SoundManager.instance.PlaySingle(Database.instance.swipeAhead), 2);
+                        level1_remaining_ups = 3;
+                    }
+                }
+                else
+                {
+                    if (level1_remaining_ups > 0)
+                    {
+                        if (action == InterceptAction.UP)
+                        {
+                            level1_remaining_ups--;
+                            if (level1_remaining_ups > 0)
+                                SoundManager.instance.PlayVoice(Database.instance.tutorialClip[14 + 2 - level1_remaining_ups], true); // This swipe was correct. Please swipe X more times.
+                        }
+                        else
+                        {
+                            // This swipe's distance was too long/short. Please swipe again.
+                            SoundManager.instance.PlayVoice(Database.instance.tutorialClip[16], true);
+                        }
+                        if (level1_remaining_ups <= 0)
+                        {
+                            /*
+                            Good job! now we will move back to the game!
+                            Tapping the screen with two fingers and holding for 2 seconds opens the pause menu.
+                            */
+                            clips = new List<AudioClip> { Database.instance.tutorialClip[17], Database.instance.tutorialClip[18] };
+                            SoundManager.instance.PlayClips(clips);
+                            level1_remaining_menus = 2;
+                        }
+                    }
+                    else
+                    {
+                        if (level1_remaining_menus > 0)
+                        {
+                            if (action == InterceptAction.MENU)
+                            {
+                                if (level1_remaining_menus == 2)
+                                {
+                                    level1_remaining_menus--;
+                                    // You are now in the pause menu. To get a hint, swipe up. To restart the level, swipe left. To go to the main menu, swipe right. To close the pause menu, tap and hold with two fingers for 2 seconds. Please close the pause menu now.
+                                    SoundManager.instance.PlayVoice(Database.instance.tutorialClip[19], true);
+                                }
+                                else if (level1_remaining_menus == 1)
+                                {
+                                    level1_remaining_menus--;
+                                    // Congratulations! You have reached the exit. Once you believe you have reached the exit in a level, triple tapping will move you to the next level and you will hear a congratulatory sound like this.
+                                    // Finish SOUND
+                                    // Triple tapping is quicker than tapping to get an echo. You should tap similar to this.
+                                    // TODO: TRIPLE TAB ECHO?
+                                    // Now try triple tapping to move on to the next level.
+                                    clips = new List<AudioClip> { Database.instance.tutorialClip[20], Database.instance.winSound, Database.instance.tutorialClip[21], Database.instance.inputSFX, Database.instance.tutorialClip[22] };
+                                    SoundManager.instance.PlayClips(clips, 0);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (action == InterceptAction.TRIPLE_TAP)
+                            {
+                                SoundManager.instance.PlaySingle(Database.instance.inputSFX);
+                                quitInterception();
+                            }
+                        }
+                    }
+                }
+                break;
+            case 3:
+                // Left turn or right turn
+                if (action == InterceptAction.LEFT || action == InterceptAction.RIGHT)
+                {
+                    level3_remaining_turns--;
+                    // This rotation was correct. Please rotate X more times.
+                    if (level3_remaining_turns > 0)
+                        SoundManager.instance.PlayVoice(Database.instance.tutorialClip[23 + 3 - level3_remaining_turns], true);
+                }
+                else
+                {
+                    //This rotation was not correct/in the same direction. Please rotate again.
+                    SoundManager.instance.PlayVoice(Database.instance.tutorialClip[26], true);
+                }
+                if (level3_remaining_turns <= 0)
+                {
+                    // Good job! now we will move back to the game. Try and get around the corner!
+                    SoundManager.instance.PlayClips(new List<AudioClip> { Database.instance.tutorialClip[27] }, 0, () => quitInterception(), 1 );
+                }
+                break;
+            default:
+                break;
+        }
+        return false;
+    }
+
+    private void quitInterception()
+    {
+        intercepted = false;
     }
 }

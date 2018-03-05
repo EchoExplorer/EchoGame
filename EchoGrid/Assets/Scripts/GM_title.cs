@@ -28,7 +28,7 @@ public class GM_title : MonoBehaviour
     /// </summary>
     void Start()
     {
-        reset_audio = false;
+        reset_audio = true;
         eh = new eventHandler(InputModule.instance);
     }
 

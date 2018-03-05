@@ -80,7 +80,6 @@ public class GM_TC : MonoBehaviour
     //bool reset_audio = true;
     bool plugin_earphone = false;
     bool orient_correction = false;
-    bool settings_done = false;
     bool clip0_reset=true;
     bool clip1_reset = true;
     bool clip2_reset = true;
@@ -91,7 +90,7 @@ public class GM_TC : MonoBehaviour
     {
 
         if(!plugin_earphone){
-            if (SoundManager.instance.PlayVoice(Database.instance.settingClips[0], clip0_reset))
+            if (SoundManager.instance.PlayVoice(Database.instance.settingClips[0], clip0_reset, 1))
             {
                 clip0_reset = false;
             }
@@ -106,9 +105,12 @@ public class GM_TC : MonoBehaviour
             }
             return;
 
-        } else{
-            settings_done = true;
-        }
+		} else {
+			if (SoundManager.instance.PlayVoice(Database.instance.settingClips[2], clip2_reset))
+			{
+				clip2_reset = false;
+			}
+		}
 
         if (finished_reading)
         {
@@ -195,13 +197,12 @@ public class GM_TC : MonoBehaviour
                 if (!plugin_earphone)
                 {
                     plugin_earphone = true;
-                }
+				}
                     //If settings 
-                else if (settings_done)
+                else
                 {
-                  SceneManager.LoadScene("Title_Screen");
-                  SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
-                 
+                  	SceneManager.LoadScene("Title_Screen");
+                  	SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
                 }
             }
         }
@@ -221,11 +222,11 @@ public class GM_TC : MonoBehaviour
                     plugin_earphone = true;
                 }
                     //If settings 
-                else if (settings_done)
+                else
                 {
-                  Utilities.writefile("consentRecord", "1");
-                  SceneManager.LoadScene("Title_Screen");
-                  SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
+                  	Utilities.writefile("consentRecord", "1");
+                  	SceneManager.LoadScene("Title_Screen");
+                  	SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
                  
                 }
             }

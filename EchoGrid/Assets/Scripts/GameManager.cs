@@ -162,7 +162,8 @@ public class GameManager : MonoBehaviour
         //Set doingSetup to false allowing player to move again.
         doingSetup = false;
         playersTurn = true;
-        SoundManager.instance.PlayVoice((AudioClip)Resources.Load("instructions/Level Start"), true);
+        if (!GameObject.Find("Player").GetComponent<Player>().intercepted)
+            SoundManager.instance.PlayVoice((AudioClip)Resources.Load("instructions/Level Start"), true);
     }
 
     /// <summary>

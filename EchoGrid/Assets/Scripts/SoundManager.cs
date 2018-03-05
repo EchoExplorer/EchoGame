@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System;
 
 /// <summary>
 /// A central manager for playing voice instrctions, certain sound effects and echo
@@ -120,16 +122,38 @@ public class SoundManager : MonoBehaviour
     /// <summary>
     /// Plays an instruction voice.
     /// </summary>
-    public bool PlayVoice(AudioClip clip, bool reset = false)
+	public bool PlayVoice(AudioClip clip, bool reset = false, float balance = 0)
     {
         if ((voiceSource.isPlaying == false) || reset)
         {
             voiceSource.clip = clip;
-            //Play the clip.
+			// Set balance (-1 to 1 from left to right, default 0)
+			voiceSource.panStereo = balance;
+			//Play the clip.
             voiceSource.Play();
             return true;
         }
 
         return false;
+    }
+
+    // Play a list of clips in their order with 0.5 seconds pausing. Callback function and its index allowed.
+    public void PlayClips(List<AudioClip> clips, int current = 0, Action callback = null, int callback_index = 0)
+    {
+        if (current == callback_index && callback != null)
+            callback();
+        AudioClip clip = clips[current];
+        float clipLength = clip.length;
+        PlayVoice(clip, true);
+        StartCoroutine(WaitForLength(clipLength, clips, current, callback, callback_index));
+    }
+
+    private IEnumerator WaitForLength(float clipLength, List<AudioClip> clips, int current, Action callback, int callback_index)
+    {
+        yield return new WaitForSeconds(clipLength + 0.5f);
+        if (current + 1 < clips.Count && !voiceSource.isPlaying && voiceSource.clip == clips[current])
+            PlayClips(clips, current + 1, callback, callback_index);
+        if (callback_index >= clips.Count && callback != null)
+            callback();
     }
 }

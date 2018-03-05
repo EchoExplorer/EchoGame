@@ -61,7 +61,7 @@ public abstract class MovingObject : MonoBehaviour
             // SmoothMovement() is DISABLED due to a FATAL flaw:
             // The position of the moving object is not thread safe. When one movement is still on processing, 
             // an immediate second command of movement will calculate its "end position" based on
-            // the current temporary position, which results into an expected end position.
+            // the current temporary position, which results into an unexpected end position.
             rb2D.MovePosition(end);
 
             //Return true to say that Move was successful
