@@ -14,6 +14,9 @@ public struct InputEvent
     public bool isDown;
     public int touchNum;
     public int cumulativeTouchNum;//within a short period of time, how many time user touches
+	public bool isSingleTap;
+	public bool isDoubleTap;
+	public bool isTripleTap;
     public bool isRotate;
     public KeyCode keycode;
     public float elapsedTime;//how long the user has hold
@@ -24,7 +27,7 @@ public struct InputEvent
 	public void init()
     {
         isRight = false; isLeft = false; isUp = false; isDown = false;
-        touchNum = 0; isRotate = false; keycode = KeyCode.None;
+		touchNum = 0; isSingleTap = false; isDoubleTap = false; isTripleTap = false; isRotate = false; keycode = KeyCode.None;
         elapsedTime = 0;
         cumulativeTouchNum = 0;
     }
@@ -43,7 +46,7 @@ public struct InputEvent
     /// <returns></returns>
 	public bool hasEffectiveInput()
     {
-        return isRight || isLeft || isUp || isDown || isRotate || (keycode != KeyCode.None) || (touchNum > 0) || (cumulativeTouchNum > 0);
+        return isRight || isLeft || isUp || isDown || isSingleTap || isDoubleTap || isTripleTap || isRotate || (keycode != KeyCode.None) || (touchNum > 0) || (cumulativeTouchNum > 0);
     }
 }
 
@@ -347,7 +350,7 @@ public class InputModule : MonoBehaviour
 					// update TouchTapCount part 2
 					if ((Time.time - multiTapStartTime) < multiTapCD) 
 					{
-						if ((tapRegister == 3) && (TouchTapCount <= 3)) 
+						if ((tapRegister == 3) && (TouchTapCount <= 6)) 
 						{
 							TouchTapCount += tapRegister;	
 						}
@@ -365,11 +368,33 @@ public class InputModule : MonoBehaviour
 			}
 		}
 
-		if (Input.touchCount == 0) 
+		if (Input.touchCount > 0)
 		{
-			if (tapRegister == 3)
+			if (Input.touchCount == 3)
 			{
-				debugInputInfo.text = "Registered 3 fingers";
+				touchDuration += Time.deltaTime;
+				touchDurationInfo.text = "Duration = " + touchDuration;
+			}
+		}
+		else if (Input.touchCount == 0) 
+		{
+			if ((tapRegister == 3) && (touchDuration >= 0.02f) && (touchDuration < 1.0f))
+			{
+				if ((TouchTapCount == 3) && (ievent.isDoubleTap == false) && (ievent.isTripleTap == false)) 
+				{
+					ievent.isSingleTap = true;
+					debugInputInfo.text = "Single tap registered";
+				}
+				else if ((TouchTapCount == 6) && (ievent.isSingleTap == false) && (ievent.isTripleTap == false))
+				{
+					ievent.isDoubleTap = true;
+					debugInputInfo.text = "Double tap registered - does nothing";
+				}
+				else if ((TouchTapCount == 9) && (ievent.isSingleTap == false) && (ievent.isDoubleTap == false))
+				{
+					ievent.isTripleTap = true;
+					debugInputInfo.text = "Triple tap registered";
+				}
 			}
 
 			touchDuration = 0.0f;
