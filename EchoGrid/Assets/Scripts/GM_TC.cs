@@ -78,40 +78,12 @@ public class GM_TC : MonoBehaviour
 
 
     //bool reset_audio = true;
-    bool plugin_earphone = false;
-    bool orient_correction = false;
-    bool clip0_reset=true;
-    bool clip1_reset = true;
-    bool clip2_reset = true;
+    
     /// <summary>
     /// Plays voice instructions concerning the terms and conditions page.
     /// </summary>
 	void play_audio()
     {
-
-        if(!plugin_earphone){
-            if (SoundManager.instance.PlayVoice(Database.instance.settingClips[0], clip0_reset, 1))
-            {
-                clip0_reset = false;
-            }
-            return;
-        }
-        if (!Utilities.isDeviceLandscape() && !orient_correction )
-        {//not landscape!
-            orient_correction = true;
-            if (SoundManager.instance.PlayVoice(Database.instance.settingClips[1], clip1_reset))
-            {
-                clip1_reset = false;
-            }
-            return;
-
-		} else {
-			if (SoundManager.instance.PlayVoice(Database.instance.settingClips[2], clip2_reset))
-			{
-				clip2_reset = false;
-			}
-		}
-
         if (finished_reading)
         {
             //if (SoundManager.instance.PlayVoice (clips [cur_clip])) {
@@ -188,48 +160,24 @@ public class GM_TC : MonoBehaviour
 
         //Check if we are running either in the Unity editor or in a standalone build.
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
+        SceneManager.LoadScene("Title_Screen");
+        SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
         if (eh.isActivate())
         {
             InputEvent ie = eh.getEventData();
-            if (ie.keycode==KeyCode.F)
-            {   
-                //First tap means plgin earphone correctly
-                if (!plugin_earphone)
-                {
-                    plugin_earphone = true;
-				}
-                    //If settings 
-                else
-                {
-                  	SceneManager.LoadScene("Title_Screen");
-                  	SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
-                }
-            }
         }
 
         //Check if we are running on iOS, Android, Windows Phone 8 or Unity iPhone
 #elif UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
+        Utilities.writefile("consentRecord", "1");
+        SceneManager.LoadScene("Title_Screen");
+        SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
         Screen.orientation = ScreenOrientation.Landscape;
          if (eh.isActivate())
         {
             InputEvent ie = eh.getEventData();
-            if (ie.touchNum>=1)
-            {   
-                //First tap means plgin earphone correctly
-                if (!plugin_earphone)
-                {
-                    plugin_earphone = true;
-                }
-                    //If settings 
-                else
-                {
-                  	Utilities.writefile("consentRecord", "1");
-                  	SceneManager.LoadScene("Title_Screen");
-                  	SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
-                 
-                }
-            }
+            
         }
 
 

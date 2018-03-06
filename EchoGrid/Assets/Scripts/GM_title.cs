@@ -28,13 +28,46 @@ public class GM_title : MonoBehaviour
     /// </summary>
     void Start()
     {
-        reset_audio = true;
         eh = new eventHandler(InputModule.instance);
     }
 
+    bool plugin_earphone = false;
+    bool second_tap = false;
+    bool orient_correction = false;
+    bool clip0_reset = true;
+    bool clip1_reset = true;
+    bool clip2_reset = true;
     void play_audio()
     {
-        if (Utilities.isDeviceLandscape() && !listenToCmd)
+        if (!plugin_earphone)
+        {
+            if (SoundManager.instance.PlayVoice(Database.instance.settingClips[0], clip0_reset, 1))
+            {
+                clip0_reset = false;
+            }
+            return;
+        }
+        if (!orient_correction)
+        {
+            if (!Utilities.isDeviceLandscape())
+            {//not landscape!
+                if (SoundManager.instance.PlayVoice(Database.instance.settingClips[1], clip1_reset))
+                {
+                    clip1_reset = false;
+                }
+                return;
+
+            }
+            else
+            {
+                orient_correction = true;
+                if (SoundManager.instance.PlayVoice(Database.instance.settingClips[2], clip2_reset))
+                {
+                    clip2_reset = false;
+                }
+            }
+        }
+        if (!listenToCmd)
         {
             if (SoundManager.instance.PlayVoice(Database.instance.TitleClips[cur_clip], reset_audio))
             {
@@ -44,7 +77,7 @@ public class GM_title : MonoBehaviour
                     cur_clip = 0;
             }
         }
-        else if (listenToCmd)
+        else
         {
             if (SoundManager.instance.PlayVoice(Database.instance.TitleCmdlistClips[cmd_cur_clip], reset_audio))
             {
@@ -54,16 +87,6 @@ public class GM_title : MonoBehaviour
                     cmd_cur_clip = 0;
             }
         }
-        /*se
-        {//not landscape!
-            if (SoundManager.instance.PlayVoice(Database.instance.oritClip[orti_clip], reset_audio))
-            {
-                reset_audio = false;
-                orti_clip += 1;
-                if (orti_clip >= Database.instance.oritClip.Length)
-                    orti_clip = 0;
-            }
-        }*/
     }
 
     /// <summary>
@@ -100,6 +123,14 @@ public class GM_title : MonoBehaviour
             InputEvent ie = eh.getEventData();
             switch (ie.keycode)
             {
+                case KeyCode.F:
+                    if (!plugin_earphone) plugin_earphone = true;
+                    else if (!second_tap)
+                    {
+                        second_tap = true;
+                        reset_audio = true;
+                    }
+                    break;
                 case KeyCode.RightArrow:
                     inputDirection = Direction.RIGHT;
                     break;
@@ -124,20 +155,36 @@ public class GM_title : MonoBehaviour
 
 		if(eh.isActivate() && doneTesting) {  // isActivate() has side effects so this order is required...
 			InputEvent ie = eh.getEventData();
-			if( (ie.touchNum == 1)&&(!ie.isRotate) ){
-				if (ie.isRight){
-					inputDirection = Direction.RIGHT;
-				} else if (ie.isLeft){
-					inputDirection = Direction.LEFT;
-				} else if (ie.isUp){
-					inputDirection = Direction.UP;
-				} else if (ie.isDown){
-					inputDirection = Direction.DOWN;
-				}
-			}
+            if (!plugin_earphone) {
+                if (ie.touchNum>=1)
+                {
+                    plugin_earphone = true;
+                    reset_audio = true;
+                }
+            }
+            else if (!second_tap){
+                if (ie.touchNum>=1)
+                {
+                    second_tap = true;
+                }
+            }
+            else
+            {
+                if( (ie.touchNum == 1)&&(!ie.isRotate) ){
+				    if (ie.isRight){
+					    inputDirection = Direction.RIGHT;
+				    } else if (ie.isLeft){
+					    inputDirection = Direction.LEFT;
+				    } else if (ie.isUp){
+					    inputDirection = Direction.UP;
+				    } else if (ie.isDown){
+					    inputDirection = Direction.DOWN;
+				    }
+			    }
+            }
 		}
 #endif //End of mobile platform dependendent compilation section started above with #elif
-
+        if (!plugin_earphone || !second_tap) return;
         switch (inputDirection)
         {
             case Direction.RIGHT:

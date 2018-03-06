@@ -1746,8 +1746,8 @@ public class Player : MovingObject
                 This sound will change according to your surroundings.
                 Please tap the screen 3 times, holding down for about half a second, and pausing about a second between taps.
                 */
-                clips = new List<AudioClip>() { Database.instance.tutorialClip[0], Database.instance.tutorialClip[1], Database.instance.tutorialClip[2], Database.instance.tutorialClip[3]};
-                SoundManager.instance.PlayClips(clips, 0, () => PlayEcho(), 2);
+                clips = new List<AudioClip>() { Database.instance.tutorialClip[0], Database.instance.tutorialClip[1], Database.instance.TitletoMainClips[0], Database.instance.TitletoMainClips[0], Database.instance.tutorialClip[2], Database.instance.tutorialClip[3]};
+                SoundManager.instance.PlayClips(clips, 0, () => PlayEcho(), 3);
                 level1_remaining_taps = 3;
                 break;
             case 3:
@@ -1841,6 +1841,25 @@ public class Player : MovingObject
 		}
 #endif
 
+        switch (action)
+        {
+            case InterceptAction.UP:
+            case InterceptAction.DOWN:
+                SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
+                break;
+            case InterceptAction.LEFT:
+                SoundManager.instance.PlaySingle(Database.instance.swipeLeft);
+                break;
+            case InterceptAction.RIGHT:
+                SoundManager.instance.PlaySingle(Database.instance.swipeRight);
+                break;
+            case InterceptAction.TAP:
+                PlayEcho();
+                break;
+            default:
+                break;
+        }
+
         switch (curLevel)
         {
             case 1:
@@ -1865,8 +1884,8 @@ public class Player : MovingObject
                         SoundManager.instance.PlaySingle(Database.instance.swipeAhead)
                         Please swipe upward 3 times, pausing about a second between swipes.
                         */
-                        clips = new List<AudioClip> { Database.instance.tutorialClip[11], Database.instance.tutorialClip[12], Database.instance.tutorialClip[13] };
-                        SoundManager.instance.PlayClips(clips, 0, () => SoundManager.instance.PlaySingle(Database.instance.swipeAhead), 2);
+                        clips = new List<AudioClip> { Database.instance.tutorialClip[11], Database.instance.tutorialClip[12], Database.instance.TitletoMainClips[0], Database.instance.TitletoMainClips[0], Database.instance.TitletoMainClips[0], Database.instance.TitletoMainClips[0], Database.instance.tutorialClip[13] };
+                        SoundManager.instance.PlayClips(clips, 0, () => SoundManager.instance.PlaySingle(Database.instance.swipeAhead), 4);
                         level1_remaining_ups = 3;
                     }
                 }
