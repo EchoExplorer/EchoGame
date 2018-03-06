@@ -17,6 +17,8 @@ public struct InputEvent
 	public bool isSingleTap;
 	public bool isDoubleTap;
 	public bool isTripleTap;
+	public bool isHold;
+	public bool isSwipe;
     public bool isRotate;
     public KeyCode keycode;
     public float elapsedTime;//how long the user has hold
@@ -27,8 +29,10 @@ public struct InputEvent
 	public void init()
     {
         isRight = false; isLeft = false; isUp = false; isDown = false;
-		touchNum = 0; isSingleTap = false; isDoubleTap = false; isTripleTap = false; isRotate = false; keycode = KeyCode.None;
+		isSingleTap = false; isDoubleTap = false; isTripleTap = false; 
+		isHold = false; isSwipe = false; isRotate = false; keycode = KeyCode.None;
         elapsedTime = 0;
+		touchNum = 0; 
         cumulativeTouchNum = 0;
     }
 
@@ -46,7 +50,7 @@ public struct InputEvent
     /// <returns></returns>
 	public bool hasEffectiveInput()
     {
-        return isRight || isLeft || isUp || isDown || isSingleTap || isDoubleTap || isTripleTap || isRotate || (keycode != KeyCode.None) || (touchNum > 0) || (cumulativeTouchNum > 0);
+        return isRight || isLeft || isUp || isDown || isSingleTap || isDoubleTap || isTripleTap || isHold || isSwipe || isRotate || (keycode != KeyCode.None) || (touchNum > 0) || (cumulativeTouchNum > 0);
     }
 }
 
@@ -59,22 +63,17 @@ public class InputModule : MonoBehaviour
     const float TOUCH_TIME = 0.02f;
     float minSwipeVerticalDist = Screen.width * 0.07f;
 	float minSwipeHorizontalDist = Screen.height * 0.10f;
+	float minHoldVerticalDist = Screen.width * 0.04f;
+	float minHoldHorizontalDist = Screen.height * 0.05f;
     const float multiTapCD = 0.4f;//make multitap easier, num of tap made within this time period
 	const float swipeGestCD = 0.3f;
     const float rotateGestCD = 0.3f;
 
-    //storage needed for recognizing different input
-    bool hasrotated = false;
-    bool swp_lock = false;//stop very fast input
-    bool isSwipe = false;
     int TouchTapCount;
-    int numTouchlastframe = 0;
     float touchTime = 0.0f;
-    float rotateGestStartTime;
-    float multiTapStartTime;
-    Vector2 swipeStartPlace = new Vector2();
-    Vector2 firstSwipePos = new Vector2();
-    Vector2 touchOrigin = new Vector2();
+	float multiTapStartTime = 0.0f;
+	float swipeGestStartTime = 0.0f;
+    float rotateGestStartTime = 0.0f;
 
     List<eventHandler> listeners = new List<eventHandler>();
     List<CDTimer> cdtimers = new List<CDTimer>();
@@ -99,6 +98,9 @@ public class InputModule : MonoBehaviour
 	int tapRegister = 0;
 	bool[] hasRegistered = {false, false, false};
 
+	int singleTapTimes = 0;
+	int doubleTapTimes = 0;
+	int tripleTapTimes = 0;
 	int swipeLeftTimes = 0;
 	int swipeRightTimes = 0;
 	int swipeUpTimes = 0;
@@ -210,9 +212,9 @@ public class InputModule : MonoBehaviour
 		int numTouches = Input.touchCount;
 		ievent.touchNum = numTouches;
 
-		foreach (Touch thisTouch in Input.touches) 
+		foreach(Touch thisTouch in Input.touches) 
 		{
-			if (thisTouch.fingerId == 0) 
+			if (thisTouch.fingerId == 0)
 			{
 				if (hasRegistered[0] == false) 
 				{
@@ -246,7 +248,7 @@ public class InputModule : MonoBehaviour
 					// update TouchTapCount part 2
 					if ((Time.time - multiTapStartTime) < multiTapCD) 
 					{
-						if ((tapRegister == 3) && (TouchTapCount <= 3)) 
+						if ((tapRegister == 3) && (TouchTapCount <= 6)) 
 						{
 							TouchTapCount += tapRegister;
 						}
@@ -262,7 +264,6 @@ public class InputModule : MonoBehaviour
 					touch0Info.text = "Cannot compute";
 				}
 			}
-
 			else if (thisTouch.fingerId == 1) 
 			{
 				if (hasRegistered[1] == false) 
@@ -296,7 +297,7 @@ public class InputModule : MonoBehaviour
 					// update TouchTapCount part 2
 					if ((Time.time - multiTapStartTime) < multiTapCD) 
 					{
-						if ((tapRegister == 3) && (TouchTapCount <= 3)) 
+						if ((tapRegister == 3) && (TouchTapCount <= 6)) 
 						{
 							TouchTapCount += tapRegister;	
 						}
@@ -359,41 +360,174 @@ public class InputModule : MonoBehaviour
 				}
 				else if (thisTouch.phase == TouchPhase.Canceled) 
 				{
-					touch1Info.text = "touch1 canceled";
+					touch2Info.text = "touch2 canceled";
 				}
 				else 
 				{
-					touch1Info.text = "Cannot compute";
+					touch2Info.text = "Cannot compute";
 				}
 			}
+
+			ievent.elapsedTime = Time.time - touchTime;
 		}
 
-		if (Input.touchCount > 0)
+		if (Input.touchCount > 0) 
 		{
-			if (Input.touchCount == 3)
+			if (Input.touchCount == 3) 
 			{
-				touchDuration += Time.deltaTime;
+				touchDuration = touchDuration + Time.deltaTime;
 				touchDurationInfo.text = "Duration = " + touchDuration;
-			}
+
+				if (touchDuration >= 1.0f) 
+				{
+					float x0 = touchEnd[0].x - touchStart[0].x;
+					float y0 = touchEnd[0].y - touchStart[0].y;
+					float x1 = touchEnd[1].x - touchStart[1].x;
+					float y1 = touchEnd[1].y - touchStart[1].y;
+					float x2 = touchEnd[2].x - touchStart[2].x;
+					float y2 = touchEnd[2].y - touchStart[2].y;
+
+					if ((Mathf.Abs(x0) <= minHoldHorizontalDist) && (Mathf.Abs(x1) <= minHoldHorizontalDist) && (Mathf.Abs(x2) <= minHoldHorizontalDist) && (Mathf.Abs(y0) <= minHoldVerticalDist) && (Mathf.Abs(y1) <= minHoldVerticalDist) && (Mathf.Abs(y2) <= minHoldVerticalDist))
+					{
+						ievent.isHold = true;
+						debugInputInfo.text = "Hold registered";	
+					}
+				}
+			}	
 		}
-		else if (Input.touchCount == 0) 
+
+		if (Input.touchCount == 0) 
 		{
-			if ((tapRegister == 3) && (touchDuration >= 0.02f) && (touchDuration < 1.0f))
+			// Check for single/double/triple taps.
+			if ((tapRegister == 3) && (touchDuration < 1.0f) && (ievent.isSwipe == false) && (ievent.isRotate == false)) 
 			{
-				if ((TouchTapCount == 3) && (ievent.isDoubleTap == false) && (ievent.isTripleTap == false)) 
+				if ((Time.time - multiTapStartTime) >= multiTapCD)
 				{
-					ievent.isSingleTap = true;
-					debugInputInfo.text = "Single tap registered";
+					if ((TouchTapCount == 3) && (ievent.isDoubleTap == false) && (ievent.isTripleTap == false)) 
+					{
+						ievent.isSingleTap = true;
+						singleTapTimes += 1;
+						debugInputInfo.text = "Single tapped " + singleTapTimes + " times";
+					
+						multiTapStartTime = Time.time;
+						TouchTapCount = 0;
+					}	
+					if ((TouchTapCount == 6) && (ievent.isSingleTap == false) && (ievent.isTripleTap == false))
+					{
+						ievent.isDoubleTap = true;
+						doubleTapTimes += 1;
+						debugInputInfo.text = "Double tapped " + doubleTapTimes + " times";
+
+						multiTapStartTime = Time.time;
+						TouchTapCount = 0;
+					}
+					if ((TouchTapCount == 9) && (ievent.isSingleTap == false) && (ievent.isDoubleTap == false))
+					{
+						ievent.isTripleTap = true;
+						tripleTapTimes += 1;
+						debugInputInfo.text = "Triple tapped " + tripleTapTimes + " times";
+
+						multiTapStartTime = Time.time;
+						TouchTapCount = 0;
+					}
 				}
-				else if ((TouchTapCount == 6) && (ievent.isSingleTap == false) && (ievent.isTripleTap == false))
+			}
+
+			// Check for swipe.
+			if ((tapRegister == 3) && (touchDuration < 1.0f) && (ievent.isSingleTap == false) && (ievent.isDoubleTap == false) && (ievent.isTripleTap == false) && (ievent.isRotate == false)) 
+			{
+				// If time passed since last swipe is equal to/past the swipe cooldown time.
+				if ((Time.time - swipeGestStartTime) >= swipeGestCD) 
 				{
-					ievent.isDoubleTap = true;
-					debugInputInfo.text = "Double tap registered - does nothing";
+					float x0 = touchEnd[0].x - touchStart[0].x;
+					float y0 = touchEnd[0].y - touchStart[0].y;
+					float x1 = touchEnd[1].x - touchStart[1].x;
+					float y1 = touchEnd[1].y - touchStart[1].y;
+					float x2 = touchEnd[2].x - touchStart[2].x;
+					float y2 = touchEnd[2].y - touchStart[2].y;
+
+					// Left or right swipe detected
+					if ((Mathf.Abs(x0) > Mathf.Abs(y0)) && (Mathf.Abs(x0) >= minSwipeHorizontalDist) && (Mathf.Abs(x1) > Mathf.Abs(y1)) && (Mathf.Abs(x1) >= minSwipeHorizontalDist) && (Mathf.Abs(x2) > Mathf.Abs(y2)) && (Mathf.Abs(x2) >= minSwipeHorizontalDist))
+					{
+						// Right swipe detected
+						if ((x0 > 0.0f) && (x1 > 0.0f) && (x2 > 0.0f))
+						{
+							ievent.isSwipe = true;
+							ievent.isRight = true;
+							swipeRightTimes += 1;
+							debugInputInfo.text = "Swiped right " + swipeRightTimes + " times";
+							swipeGestStartTime = Time.time;
+							tapRegister = 0;
+						}
+						// Left swipe detected
+						else if ((x0 < 0.0f) && (x1 < 0.0f) && (x2 < 0.0f))
+						{
+							ievent.isSwipe = true;
+							ievent.isLeft = true;
+							swipeLeftTimes += 1;
+							debugInputInfo.text = "Swiped left " + swipeLeftTimes + " times";
+							swipeGestStartTime = Time.time;
+							tapRegister = 0;
+						}
+					}
+					// Up or down swipe detected
+					else if ((Mathf.Abs(y0) > Mathf.Abs(x0)) && (Mathf.Abs(y0) >= minSwipeVerticalDist) && (Mathf.Abs(y1) > Mathf.Abs(x1)) && (Mathf.Abs(y1) >= minSwipeVerticalDist) && (Mathf.Abs(y2) > Mathf.Abs(x2)) && (Mathf.Abs(y2) >= minSwipeVerticalDist))
+					{
+						// Up swipe detected
+						if ((y0 > 0.0f) && (y1 > 0.0f) && (y2 > 0.0f))
+						{
+							ievent.isSwipe = true;
+							ievent.isUp = true;
+							swipeUpTimes += 1;
+							debugInputInfo.text = "Swiped up " + swipeUpTimes + " times";
+							swipeGestStartTime = Time.time;
+							tapRegister = 0;
+						}
+						// Down swipe detected
+						else if ((y0 < 0.0f) && (y1 < 0.0f) && (y2 < 0.0f))
+						{
+							ievent.isSwipe = true;
+							ievent.isDown = true;
+							swipeDownTimes += 1;
+							debugInputInfo.text = "Swiped down " + swipeDownTimes + " times";
+							swipeGestStartTime = Time.time;
+							tapRegister = 0;
+						}
+					}	
 				}
-				else if ((TouchTapCount == 9) && (ievent.isSingleTap == false) && (ievent.isDoubleTap == false))
+			}
+
+			// Check for rotation.
+			if ((tapRegister == 3) && (touchDuration < 1.0f) && (ievent.isSingleTap == false) && (ievent.isDoubleTap == false) && (ievent.isTripleTap == false) && (ievent.isSwipe == false))
+			{
+				// If time passed since last rotation is equal to/past the rotation cooldown time.
+				if ((Time.time - rotateGestStartTime) >= rotateGestCD)
 				{
-					ievent.isTripleTap = true;
-					debugInputInfo.text = "Triple tap registered";
+					VecStart = vecStart1 - vecStart2;
+					VecEnd = vecEnd1 - vecEnd2;
+					Vector3 cross = Vector3.Cross((Vector3)VecStart.normalized, (Vector3)VecEnd.normalized);
+					float crossPz = cross.z;
+
+					// Left rotation detected.
+					if ((crossPz >= 0) && (Mathf.Abs(crossPz) >= Screen.height*0.00015f))
+					{
+						ievent.isRotate = true;
+						ievent.isLeft = true;
+						rotateLeftTimes += 1;
+						debugInputInfo.text = "Rotated left " + rotateLeftTimes + " times";
+						rotateGestStartTime = Time.time;
+						tapRegister = 0;
+					}
+					// Right rotation detected.
+					else if ((crossPz < 0) && (Mathf.Abs(crossPz) >= Screen.height*0.00015f)) 
+					{
+						ievent.isRotate = true;
+						ievent.isRight = true;
+						rotateRightTimes += 1;
+						debugInputInfo.text = "Rotated right " + rotateRightTimes + " times";
+						rotateGestStartTime = Time.time;
+						tapRegister = 0;
+					}
 				}
 			}
 
@@ -401,117 +535,10 @@ public class InputModule : MonoBehaviour
 
 			hasRegistered[0] = false;
 			hasRegistered[1] = false;
-			hasRegistered[2] = false;
+			hasRegistered[2] = false;	
 		}
 
 		ievent.cumulativeTouchNum = TouchTapCount;
-			
-		/*
-		//temp storage
-		Touch myTouch;
-		Vector2 touchEndpos = new Vector2();
-		BoardManager.Direction swp_dir = BoardManager.Direction.OTHER;
-		bool isRotation = false; 
-		 
-		//collect raw data from the device
-		if (numTouches > 0) {
-			//Store the first touch detected.
-			myTouch = Input.touches[0];
-			touchEndpos = myTouch.position;
-
-			if((numTouches == 2) && numTouches != numTouchlastframe){
-				VecStart = Input.touches[0].position - Input.touches[1].position;
-			}
-				
-			if (myTouch.phase == TouchPhase.Began){
-				hasrotated = false;
-				swipeStartPlace = myTouch.position;
-				//get the vector between 2 fingers
-				if(numTouches == 2){
-					VecStart = myTouch.position - Input.touches[1].position;
-				}
-				//If so, set touchOrigin to the position of that touch
-				touchOrigin = myTouch.position;
-				touchTime = Time.time;
-				swp_lock = true;
-				ResetCDTimers();
-			} else if ((myTouch.phase == TouchPhase.Ended) && swp_lock){//deals with swipe and multiple taps
-				//Set touchEnd to equal the position of this touch
-				hasrotated = false;
-				touchEndpos = myTouch.position;
-				float x = touchEndpos.x - touchOrigin.x;
-				float y = touchEndpos.y - touchOrigin.y;
-
-				if (Mathf.Abs(x) > Mathf.Abs(y) && Mathf.Abs(x) >= minSwipeDist){//right & left
-					if (x > 0){//right
-						swp_dir = BoardManager.Direction.RIGHT;
-						ievent.isRight = true;
-					}else{//left
-						swp_dir = BoardManager.Direction.LEFT;
-						ievent.isLeft = true;
-					}
-				} else if (Mathf.Abs(y) > Mathf.Abs(x) && Mathf.Abs(y) >= minSwipeDist) {//up & down
-					if (y > 0){//up/front
-						swp_dir = BoardManager.Direction.FRONT;
-						ievent.isUp = true;
-					} else{//down/back
-						swp_dir = BoardManager.Direction.BACK;
-						ievent.isDown = true;					}
-				}
-
-				//update TouchTapCount part 2
-				if( (Time.time - multiTapStartTime) < multiTapCD ){
-					TouchTapCount += myTouch.tapCount;
-					ievent.elapsedTime = Time.time - touchTime;
-				}
-
-				swp_lock = false;//flip the lock, until we find another TouchPhase.Began
-			}else if( (numTouches == 2) && (!hasrotated) ){
-				
-				if(numTouches == 2){//detect a rotate
-					VecEnd = Input.touches[0].position - Input.touches[1].position;
-					Vector3 cross = Vector3.Cross((Vector3)VecStart.normalized, (Vector3)VecEnd.normalized);
-					float crossPz = cross.z;
-					if( (crossPz >= 0)&&(Mathf.Abs(crossPz) >= Screen.height*0.00015f ) ){//left
-						isRotation = true;
-						hasrotated = true;
-						if(Time.time - rotateGestStartTime >= rotateGestCD){
-							rotateGestStartTime = Time.time;
-							swp_dir = BoardManager.Direction.LEFT;
-							ievent.isLeft = true;
-							ievent.elapsedTime = Time.time - touchTime;
-						}
-					} else if( (crossPz < 0)&&(Mathf.Abs(crossPz) >= Screen.height*0.00015f) ){//right
-						isRotation = true;
-						hasrotated = true;
-						if(Time.time - rotateGestStartTime >= rotateGestCD){
-							rotateGestStartTime = Time.time;
-							swp_dir = BoardManager.Direction.RIGHT;
-							ievent.isRight = true;
-							ievent.elapsedTime = Time.time - touchTime;
-						}
-					}
-					ievent.isRotate = true;
-				}
-			}
-			numTouchlastframe = numTouches;
-			ievent.elapsedTime = Time.time - touchTime;
-		} else{
-			numTouchlastframe = 0;
-		}
-
-		float touchx = touchEndpos.x - touchOrigin.x;
-		float touchy = touchEndpos.y - touchOrigin.y;
-
-		if (Mathf.Abs(touchx) >= minSwipeDist){//right & left
-			isSwipe = true;
-		} else if (Mathf.Abs(touchy) >= minSwipeDist) {//up & down
-			isSwipe = true;
-		} else
-			isSwipe = false;
-		
-		ievent.cumulativeTouchNum = TouchTapCount;
-		*/
 #endif
         //print(touchTime);
         //if no input, code should not reach here
