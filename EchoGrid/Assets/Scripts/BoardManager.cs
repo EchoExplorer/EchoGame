@@ -227,7 +227,7 @@ public class BoardManager : MonoBehaviour
     bool skip_clip = false;
 
     // Intercept the game
-    bool hasIntercepted;
+    bool hasIntercepted = false;
 
     //Clears our list gridPositions and prepares it to generate a new board.
     void InitialiseList()

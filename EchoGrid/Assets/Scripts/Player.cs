@@ -82,6 +82,17 @@ public class Player : MovingObject
     //int score;
     eventHandler eh;
 
+    public Text debugInputInfo;
+    public Text debugPlayerInfo;
+
+    public bool intercepted = false;
+
+	public int level1_remaining_taps = -1;
+    public int level1_remaining_ups = -1;
+    public int level1_remaining_menus = -1;
+    public int level3_remaining_turns = -1;
+    enum InterceptAction {NONE, UP, DOWN, LEFT, RIGHT, TAP, DOUBLE_TAP, TRIPLE_TAP, MENU};
+
     string surveyCode = "";
 
     void Awake()
@@ -121,14 +132,6 @@ public class Player : MovingObject
         survey_activated = true;
         echoLock = false;
         ad = GetComponent<AndroidDialogue>();
-
-        touch_simple = 1;
-        touch_audio = 2;
-        touch_exit = 1;
-        touch_menu = 2;
-        tap_simple = 1;
-        tap_exit = 2;
-        tap_menu = 2;
 
         //score = 1000;
         eh = new eventHandler(InputModule.instance);
@@ -1270,15 +1273,7 @@ public class Player : MovingObject
     }
 
     //control
-    //"touch is how many finger on the screen"
-    int touch_simple, touch_audio, touch_exit, touch_menu;
-    //tap is how many times player tap the screen
-    int tap_simple, tap_exit, tap_menu;
     bool echoLock = false;
-    Vector2 swipeStartPlace = new Vector2();
-    Vector2 firstSwipePos = new Vector2();
-    Vector2 VecStart = new Vector2();
-    Vector2 VecEnd = new Vector2();
     List<Touch> touches;
     CDTimer TriggerechoTimer;
     CDTimer TriggermenuTimer;
@@ -1286,6 +1281,11 @@ public class Player : MovingObject
 
     void Update()
     {
+    	debugInputInfo = GameObject.FindGameObjectWithTag("DebugInput").GetComponent<Text>();
+    	debugPlayerInfo = GameObject.FindGameObjectWithTag("DebugPlayer").GetComponent<Text>();
+
+    	debugInputInfo.text = "Lvl: " + curLevel + ", IntTap: " + level1_remaining_taps + ", IntUp: " + level1_remaining_ups + ", IntMenu: " + level1_remaining_menus + ", IntTurn: " + level3_remaining_turns;
+
         play_audio();
         //UnityEngine.Debug.DrawLine (transform.position, transform.position+get_player_dir("FRONT"), Color.green);
         //UnityEngine.Debug.DrawLine (transform.position, transform.position+get_player_dir("LEFT"), Color.yellow);
@@ -1308,9 +1308,9 @@ public class Player : MovingObject
         }
 
         Vector3 dir = Vector3.zero;
-        //Check if we are running either in the Unity editor or in a standalone build.
+// Check if we are running either in the Unity editor or in a standalone build.
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
-        //Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction\
+        // Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction\
         if (eh.isActivate())
         {
             InputEvent ie = eh.getEventData();
@@ -1319,13 +1319,16 @@ public class Player : MovingObject
                 case KeyCode.RightArrow:
                     if (!want_exit)
                     {
+                    	debugPlayerInfo.text = "Rotated right. Turning player right 90 degrees.";
                         dir = -transform.up;
                         SoundManager.instance.PlaySingle(Database.instance.swipeRight);
                     }
                     else
                     {
+                    	debugPlayerInfo.text = "Swiped right. Restarting level.";
                         SoundManager.instance.playcrash(Database.instance.inputSFX);
                         GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
+						SoundManager.instance.PlayVoice(Database.instance.menuOff, true); // should have another set of sound effect
                         Destroy(GameObject.Find("GameManager"));
                         SceneManager.LoadScene("Main");
                     }
@@ -1333,13 +1336,16 @@ public class Player : MovingObject
                 case KeyCode.LeftArrow:
                     if (!want_exit)
                     {
+                    	debugPlayerInfo.text = "Rotated left. Turning player left 90 degrees.";
                         dir = get_player_dir("LEFT");
                         SoundManager.instance.PlaySingle(Database.instance.swipeLeft);
                     }
                     else
                     {
+                    	debugPlayerInfo.text = "Swiped left. Returning to main menu.";
                         SoundManager.instance.playcrash(Database.instance.inputSFX);
-                        //SceneManager.UnloadScene("Main");
+                        // SceneManager.UnloadScene("Main");
+						SoundManager.instance.PlayVoice(Database.instance.menuOff, true); // should have another set of sound effect
                         Destroy(GameObject.Find("GameManager"));
                         SceneManager.LoadScene("Title_Screen");
                     }
@@ -1347,50 +1353,79 @@ public class Player : MovingObject
                 case KeyCode.UpArrow:
                     if (!want_exit)
                     {
+                    	debugPlayerInfo.text = "Swiped up. Moved player forward.";
                         dir = transform.right;
                         SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
-                    } else
+                    } 
+                    else
                     {
+                    	debugPlayerInfo.text = "Swiped up. Gave player hint";
                         getHint();
-                        want_exit = false;
                     }
                     break;
                 case KeyCode.DownArrow:
+                	debugPlayerInfo.text = "Swiped down. Moved player backward.";
                     dir = -transform.right;
                     SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
                     break;
                 case KeyCode.F:
-                    GameManager.instance.boardScript.gamerecord += "E{";
-                    PlayEcho();
-                    GameManager.instance.boardScript.gamerecord += lastEcho;
-                    GameManager.instance.boardScript.gamerecord += "}";
+                	if (!want_exit)
+                	{
+                		debugPlayerInfo.text = "Single tapped. Played echo.";
+						GameManager.instance.boardScript.gamerecord += "E{";
+                    	PlayEcho();
+                    	GameManager.instance.boardScript.gamerecord += lastEcho;
+                    	GameManager.instance.boardScript.gamerecord += "}";
+                	}
                     break;
                 case KeyCode.E:
+                	debugPlayerInfo.text = "Double tapped. Does nothing currently.";
+                	break;
+                case KeyCode.G:
                     if (!want_exit)
                     {
+                    	debugPlayerInfo.text = "Triple tapped. Attempting to exit level.";	
                         GameManager.instance.boardScript.gamerecord += "X";
                         attemptExitFromLevel();
                     }
-                    else
-                        want_exit = false;
                     break;
                 case KeyCode.R:
-                    want_exit = true;
-                    reset_audio = true;
+                	if (want_exit == false) 
+                	{
+                		debugPlayerInfo.text = "Hold registered. Opened pause menu.";
+						if (SoundManager.instance.voiceSource.isPlaying)
+						{
+							GameManager.instance.boardScript.restore_audio = true;
+							GameManager.instance.boardScript.latest_clip = SoundManager.instance.voiceSource.clip;
+						}
+						SoundManager.instance.PlayVoice(Database.instance.menuOn, true);
+						want_exit = true;
+    	                reset_audio = true;
+                	}
+                	else if (want_exit == true)
+                	{
+                		debugPlayerInfo.text = "Hold registered. Closed pause menu.";
+						SoundManager.instance.PlayVoice(Database.instance.menuOff, true);
+						want_exit = false;
+            	        reset_audio = true;
+                	}
                     break;
                 case KeyCode.M:
                     if (GameManager.levelImageActive)
                     {
+                    	debugPlayerInfo.text = "M key pressed. Turned off visual map for debugging.";
                         GameManager.instance.HideLevelImage();
                         GameManager.instance.boardScript.gamerecord += "S_OFF";
                     }
                     else
                     {
+                    	debugPlayerInfo.text = "M key pressed. Turned on visual map for debugging.";
                         GameManager.instance.UnHideLevelImage();
                         GameManager.instance.boardScript.gamerecord += "S_ON";
                     }
                     break;
 				case KeyCode.P: 
+					debugPlayerInfo.text = "P key pressed. Moving to main menu.";
 					SoundManager.instance.playcrash(Database.instance.inputSFX);
 					//SceneManager.UnloadScene("Main");
 					Destroy(GameObject.Find("GameManager"));
@@ -1437,93 +1472,139 @@ public class Player : MovingObject
 		}
 
 		//process input
-		if(eh.isActivate()){
+		if (eh.isActivate())
+		{
 			InputEvent ie = eh.getEventData();
-			if ((ie.touchNum == touch_simple)&&(ie.hasDir())){//a swipe
+
+			if (ie.isSingleTap == true)
+			{
+				if (at_pause_menu == false)
+				{
+					if (!echoLock)
+					{
+						debugPlayerInfo.text = "Single tapped. Played echo.";
+						GameManager.instance.boardScript.gamerecord += "E{";
+						PlayEcho();
+						GameManager.instance.boardScript.gamerecord += lastEcho;
+						GameManager.instance.boardScript.gamerecord += "}";
+						flipEchoLock(true);
+					}
+				}
+			}
+			else if (ie.isDoubleTap == true)
+			{
+				debugPlayerInfo.text = "Double tapped. Does nothing currently.";
+			}
+			else if (ie.isTripleTap == true)
+			{
+				if (at_pause_menu == false)
+				{
+					debugPlayerInfo.text = "Triple tapped. Attempting to exit level.";
+					GameManager.instance.boardScript.gamerecord += "X";
+					attemptExitFromLevel();
+				}
+			}
+			else if (ie.isHold == true)
+			{
 				flipEchoLock(true);
-				if(!at_pause_menu){
-					if(ie.isUp){
+				if (at_pause_menu == false)
+				{
+					debugPlayerInfo.text = "Hold registered. Opened pause menu.";
+					at_pause_menu = true;
+					if (SoundManager.instance.voiceSource.isPlaying)
+					{
+						GameManager.instance.boardScript.restore_audio = true;
+						GameManager.instance.boardScript.latest_clip = SoundManager.instance.voiceSource.clip;
+					}
+					SoundManager.instance.PlayVoice(Database.instance.menuOn, true);
+				}
+				else if (at_pause_menu == true)
+				{
+					debugPlayerInfo.text = "Hold registered. Closed pause menu.";
+					at_pause_menu = false;
+					SoundManager.instance.PlayVoice(Database.instance.menuOff, true);
+				}
+			}
+			else if (ie.isSwipe == true)
+			{
+				flipEchoLock(true);
+				if (at_pause_menu == false)
+				{
+					if (ie.isUp == true)
+					{
+						debugPlayerInfo.text = "Swiped up. Moved player forward.";
 						dir = get_player_dir("FRONT");
 						SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
 					}
-				} else {//at pause menu
-					if(ie.isDown){//turn on/of black screen
-						if(GameManager.levelImageActive){
+				} 
+				else if (at_pause_menu == true)
+				{
+					if (ie.isDown == true)
+					{
+						if (GameManager.levelImageActive)
+						{
+							debugPlayerInfo.text = "Swiped down. Turning off visual map for debugging.";
 							GameManager.instance.HideLevelImage();
 							GameManager.instance.boardScript.gamerecord += "S_OFF";
-						}else{
+						}
+						else
+						{
+							debugPlayerInfo.text = "Swiped down. Turning on visual map for debugging.";
 							GameManager.instance.UnHideLevelImage();
 							GameManager.instance.boardScript.gamerecord += "S_ON"; // dont forget to turn these two back on!
 						}
-						at_pause_menu = false;
-						SoundManager.instance.PlayVoice(Database.instance.menuOff, true);//shoule have another set of sound effect
-					}else if(ie.isLeft){//restart level
+					}
+					else if (ie.isLeft == true)
+					{
+						debugPlayerInfo.text = "Swiped left. Restarting level.";
 						SoundManager.instance.playcrash(Database.instance.inputSFX);
 						//GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
 						SoundManager.instance.PlayVoice(Database.instance.menuOff, true);//shoule have another set of sound effect
 						Destroy(GameObject.Find("GameManager"));
 						//Destroy(this);
 						SceneManager.LoadScene("Main");
-					}else if(ie.isRight){//return to main menu
+					}
+					else if (ie.isRight == true)
+					{
+						debugPlayerInfo.text = "Swiped right. Moving to main menu.";
 						SoundManager.instance.playcrash(Database.instance.inputSFX);
 						Destroy(GameObject.Find("GameManager"));
 						SceneManager.LoadScene("Title_Screen");
-					}else if(ie.isUp){//repeat audio (duplicate)
-						getHint ();
-                		at_pause_menu = false;
+					}
+					else if (ie.isUp == true)
+					{
+						debugPlayerInfo.text = "Swiped up. Gave player hint.";
+						getHint();
 					}					
 				}
-			} else if ((ie.touchNum == 2) && (!ie.hasDir())){//turn on/off menu
+			} 
+			else if (ie.isRotate == true)
+			{
 				flipEchoLock(true);
-				if(ie.elapsedTime >= Const.MENU_TOUCH_TIME) {
-					if(TriggermenuTimer.CDfinish()) {//turn on/off pause menu
-						if(!at_pause_menu){
-							at_pause_menu = true;
-							if(SoundManager.instance.voiceSource.isPlaying){
-								GameManager.instance.boardScript.restore_audio = true;
-								GameManager.instance.boardScript.latest_clip = SoundManager.instance.voiceSource.clip;
-							}
-							SoundManager.instance.PlayVoice(Database.instance.menuOn, true);
-						}else{//menu already open, now close it
-							at_pause_menu = false;
-							SoundManager.instance.PlayVoice(Database.instance.menuOff, true);
-						}
-						TriggermenuTimer.reset();
-					}
-				}
-			} else if ( (ie.isRotate)&&(ie.hasDir()) ){
-				flipEchoLock(true);
-				if(!at_pause_menu && TriggerrotateTimer.CDfinish()){
-					if(ie.isLeft){
+				if (at_pause_menu == false)
+				{
+					if (ie.isLeft == true)
+					{
+						debugPlayerInfo.text = "Rotated left. Turning player left 90 degrees.";
 						dir = get_player_dir("LEFT");
 						if (!GameManager.instance.boardScript.turning_lock)
+						{
 							SoundManager.instance.PlaySingle(Database.instance.swipeLeft);
-					}else if(ie.isRight){
-						dir = get_player_dir("RIGHT");
-						if (!GameManager.instance.boardScript.turning_lock)
-							SoundManager.instance.PlaySingle(Database.instance.swipeRight);
+						}
 					}
-					TriggerrotateTimer.reset();
-				}
-			} else if( (ie.touchNum == touch_simple)&&(!ie.hasDir()) ){//a tap
-				if(!at_pause_menu){
-					if (ie.cumulativeTouchNum >= touch_exit){
-						GameManager.instance.boardScript.gamerecord += "X";
-						attemptExitFromLevel();
-					} else if((ie.elapsedTime > Const.opsToEchoCD)&&(ie.elapsedTime < Const.opsToEchoCD+0.02f)&&TriggerechoTimer.CDfinish()&&(!echoLock)){
-						GameManager.instance.boardScript.gamerecord += "E{";
-						PlayEcho();
-						GameManager.instance.boardScript.gamerecord += lastEcho;
-						GameManager.instance.boardScript.gamerecord += "}";
-						TriggerechoTimer.reset();
-						flipEchoLock(true);
+					else if (ie.isRight == true)
+					{
+						debugPlayerInfo.text = "Rotated right. Turning player right 90 degrees.";
+						dir = get_player_dir("RIGHT");
+						if (!GameManager.instance.boardScript.turning_lock) 
+						{
+							SoundManager.instance.PlaySingle(Database.instance.swipeRight);
+						}
 					}
 				}
 			}
 			flipEchoLock(false);
 		}
-			
-
 #endif //End of mobile platform dependendent compilation section started above with #elif
         calculateMove(dir);
     }
@@ -1727,14 +1808,13 @@ public class Player : MovingObject
 
     }
 
-
-    
-
-    public bool intercepted = false;
     List<AudioClip> clips;
     public void Intercept(int level)
     {
-        if (curLevel != level) return;
+        if (curLevel != level) 
+        {
+        	return;
+        }
         intercepted = true;
         switch (level)
         {
@@ -1746,9 +1826,12 @@ public class Player : MovingObject
                 This sound will change according to your surroundings.
                 Please tap the screen 3 times, holding down for about half a second, and pausing about a second between taps.
                 */
+                debugPlayerInfo.text = "Playing tutorial level 1 clips.";
                 clips = new List<AudioClip>() { Database.instance.tutorialClip[0], Database.instance.tutorialClip[1], Database.instance.TitletoMainClips[0], Database.instance.TitletoMainClips[0], Database.instance.tutorialClip[2], Database.instance.tutorialClip[3]};
                 SoundManager.instance.PlayClips(clips, 0, () => PlayEcho(), 3);
                 level1_remaining_taps = 3;
+                level1_remaining_ups = 3;
+                level1_remaining_menus = 2;
                 break;
             case 3:
                 /*
@@ -1757,6 +1840,7 @@ public class Player : MovingObject
                 Tapping to hear an echo after rotating could be helpful in determining where you need to go and or if you should keep turning.
                 Please rotate to the right or left 4 times, pausing about a second between rotations. This will bring you back to the same position you started at.
                 */
+                debugPlayerInfo.text = "Playing tutorial level 3 clips.";
                 clips = new List<AudioClip>() { Database.instance.tutorialClip[4], Database.instance.tutorialClip[5], Database.instance.tutorialClip[6], Database.instance.tutorialClip[7] };
                 SoundManager.instance.PlayClips(clips);
                 level3_remaining_turns = 4;
@@ -1765,12 +1849,8 @@ public class Player : MovingObject
                 break;
         }
     }
-    int level1_remaining_taps = 3;
-    int level1_remaining_ups = 3;
-    int level1_remaining_menus = 2;
-    int level3_remaining_turns = 4;
-    enum InterceptAction {NONE, UP, DOWN, LEFT, RIGHT, TAP, DOUBLE_TAP, TRIPLE_TAP, MENU};
-    bool InterceptMission(InputEvent ie)
+  
+    public bool InterceptMission(InputEvent ie)
     {
         InterceptAction action = InterceptAction.NONE;
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
@@ -1798,52 +1878,61 @@ public class Player : MovingObject
                 action = InterceptAction.TRIPLE_TAP;
                 break;
             case KeyCode.R:
-                return true;
-            case KeyCode.M:
                 action = InterceptAction.MENU;
                 break;
+            case KeyCode.M:
+            	return true;
+            case KeyCode.P:
+            	return true;
             default:
                 break;
         }
-#elif UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
-		if ((ie.touchNum == 1)&&(ie.hasDir())){//a swipe
-            if(ie.isUp) {
+#endif
+#if UNITY_IOS || UNITY_ANDROID
+		if (ie.isSingleTap == true)
+		{
+			action = InterceptAction.TAP;
+		}
+		else if (ie.isDoubleTap == true) 
+		{
+			action = InterceptAction.DOUBLE_TAP;
+		}
+		else if (ie.isTripleTap == true)
+		{
+			action = InterceptAction.TRIPLE_TAP;
+		}
+		else if (ie.isHold == true)
+		{
+			action = InterceptAction.MENU;
+		} 
+		else if (ie.isSwipe == true)
+		{
+            if (ie.isUp == true)
+            {
                 action = InterceptAction.UP;
             }
-            else if(ie.isDown) {
+            else if (ie.isDown == true)
+            {
                 action = InterceptAction.DOWN;
             }
-		} else if ((ie.touchNum == 2) && (!ie.hasDir())){
-			if(ie.elapsedTime >= Const.MENU_TOUCH_TIME) {
-				if(TriggermenuTimer.CDfinish()) {//turn on/off pause menu
-					action = InterceptAction.MENU;
-					TriggermenuTimer.reset();
-				}
+		} 
+		else if (ie.isRotate == true)
+		{
+			if (ie.isLeft == true)
+			{
+				action = InterceptAction.LEFT;
 			}
-		} else if ((ie.isRotate)&&(ie.hasDir()) ){
-			if(TriggerrotateTimer.CDfinish()){
-				if(ie.isLeft){
-					action = InterceptAction.LEFT;
-				}else if(ie.isRight){
-					action = InterceptAction.RIGHT;
-				}
-				TriggerrotateTimer.reset();
+			else if (ie.isRight == true)
+			{
+				action = InterceptAction.RIGHT;
 			}
-		} else if((ie.touchNum == 1)&&(!ie.hasDir()) ){//a tap
-			if (ie.cumulativeTouchNum == 1 && ie.elapsedTime > Const.opsToEchoCD && ie.elapsedTime < Const.opsToEchoCD + 0.02f && TriggerechoTimer.CDfinish()){
-				action = InterceptAction.TAP;
-                TriggerechoTimer.reset();
-			} else if(ie.cumulativeTouchNum == 2){
-				action = InterceptAction.DOUBLE_TAP;
-			} else if(ie.cumulativeTouchNum == 3){
-				action = InterceptAction.TRIPLE_TAP;
-			}
-		}
+		} 
 #endif
-
         switch (action)
         {
             case InterceptAction.UP:
+				SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
+				break;
             case InterceptAction.DOWN:
                 SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
                 break;
@@ -1867,55 +1956,61 @@ public class Player : MovingObject
                 {
                     if (action == InterceptAction.TAP)
                     {
+                    	debugPlayerInfo.text = "Single tapped for gesture tutorial. Played echo.";
                         level1_remaining_taps--;
-                        if (level1_remaining_taps > 0)
+                        if (level1_remaining_taps > 0) 
+                        {
                             SoundManager.instance.PlayVoice(Database.instance.tutorialClip[8 + 2 - level1_remaining_taps], true); // This tap was correct. Please tap X more times.
+                        }
                     }
-                    else
+                    else if ((action == InterceptAction.DOUBLE_TAP) || (action == InterceptAction.TRIPLE_TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.LEFT) || (action == InterceptAction.RIGHT) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || (ie.isUnrecognized == true))
                     {
+                    	debugPlayerInfo.text = "Incorrect tap for gesture tutorial.";
                         // This tap was too long/short. Please tap again.
                         SoundManager.instance.PlayVoice(Database.instance.tutorialClip[10], true);
                     }
-                    if (level1_remaining_taps <= 0)
+                    if (level1_remaining_taps == 0)
                     {
-                        /*
-                        Good job! now we will move on to swiping.
-                        Swiping upward with three fingers moves you forward in the game and generates a sound like this.
-                        SoundManager.instance.PlaySingle(Database.instance.swipeAhead)
-                        Please swipe upward 3 times, pausing about a second between swipes.
-                        */
+                        // Good job! now we will move on to swiping.
+                        // Swiping upward with three fingers moves you forward in the game and generates a sound like this.
+                        // SoundManager.instance.PlaySingle(Database.instance.swipeAhead)
+                        // Please swipe upward 3 times, pausing about a second between swipes.
+
+                        debugPlayerInfo.text = "Finished tapping section for gesture tutorial.";
                         clips = new List<AudioClip> { Database.instance.tutorialClip[11], Database.instance.tutorialClip[12], Database.instance.TitletoMainClips[0], Database.instance.TitletoMainClips[0], Database.instance.TitletoMainClips[0], Database.instance.TitletoMainClips[0], Database.instance.tutorialClip[13] };
                         SoundManager.instance.PlayClips(clips, 0, () => SoundManager.instance.PlaySingle(Database.instance.swipeAhead), 4);
-                        level1_remaining_ups = 3;
                     }
                 }
-                else
+                else if (level1_remaining_taps == 0)
                 {
                     if (level1_remaining_ups > 0)
                     {
                         if (action == InterceptAction.UP)
                         {
+							debugPlayerInfo.text = "Swiped up for gesture tutorial.";
                             level1_remaining_ups--;
-                            if (level1_remaining_ups > 0)
+                            if (level1_remaining_ups > 0) 
+                            {
                                 SoundManager.instance.PlayVoice(Database.instance.tutorialClip[14 + 2 - level1_remaining_ups], true); // This swipe was correct. Please swipe X more times.
+                            }
                         }
-                        else
+						else if ((action == InterceptAction.TAP) || (action == InterceptAction.DOUBLE_TAP) || (action == InterceptAction.TRIPLE_TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.LEFT) || (action == InterceptAction.RIGHT) || (action == InterceptAction.DOWN) || (ie.isUnrecognized == true))
                         {
                             // This swipe's distance was too long/short. Please swipe again.
+                            debugPlayerInfo.text = "Incorrect swipe up for gesture tutorial.";
                             SoundManager.instance.PlayVoice(Database.instance.tutorialClip[16], true);
                         }
-                        if (level1_remaining_ups <= 0)
+                        if (level1_remaining_ups == 0)
                         {
-                            /*
-                            Good job! now we will move back to the game!
-                            Tapping the screen with two fingers and holding for 2 seconds opens the pause menu.
-                            */
+                            
+                            // Good job! now we will move back to the game!
+                            // Tapping the screen with two fingers and holding for 2 seconds opens the pause menu.
+                            debugPlayerInfo.text = "Finished swiping section for gesture tutorial.";
                             clips = new List<AudioClip> { Database.instance.tutorialClip[17], Database.instance.tutorialClip[18] };
                             SoundManager.instance.PlayClips(clips);
-                            level1_remaining_menus = 2;
                         }
                     }
-                    else
+                    else if (level1_remaining_ups == 0)
                     {
                         if (level1_remaining_menus > 0)
                         {
@@ -1923,12 +2018,14 @@ public class Player : MovingObject
                             {
                                 if (level1_remaining_menus == 2)
                                 {
+                                	debugPlayerInfo.text = "Hold registered. Opened pause menu for gesture tutorial.";
                                     level1_remaining_menus--;
                                     // You are now in the pause menu. To get a hint, swipe up. To restart the level, swipe left. To go to the main menu, swipe right. To close the pause menu, tap and hold with two fingers for 2 seconds. Please close the pause menu now.
                                     SoundManager.instance.PlayVoice(Database.instance.tutorialClip[19], true);
                                 }
                                 else if (level1_remaining_menus == 1)
                                 {
+                                	debugPlayerInfo.text = "Hold registered. Closed pause menu for gesture tutorial.";
                                     level1_remaining_menus--;
                                     // Congratulations! You have reached the exit. Once you believe you have reached the exit in a level, triple tapping will move you to the next level and you will hear a congratulatory sound like this.
                                     // Finish SOUND
@@ -1939,34 +2036,55 @@ public class Player : MovingObject
                                     SoundManager.instance.PlayClips(clips, 0);
                                 }
                             }
+							else if ((action == InterceptAction.TAP) || (action == InterceptAction.DOUBLE_TAP) || (action == InterceptAction.TRIPLE_TAP) || (action == InterceptAction.LEFT) || (action == InterceptAction.RIGHT) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || (ie.isUnrecognized == true))
+							{
+								debugPlayerInfo.text = "Incorrect hold for menu in gesture tutorial.";
+							}
                         }
-                        else
+                        else if (level1_remaining_menus == 0)
                         {
+							debugPlayerInfo.text = "Finished menu section for gesture tutorial.";
+
                             if (action == InterceptAction.TRIPLE_TAP)
                             {
+								debugPlayerInfo.text = "Triple tapped. Starting tutorial level 1.";
                                 SoundManager.instance.PlaySingle(Database.instance.inputSFX);
                                 quitInterception();
                             }
+							else if ((action == InterceptAction.TAP) || (action == InterceptAction.DOUBLE_TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.LEFT) || (action == InterceptAction.RIGHT) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || (ie.isUnrecognized == true))
+							{
+								debugPlayerInfo.text = "Incorrect triple tap for gesture tutorial.";
+							}
                         }
                     }
                 }
                 break;
             case 3:
                 // Left turn or right turn
-                if (action == InterceptAction.LEFT || action == InterceptAction.RIGHT)
+				if (level3_remaining_turns > 0) 
                 {
-                    level3_remaining_turns--;
-                    // This rotation was correct. Please rotate X more times.
-                    if (level3_remaining_turns > 0)
-                        SoundManager.instance.PlayVoice(Database.instance.tutorialClip[23 + 3 - level3_remaining_turns], true);
+                	if ((action == InterceptAction.LEFT) || (action == InterceptAction.RIGHT))
+                	{
+						debugPlayerInfo.text = "Rotated for gesture tutorial. Turned player 90 degrees.";
+                 		level3_remaining_turns--;
+
+                 		if (level3_remaining_turns > 0) 
+                 		{
+							// This rotation was correct. Please rotate X more times.
+                        	SoundManager.instance.PlayVoice(Database.instance.tutorialClip[23 + 3 - level3_remaining_turns], true);
+                 		}
+               
+                    }
+					else if ((action == InterceptAction.TAP) || (action == InterceptAction.DOUBLE_TAP) || (action == InterceptAction.TRIPLE_TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || (ie.isUnrecognized == true))
+                	{
+                		debugPlayerInfo.text = "Incorrect rotation for gesture tutorial.";
+                    	// This rotation was not correct/in the same direction. Please rotate again.
+                    	SoundManager.instance.PlayVoice(Database.instance.tutorialClip[26], true);
+                	}
                 }
-                else
+                else if (level3_remaining_turns == 0)
                 {
-                    //This rotation was not correct/in the same direction. Please rotate again.
-                    SoundManager.instance.PlayVoice(Database.instance.tutorialClip[26], true);
-                }
-                if (level3_remaining_turns <= 0)
-                {
+					debugPlayerInfo.text = "Finished rotations for gesture tutorial. Completed gesture tutorial. Continuing with level 3.";
                     // Good job! now we will move back to the game. Try and get around the corner!
                     SoundManager.instance.PlayClips(new List<AudioClip> { Database.instance.tutorialClip[27] }, 0, () => quitInterception(), 1 );
                 }

@@ -123,7 +123,7 @@ public class GameManager : MonoBehaviour
     //TODO(agotsis) Analyze database
     void InitGame()
     {
-#if UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
+#if UNITY_IOS || UNITY_ANDROID
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
         Screen.orientation = ScreenOrientation.Landscape;
 #endif

@@ -18,6 +18,8 @@ public class GM_main_pre : MonoBehaviour
     eventHandler eh;
     CDTimer TriggerStartNewGame;
 
+    public Text debugPlayerInfo;
+
     // Use this for initialization
     void Start()
     {
@@ -71,19 +73,20 @@ public class GM_main_pre : MonoBehaviour
     /// </summary>
     void Update()
     {
+    	debugPlayerInfo = GameObject.FindGameObjectWithTag("DebugPlayer").GetComponent<Text>();
+
         play_audio();
 
         SelectMode selectMode = SelectMode.NONE;
 
-        //Check if we are running either in the Unity editor or in a standalone build.
+// Check if we are running either in the Unity editor or in a standalone build.
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
-
         if (eh.isActivate())
         {
             InputEvent ie = eh.getEventData();
             switch (ie.keycode)
             {
-                //Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
+                // Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
                 case KeyCode.RightArrow:
                     if (!at_confirm)
                     {
@@ -136,42 +139,52 @@ public class GM_main_pre : MonoBehaviour
 			//SoundManager.instance.PlaySingle(swipeAhead);
 		}
 		*/
-
-        //Check if we are running on iOS, Android, Windows Phone 8 or Unity iPhone
-#elif UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
+#endif
+// Check if we are running on iOS/Android.
+#if UNITY_IOS || UNITY_ANDROID
 		Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
-		if(eh.isActivate()){
+		if (eh.isActivate())
+		{
 			InputEvent ie = eh.getEventData();
 
-			if( (ie.touchNum == 1)&&(!ie.isRotate) ){
-				if(ie.isRight){
-					if(!at_confirm){
+			if (ie.isSwipe == true)
+			{
+				if (ie.isRight == true)
+				{
+					if (!at_confirm)
+					{
                         selectMode = SelectMode.CONTINUE;
 					}
-				} else if (ie.isLeft){
-					if(!at_confirm){
-						//nothing
-					}else{//at_confirm
+				} 
+				else if (ie.isLeft == true)
+				{
+					if (!at_confirm)
+					{
+						// nothing
+					}
+					else
+					{ // at_confirm
                         selectMode = SelectMode.NEW;
 					}
 				}
 			}
-			else if ( (ie.cumulativeTouchNum >= 2)&&(!ie.hasDir()) && TriggerStartNewGame.CDfinish()){
+			else if ((ie.isDoubleTap == true) && TriggerStartNewGame.CDfinish())
+			{
                 selectMode = SelectMode.CONFIRM;
 			}
 		}
-
 #endif //End of mobile platform dependendent compilation section started above with #elif
-
         switch (selectMode)
         {
             case SelectMode.CONTINUE:
+            	debugPlayerInfo.text = "Swiped right. Continuing from where you left off.";
                 SoundManager.instance.PlaySingle(Database.instance.inputSFX);
                 SoundManager.instance.PlayVoice(Database.instance.MainPreContinueGame, true);
                 SceneManager.LoadScene("Main");
                 break;
             case SelectMode.NEW:
+            	debugPlayerInfo.text = "Swiped left. Starting new game.";
                 SoundManager.instance.PlaySingle(Database.instance.inputSFX);
                 if (GameMode.instance.gamemode == GameMode.Game_Mode.TUTORIAL)
                     GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL_RESTART;
@@ -181,13 +194,15 @@ public class GM_main_pre : MonoBehaviour
                 // Utilities.write_save(0); ???
                 SceneManager.LoadScene("Main");
                 break;
-            case SelectMode.CONFIRM:
+			case SelectMode.CONFIRM:
+				debugPlayerInfo.text = "Double tapped. Confirmed action";
                 cur_clip = 0;
                 reset_audio = true;
                 at_confirm = !at_confirm;
                 SoundManager.instance.PlaySingle(Database.instance.inputSFX);
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
-#elif UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
+#endif
+#if UNITY_IOS || UNITY_ANDROID
                 TriggerStartNewGame.reset();
 #endif
                 break;

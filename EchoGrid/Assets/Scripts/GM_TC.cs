@@ -26,6 +26,8 @@ public class GM_TC : MonoBehaviour
 
     eventHandler eh;
 
+    public Text debugPlayerInfo;
+
     /// <summary>
     /// Loads the terms and conditions data.
     /// </summary>
@@ -100,6 +102,8 @@ public class GM_TC : MonoBehaviour
     /// </summary>
     void Update()
     {
+    	debugPlayerInfo = GameObject.FindGameObjectWithTag("DebugPlayer").GetComponent<Text>();
+
         //MUST have internet connection
         if (Const.TEST_CONNECTION)
         {
@@ -116,8 +120,7 @@ public class GM_TC : MonoBehaviour
             }
         }
 
-
-#if UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
+#if UNITY_IOS || UNITY_ANDROID
         // Consent function temporarily disabled.
         /*
         if (!android_window_displayed)
@@ -153,35 +156,29 @@ public class GM_TC : MonoBehaviour
         android_window_displayed = true;
         URL_opened = true;
         finished_reading = true;
-        
 #endif
-
         play_audio();
 
-        //Check if we are running either in the Unity editor or in a standalone build.
+// Check if we are running either in the Unity editor or in a standalone build.
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
-        SceneManager.LoadScene("Title_Screen");
-        SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
-        if (eh.isActivate())
+		if (eh.isActivate())
         {
             InputEvent ie = eh.getEventData();
         }
-
-        //Check if we are running on iOS, Android, Windows Phone 8 or Unity iPhone
-#elif UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
+        SceneManager.LoadScene("Title_Screen");
+        SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
+#endif
+// Check if we are running on iOS/Android.
+#if UNITY_IOS || UNITY_ANDROID
+		if (eh.isActivate())
+        {
+            InputEvent ie = eh.getEventData();
+        }
         Utilities.writefile("consentRecord", "1");
         SceneManager.LoadScene("Title_Screen");
         SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
         Screen.orientation = ScreenOrientation.Landscape;
-         if (eh.isActivate())
-        {
-            InputEvent ie = eh.getEventData();
-            
-        }
-
-
-
-#endif //End of mobile platform dependendent compilation section started above with #elif
+#endif // End of mobile platform dependendent compilation section started above with #elif
     }
 }

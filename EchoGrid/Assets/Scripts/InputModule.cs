@@ -20,8 +20,9 @@ public struct InputEvent
 	public bool isHold;
 	public bool isSwipe;
     public bool isRotate;
+    public bool isUnrecognized;
     public KeyCode keycode;
-    public float elapsedTime;//how long the user has hold
+ 	public float elapsedTime;//how long the user has hold
 
     /// <summary>
     /// Initializes all the fields to default values.
@@ -30,8 +31,8 @@ public struct InputEvent
     {
         isRight = false; isLeft = false; isUp = false; isDown = false;
 		isSingleTap = false; isDoubleTap = false; isTripleTap = false; 
-		isHold = false; isSwipe = false; isRotate = false; keycode = KeyCode.None;
-        elapsedTime = 0;
+		isHold = false; isSwipe = false; isRotate = false; isUnrecognized = false; keycode = KeyCode.None;
+        elapsedTime = 0.0f;
 		touchNum = 0; 
         cumulativeTouchNum = 0;
     }
@@ -50,7 +51,7 @@ public struct InputEvent
     /// <returns></returns>
 	public bool hasEffectiveInput()
     {
-        return isRight || isLeft || isUp || isDown || isSingleTap || isDoubleTap || isTripleTap || isHold || isSwipe || isRotate || (keycode != KeyCode.None) || (touchNum > 0) || (cumulativeTouchNum > 0);
+        return isRight || isLeft || isUp || isDown || isSingleTap || isDoubleTap || isTripleTap || isHold || isSwipe || isRotate || isUnrecognized || (keycode != KeyCode.None) || (touchNum > 0) || (cumulativeTouchNum > 0);
     }
 }
 
@@ -164,42 +165,52 @@ public class InputModule : MonoBehaviour
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
         if (Input.GetKeyUp(KeyCode.RightArrow))
         {
+        	debugInputInfo.text = "Right arrow key pressed.";
             ievent.keycode = KeyCode.RightArrow;
         }
         else if (Input.GetKeyUp(KeyCode.LeftArrow))
         {
+			debugInputInfo.text = "Left arrow key pressed.";
             ievent.keycode = KeyCode.LeftArrow;
         }
         else if (Input.GetKeyUp(KeyCode.UpArrow))
         {
+			debugInputInfo.text = "Up arrow key pressed.";
             ievent.keycode = KeyCode.UpArrow;
         }
         else if (Input.GetKeyUp(KeyCode.DownArrow))
         {
+			debugInputInfo.text = "Down arrow key pressed.";
             ievent.keycode = KeyCode.DownArrow;
         }
         else if (Input.GetKeyUp("f"))
         {
+			debugInputInfo.text = "F key pressed.";
             ievent.keycode = KeyCode.F;
         }
         else if (Input.GetKeyUp("e"))
         {
+			debugInputInfo.text = "E key pressed.";
             ievent.keycode = KeyCode.E;
         }
         else if (Input.GetKeyUp("g"))
         {
+			debugInputInfo.text = "G key pressed.";
             ievent.keycode = KeyCode.G;
         }
         else if (Input.GetKeyUp("r"))
         {
+			debugInputInfo.text = "R key pressed.";
             ievent.keycode = KeyCode.R;
         }
         else if (Input.GetKeyUp("m"))
         {
+			debugInputInfo.text = "M key pressed.";
             ievent.keycode = KeyCode.M;
         }
 		else if (Input.GetKeyUp("p"))
 		{
+			debugInputInfo.text = "P key pressed.";
 			ievent.keycode = KeyCode.P;
 		}
         else
@@ -408,8 +419,8 @@ public class InputModule : MonoBehaviour
 						ievent.isSingleTap = true;
 						singleTapTimes += 1;
 						debugInputInfo.text = "Single tapped " + singleTapTimes + " times";
-					
 						multiTapStartTime = Time.time;
+						tapRegister = 0;
 						TouchTapCount = 0;
 					}	
 					if ((TouchTapCount == 6) && (ievent.isSingleTap == false) && (ievent.isTripleTap == false))
@@ -417,8 +428,8 @@ public class InputModule : MonoBehaviour
 						ievent.isDoubleTap = true;
 						doubleTapTimes += 1;
 						debugInputInfo.text = "Double tapped " + doubleTapTimes + " times";
-
 						multiTapStartTime = Time.time;
+						tapRegister = 0;
 						TouchTapCount = 0;
 					}
 					if ((TouchTapCount == 9) && (ievent.isSingleTap == false) && (ievent.isDoubleTap == false))
@@ -426,8 +437,8 @@ public class InputModule : MonoBehaviour
 						ievent.isTripleTap = true;
 						tripleTapTimes += 1;
 						debugInputInfo.text = "Triple tapped " + tripleTapTimes + " times";
-
 						multiTapStartTime = Time.time;
+						tapRegister = 0;
 						TouchTapCount = 0;
 					}
 				}
@@ -526,6 +537,25 @@ public class InputModule : MonoBehaviour
 						rotateRightTimes += 1;
 						debugInputInfo.text = "Rotated right " + rotateRightTimes + " times";
 						rotateGestStartTime = Time.time;
+						tapRegister = 0;
+					}
+				}
+			}
+
+			if ((tapRegister == 3) && (touchDuration > 0.0f) && (ievent.isSingleTap == false) && (ievent.isDoubleTap == false) && (ievent.isTripleTap == false) && (ievent.isSwipe == false) && (ievent.isRotate == false))
+			{
+				if (touchDuration >= 1.0f) {
+					float x0 = touchEnd[0].x - touchStart[0].x;
+					float y0 = touchEnd[0].y - touchStart[0].y;
+					float x1 = touchEnd[1].x - touchStart[1].x;
+					float y1 = touchEnd[1].y - touchStart[1].y;
+					float x2 = touchEnd[2].x - touchStart[2].x;
+					float y2 = touchEnd[2].y - touchStart[2].y;
+
+					if ((Mathf.Abs(x0) > minHoldHorizontalDist) || (Mathf.Abs(x1) > minHoldHorizontalDist) || (Mathf.Abs(x2) > minHoldHorizontalDist) || (Mathf.Abs(y0) > minHoldVerticalDist) || (Mathf.Abs(y1) > minHoldVerticalDist) || (Mathf.Abs(y2) > minHoldVerticalDist))
+					{
+						ievent.isUnrecognized = true;
+						debugInputInfo.text = "Unrecognized input";
 						tapRegister = 0;
 					}
 				}

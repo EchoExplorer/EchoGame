@@ -21,6 +21,8 @@ public class GM_title : MonoBehaviour
     bool doneTesting = false;
     eventHandler eh;
 
+	public Text debugPlayerInfo;
+
     enum Direction { NONE, UP, DOWN, LEFT, RIGHT }
 
     /// <summary>
@@ -96,6 +98,8 @@ public class GM_title : MonoBehaviour
     /// </summary>
     void Update()
     {
+		debugPlayerInfo = GameObject.FindGameObjectWithTag("DebugPlayer").GetComponent<Text>();
+
         if (Const.TEST_CONNECTION)
         {
             if (!doneTesting)
@@ -115,97 +119,137 @@ public class GM_title : MonoBehaviour
 
         Direction inputDirection = Direction.NONE;
 
-        //Check if we are running either in the Unity editor or in a standalone build.
+// Check if we are running either in the Unity editor or in a standalone build.
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
-
         if (eh.isActivate() && doneTesting) // isActivate() has side effects so this order is required...
         {
             InputEvent ie = eh.getEventData();
             switch (ie.keycode)
             {
                 case KeyCode.F:
-                    if (!plugin_earphone) plugin_earphone = true;
+                    if (!plugin_earphone)
+                    {
+                    	debugPlayerInfo.text = "Single tapped. Earphones in.";
+						plugin_earphone = true;	
+						reset_audio = true;
+                    } 
                     else if (!second_tap)
                     {
+                    	debugPlayerInfo.text = "Single tapped second time.";
                         second_tap = true;
                         reset_audio = true;
                     }
                     break;
                 case KeyCode.RightArrow:
-                    inputDirection = Direction.RIGHT;
+					if ((plugin_earphone == true) && (second_tap == true))
+					{
+						inputDirection = Direction.RIGHT;
+					}
                     break;
                 case KeyCode.LeftArrow:
-                    inputDirection = Direction.LEFT;
+					if ((plugin_earphone == true) && (second_tap == true))
+					{
+						inputDirection = Direction.LEFT;
+					}
                     break;
-                case KeyCode.UpArrow://Up
-                    inputDirection = Direction.UP;
+                case KeyCode.UpArrow: // Up
+					if ((plugin_earphone == true) && (second_tap == true))
+					{
+						inputDirection = Direction.UP;
+					}
                     break;
-                case KeyCode.DownArrow://BACK
-                    inputDirection = Direction.DOWN;
+                case KeyCode.DownArrow: // BACK
+					if ((plugin_earphone == true) && (second_tap == true))
+					{
+						inputDirection = Direction.DOWN;
+					}
                     break;
                 default:
                     break;
             }
         }
-
-        //Check if we are running on iOS, Android, Windows Phone 8 or Unity iPhone
-#elif UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
+#endif
+// Check if we are running on iOS/Android.
+#if UNITY_IOS || UNITY_ANDROID
 		Screen.sleepTimeout = SleepTimeout.NeverSleep;
 		Screen.orientation = ScreenOrientation.Landscape;
 
-		if(eh.isActivate() && doneTesting) {  // isActivate() has side effects so this order is required...
+		if (eh.isActivate() && doneTesting) 
+		{  // isActivate() has side effects so this order is required...
 			InputEvent ie = eh.getEventData();
-            if (!plugin_earphone) {
-                if (ie.touchNum>=1)
+            if (!plugin_earphone)
+            {
+                if (ie.isSingleTap == true)
                 {
+					debugPlayerInfo.text = "Single tapped. Earphones in.";
                     plugin_earphone = true;
                     reset_audio = true;
                 }
             }
-            else if (!second_tap){
-                if (ie.touchNum>=1)
+            else if (!second_tap)
+            {
+                if (ie.isSingleTap == true)
                 {
+					debugPlayerInfo.text = "Single tapped second time.";
                     second_tap = true;
+					reset_audio = true;
                 }
             }
-            else
+            if ((plugin_earphone == true) && (second_tap == true))
             {
-                if( (ie.touchNum == 1)&&(!ie.isRotate) ){
-				    if (ie.isRight){
+                if (ie.isSwipe == true)
+                {
+				    if (ie.isRight == true)
+				    {
 					    inputDirection = Direction.RIGHT;
-				    } else if (ie.isLeft){
+				    }
+				    else if (ie.isLeft == true)
+				    {
 					    inputDirection = Direction.LEFT;
-				    } else if (ie.isUp){
+				    }
+				    else if (ie.isUp == true)
+				    {
 					    inputDirection = Direction.UP;
-				    } else if (ie.isDown){
+				    } 
+				    else if (ie.isDown == true)
+				    {
 					    inputDirection = Direction.DOWN;
 				    }
 			    }
             }
 		}
 #endif //End of mobile platform dependendent compilation section started above with #elif
-        if (!plugin_earphone || !second_tap) return;
+        if (!plugin_earphone || !second_tap) 
+        {
+        	return;
+        }
         switch (inputDirection)
         {
             case Direction.RIGHT:
+            	debugPlayerInfo.text = "Swiped right. Moving to pregame menu to continue where you left off.";
                 GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
 				SceneManager.LoadScene("Main_pre");
 				SoundManager.instance.PlayVoice(Database.instance.TitletoMainClips[0], true);
                 break;
             case Direction.LEFT:
+            	debugPlayerInfo.text = "Swiped left. Moving to pregame menu to start tutorial.";
                 GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
                 SceneManager.LoadScene("Main_pre");
 				SoundManager.instance.PlayVoice(Database.instance.TitletoMainClips[0], true);
 				//SceneManager.LoadScene("Main");
                 break;
             case Direction.UP:
+            	debugPlayerInfo.text = "Swiped up. Listening to commands.";
                 SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
-				if(!listenToCmd){
+				if (!listenToCmd)
+				{
 					listenToCmd = true;
 					reset_audio = true;
 					cur_clip = 0;
 					cmd_cur_clip = 0;
-				}else{
+				}
+				else
+				{
 					listenToCmd = false;
 					reset_audio = true;
 					cur_clip = 0;
@@ -213,6 +257,7 @@ public class GM_title : MonoBehaviour
 				}
                 break;
             case Direction.DOWN:
+            	debugPlayerInfo.text = "Swiped down. Does nothing here.";
                 SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
 				//credit
                 break;

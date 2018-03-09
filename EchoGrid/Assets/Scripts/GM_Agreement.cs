@@ -27,11 +27,17 @@ public class GM_Agreement : MonoBehaviour
 
     string[] questions;
 
+    eventHandler eh;
+
+    public Text debugPlayerInfo;
+
     /// <summary>
     /// Loads all resources needed for the user agreement page.
     /// </summary>
     void Awake()
     {
+    	eh = new eventHandler(InputModule.instance);
+
         ad = GetComponent<AndroidDialogue>();
         swipeAhead = Resources.Load("fx/swipe-ahead") as AudioClip;
         orit = new AudioClip[2];
@@ -92,42 +98,48 @@ public class GM_Agreement : MonoBehaviour
         }
     }
 
-    Vector2 touchOrigin = -Vector2.one;
-    float touchTime = 0f;
-    private float minSwipeDist = 100f;
-
     /// <summary>
     /// Repeatedly polls to check if the dialogue buttons were pressed,
     ///  and transitions to the next instruction once the button is pressed.
     /// </summary>
     void Update()
     {
+    	debugPlayerInfo = GameObject.FindGameObjectWithTag("DebugPlayer").GetComponent<Text>();
+
         play_audio();
 
-        //Check if we are running either in the Unity editor or in a standalone build.
+// Check if we are running either in the Unity editor or in a standalone build.
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
+		// Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
+		if (eh.isActivate())
+		{
+			InputEvent ie = eh.getEventData();
 
-        //Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
-        if (Input.GetKeyUp(KeyCode.RightArrow))
-        {
-            //SoundManager.instance.PlaySingle(swipeRight);
-        }
-        else if (Input.GetKeyUp(KeyCode.LeftArrow))
-        {
-            gotoNextAgreement();
-            SoundManager.instance.PlaySingle(swipeAhead);
-        }
-        else if (Input.GetKeyUp(KeyCode.UpArrow))
-        {//Up
-        }
-        else if (Input.GetKeyUp(KeyCode.DownArrow))
-        {//BACK
-         //SoundManager.instance.PlaySingle(swipeAhead);
-         //credit
-        }
-
-        //Check if we are running on iOS, Android, Windows Phone 8 or Unity iPhone
-#elif UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
+			switch(ie.keycode)
+			{
+				case KeyCode.RightArrow:
+					// SoundManager.instance.PlaySingle(swipeRight);
+					break;
+				case KeyCode.LeftArrow:
+					debugPlayerInfo.text = "Swiped left. Moving to next agreement.";
+					gotoNextAgreement();
+            		SoundManager.instance.PlaySingle(swipeAhead);
+            		break;
+				case KeyCode.UpArrow:
+					// Up
+					break;
+				case KeyCode.DownArrow:
+					// Back
+					// SoundManager.instance.PlaySingle(swipeAhead);
+        			// credit
+					break;
+				default:
+					break;
+			}
+		}
+#endif
+// Check if we are running on iOS/Android.
+#if UNITY_IOS || UNITY_ANDROID
         //AndroidDialogue
         if (ad.noclicked())
         {
@@ -150,80 +162,43 @@ public class GM_Agreement : MonoBehaviour
             isLandscape = false;
         }
 
-        float TOUCH_TIME = 0.05f;
-
-        //Check if Input has registered more than zero touches
-        int numTouches = Input.touchCount;
-
-        if (numTouches > 0)
+        if (eh.isActivate()) 
         {
-            //Store the first touch detected.
-            Touch myTouch = Input.touches[0];
+        	InputEvent ie = eh.getEventData();
 
-            //Check if the phase of that touch equals Began
-            if (myTouch.phase == TouchPhase.Began)
-            {
-                //If so, set touchOrigin to the position of that touch
-                touchOrigin = myTouch.position;
-                touchTime = Time.time;
-            }
-
-            //If the touch phase is not Began, and instead is equal to Ended and the x of touchOrigin is greater or equal to zero:
-            else if (myTouch.phase == TouchPhase.Ended && touchOrigin.x >= 0)
-            {
-                //Set touchEnd to equal the position of this touch
-                Vector2 touchEnd = myTouch.position;
-
-                //Calculate the difference between the beginning and end of the touch on the x axis.
-                float x = touchEnd.x - touchOrigin.x;
-
-                //Calculate the difference between the beginning and end of the touch on the y axis.
-                float y = touchEnd.y - touchOrigin.y;
-
-                //Set touchOrigin.x to -1 so that our else if statement will evaluate false and not repeat immediately.
-                touchOrigin.x = -1;
-
-                //Check if the difference along the x axis is greater than the difference along the y axis.
-                if (Mathf.Abs(x) > Mathf.Abs(y) && Mathf.Abs(x) >= minSwipeDist)
-                {
-                    //If x is greater than zero, set horizontal to 1, otherwise set it to -1
-                    if (x > 0)
-                    {//RIGHT
-                        //SoundManager.instance.PlaySingle(swipeRight);
-                    }
-                    else
-                    {//LEFT
-                        gotoNextAgreement();
-                        SoundManager.instance.PlaySingle(swipeAhead);
-                    }
-                }
-                else if (Mathf.Abs(y) > Mathf.Abs(x) && Mathf.Abs(y) >= minSwipeDist)
-                {
-                    //If y is greater than zero, set vertical to 1, otherwise set it to -1
-                    if (y > 0)
-                    {//FRONT
-                        //SoundManager.instance.PlaySingle(swipeAhead);
-                    }
-                    else
-                    {//BACK
-                        //SoundManager.instance.PlaySingle(swipeAhead);
-                        //credit
-                    }
-                }
-                else if (Mathf.Abs(Time.time - touchTime) > TOUCH_TIME)
-                {
-                    if (numTouches == 2)
-                    {
-                        //GameMode.gamemode = GameMode.Game_Mode.RESTART;
-                        //SceneManager.LoadScene("Main");
-                    }
-                    else
-                    {
-                    }
-                }
-            }
+        	if (ie.isSwipe == true)
+        	{
+        		if (ie.isRight == true)
+        		{
+					// Right
+                    // SoundManager.instance.PlaySingle(swipeRight);
+        		}
+        		else if (ie.isLeft == true)
+        		{
+					// Left
+					debugPlayerInfo.text = "Swiped left. Moving to next agreement.";
+                    gotoNextAgreement();
+                    SoundManager.instance.PlaySingle(swipeAhead);
+        		}
+        		else if (ie.isUp == true)
+        		{
+					// Front
+                    // SoundManager.instance.PlaySingle(swipeAhead);
+        		}
+        		else if (ie.isDown == true)
+        		{
+					// Back
+                    // SoundManager.instance.PlaySingle(swipeAhead);
+                    // credit
+        		}
+        	}
+        	else if (ie.isDoubleTap == true)
+        	{
+				// GameMode.gamemode = GameMode.Game_Mode.RESTART;
+                // SceneManager.LoadScene("Main");
+        	}
         }
-#endif //End of mobile platform dependendent compilation section started above with #elif
+#endif // End of mobile platform dependendent compilation section started above with #elif
     }
 
     /// <summary>
