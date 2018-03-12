@@ -34,11 +34,13 @@ Double tap to attempt to exit
 END
 
 LEVEL_3
-Begin
+IN
+at(1,9)_T_F_RIGHT
 2sec_silence
 1sec_silence
 Now let's move on from straight hallways
 There is a right turn in this hallway
+Inend
 IN
 at(6,9)_T_F_RIGHT
 As you move forward, notice what the echoes sound like

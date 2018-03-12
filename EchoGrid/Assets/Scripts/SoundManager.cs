@@ -50,7 +50,7 @@ public class SoundManager : MonoBehaviour
             {
                 if (efxSource[i] != null)
                 {
-                    efxSource[i].volume = 0.5f;
+                    efxSource[i].volume = 1f;
                     voice_adjusted = true;
                 }
                 else
@@ -61,7 +61,7 @@ public class SoundManager : MonoBehaviour
             }
             if (voiceSource != null)
             {
-                voiceSource.volume = 0.1f;
+                voiceSource.volume = 1f;
                 //voiceSource.pitch = 0.9f;
                 voice_adjusted = true;
             }
@@ -70,7 +70,7 @@ public class SoundManager : MonoBehaviour
 
             if (crashSource != null)
             {
-                crashSource.volume = 0.1f;
+                crashSource.volume = 1f;
                 voice_adjusted = true;
             }
             else
@@ -108,14 +108,25 @@ public class SoundManager : MonoBehaviour
     /// <summary>
     /// Plays an echo sound.
     /// </summary>
-	public void PlayEcho(AudioClip clip)
+	public void PlayEcho(AudioClip echoClip, Action callback = null)
     {
-        if (!echoSource.isPlaying)
+        echoSource.clip = Database.instance.TitletoMainClips[0];
+        echoSource.Play();
+        StartCoroutine(EchoWait(echoSource.clip.length, echoClip, callback));
+    }
+
+    private IEnumerator EchoWait(float waitLength, AudioClip echoClip, Action callback)
+    {
+        yield return new WaitForSeconds(waitLength);
+        if (echoClip != null)
         {
-            echoSource.clip = clip;
-            //Play the clip.
+            echoSource.clip = echoClip;
             echoSource.Play();
-            return;
+            StartCoroutine(EchoWait(echoSource.clip.length, null, callback));
+        }
+        else if (callback != null)
+        {
+            callback();
         }
     }
 
@@ -141,7 +152,9 @@ public class SoundManager : MonoBehaviour
     public void PlayClips(List<AudioClip> clips, int current = 0, Action callback = null, int callback_index = 0)
     {
         if (current == callback_index && callback != null)
+        {
             callback();
+        }
         AudioClip clip = clips[current];
         float clipLength = clip.length;
         PlayVoice(clip, true);
@@ -150,10 +163,12 @@ public class SoundManager : MonoBehaviour
 
     private IEnumerator WaitForLength(float clipLength, List<AudioClip> clips, int current, Action callback, int callback_index)
     {
-        yield return new WaitForSeconds(clipLength + 0.5f);
+        yield return new WaitForSeconds(clipLength + 0.3f);
         if (current + 1 < clips.Count && !voiceSource.isPlaying && voiceSource.clip == clips[current])
             PlayClips(clips, current + 1, callback, callback_index);
-        if (callback_index >= clips.Count && callback != null)
+        if (callback_index >= clips.Count && current >= clips.Count - 1 && callback != null)
+        {
             callback();
+        }
     }
 }

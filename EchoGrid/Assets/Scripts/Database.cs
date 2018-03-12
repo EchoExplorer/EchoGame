@@ -114,7 +114,7 @@ public class Database : MonoBehaviour
         TitleCmdlistClips[2] = Resources.Load("instructions/Swipe up to move forward") as AudioClip;
         TitleCmdlistClips[3] = Resources.Load("instructions/Rotate two fingers counterclockwise to turn left") as AudioClip;
         TitleCmdlistClips[4] = Resources.Load("instructions/Rotate two fingers clockwise to turn right") as AudioClip;
-        TitleCmdlistClips[5] = Resources.Load("instructions/Double tap to attempt to exit") as AudioClip;
+        TitleCmdlistClips[5] = Resources.Load("instructions/Double tap to attempt to exit") as AudioClip; // TODO: Change to triple tap
         TitleCmdlistClips[6] = Resources.Load("instructions/0_5sec_silence") as AudioClip;
         TitleCmdlistClips[7] = Resources.Load("instructions/turn around by turning in the same direction twice") as AudioClip;
         TitleCmdlistClips[8] = Resources.Load("instructions/2sec_silence") as AudioClip;

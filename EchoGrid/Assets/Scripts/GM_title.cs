@@ -131,7 +131,6 @@ public class GM_title : MonoBehaviour
                     {
                     	debugPlayerInfo.text = "Single tapped. Earphones in.";
 						plugin_earphone = true;	
-						reset_audio = true;
                     } 
                     else if (!second_tap)
                     {
@@ -183,7 +182,6 @@ public class GM_title : MonoBehaviour
                 {
 					debugPlayerInfo.text = "Single tapped. Earphones in.";
                     plugin_earphone = true;
-                    reset_audio = true;
                 }
             }
             else if (!second_tap)
@@ -195,7 +193,8 @@ public class GM_title : MonoBehaviour
 					reset_audio = true;
                 }
             }
-            if ((plugin_earphone == true) && (second_tap == true))
+            //if ((plugin_earphone == true) && (second_tap == true)) // Placing if like this is NOT EQUAL to the original one (else)!
+            else
             {
                 if (ie.isSwipe == true)
                 {

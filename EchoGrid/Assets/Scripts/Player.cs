@@ -146,6 +146,9 @@ public class Player : MovingObject
 
     protected override void Start()
     {
+        debugInputInfo = GameObject.FindGameObjectWithTag("DebugInput").GetComponent<Text>();
+        debugPlayerInfo = GameObject.FindGameObjectWithTag("DebugPlayer").GetComponent<Text>();
+
         curLevel = GameManager.instance.level;
         init();
         //Adjust player scale
@@ -188,7 +191,7 @@ public class Player : MovingObject
     string[] frontDistS = { "2.25", "3.75" };
     string[] frontDistM = { "5.25", "6.75" };
     string[] frontDistL = { "8.25", "9.75", "11.25", "12.75" };
-
+    
     /// <summary>
     /// A function that determines which echo file to play based on the surrounding environment.
     /// </summary>
@@ -702,8 +705,10 @@ public class Player : MovingObject
         }
         else
         {
-            SoundManager.instance.PlayEcho(echo);
+            // SoundManager.instance.PlayEcho(echo);
             Logging.Log(lastEcho, Logging.LogLevel.LOW_PRIORITY);
+            // SoundManager.instance.PlayClips(new List<AudioClip> { Database.instance.TitletoMainClips[0], echo }, 0, () => PlayedEcho(), 2);
+            SoundManager.instance.PlayEcho(echo);
         }
     }
 
@@ -1281,8 +1286,6 @@ public class Player : MovingObject
 
     void Update()
     {
-    	debugInputInfo = GameObject.FindGameObjectWithTag("DebugInput").GetComponent<Text>();
-    	debugPlayerInfo = GameObject.FindGameObjectWithTag("DebugPlayer").GetComponent<Text>();
 
     	debugInputInfo.text = "Lvl: " + curLevel + ", IntTap: " + level1_remaining_taps + ", IntUp: " + level1_remaining_ups + ", IntMenu: " + level1_remaining_menus + ", IntTurn: " + level3_remaining_turns;
 
@@ -1300,7 +1303,7 @@ public class Player : MovingObject
             GameManager.instance.boardScript.write_local_stats();
             localRecordWritten = true;
         }
-
+        
         if (intercepted && eh.isActivate())
         {
             if (!InterceptMission(eh.getEventData())) 
@@ -1948,7 +1951,7 @@ public class Player : MovingObject
             default:
                 break;
         }
-
+        
         switch (curLevel)
         {
             case 1:
@@ -1960,7 +1963,7 @@ public class Player : MovingObject
                         level1_remaining_taps--;
                         if (level1_remaining_taps > 0) 
                         {
-                            SoundManager.instance.PlayVoice(Database.instance.tutorialClip[8 + 2 - level1_remaining_taps], true); // This tap was correct. Please tap X more times.
+                            SoundManager.instance.PlayClips(new List<AudioClip> { Database.instance.TitleClips[6], Database.instance.tutorialClip[8 + 2 - level1_remaining_taps] }); // This tap was correct. Please tap X more times.
                         }
                     }
                     else if ((action == InterceptAction.DOUBLE_TAP) || (action == InterceptAction.TRIPLE_TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.LEFT) || (action == InterceptAction.RIGHT) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || (ie.isUnrecognized == true))
@@ -1977,8 +1980,8 @@ public class Player : MovingObject
                         // Please swipe upward 3 times, pausing about a second between swipes.
 
                         debugPlayerInfo.text = "Finished tapping section for gesture tutorial.";
-                        clips = new List<AudioClip> { Database.instance.tutorialClip[11], Database.instance.tutorialClip[12], Database.instance.TitletoMainClips[0], Database.instance.TitletoMainClips[0], Database.instance.TitletoMainClips[0], Database.instance.TitletoMainClips[0], Database.instance.tutorialClip[13] };
-                        SoundManager.instance.PlayClips(clips, 0, () => SoundManager.instance.PlaySingle(Database.instance.swipeAhead), 4);
+                        clips = new List<AudioClip> { Database.instance.TitleClips[6], Database.instance.tutorialClip[11], Database.instance.tutorialClip[12], Database.instance.TitletoMainClips[0], Database.instance.swipeAhead, Database.instance.tutorialClip[13] };
+                        SoundManager.instance.PlayClips(clips);
                     }
                 }
                 else if (level1_remaining_taps == 0)
@@ -1991,7 +1994,7 @@ public class Player : MovingObject
                             level1_remaining_ups--;
                             if (level1_remaining_ups > 0) 
                             {
-                                SoundManager.instance.PlayVoice(Database.instance.tutorialClip[14 + 2 - level1_remaining_ups], true); // This swipe was correct. Please swipe X more times.
+                                SoundManager.instance.PlayClips(new List<AudioClip> { Database.instance.TitleClips[6], Database.instance.tutorialClip[14 + 2 - level1_remaining_ups] }); // This swipe was correct. Please swipe X more times.
                             }
                         }
 						else if ((action == InterceptAction.TAP) || (action == InterceptAction.DOUBLE_TAP) || (action == InterceptAction.TRIPLE_TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.LEFT) || (action == InterceptAction.RIGHT) || (action == InterceptAction.DOWN) || (ie.isUnrecognized == true))
@@ -2002,11 +2005,11 @@ public class Player : MovingObject
                         }
                         if (level1_remaining_ups == 0)
                         {
-                            
+                            // TODO: Replace "now we will move back to the game" with "now we will show you how to use the pause menu"
                             // Good job! now we will move back to the game!
                             // Tapping the screen with two fingers and holding for 2 seconds opens the pause menu.
                             debugPlayerInfo.text = "Finished swiping section for gesture tutorial.";
-                            clips = new List<AudioClip> { Database.instance.tutorialClip[17], Database.instance.tutorialClip[18] };
+                            clips = new List<AudioClip> { Database.instance.TitleClips[6], Database.instance.tutorialClip[17], Database.instance.tutorialClip[18] };
                             SoundManager.instance.PlayClips(clips);
                         }
                     }
@@ -2033,7 +2036,7 @@ public class Player : MovingObject
                                     // TODO: TRIPLE TAB ECHO?
                                     // Now try triple tapping to move on to the next level.
                                     clips = new List<AudioClip> { Database.instance.tutorialClip[20], Database.instance.winSound, Database.instance.tutorialClip[21], Database.instance.inputSFX, Database.instance.tutorialClip[22] };
-                                    SoundManager.instance.PlayClips(clips, 0);
+                                    SoundManager.instance.PlayClips(clips);
                                 }
                             }
 							else if ((action == InterceptAction.TAP) || (action == InterceptAction.DOUBLE_TAP) || (action == InterceptAction.TRIPLE_TAP) || (action == InterceptAction.LEFT) || (action == InterceptAction.RIGHT) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || (ie.isUnrecognized == true))
@@ -2048,8 +2051,9 @@ public class Player : MovingObject
                             if (action == InterceptAction.TRIPLE_TAP)
                             {
 								debugPlayerInfo.text = "Triple tapped. Starting tutorial level 1.";
-                                SoundManager.instance.PlaySingle(Database.instance.inputSFX);
-                                quitInterception();
+                                // TODO: Replace the winSound with "Congratulations! You have completed the tutorial. Now we will move back to the game!"
+                                clips = new List<AudioClip> { Database.instance.winSound };
+                                SoundManager.instance.PlayClips(clips, 0, () => quitInterception(), 1);
                             }
 							else if ((action == InterceptAction.TAP) || (action == InterceptAction.DOUBLE_TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.LEFT) || (action == InterceptAction.RIGHT) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || (ie.isUnrecognized == true))
 							{
@@ -2067,11 +2071,9 @@ public class Player : MovingObject
                 	{
 						debugPlayerInfo.text = "Rotated for gesture tutorial. Turned player 90 degrees.";
                  		level3_remaining_turns--;
-
                  		if (level3_remaining_turns > 0) 
                  		{
-							// This rotation was correct. Please rotate X more times.
-                        	SoundManager.instance.PlayVoice(Database.instance.tutorialClip[23 + 3 - level3_remaining_turns], true);
+                            SoundManager.instance.PlayClips(new List<AudioClip> { Database.instance.TitleClips[6], Database.instance.tutorialClip[23 + 3 - level3_remaining_turns] }); // This rotation was correct. Please rotate X more times.
                  		}
                
                     }
@@ -2082,11 +2084,11 @@ public class Player : MovingObject
                     	SoundManager.instance.PlayVoice(Database.instance.tutorialClip[26], true);
                 	}
                 }
-                else if (level3_remaining_turns == 0)
+                if (level3_remaining_turns == 0)
                 {
 					debugPlayerInfo.text = "Finished rotations for gesture tutorial. Completed gesture tutorial. Continuing with level 3.";
                     // Good job! now we will move back to the game. Try and get around the corner!
-                    SoundManager.instance.PlayClips(new List<AudioClip> { Database.instance.tutorialClip[27] }, 0, () => quitInterception(), 1 );
+                    SoundManager.instance.PlayClips(new List<AudioClip> { Database.instance.TitleClips[6], Database.instance.tutorialClip[27] }, 0, () => quitInterception(), 2 );
                 }
                 break;
             default:
