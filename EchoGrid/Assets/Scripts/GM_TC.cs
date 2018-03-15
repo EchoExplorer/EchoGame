@@ -26,7 +26,7 @@ public class GM_TC : MonoBehaviour
 
     eventHandler eh;
 
-    public Text debugPlayerInfo;
+    String debugPlayerInfo; // String for debugging the effects of the player's actions (Tells you they rotated, swiped, etc.).
 
     /// <summary>
     /// Loads the terms and conditions data.
@@ -102,8 +102,6 @@ public class GM_TC : MonoBehaviour
     /// </summary>
     void Update()
     {
-    	debugPlayerInfo = GameObject.FindGameObjectWithTag("DebugPlayer").GetComponent<Text>();
-
         //MUST have internet connection
         if (Const.TEST_CONNECTION)
         {
@@ -163,20 +161,20 @@ public class GM_TC : MonoBehaviour
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
 		if (eh.isActivate())
         {
-            InputEvent ie = eh.getEventData();
+			InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
         }
-        SceneManager.LoadScene("Title_Screen");
-        SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
+		SceneManager.LoadScene("Title_Screen"); // Move to main menu
+		SoundManager.instance.PlaySingle(Database.instance.swipeAhead); // To notify that this scene loaded, but it immediately moves to the main menu.
 #endif
 // Check if we are running on iOS/Android.
 #if UNITY_IOS || UNITY_ANDROID
 		if (eh.isActivate())
         {
-            InputEvent ie = eh.getEventData();
+			InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
         }
         Utilities.writefile("consentRecord", "1");
-        SceneManager.LoadScene("Title_Screen");
-        SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
+        SceneManager.LoadScene("Title_Screen"); // Move to main menu.
+        SoundManager.instance.PlaySingle(Database.instance.swipeAhead); // To notify that this scene loaded, but it immediately moves to the main menu.
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
         Screen.orientation = ScreenOrientation.Landscape;
 #endif // End of mobile platform dependendent compilation section started above with #elif

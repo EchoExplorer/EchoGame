@@ -1,10 +1,14 @@
 fileFormatVersion: 2
 guid: c6acffab68fab47e18fb85f9c3485cf6
-timeCreated: 1447329037
+timeCreated: 1520953888
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - canvas: {fileID: 223183630621063140, guid: 0b56c78362a86234f89d7b2cb393b073, type: 2}
+  - playerText: {fileID: 114540818412246422, guid: caf7262ca7b60df4799c3268daf1acec,
+      type: 2}
+  - debugPlayerInfo: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

@@ -29,7 +29,7 @@ public class GM_Agreement : MonoBehaviour
 
     eventHandler eh;
 
-    public Text debugPlayerInfo;
+	string debugPlayerInfo; // String for debugging the effects of the player's actions (Tells you they rotated, swiped, etc.).
 
     /// <summary>
     /// Loads all resources needed for the user agreement page.
@@ -72,6 +72,12 @@ public class GM_Agreement : MonoBehaviour
         gotoNextAgreement();
     }
 
+    // Use this for initialization.
+    void Start()
+    {
+
+    }
+
     bool reset_audio = false;
     /// <summary>
     /// Plays the instruction clips.
@@ -104,8 +110,6 @@ public class GM_Agreement : MonoBehaviour
     /// </summary>
     void Update()
     {
-    	debugPlayerInfo = GameObject.FindGameObjectWithTag("DebugPlayer").GetComponent<Text>();
-
         play_audio();
 
 // Check if we are running either in the Unity editor or in a standalone build.
@@ -113,21 +117,28 @@ public class GM_Agreement : MonoBehaviour
 		// Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
 		if (eh.isActivate())
 		{
-			InputEvent ie = eh.getEventData();
+			InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
 
+			// Do something based on this event info.
 			switch(ie.keycode)
 			{
+				// If the right arrow key was pressed.
 				case KeyCode.RightArrow:
 					// SoundManager.instance.PlaySingle(swipeRight);
 					break;
+				// If the left arrow key was pressed.
 				case KeyCode.LeftArrow:
-					debugPlayerInfo.text = "Swiped left. Moving to next agreement.";
-					gotoNextAgreement();
+					// Move to the next agreement.
+					debugPlayerInfo = "Swiped left. Moving to next agreement.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    gotoNextAgreement();
             		SoundManager.instance.PlaySingle(swipeAhead);
             		break;
+            	// If the up arrow key was pressed.
 				case KeyCode.UpArrow:
 					// Up
 					break;
+				// If the down arrow key was pressed.
 				case KeyCode.DownArrow:
 					// Back
 					// SoundManager.instance.PlaySingle(swipeAhead);
@@ -164,27 +175,33 @@ public class GM_Agreement : MonoBehaviour
 
         if (eh.isActivate()) 
         {
-        	InputEvent ie = eh.getEventData();
+        	InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
 
+        	// If a swipe was recognized.
         	if (ie.isSwipe == true)
         	{
+        		// If the swipe was right.
         		if (ie.isRight == true)
         		{
 					// Right
                     // SoundManager.instance.PlaySingle(swipeRight);
         		}
+        		// If the swipe was left.
         		else if (ie.isLeft == true)
         		{
-					// Left
-					debugPlayerInfo.text = "Swiped left. Moving to next agreement.";
+					// Move to the next agreement.
+					debugPlayerInfo = "Swiped left. Moving to next agreement.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     gotoNextAgreement();
                     SoundManager.instance.PlaySingle(swipeAhead);
         		}
+        		// If the swipe was up.
         		else if (ie.isUp == true)
         		{
 					// Front
                     // SoundManager.instance.PlaySingle(swipeAhead);
         		}
+        		// If the swipe was down.
         		else if (ie.isDown == true)
         		{
 					// Back
@@ -192,6 +209,7 @@ public class GM_Agreement : MonoBehaviour
                     // credit
         		}
         	}
+        	// If a double tap was recognized.
         	else if (ie.isDoubleTap == true)
         	{
 				// GameMode.gamemode = GameMode.Game_Mode.RESTART;

@@ -17,11 +17,11 @@ public class GM_title : MonoBehaviour
     bool reset_audio = false;
     bool listenToCmd = false;
     public bool toMainflag = false;
-    public Text titleText;
+    Text titleText;
     bool doneTesting = false;
     eventHandler eh;
 
-	public Text debugPlayerInfo;
+	string debugPlayerInfo; // String for debugging the effects of the player's actions (Tells you they rotated, swiped, etc.).
 
     enum Direction { NONE, UP, DOWN, LEFT, RIGHT }
 
@@ -98,8 +98,6 @@ public class GM_title : MonoBehaviour
     /// </summary>
     void Update()
     {
-		debugPlayerInfo = GameObject.FindGameObjectWithTag("DebugPlayer").GetComponent<Text>();
-
         if (Const.TEST_CONNECTION)
         {
             if (!doneTesting)
@@ -123,41 +121,52 @@ public class GM_title : MonoBehaviour
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
         if (eh.isActivate() && doneTesting) // isActivate() has side effects so this order is required...
         {
-            InputEvent ie = eh.getEventData();
+			InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs
+
+			// Do something based on this event info.
             switch (ie.keycode)
             {
+            	// If the 'f' key was pressed.
                 case KeyCode.F:
+                	// If the player has plugged in headphones and single tapped, let them perform actions for the main menu.
                     if (!plugin_earphone)
                     {
-                    	debugPlayerInfo.text = "Single tapped. Earphones in.";
-						plugin_earphone = true;	
+                    	debugPlayerInfo = "Single tapped. Earphones in.";
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                        plugin_earphone = true;	// The player has plugged in earphones.
                     } 
+                    // If the player's game environment is set up properly, let them go to the main menu.
                     else if (!second_tap)
                     {
-                    	debugPlayerInfo.text = "Single tapped second time.";
+                    	debugPlayerInfo = "Single tapped second time.";
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         second_tap = true;
                         reset_audio = true;
                     }
                     break;
+                // If the right arrow key was pressed.
                 case KeyCode.RightArrow:
 					if ((plugin_earphone == true) && (second_tap == true))
 					{
 						inputDirection = Direction.RIGHT;
 					}
                     break;
+                // If the left arrow key was pressed.
                 case KeyCode.LeftArrow:
 					if ((plugin_earphone == true) && (second_tap == true))
 					{
 						inputDirection = Direction.LEFT;
 					}
                     break;
-                case KeyCode.UpArrow: // Up
+                // If the up arrow key was pressed.
+                case KeyCode.UpArrow:
 					if ((plugin_earphone == true) && (second_tap == true))
 					{
 						inputDirection = Direction.UP;
 					}
                     break;
-                case KeyCode.DownArrow: // BACK
+                // If the down arrow key was pressed.
+                case KeyCode.DownArrow:
 					if ((plugin_earphone == true) && (second_tap == true))
 					{
 						inputDirection = Direction.DOWN;
@@ -175,12 +184,13 @@ public class GM_title : MonoBehaviour
 
 		if (eh.isActivate() && doneTesting) 
 		{  // isActivate() has side effects so this order is required...
-			InputEvent ie = eh.getEventData();
+			InputEvent ie = eh.getEventData();  // Get input event data from InputModule.cs
             if (!plugin_earphone)
             {
                 if (ie.isSingleTap == true)
                 {
-					debugPlayerInfo.text = "Single tapped. Earphones in.";
+					debugPlayerInfo = "Single tapped. Earphones in.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     plugin_earphone = true;
                 }
             }
@@ -188,7 +198,8 @@ public class GM_title : MonoBehaviour
             {
                 if (ie.isSingleTap == true)
                 {
-					debugPlayerInfo.text = "Single tapped second time.";
+					debugPlayerInfo = "Single tapped second time.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     second_tap = true;
 					reset_audio = true;
                 }
@@ -196,20 +207,25 @@ public class GM_title : MonoBehaviour
             //if ((plugin_earphone == true) && (second_tap == true)) // Placing if like this is NOT EQUAL to the original one (else)!
             else
             {
+            	// If a swipe was registered.
                 if (ie.isSwipe == true)
                 {
+                	// If the swipe was right.
 				    if (ie.isRight == true)
 				    {
 					    inputDirection = Direction.RIGHT;
 				    }
+				    // If the swipe was left.
 				    else if (ie.isLeft == true)
 				    {
 					    inputDirection = Direction.LEFT;
 				    }
+				    // If the swipe was up.
 				    else if (ie.isUp == true)
 				    {
 					    inputDirection = Direction.UP;
 				    } 
+				    // If the swipe was down.
 				    else if (ie.isDown == true)
 				    {
 					    inputDirection = Direction.DOWN;
@@ -224,21 +240,27 @@ public class GM_title : MonoBehaviour
         }
         switch (inputDirection)
         {
+        	// If the player swiped right, move to the pregame menu to continue where you left off.
             case Direction.RIGHT:
-            	debugPlayerInfo.text = "Swiped right. Moving to pregame menu to continue where you left off.";
+            	debugPlayerInfo = "Swiped right. Moving to pregame menu to continue where you left off.";
+                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
-				SceneManager.LoadScene("Main_pre");
+				SceneManager.LoadScene("Main_pre"); // Move to pregame menu.
 				SoundManager.instance.PlayVoice(Database.instance.TitletoMainClips[0], true);
                 break;
+            // If the player swiped left, move to the pregame menu to start the tutorial.
             case Direction.LEFT:
-            	debugPlayerInfo.text = "Swiped left. Moving to pregame menu to start tutorial.";
+            	debugPlayerInfo = "Swiped left. Moving to pregame menu to start tutorial.";
+                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
-                SceneManager.LoadScene("Main_pre");
+                SceneManager.LoadScene("Main_pre"); // Move to pregame menu.
 				SoundManager.instance.PlayVoice(Database.instance.TitletoMainClips[0], true);
 				//SceneManager.LoadScene("Main");
                 break;
+            // If the player swiped up, listen to the commands.
             case Direction.UP:
-            	debugPlayerInfo.text = "Swiped up. Listening to commands.";
+            	debugPlayerInfo = "Swiped up. Listening to commands.";
+                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
 				if (!listenToCmd)
 				{
@@ -255,8 +277,10 @@ public class GM_title : MonoBehaviour
 					cmd_cur_clip = 0;
 				}
                 break;
+            // If the player swiped down, do nothing.
             case Direction.DOWN:
-            	debugPlayerInfo.text = "Swiped down. Does nothing here.";
+            	debugPlayerInfo = "Swiped down. Does nothing here.";
+                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
 				//credit
                 break;

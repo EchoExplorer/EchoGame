@@ -90,6 +90,7 @@
     <None Include="Assets\Editor\Doxygen\ReadMe.txt" />
     <None Include="Assets\Editor\Doxygen\Resources\BaseDoxyfile.txt" />
     <None Include="Assets\Fonts\OFL.txt" />
+    <None Include="Assets\Plugins\Android\AndroidManifest.xml" />
     <None Include="Assets\Resources\GameData\levels.txt" />
     <None Include="Assets\Resources\GameData\levels_T_tutorial.txt" />
     <None Include="Assets\Resources\GameData\test.txt" />

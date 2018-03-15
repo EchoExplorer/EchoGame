@@ -18,7 +18,7 @@ public class GM_main_pre : MonoBehaviour
     eventHandler eh;
     CDTimer TriggerStartNewGame;
 
-    public Text debugPlayerInfo;
+    string debugPlayerInfo; // String for debugging the effects of the player's actions (Tells you they rotated, swiped, etc.).
 
     // Use this for initialization
     void Start()
@@ -73,33 +73,39 @@ public class GM_main_pre : MonoBehaviour
     /// </summary>
     void Update()
     {
-    	debugPlayerInfo = GameObject.FindGameObjectWithTag("DebugPlayer").GetComponent<Text>();
-
         play_audio();
 
         SelectMode selectMode = SelectMode.NONE;
 
 // Check if we are running either in the Unity editor or in a standalone build.
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
+		// Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
         if (eh.isActivate())
         {
-            InputEvent ie = eh.getEventData();
+			InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
+
+			// Do something based on this event info.
             switch (ie.keycode)
             {
-                // Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
+              	// If the right arrow key was pressed.
                 case KeyCode.RightArrow:
+                	// If we have not confirmed we want to start a new game and have swiped right, set mode to Continue.
                     if (!at_confirm)
-                    {
+                    {	
                         selectMode = SelectMode.CONTINUE;
                     }
                     break;
+                // If the left arrow key was pressed.
                 case KeyCode.LeftArrow:
+                	// If we have confirmed we want to start a new game and have swiped left, set mode to New.
                     if (at_confirm)
                     {
                         selectMode = SelectMode.NEW;
                     }
                     break;
+                // If the 'e' key was pressed.
                 case KeyCode.E:
+            		// We have confirmed we want to start a new game, so set mode to Confirm.
                     selectMode = SelectMode.CONFIRM;
                     break;
                 default:
@@ -146,29 +152,36 @@ public class GM_main_pre : MonoBehaviour
 
 		if (eh.isActivate())
 		{
-			InputEvent ie = eh.getEventData();
+			InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
 
+			// If a swipe was recognized.
 			if (ie.isSwipe == true)
 			{
+				// If the swipe was right.
 				if (ie.isRight == true)
 				{
+					// If we have not confirmed we want to start a new game and have swiped right, set mode to Continue.
 					if (!at_confirm)
 					{
                         selectMode = SelectMode.CONTINUE;
 					}
 				} 
+				// If the swipe was right.
 				else if (ie.isLeft == true)
 				{
+					// If we have not confirmed we want to start a new game, do nothing.
 					if (!at_confirm)
 					{
 						// nothing
 					}
+					// If we have confirmed we want to start a new game and have swiped left, set mode to New.
 					else
-					{ // at_confirm
+					{ 
                         selectMode = SelectMode.NEW;
 					}
 				}
 			}
+			// If a double tap was registered and we are able to start a new game, set mode to Continue.
 			else if ((ie.isDoubleTap == true) && TriggerStartNewGame.CDfinish())
 			{
                 selectMode = SelectMode.CONFIRM;
@@ -177,14 +190,18 @@ public class GM_main_pre : MonoBehaviour
 #endif //End of mobile platform dependendent compilation section started above with #elif
         switch (selectMode)
         {
+        	// If mode is set to Continue, we have swiped right, so continue from where we left off.
             case SelectMode.CONTINUE:
-            	debugPlayerInfo.text = "Swiped right. Continuing from where you left off.";
+            	debugPlayerInfo = "Swiped right. Continuing from where you left off.";
+                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 SoundManager.instance.PlaySingle(Database.instance.inputSFX);
                 SoundManager.instance.PlayVoice(Database.instance.MainPreContinueGame, true);
-                SceneManager.LoadScene("Main");
+                SceneManager.LoadScene("Main"); 
                 break;
+            // If mode is set to New, we have confirmed and swiped left, so start a new game from either the tutorial or the first non-tutorial level.
             case SelectMode.NEW:
-            	debugPlayerInfo.text = "Swiped left. Starting new game.";
+            	debugPlayerInfo = "Swiped left. Starting new game.";
+                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 SoundManager.instance.PlaySingle(Database.instance.inputSFX);
                 if (GameMode.instance.gamemode == GameMode.Game_Mode.TUTORIAL)
                     GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL_RESTART;
@@ -194,8 +211,10 @@ public class GM_main_pre : MonoBehaviour
                 // Utilities.write_save(0); ???
                 SceneManager.LoadScene("Main");
                 break;
+            // If mode is set to Confirm, we have double tapped to confirm we want to start a new game, so let the player swipe left to start.
 			case SelectMode.CONFIRM:
-				debugPlayerInfo.text = "Double tapped. Confirmed action";
+				debugPlayerInfo = "Double tapped. Confirmed action";
+                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 cur_clip = 0;
                 reset_audio = true;
                 at_confirm = !at_confirm;

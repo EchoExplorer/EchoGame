@@ -1,10 +1,26 @@
 fileFormatVersion: 2
 guid: 1fd1be69fbcce7e4b9e9f3e463001cc9
-timeCreated: 1488075227
+timeCreated: 1520953880
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - canvas: {fileID: 223183630621063140, guid: 0b56c78362a86234f89d7b2cb393b073, type: 2}
+  - inputText: {fileID: 114367809567050678, guid: b4e36ccc20a7e7e4a84fbbe161c05119,
+      type: 2}
+  - touch0Text: {fileID: 114420491642311912, guid: 9d5430de586748f439fc6a8461a20460,
+      type: 2}
+  - touch1Text: {fileID: 114458004231814416, guid: b125b64a8a2bbd24c92f3ed3c877fcb5,
+      type: 2}
+  - touch2Text: {fileID: 114784634959515872, guid: f2e4c5c66d1ccf242aadd29bc4ea54ff,
+      type: 2}
+  - durationText: {fileID: 114234098465824324, guid: b7fcee64389401a49882e5a6472699bb,
+      type: 2}
+  - debugInputInfo: {instanceID: 0}
+  - touch0Info: {instanceID: 0}
+  - touch1Info: {instanceID: 0}
+  - touch2Info: {instanceID: 0}
+  - touchDurationInfo: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
