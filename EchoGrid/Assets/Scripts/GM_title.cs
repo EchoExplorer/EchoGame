@@ -23,6 +23,8 @@ public class GM_title : MonoBehaviour
 
 	string debugPlayerInfo; // String for debugging the effects of the player's actions (Tells you they rotated, swiped, etc.).
 
+    public bool isUsingTalkback = false; // Used to determine if the player is using Talkback or not.
+
     enum Direction { NONE, UP, DOWN, LEFT, RIGHT }
 
     /// <summary>
@@ -33,15 +35,17 @@ public class GM_title : MonoBehaviour
         eh = new eventHandler(InputModule.instance);
     }
 
+    bool determined_talkback = false;
     bool plugin_earphone = false;
-    bool second_tap = false;
-    bool orient_correction = false;
+    bool environment_setup = false;
+    bool orientation_correct = false;
     bool clip0_reset = true;
     bool clip1_reset = true;
     bool clip2_reset = true;
+
     void play_audio()
     {
-        if (!plugin_earphone)
+        if ((determined_talkback == true) && !plugin_earphone)
         {
             if (SoundManager.instance.PlayVoice(Database.instance.settingClips[0], clip0_reset, 1))
             {
@@ -49,7 +53,7 @@ public class GM_title : MonoBehaviour
             }
             return;
         }
-        if (!orient_correction)
+        if ((determined_talkback == true) && (plugin_earphone == true) && !orientation_correct)
         {
             if (!Utilities.isDeviceLandscape())
             {//not landscape!
@@ -62,14 +66,14 @@ public class GM_title : MonoBehaviour
             }
             else
             {
-                orient_correction = true;
                 if (SoundManager.instance.PlayVoice(Database.instance.settingClips[2], clip2_reset))
                 {
                     clip2_reset = false;
                 }
+                orientation_correct = true;
             }
         }
-        if (!listenToCmd)
+        if ((environment_setup == true) && !listenToCmd)
         {
             if (SoundManager.instance.PlayVoice(Database.instance.TitleClips[cur_clip], reset_audio))
             {
@@ -79,7 +83,7 @@ public class GM_title : MonoBehaviour
                     cur_clip = 0;
             }
         }
-        else
+        else if ((environment_setup == true) && listenToCmd)
         {
             if (SoundManager.instance.PlayVoice(Database.instance.TitleCmdlistClips[cmd_cur_clip], reset_audio))
             {
@@ -129,46 +133,66 @@ public class GM_title : MonoBehaviour
             	// If the 'f' key was pressed.
                 case KeyCode.F:
                 	// If the player has plugged in headphones and single tapped, let them perform actions for the main menu.
-                    if (!plugin_earphone)
+                    if ((determined_talkback == true) && !plugin_earphone)
                     {
-                    	debugPlayerInfo = "Single tapped. Earphones in.";
+                    	debugPlayerInfo = "Tap registered. Earphones in.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         plugin_earphone = true;	// The player has plugged in earphones.
                     } 
                     // If the player's game environment is set up properly, let them go to the main menu.
-                    else if (!second_tap)
+                    else if ((determined_talkback == true) && (plugin_earphone == true) && (orientation_correct == true) && !environment_setup)
                     {
-                    	debugPlayerInfo = "Single tapped second time.";
+                    	debugPlayerInfo = "Tap registered. Game environment set up.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                        second_tap = true;
+                        environment_setup = true;
                         reset_audio = true;
                     }
-                    break;
+                    break;             
                 // If the right arrow key was pressed.
                 case KeyCode.RightArrow:
-					if ((plugin_earphone == true) && (second_tap == true))
+                    // If the player has not informed us if they are using Talkback or not.
+                    if (determined_talkback == false)
+                    {
+                        debugPlayerInfo = "Swiped right. Player is not using Talkback.";
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                        isUsingTalkback = false; // The player is not using Talkback.
+                        determined_talkback = true; // Determined if the player is using Talkback or not.
+                    }
+                    // If the player's game environment is set up properly.
+                    if ((determined_talkback == true) && (plugin_earphone == true) && (orientation_correct == true) && (environment_setup == true))
 					{
 						inputDirection = Direction.RIGHT;
 					}
                     break;
                 // If the left arrow key was pressed.
                 case KeyCode.LeftArrow:
-					if ((plugin_earphone == true) && (second_tap == true))
-					{
+                    // If the player has not informed us if they are using Talkback or not.
+                    if (determined_talkback == false)
+                    {
+                        debugPlayerInfo = "Swiped left. Player is using Talkback.";
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                        isUsingTalkback = true; // The player is using Talkback.
+                        determined_talkback = true; // Determined if the player is using Talkback or not.
+                    }
+                    // If the player's game environment is set up properly.
+                    if ((determined_talkback == true) && (plugin_earphone == true) && (orientation_correct == true) && (environment_setup == true))
+                    {
 						inputDirection = Direction.LEFT;
 					}
                     break;
                 // If the up arrow key was pressed.
                 case KeyCode.UpArrow:
-					if ((plugin_earphone == true) && (second_tap == true))
-					{
+                    // If the player's game environment is set up properly.
+                    if ((determined_talkback == true) && (plugin_earphone == true) && (orientation_correct == true) && (environment_setup == true))
+                    {
 						inputDirection = Direction.UP;
 					}
                     break;
                 // If the down arrow key was pressed.
                 case KeyCode.DownArrow:
-					if ((plugin_earphone == true) && (second_tap == true))
-					{
+                    // If the player's game environment is set up properly.
+                    if ((determined_talkback == true) && (plugin_earphone == true) && (orientation_correct == true) && (environment_setup == true))
+                    {
 						inputDirection = Direction.DOWN;
 					}
                     break;
@@ -185,26 +209,55 @@ public class GM_title : MonoBehaviour
 		if (eh.isActivate() && doneTesting) 
 		{  // isActivate() has side effects so this order is required...
 			InputEvent ie = eh.getEventData();  // Get input event data from InputModule.cs
-            if (!plugin_earphone)
+
+            // If the player has not informed us if they are using Talkback or not.
+            if (determined_talkback == false)
             {
-                if (ie.isSingleTap == true)
+                // If a swipe was registered.
+                if (ie.isSwipe == true)
                 {
-					debugPlayerInfo = "Single tapped. Earphones in.";
+                    // If the swipe was left, the user is using Talkback.
+                    if (ie.isLeft == true)
+                    {
+                        debugPlayerInfo = "Swiped left. Player is using Talkback.";
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                        isUsingTalkback = true; // The player is using Talkback.
+                        determined_talkback = true; // Determined if the player is using Talkback or not.
+                    }
+                    // If the swipe was right, the user is not using Talkback.
+                    else if (ie.isRight == true)
+                    {
+                        debugPlayerInfo = "Swiped right. Player is not using Talkback.";
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                        isUsingTalkback = false; // The player is not using Talkback.
+                        determined_talkback = true; // Determined if the player is using Talkback or not.
+                    }
+                }           
+            }
+            // If the player has not put in headphones.
+            else if ((determined_talkback == true) && !plugin_earphone)
+            {
+                // If a tap was registered.
+                if (ie.isTap == true)
+                {
+					debugPlayerInfo = "Tap registered. Earphones in.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    plugin_earphone = true;
+                    plugin_earphone = true; // The player has put in headphones.
                 }
             }
-            else if (!second_tap)
+
+            // If the player's game environment is set up properly.
+            else if ((determined_talkback == true) && (plugin_earphone == true) && (orientation_correct == true) && !environment_setup)
             {
-                if (ie.isSingleTap == true)
+                // If a tap was registered.
+                if (ie.isTap == true)
                 {
-					debugPlayerInfo = "Single tapped second time.";
+					debugPlayerInfo = "Tap registered. Game environment set up.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    second_tap = true;
+                    environment_setup = true; // Player environment is now set up.
 					reset_audio = true;
                 }
-            }
-            //if ((plugin_earphone == true) && (second_tap == true)) // Placing if like this is NOT EQUAL to the original one (else)!
+            }         
             else
             {
             	// If a swipe was registered.
@@ -234,7 +287,7 @@ public class GM_title : MonoBehaviour
             }
 		}
 #endif //End of mobile platform dependendent compilation section started above with #elif
-        if (!plugin_earphone || !second_tap) 
+        if ((determined_talkback == false) || !plugin_earphone || !environment_setup) 
         {
         	return;
         }

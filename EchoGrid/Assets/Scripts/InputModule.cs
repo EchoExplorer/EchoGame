@@ -14,9 +14,7 @@ public struct InputEvent
     public bool isDown; // If a swipe or rotation registered was down.
     public int touchNum; 
     public int cumulativeTouchNum; // within a short period of time, how many time user touches
-	public bool isSingleTap; // If a single tap was registered.
-	public bool isDoubleTap; // If a double tap was registered.
-	public bool isTripleTap; // If a triple tap was registered.
+	public bool isTap; // If a tap was registered.
 	public bool isHold; // If a hold was registered.
 	public bool isSwipe; // If a swipe was registered.
     public bool isRotate; // If a rotation was registered.
@@ -30,8 +28,7 @@ public struct InputEvent
 	public void init()
     {
         isRight = false; isLeft = false; isUp = false; isDown = false;
-		isSingleTap = false; isDoubleTap = false; isTripleTap = false; 
-		isHold = false; isSwipe = false; isRotate = false; isUnrecognized = false; keycode = KeyCode.None;
+		isTap = false; isHold = false; isSwipe = false; isRotate = false; isUnrecognized = false; keycode = KeyCode.None;
         elapsedTime = 0.0f;
 		touchNum = 0; 
         cumulativeTouchNum = 0;
@@ -51,7 +48,7 @@ public struct InputEvent
     /// <returns></returns>
 	public bool hasEffectiveInput()
     {
-        return isRight || isLeft || isUp || isDown || isSingleTap || isDoubleTap || isTripleTap || isHold || isSwipe || isRotate || isUnrecognized || (keycode != KeyCode.None) || (touchNum > 0) || (cumulativeTouchNum > 0);
+        return isRight || isLeft || isUp || isDown || isTap || isHold || isSwipe || isRotate || isUnrecognized || (keycode != KeyCode.None) || (touchNum > 0) || (cumulativeTouchNum > 0);
     }
 }
 
@@ -68,14 +65,14 @@ public class InputModule : MonoBehaviour
 	float minSwipeHorizontalDist = Screen.height * 0.07f; // The minimum horizontal distance the player needs to move their fingers to register a gesture as a swipe.
     float maxRotateVerticalDist = Screen.width * 0.5f; // The maximum vertical distance the player can move their fingers to register a gesture as a rotation.
     float maxRotateHorizontalDist = Screen.height * 0.75f; // The maximum horizontal distance the player can move their fingers to register a gesture as a rotation.
-    const float multiTapCD = 1.0f; // How long the player has to input more taps once a tap has been started.
+    const float tapCD = 1.0f; // How long the player has to finish a tap once it has been started.
 	const float swipeGestCD = 1.0f; // How long the player has to finish a swipe once it has been started. 
 	const float rotateGestCD = 1.0f; // How long the player has to finish a rotation once it has been started.
     float holdDuration = 1.5f; // How long the player must keep touching for a hold to register.
 
 	int TouchTapCount; // Used to determine how many taps have been registered (single, double, triple) in a given time period.
 	float touchTime = 0.0f;
-	float multiTapStartTime = 0.0f; // When a tap/multitap starts.
+	float tapGestStartTime = 0.0f; // When a tap starts.
     float swipeGestStartTime = 0.0f; // When a swipe starts.
     float rotateGestStartTime = 0.0f; // When a rotation starts.
 
@@ -87,11 +84,6 @@ public class InputModule : MonoBehaviour
     string debugTouch1Info; // String for debugging what is happening with touch1.
 	string debugTouch2Info; // String for debugging what is happening with touch2.
 	string debugTouchDurationInfo; // String for debugging the duration the player has been holding a gesture.
-    string debugCrossInfo; // String for debugging the information about the start and end vectors between touch0 and touch1 and their cross product.
-
-    string vecStartInfo; // String for the vector of the start positions of touch0 and touch1.
-    string vecEndInfo; // String for the vector of the end positions of touch0 and touch1.
-    string crossProductInfo; // String for the cross product of the start and end vectors of touch0 and touch1.
 
 	Vector2[] touchStart = {new Vector2(), new Vector2(), new Vector2()}; // Array for the start positions of the three touches.
 	Vector2[] touchEnd = {new Vector2(), new Vector2(), new Vector2()}; // Array for the end positions of the three touches.
@@ -107,9 +99,7 @@ public class InputModule : MonoBehaviour
 	bool[] hasRegistered = {false, false, false}; // For some reason TouchPhase.Began does not seem to be recognized. This fills a similar purpose, determining if the touch has been on the screen during a frame or not.
 	bool stillHolding = false; // For if the user makes a hold longer than 1.0f. Because on each update call isHold is set back to false, we don't want to have it change back to true unless the user has let go and held for another 1.0f.
 
-	int singleTapTimes = 0; // Number of times the player has made a single tap. Helpful for debugging if multiple single taps are made in a row.
-	int doubleTapTimes = 0; // Number of times the player has made a double tap. Helpful for debugging if multiple double taps are made in a row.
-	int tripleTapTimes = 0; // Number of times the player has made a triple tap. Helpful for debugging if multiple triple taps are made in a row.
+	int tapTimes = 0; // Number of times the player has made a single tap. Helpful for debugging if multiple single taps are made in a row.
     int holdTimes = 0; // Number of times the player has made a hold. Helpful for debugging if multiple holds are made in a row.
     int swipeLeftTimes = 0; // Number of times the player has made a swipe left. Helpful for debugging if multiple swipe lefts are made in a row.
 	int swipeRightTimes = 0; // Number of times the player has made a swipe right. Helpful for debugging if multiple swipe rights are made in a row.
@@ -207,33 +197,12 @@ public class InputModule : MonoBehaviour
             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
             ievent.keycode = KeyCode.F;
         }
-		// If the 'e' key was pressed, set the keycode to 'e'.
-        else if (Input.GetKeyUp("e"))
-        {
-			debugInputInfo = "E key pressed.";
-            DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
-            ievent.keycode = KeyCode.E;
-        }
-		// If the 'g' key was pressed, set the keycode to 'g'.
-        else if (Input.GetKeyUp("g"))
-        {
-			debugInputInfo = "G key pressed.";
-            DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
-            ievent.keycode = KeyCode.G;
-        }
 		// If the 'r' key was pressed, set the keycode to 'r'.
         else if (Input.GetKeyUp("r"))
         {
 			debugInputInfo = "R key pressed.";
             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
             ievent.keycode = KeyCode.R;
-        }
-		// If the 'm' key was pressed, set the keycode to 'm'.
-        else if (Input.GetKeyUp("m"))
-        {
-			debugInputInfo = "M key pressed.";
-            DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
-            ievent.keycode = KeyCode.M;
         }
         // If the 'p' key was pressed, set the keycode to 'p'.
 		else if (Input.GetKeyUp("p"))
@@ -287,11 +256,11 @@ public class InputModule : MonoBehaviour
 					touchEnd[0] = thisTouch.position; // Update the end position of this touch.
 					vecEnd1 = thisTouch.position; // Update the end position vector of this touch.
 
-					// If there is still time to register another tap.
-					if ((Time.time - multiTapStartTime) < multiTapCD) 
+					// If there is still time to register a tap.
+					if ((Time.time - tapGestStartTime) < tapCD) 
 					{
-                        // If three fingers have left the screen and there has been less than three taps in this time, increment TouchTapCount by three.
-                        if ((tapRegister == 3) && (TouchTapCount <= 6)) 
+                        // If three fingers have left the screen and there has not been a tap in this time, increment TouchTapCount by three.
+                        if ((tapRegister == 3) && (TouchTapCount < 3)) 
 						{   
                             TouchTapCount += tapRegister;                            
                         }
@@ -342,17 +311,17 @@ public class InputModule : MonoBehaviour
 					touchEnd[1] = thisTouch.position; // Update the end position of this touch.
 					vecEnd2 = thisTouch.position; // Update the end position vector of this touch.
 
-					// If there is still time to register another tap.
-					if ((Time.time - multiTapStartTime) < multiTapCD)
-					{
-						// If three fingers have left the screen and there has been less than three taps in this time, increment TouchTapCount by three.
-						if ((tapRegister == 3) && (TouchTapCount <= 6)) 
-						{          
-                            TouchTapCount += tapRegister;	
-						}
-						ievent.elapsedTime = Time.time - touchTime;
-					}
-				}
+                    // If there is still time to register a tap.
+                    if ((Time.time - tapGestStartTime) < tapCD)
+                    {
+                        // If three fingers have left the screen and there has not been a tap in this time, increment TouchTapCount by three.
+                        if ((tapRegister == 3) && (TouchTapCount < 3))
+                        {
+                            TouchTapCount += tapRegister;
+                        }
+                        ievent.elapsedTime = Time.time - touchTime;
+                    }
+                }
 				// If the touch was canceled for some reason.
 				else if (thisTouch.phase == TouchPhase.Canceled) 
 				{
@@ -376,10 +345,10 @@ public class InputModule : MonoBehaviour
                     touchEnd[2] = thisTouch.position; // The end position of this touch should currently be the same as the start position.         
                     hasRegistered[2] = true; // The touch has now been registered.
 
-                    // If a multitap can start now, set the start time to now and set the TouchTapCount back to 0.
-                    if ((Time.time - multiTapStartTime) >= multiTapCD)
+                    // If a tap can start now, set the start time to now and set the TouchTapCount back to 0.
+                    if ((Time.time - tapGestStartTime) >= tapCD)
                     {
-                        multiTapStartTime = Time.time;
+                        tapGestStartTime = Time.time;
                         TouchTapCount = 0;
                     }
 
@@ -402,17 +371,17 @@ public class InputModule : MonoBehaviour
 					tapRegister += 1; // Update the number of touches that have left the screen.
 					touchEnd[2] = thisTouch.position; // Update the end position of this touch.
 
-					// If there is still time to register another tap.
-					if ((Time.time - multiTapStartTime) < multiTapCD) 
-					{
-                        // If three fingers have left the screen and there has been less than three taps in this time, increment TouchTapCount by three.
-                        if ((tapRegister == 3) && (TouchTapCount <= 6)) 
-						{                   
-                            TouchTapCount += tapRegister;	
-						}
-						ievent.elapsedTime = Time.time - touchTime;
-					}
-				}
+                    // If there is still time to register a tap.
+                    if ((Time.time - tapGestStartTime) < tapCD)
+                    {
+                        // If three fingers have left the screen and there has not been a tap in this time, increment TouchTapCount by three.
+                        if ((tapRegister == 3) && (TouchTapCount < 3))
+                        {
+                            TouchTapCount += tapRegister;
+                        }
+                        ievent.elapsedTime = Time.time - touchTime;
+                    }
+                }
 				// If the touch was canceled for some reason.
 				else if (thisTouch.phase == TouchPhase.Canceled) 
 				{
@@ -460,20 +429,11 @@ public class InputModule : MonoBehaviour
 
                     VecStart = vecStart1 - vecStart2; // Get the vector between the start positions of touch0 and touch1.
                     VecEnd = vecEnd1 - vecEnd2; // Get the vector between the end positions of touch0 and touch1.
-                    Vector3 VSNormalized = (Vector3)VecStart.normalized;
-                    Vector3 VENormalized = (Vector3)VecEnd.normalized;
-                    Vector3 cross = Vector3.Cross(VSNormalized, VENormalized); // Get the cross product between the two vectors.
+                    Vector3 cross = Vector3.Cross((Vector3)VecStart.normalized, (Vector3)VecEnd.normalized); // Get the cross product between the two vectors.
                     float crossPz = cross.z; // Get the z-component of the cross product.
 
-                    vecStartInfo = "X: " + VSNormalized.x + ", Y: " + VSNormalized.y;
-                    vecEndInfo = "X: " + VENormalized.x + ", Y: " + VENormalized.y;
-                    crossProductInfo = "CrossZ: " + crossPz;
-
-                    debugCrossInfo = vecStartInfo + "\n" + vecEndInfo + "\n" + crossProductInfo;
-                    DebugCross.instance.ChangeDebugCrossText(debugCrossInfo); // Update the debug textbox.
-
                     // If another gesture has not been registered already for this update.
-                    if ((stillHolding == false) && (ievent.isSingleTap == false) && (ievent.isDoubleTap == false) && (ievent.isTripleTap == false) && (ievent.isHold == false) && (ievent.isSwipe == false) && (ievent.isRotate == false) && (ievent.isUnrecognized == false))
+                    if ((stillHolding == false) && (ievent.isTap == false) && (ievent.isHold == false) && (ievent.isSwipe == false) && (ievent.isRotate == false) && (ievent.isUnrecognized == false))
                     {
                         // If the x or y distances covered by each finger have not exceeded the maximum distances for a hold and have not rotated too much.
                         if ((Mathf.Abs(x0) <= maxHoldHorizontalDist) && (Mathf.Abs(x1) <= maxHoldHorizontalDist) && (Mathf.Abs(x2) <= maxHoldHorizontalDist) && (Mathf.Abs(y0) <= maxHoldVerticalDist) && (Mathf.Abs(y1) <= maxHoldVerticalDist) && (Mathf.Abs(y2) <= maxHoldVerticalDist) && (Mathf.Abs(crossPz) < (Screen.height * 0.00015f)))
@@ -485,7 +445,7 @@ public class InputModule : MonoBehaviour
                             stillHolding = true; // Make sure isHold does not get triggered again if they continue to hold for another 1.0f.
                         }
                         // Check if any of the touches moved more than the maximum vertical/horizontal distance for a hold or have rotated to much.
-                        if ((stillHolding == false) && ((Mathf.Abs(x0) > maxHoldHorizontalDist) || (Mathf.Abs(x1) > maxHoldHorizontalDist) || (Mathf.Abs(x2) > maxHoldHorizontalDist) || (Mathf.Abs(y0) > maxHoldVerticalDist) || (Mathf.Abs(y1) > maxHoldVerticalDist) || (Mathf.Abs(y2) > maxHoldVerticalDist) || (Mathf.Abs(crossPz) >= (Screen.height * 0.00015f))))
+                        else if (stillHolding == false)
                         {
                             ievent.isUnrecognized = true; // There was an unrecognized gesture.
                             unrecognizedTimes += 1; // Update the number of times an unrecognized gesture has been made.
@@ -520,72 +480,33 @@ public class InputModule : MonoBehaviour
 
                 VecStart = vecStart1 - vecStart2; // Get the vector between the start positions of touch0 and touch1.
                 VecEnd = vecEnd1 - vecEnd2; // Get the vector between the end positions of touch0 and touch1.
-                Vector3 VSNormalized = (Vector3)VecStart.normalized;
-                Vector3 VENormalized = (Vector3)VecEnd.normalized;
-                Vector3 cross = Vector3.Cross(VSNormalized, VENormalized); // Get the cross product between the two vectors.
+                Vector3 cross = Vector3.Cross((Vector3)VecStart.normalized, (Vector3)VecEnd.normalized); // Get the cross product between the two vectors.
                 float crossPz = cross.z; // Get the z-component of the cross product.
-
-                vecStartInfo = "X: " + VSNormalized.x + ", Y: " + VSNormalized.y;
-                vecEndInfo = "X: " + VENormalized.x + ", Y: " + VENormalized.y;
-                crossProductInfo = "CrossZ: " + crossPz;
-
-                debugCrossInfo = vecStartInfo + "\n" + vecEndInfo + "\n" + crossProductInfo;
-                DebugCross.instance.ChangeDebugCrossText(debugCrossInfo); // Update the debug textbox.
 
                 // If it could be a tap, swipe, or rotation.
                 if (touchDuration < holdDuration)
                 {
-                    // If the gesture could be a single tap.
+                    // If the gesture could be a tap.
                     if ((TouchTapCount == 3) && (Mathf.Abs(x0) < minSwipeHorizontalDist) && (Mathf.Abs(y0) < minSwipeVerticalDist) && (Mathf.Abs(x1) < minSwipeHorizontalDist) && (Mathf.Abs(y1) < minSwipeVerticalDist) && (Mathf.Abs(x2) < minSwipeHorizontalDist) && (Mathf.Abs(y2) < minSwipeVerticalDist))
                     {
-                        // If time passed since last tap/multitap is equal to/past the multitap cooldown time and another gesture has not been registered already for this update. 
-                        if (((Time.time - multiTapStartTime) >= multiTapCD) && (ievent.isSingleTap == false) && (ievent.isDoubleTap == false) && (ievent.isHold == false) && (ievent.isTripleTap == false) && (ievent.isSwipe == false) && (ievent.isRotate == false) && (ievent.isUnrecognized == false))
+                        // If time passed since last tap is equal to/past the tap cooldown time and another gesture has not been registered already for this update. 
+                        if (((Time.time - tapGestStartTime) >= tapCD) && (ievent.isTap == false) && (ievent.isHold == false) && (ievent.isSwipe == false) && (ievent.isRotate == false) && (ievent.isUnrecognized == false))
                         {
-                            ievent.isSingleTap = true; // A single tap was registered.
-                            singleTapTimes += 1; // Update the number of times a single tap was made.
-                            debugInputInfo = "Single tapped " + singleTapTimes + " times";
+                            ievent.isTap = true; // A tap was registered.
+                            tapTimes += 1; // Update the number of times a tap was made.
+                            debugInputInfo = "Tapped " + tapTimes + " times";
                             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
-                            multiTapStartTime = Time.time; // Set the end time to now.
+                            tapGestStartTime = Time.time; // Set the start time to now.
                             tapRegister = 0; // Reset the tapRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
-                            TouchTapCount = 0; // Reset the TouchTapCount just to make sure that more than 3 taps are not recognized.
-                        }
-                    }
-                    // If the gesture could be a double tap.
-                    else if ((TouchTapCount == 6) && (Mathf.Abs(x0) < minSwipeHorizontalDist) && (Mathf.Abs(y0) < minSwipeVerticalDist) && (Mathf.Abs(x1) < minSwipeHorizontalDist) && (Mathf.Abs(y1) < minSwipeVerticalDist) && (Mathf.Abs(x2) < minSwipeHorizontalDist) && (Mathf.Abs(y2) < minSwipeVerticalDist))
-                    {
-                        // If time passed since last tap/multitap is equal to/past the multitap cooldown time and another gesture has not been registered already for this update. 
-                        if (((Time.time - multiTapStartTime) >= multiTapCD) && (ievent.isSingleTap == false) && (ievent.isDoubleTap == false) && (ievent.isTripleTap == false) && (ievent.isHold == false) && (ievent.isSwipe == false) && (ievent.isRotate == false) && (ievent.isUnrecognized == false))
-                        {                     
-                            ievent.isDoubleTap = true; // A double tap was registered.
-                            doubleTapTimes += 1; // Update the number of times a double tap was made.
-                            debugInputInfo = "Double tapped " + doubleTapTimes + " times";
-                            DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
-                            multiTapStartTime = Time.time; // Set the end time to now.
-                            tapRegister = 0; // Reset the tapRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
-                            TouchTapCount = 0; // Reset the TouchTapCount just to make sure that more than 3 taps are not recognized.
-                        }
-                    }
-                    // If the gesture could be a triple tap.
-                    else if ((TouchTapCount == 9) && (Mathf.Abs(x0) < minSwipeHorizontalDist) && (Mathf.Abs(y0) < minSwipeVerticalDist) && (Mathf.Abs(x1) < minSwipeHorizontalDist) && (Mathf.Abs(y1) < minSwipeVerticalDist) && (Mathf.Abs(x2) < minSwipeHorizontalDist) && (Mathf.Abs(y2) < minSwipeVerticalDist))
-                    {
-                        // If time passed since last tap/multitap is equal to/past the multitap cooldown time and another gesture has not been registered already for this update. 
-                        if (((Time.time - multiTapStartTime) >= multiTapCD) && (ievent.isSingleTap == false) && (ievent.isDoubleTap == false) && (ievent.isTripleTap == false) && (ievent.isHold == false) && (ievent.isSwipe == false) && (ievent.isRotate == false) && (ievent.isUnrecognized == false))
-                        {
-                            ievent.isTripleTap = true; // A triple tap was registered.
-                            tripleTapTimes += 1; // Update the number of times a triple tap was made.
-                            debugInputInfo = "Triple tapped " + tripleTapTimes + " times";
-                            DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
-                            multiTapStartTime = Time.time; // Set the end time to now.
-                            tapRegister = 0; // Reset the tapRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
-                            TouchTapCount = 0; // Reset the TouchTapCount just to make sure that more than 3 taps are not recognized.
+                            TouchTapCount = 0; // Reset the TouchTapCount just to make sure that more than one tap is not recognized.
                         }
                     }
                     
                     // If the gesture could be a swipe left or right.
-                    else if ((Mathf.Abs(x0) > Mathf.Abs(y0)) && (Mathf.Abs(x0) >= minSwipeHorizontalDist) && (Mathf.Abs(x1) > Mathf.Abs(y1)) && (Mathf.Abs(x1) >= minSwipeHorizontalDist) && (Mathf.Abs(x2) > Mathf.Abs(y2)) && (Mathf.Abs(x2) >= minSwipeHorizontalDist) && (Mathf.Abs(crossPz) < (Screen.height * 0.00015f)))
+                    else if ((Mathf.Abs(x0) > Mathf.Abs(y0)) && (Mathf.Abs(x0) >= minSwipeHorizontalDist) && (Mathf.Abs(x1) > Mathf.Abs(y1)) && (Mathf.Abs(x1) >= minSwipeHorizontalDist) && (Mathf.Abs(x2) > Mathf.Abs(y2)) && (Mathf.Abs(x2) >= minSwipeHorizontalDist))
                     {
                         // If time passed since last swipe is equal to/past the swipe cooldown time and another gesture has not been registered already for this update. 
-                        if (((Time.time - swipeGestStartTime) >= swipeGestCD) && (ievent.isSingleTap == false) && (ievent.isDoubleTap == false) && (ievent.isTripleTap == false) && (ievent.isHold == false) && (ievent.isSwipe == false) && (ievent.isRotate == false) && (ievent.isUnrecognized == false))
+                        if (((Time.time - swipeGestStartTime) >= swipeGestCD) && (ievent.isTap == false) && (ievent.isHold == false) && (ievent.isSwipe == false) && (ievent.isRotate == false) && (ievent.isUnrecognized == false))
                         {
                             // Swipe right detected.
                             if ((x0 > 0.0f) && (x1 > 0.0f) && (x2 > 0.0f))
@@ -597,7 +518,7 @@ public class InputModule : MonoBehaviour
                                 DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
                                 swipeGestStartTime = Time.time; // Set the end time to now.
                                 tapRegister = 0; // Reset the tapRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
-                                TouchTapCount = 0; // Reset the TouchTapCount just to make sure that more than 3 taps are not recognized.
+                                TouchTapCount = 0; // Reset the TouchTapCount just to make sure that more than one tap is not recognized.
                             }
                             // Swipe left detected.
                             else if ((x0 < 0.0f) && (x1 < 0.0f) && (x2 < 0.0f))
@@ -609,15 +530,15 @@ public class InputModule : MonoBehaviour
                                 DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
                                 swipeGestStartTime = Time.time; // Set the end time to now.
                                 tapRegister = 0; // Reset the tapRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
-                                TouchTapCount = 0; // Reset the TouchTapCount just to make sure that more than 3 taps are not recognized.
+                                TouchTapCount = 0; // Reset the TouchTapCount just to make sure that more than one tap is not recognized.
                             }
                         }
                     }
                     // If the gesture could be a swipe up or down.
-                    else if ((Mathf.Abs(y0) > Mathf.Abs(x0)) && (Mathf.Abs(y0) >= minSwipeVerticalDist) && (Mathf.Abs(y1) > Mathf.Abs(x1)) && (Mathf.Abs(y1) >= minSwipeVerticalDist) && (Mathf.Abs(y2) > Mathf.Abs(x2)) && (Mathf.Abs(y2) >= minSwipeVerticalDist) && (Mathf.Abs(crossPz) < (Screen.height * 0.00015f)))
+                    else if ((Mathf.Abs(y0) > Mathf.Abs(x0)) && (Mathf.Abs(y0) >= minSwipeVerticalDist) && (Mathf.Abs(y1) > Mathf.Abs(x1)) && (Mathf.Abs(y1) >= minSwipeVerticalDist) && (Mathf.Abs(y2) > Mathf.Abs(x2)) && (Mathf.Abs(y2) >= minSwipeVerticalDist))
                     {
                         // If time passed since last swipe is equal to/past the swipe cooldown time and another gesture has not been registered already for this update. 
-                        if (((Time.time - swipeGestStartTime) >= swipeGestCD) && (ievent.isSingleTap == false) && (ievent.isDoubleTap == false) && (ievent.isTripleTap == false) && (ievent.isHold == false) && (ievent.isSwipe == false) && (ievent.isRotate == false) && (ievent.isUnrecognized == false))
+                        if (((Time.time - swipeGestStartTime) >= swipeGestCD) && (ievent.isTap == false) && (ievent.isHold == false) && (ievent.isSwipe == false) && (ievent.isRotate == false) && (ievent.isUnrecognized == false))
                         {
                             // Swipe up detected.
                             if ((y0 > 0.0f) && (y1 > 0.0f) && (y2 > 0.0f))
@@ -629,7 +550,7 @@ public class InputModule : MonoBehaviour
                                 DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
                                 swipeGestStartTime = Time.time; // Set the end time to now.
                                 tapRegister = 0; // Reset the tapRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
-                                TouchTapCount = 0; // Reset the TouchTapCount just to make sure that more than 3 taps are not recognized.
+                                TouchTapCount = 0; // Reset the TouchTapCount just to make sure that more than one tap is not recognized.
                             }
                             // Swipe down detected.
                             else if ((y0 < 0.0f) && (y1 < 0.0f) && (y2 < 0.0f))
@@ -641,7 +562,7 @@ public class InputModule : MonoBehaviour
                                 DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
                                 swipeGestStartTime = Time.time; // Set the end time to now.
                                 tapRegister = 0; // Reset the tapRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
-                                TouchTapCount = 0; // Reset the TouchTapCount just to make sure that more than 3 taps are not recognized.
+                                TouchTapCount = 0; // Reset the TouchTapCount just to make sure that more than one tap is not recognized.
                             }
                         }
                     }
@@ -650,7 +571,7 @@ public class InputModule : MonoBehaviour
                     else if ((crossPz >= 0) && (Mathf.Abs(x0) <= maxRotateHorizontalDist) && (Mathf.Abs(y0) <= maxRotateVerticalDist) && (Mathf.Abs(x1) <= maxRotateHorizontalDist) && (Mathf.Abs(y1) <= maxRotateVerticalDist) && (Mathf.Abs(x2) <= maxRotateHorizontalDist) && (Mathf.Abs(y2) <= maxRotateVerticalDist) && (Mathf.Abs(crossPz) >= (Screen.height * 0.00075f)))
                     {
                         // If time passed since last rotation is equal to/past the rotation cooldown time and another gesture has not been registered already for this update. 
-                        if (((Time.time - rotateGestStartTime) >= rotateGestCD) && (ievent.isSingleTap == false) && (ievent.isDoubleTap == false) && (ievent.isTripleTap == false) && (ievent.isHold == false) && (ievent.isSwipe == false) && (ievent.isRotate == false) && (ievent.isUnrecognized == false))
+                        if (((Time.time - rotateGestStartTime) >= rotateGestCD) && (ievent.isTap == false) && (ievent.isHold == false) && (ievent.isSwipe == false) && (ievent.isRotate == false) && (ievent.isUnrecognized == false))
                         {
                             ievent.isRotate = true; // A rotation was detected.
                             ievent.isLeft = true; // The rotation was left.
@@ -659,14 +580,14 @@ public class InputModule : MonoBehaviour
                             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
                             rotateGestStartTime = Time.time; // Set the end time to now.
                             tapRegister = 0; // Reset the tapRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
-                            TouchTapCount = 0; // Reset the TouchTapCount just to make sure that more than 3 taps are not recognized.
+                            TouchTapCount = 0; // Reset the TouchTapCount just to make sure that more than one tap is not recognized.
                         }
                     }
                     // If the gesture could be right rotation.
                     else if ((crossPz < 0) && (Mathf.Abs(x0) <= maxRotateHorizontalDist) && (Mathf.Abs(y0) <= maxRotateVerticalDist) && (Mathf.Abs(x1) <= maxRotateHorizontalDist) && (Mathf.Abs(y1) <= maxRotateVerticalDist) && (Mathf.Abs(x2) <= maxRotateHorizontalDist) && (Mathf.Abs(y2) <= maxRotateVerticalDist) && (Mathf.Abs(crossPz) >= (Screen.height * 0.00075f)))
                     {
                         // If time passed since last rotation is equal to/past the rotation cooldown time and another gesture has not been registered already for this update. 
-                        if (((Time.time - rotateGestStartTime) >= rotateGestCD) && (ievent.isSingleTap == false) && (ievent.isDoubleTap == false) && (ievent.isTripleTap == false) && (ievent.isHold == false) && (ievent.isSwipe == false) && (ievent.isRotate == false) && (ievent.isUnrecognized == false))
+                        if (((Time.time - rotateGestStartTime) >= rotateGestCD) && (ievent.isTap == false) && (ievent.isHold == false) && (ievent.isSwipe == false) && (ievent.isRotate == false) && (ievent.isUnrecognized == false))
                         {
                             ievent.isRotate = true; // A rotation was detected.
                             ievent.isRight = true; // The rotation was right.
@@ -675,19 +596,19 @@ public class InputModule : MonoBehaviour
                             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
                             rotateGestStartTime = Time.time; // Set the end time to now.
                             tapRegister = 0; // Reset the tapRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
-                            TouchTapCount = 0; // Reset the TouchTapCount just to make sure that more than 3 taps are not recognized.
+                            TouchTapCount = 0; // Reset the TouchTapCount just to make sure that more than one tap is not recognized.
                         }
                     }
 
                     // If another gesture has not been registered already for this update.
-                    else if ((ievent.isSingleTap == false) && (ievent.isDoubleTap == false) && (ievent.isTripleTap == false) && (ievent.isHold == false) && (ievent.isSwipe == false) && (ievent.isRotate == false) && (ievent.isUnrecognized == false))
+                    else if ((ievent.isTap == false) && (ievent.isHold == false) && (ievent.isSwipe == false) && (ievent.isRotate == false) && (ievent.isUnrecognized == false))
                     {
                         ievent.isUnrecognized = true; // There was an unrecognized gesture.
                         unrecognizedTimes += 1; // Update the number of times an unrecognized gesture has been made.
                         debugInputInfo = "Unrecognized input has been made " + unrecognizedTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
                         tapRegister = 0; // Reset the tapRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
-                        TouchTapCount = 0; // Reset the TouchTapCount just to make sure that more than 3 taps are not recognized.                        
+                        TouchTapCount = 0; // Reset the TouchTapCount just to make sure that more than one tap is not recognized.                   
                     }                 
                 }
 

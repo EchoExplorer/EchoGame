@@ -103,8 +103,8 @@ public class GM_main_pre : MonoBehaviour
                         selectMode = SelectMode.NEW;
                     }
                     break;
-                // If the 'e' key was pressed.
-                case KeyCode.E:
+                // If the 'f' key was pressed.
+                case KeyCode.F:
             		// We have confirmed we want to start a new game, so set mode to Confirm.
                     selectMode = SelectMode.CONFIRM;
                     break;
@@ -181,8 +181,8 @@ public class GM_main_pre : MonoBehaviour
 					}
 				}
 			}
-			// If a double tap was registered and we are able to start a new game, set mode to Continue.
-			else if ((ie.isDoubleTap == true) && TriggerStartNewGame.CDfinish())
+			// If a tap was registered and we are able to start a new game, set mode to Continue.
+			else if ((ie.isTap == true) && TriggerStartNewGame.CDfinish())
 			{
                 selectMode = SelectMode.CONFIRM;
 			}
@@ -211,9 +211,9 @@ public class GM_main_pre : MonoBehaviour
                 // Utilities.write_save(0); ???
                 SceneManager.LoadScene("Main");
                 break;
-            // If mode is set to Confirm, we have double tapped to confirm we want to start a new game, so let the player swipe left to start.
+            // If mode is set to Confirm, we have tapped to confirm we want to start a new game, so let the player swipe left to start.
 			case SelectMode.CONFIRM:
-				debugPlayerInfo = "Double tapped. Confirmed action";
+				debugPlayerInfo = "Tap registered. Confirmed action.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 cur_clip = 0;
                 reset_audio = true;

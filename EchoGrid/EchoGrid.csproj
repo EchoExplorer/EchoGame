@@ -95,10 +95,8 @@
     <Compile Include="Assets\Scripts\Const.cs" />
     <Compile Include="Assets\Scripts\Database.cs" />
     <Compile Include="Assets\Scripts\Database\DbAccess.cs" />
-    <Compile Include="Assets\Scripts\DebugCross.cs" />
     <Compile Include="Assets\Scripts\DebugInput.cs" />
     <Compile Include="Assets\Scripts\DebugPlayer.cs" />
-    <Compile Include="Assets\Scripts\DebugTalkback.cs" />
     <Compile Include="Assets\Scripts\DebugTouch0.cs" />
     <Compile Include="Assets\Scripts\DebugTouch1.cs" />
     <Compile Include="Assets\Scripts\DebugTouch2.cs" />

@@ -209,17 +209,20 @@ public class Utilities : MonoBehaviour
     /// </summary>
     public static bool isDeviceLandscape()
     {
-        #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
-                return true;
-        #else
-            if ((Input.deviceOrientation == DeviceOrientation.LandscapeLeft)
-                || (Input.deviceOrientation == DeviceOrientation.LandscapeRight))
-                return true;
-            return false;
-        #endif
+        bool isLandscape = false;
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
+        isLandscape = true;
+#endif
+#if UNITY_ANDROID || UNITY_IOS
+        if ((Input.deviceOrientation == DeviceOrientation.LandscapeLeft) || (Input.deviceOrientation == DeviceOrientation.LandscapeRight))
+        {
+            isLandscape = true;
+        }
+#endif
+        return isLandscape;
     }
 
-    //Platform specific Utility
-#if UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
+// Platform specific Utility
+#if UNITY_IOS || UNITY_ANDROID
 #endif
 }

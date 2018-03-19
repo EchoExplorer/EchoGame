@@ -209,8 +209,8 @@ public class GM_Agreement : MonoBehaviour
                     // credit
         		}
         	}
-        	// If a double tap was recognized.
-        	else if (ie.isDoubleTap == true)
+        	// If a tap was recognized.
+        	else if (ie.isTap == true)
         	{
 				// GameMode.gamemode = GameMode.Game_Mode.RESTART;
                 // SceneManager.LoadScene("Main");
