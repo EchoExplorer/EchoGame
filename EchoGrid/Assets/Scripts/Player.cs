@@ -2013,7 +2013,8 @@ public class Player : MovingObject
                         level1_remaining_taps--; // Decrease the amount of taps left to do.
                         if (level1_remaining_taps > 0) 
                         {
-                            SoundManager.instance.PlayClips(new List<AudioClip> { Database.instance.TitleClips[6], Database.instance.tutorialClip[8 + 2 - level1_remaining_taps] }); // This tap was correct. Please tap X more times.
+                            clips = new List<AudioClip> { Database.instance.TitleClips[6], Database.instance.tutorialClip[8 + 2 - level1_remaining_taps] };
+                            SoundManager.instance.PlayClips(clips); // This tap was correct. Please tap X more times.
                         }
                     }
                     // If the action was not a tap.
@@ -2052,7 +2053,8 @@ public class Player : MovingObject
                             level1_remaining_ups--; // Decrease the number of swipes up left to do.
                             if (level1_remaining_ups > 0) 
                             {
-                                SoundManager.instance.PlayClips(new List<AudioClip> { Database.instance.TitleClips[6], Database.instance.tutorialClip[14 + 2 - level1_remaining_ups] }); // This swipe was correct. Please swipe X more times.
+                                clips = new List<AudioClip> { Database.instance.TitleClips[6], Database.instance.tutorialClip[14 + 2 - level1_remaining_ups] };
+                                SoundManager.instance.PlayClips(clips); // This swipe was correct. Please swipe X more times.
                             }
                         }
                         // If the action was not a swipe up.
@@ -2096,7 +2098,7 @@ public class Player : MovingObject
                                 // If the pause menu has not been closed.
                                 else if (level1_remaining_menus == 1)
                                 {
-                                	debugPlayerInfo = "Hold registered. Closed pause menu for gesture tutorial.";
+                                	debugPlayerInfo = "Hold registered. Closed pause menu. Finished menu section for gesture tutorial.";
                                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                                     level1_remaining_menus--; // Decrease the number of holds left to do.
                                     // Congratulations! You have reached the exit. Once you believe you have reached the exit in a level, triple tapping will move you to the next level and you will hear a congratulatory sound like this.
@@ -2118,9 +2120,6 @@ public class Player : MovingObject
                         // If the player has finished the hold section of the tutorial.
                         else if (level1_remaining_menus == 0)
                         {
-							debugPlayerInfo = "Finished menu section for gesture tutorial.";
-                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-
 							// If the action was a swipe down.
                             if (action == InterceptAction.DOWN)
                             {
@@ -2153,7 +2152,8 @@ public class Player : MovingObject
                         level3_remaining_turns--; // Decrease the number of turns left to do.
                  		if (level3_remaining_turns > 0) 
                  		{
-                            SoundManager.instance.PlayClips(new List<AudioClip> { Database.instance.TitleClips[6], Database.instance.tutorialClip[23 + 3 - level3_remaining_turns] }); // This rotation was correct. Please rotate X more times.
+                            clips = new List<AudioClip> { Database.instance.TitleClips[6], Database.instance.tutorialClip[23 + 3 - level3_remaining_turns] };
+                            SoundManager.instance.PlayClips(clips); // This rotation was correct. Please rotate X more times.
                  		}
                
                     }
@@ -2167,12 +2167,14 @@ public class Player : MovingObject
                 	}
                 }
                 // If the player has finished the rotation section of the tutorial.
-                if (level3_remaining_turns == 0)
+                else if (level3_remaining_turns == 0)
                 {
 					debugPlayerInfo = "Finished rotations for gesture tutorial. Completed gesture tutorial. Continuing with level 3.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     // Good job! now we will move back to the game. Try and get around the corner!
-                    SoundManager.instance.PlayClips(new List<AudioClip> { Database.instance.TitleClips[6], Database.instance.tutorialClip[27] }, 0, () => quitInterception(), 2 );
+                    clips = new List<AudioClip> { Database.instance.TitleClips[6], Database.instance.tutorialClip[27] };                    
+                    quitInterception();
+                    SoundManager.instance.PlayClips(clips);
                 }
                 break;
             default:

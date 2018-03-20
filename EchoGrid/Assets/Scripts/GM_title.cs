@@ -21,9 +21,9 @@ public class GM_title : MonoBehaviour
     bool doneTesting = false;
     eventHandler eh;
 
-	string debugPlayerInfo; // String for debugging the effects of the player's actions (Tells you they rotated, swiped, etc.).
+    public bool isUsingTalkback = false; // Tells us if the player has told us that they are using Talkback or not.
 
-    public bool isUsingTalkback = false; // Used to determine if the player is using Talkback or not.
+    string debugPlayerInfo; // String for debugging the effects of the player's actions (Tells you they rotated, swiped, etc.).
 
     enum Direction { NONE, UP, DOWN, LEFT, RIGHT }
 
@@ -32,6 +32,7 @@ public class GM_title : MonoBehaviour
     /// </summary>
     void Start()
     {
+        titleText = GameObject.Find("ContactText").GetComponent<Text>();
         eh = new eventHandler(InputModule.instance);
     }
 
@@ -155,7 +156,7 @@ public class GM_title : MonoBehaviour
                     {
                         debugPlayerInfo = "Swiped right. Player is not using Talkback.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                        isUsingTalkback = false; // The player is not using Talkback.
+                        isUsingTalkback = false; // The player has told us they are not using Talkback.
                         determined_talkback = true; // Determined if the player is using Talkback or not.
                     }
                     // If the player's game environment is set up properly.
@@ -171,7 +172,7 @@ public class GM_title : MonoBehaviour
                     {
                         debugPlayerInfo = "Swiped left. Player is using Talkback.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                        isUsingTalkback = true; // The player is using Talkback.
+                        isUsingTalkback = true; // The player has told us they are using Talkback.
                         determined_talkback = true; // Determined if the player is using Talkback or not.
                     }
                     // If the player's game environment is set up properly.
@@ -221,7 +222,7 @@ public class GM_title : MonoBehaviour
                     {
                         debugPlayerInfo = "Swiped left. Player is using Talkback.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                        isUsingTalkback = true; // The player is using Talkback.
+                        isUsingTalkback = true; // The player has told us they are using Talkback.
                         determined_talkback = true; // Determined if the player is using Talkback or not.
                     }
                     // If the swipe was right, the user is not using Talkback.
@@ -229,7 +230,7 @@ public class GM_title : MonoBehaviour
                     {
                         debugPlayerInfo = "Swiped right. Player is not using Talkback.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                        isUsingTalkback = false; // The player is not using Talkback.
+                        isUsingTalkback = false; // The player has told us they are not using Talkback.
                         determined_talkback = true; // Determined if the player is using Talkback or not.
                     }
                 }           
