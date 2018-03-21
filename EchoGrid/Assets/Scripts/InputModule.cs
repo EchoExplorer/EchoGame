@@ -164,42 +164,48 @@ public class InputModule : MonoBehaviour
 		// If the right arrow key was pressed, set the keycode to the right arrow.
         if (Input.GetKeyUp(KeyCode.RightArrow))
         {
-            debugInputInfo = "Right arrow key pressed."; 
+            swipeRightTimes += 1; // Update the number of times the right arrow key has been pressed.
+            debugInputInfo = "Right arrow key pressed " + swipeRightTimes + " times."; 
             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
             ievent.keycode = KeyCode.RightArrow;
         }
 		// If the left arrow key was pressed, set the keycode to the left arrow.
         else if (Input.GetKeyUp(KeyCode.LeftArrow))
         {
-			debugInputInfo = "Left arrow key pressed.";
+            swipeLeftTimes += 1; // Update the number of times the left arrow key has been pressed.
+            debugInputInfo = "Left arrow key pressed " + swipeLeftTimes + " times.";
             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
             ievent.keycode = KeyCode.LeftArrow;
         }
 		// If the up arrow key was pressed, set the keycode to the up arrow.
         else if (Input.GetKeyUp(KeyCode.UpArrow))
         {
-			debugInputInfo = "Up arrow key pressed.";
+            swipeUpTimes += 1; // Update the number of times the up arrow key has been pressed.
+            debugInputInfo = "Up arrow key pressed " + swipeUpTimes + " times.";
             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
             ievent.keycode = KeyCode.UpArrow;
         }
 		// If the down arrow key was pressed, set the keycode to the down arrow.
         else if (Input.GetKeyUp(KeyCode.DownArrow))
         {
-			debugInputInfo = "Down arrow key pressed.";
+            swipeDownTimes += 1; // Update the number of times the down arrow key has been pressed.
+            debugInputInfo = "Down arrow key pressed " + swipeDownTimes + " times.";
             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
             ievent.keycode = KeyCode.DownArrow;
         }
 		// If the 'f' key was pressed, set the keycode to 'f'.
         else if (Input.GetKeyUp("f"))
         {
-			debugInputInfo = "F key pressed.";
+            tapTimes += 1; // Update the number of times the 'f' key has been pressed.
+            debugInputInfo = "F key pressed " + tapTimes + " times.";
             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
             ievent.keycode = KeyCode.F;
         }
 		// If the 'r' key was pressed, set the keycode to 'r'.
         else if (Input.GetKeyUp("r"))
         {
-			debugInputInfo = "R key pressed.";
+            holdTimes += 1; // Update the number of times the 'r' key has been pressed.
+            debugInputInfo = "R key pressed " + holdTimes + " times.";
             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
             ievent.keycode = KeyCode.R;
         }

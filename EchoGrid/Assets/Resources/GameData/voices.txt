@@ -4,27 +4,13 @@ Begin
 1sec_silence
 Welcome to echo adventure, in this game you are in a dark maze, in order to escape, you will learn to use echolocation to navigate
 Swipe up to move forward
-IN
-at(s,s)_T_T_OTHER
-1sec_silence
 Currently we are in a straight hallway
-Inend
-RETURN
-You are back at the entrance, please turn around
-Inend
-Exit
-Double tap to attempt to exit
-END
-
-LEVEL_2
-Begin
-2sec_silence
-1sec_silence
-This is another straight hallway
 The stairs are at the end of the hallway
 If you hit a wall, you will hear a sound like this
 wallHitting
 Try to get to the stairs without crashing
+IN
+Inend
 RETURN
 You are back at the entrance, please turn around
 Inend
@@ -33,9 +19,21 @@ Good job
 Double tap to attempt to exit
 END
 
+LEVEL_2
+Begin
+2sec_silence
+1sec_silence
+This is another straight hallway
+Try to get to the stairs without crashing
+RETURN
+You are back at the entrance, please turn around
+Inend
+Exit
+Good job
+END
+
 LEVEL_3
 IN
-at(1,9)_T_F_RIGHT
 2sec_silence
 1sec_silence
 Now let's move on from straight hallways
@@ -47,13 +45,10 @@ As you move forward, notice what the echoes sound like
 Inend
 IN
 at(9,9)_T_F_RIGHT
-Now you are at a right turn
-Notice that the echo is louder in your left ear
 Inend
 IN
 at(9,9)_T_F_BACK
 1sec_silence
-You have turned right 90 degrees 
 Now move forward until you reach the stairs
 Inend
 RETURN

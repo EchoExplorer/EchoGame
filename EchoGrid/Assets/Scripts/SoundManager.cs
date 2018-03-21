@@ -18,6 +18,8 @@ public class SoundManager : MonoBehaviour
     int max_sfx_playing = 5;
     bool voice_adjusted = false;
 
+    public bool finishedAllClips = false; // Determines if we have gone through all the clips in our list.
+
     void Awake()
     {
         if (instance == null)
@@ -149,23 +151,36 @@ public class SoundManager : MonoBehaviour
     }
 
     // Play a list of clips in their order with 0.5 seconds pausing. Callback function and its index allowed.
-    public void PlayClips(List<AudioClip> clips, int current = 0, Action callback = null, int callback_index = 0)
+    public void PlayClips(List<AudioClip> clips, int current = 0, Action callback = null, int callback_index = 0, bool isFirstClip = true)
     {
+        // If this clip is the first clip in our list.
+        if (isFirstClip == true)
+        {
+            finishedAllClips = false; // We have not finished all our clips yet.
+        }
+
         if (current == callback_index && callback != null)
         {
             callback();
         }
         AudioClip clip = clips[current];
         float clipLength = clip.length;
-        PlayVoice(clip, true);
-        StartCoroutine(WaitForLength(clipLength, clips, current, callback, callback_index));
+        PlayVoice(clip, true);        
+        StartCoroutine(WaitForLength(clipLength, clips, current, callback, callback_index));                   
     }
 
     private IEnumerator WaitForLength(float clipLength, List<AudioClip> clips, int current, Action callback, int callback_index)
-    {
+    {        
         yield return new WaitForSeconds(clipLength + 0.3f);
-        if (current + 1 < clips.Count && !voiceSource.isPlaying && voiceSource.clip == clips[current])
-            PlayClips(clips, current + 1, callback, callback_index);
+        // Check if this clip is the last clip in the list and make sure this clip has finished playing.
+        if (((current + 1) == clips.Count) && (!voiceSource.isPlaying))
+        {
+            finishedAllClips = true; // We have played all clips in the list.
+        }
+        else if (current + 1 < clips.Count && !voiceSource.isPlaying && voiceSource.clip == clips[current])
+        {
+            PlayClips(clips, current + 1, callback, callback_index, false);
+        }
         if (callback_index >= clips.Count && current >= clips.Count - 1 && callback != null)
         {
             callback();
