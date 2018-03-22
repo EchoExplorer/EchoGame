@@ -17,9 +17,18 @@ public class GM_title : MonoBehaviour
     bool reset_audio = false;
     bool listenToCmd = false;
     public bool toMainflag = false;
+
     Text titleText;
     bool doneTesting = false;
     eventHandler eh;
+
+    GameObject levelImage;
+    GameObject inputTextbox;
+    GameObject playerTextbox;
+    GameObject touch0Textbox;
+    GameObject touch1Textbox;
+    GameObject touch2Textbox;
+    GameObject touchDurationTextbox;
 
     public bool isUsingTalkback = false; // Tells us if the player has told us that they are using Talkback or not.
 

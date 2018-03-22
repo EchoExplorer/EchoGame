@@ -19,8 +19,6 @@ public class DebugTouch1 : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
-        DontDestroyOnLoad(gameObject);
     }
 
     // Use this for initialization

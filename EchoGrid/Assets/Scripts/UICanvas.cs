@@ -8,16 +8,19 @@ using System.Collections;
 /// </summary>
 public class UICanvas : MonoBehaviour
 {
-
     public static UICanvas instance;
 
     // Use this for initialization
     void Awake()
     {
         if (instance == null)
+        {
             instance = this;
+        }
         else if (instance != this)
+        {
             Destroy(gameObject);
+        }
 
         DontDestroyOnLoad(gameObject);
     }

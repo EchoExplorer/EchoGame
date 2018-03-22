@@ -19,19 +19,17 @@ public class DebugInput : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
-        DontDestroyOnLoad(gameObject);
     }
 
     // Use this for initialization
     void Start()
     {
         debugInputText = GetComponent<Text>();
-        inputText = "Input";
-	}
-	
-	// Update is called once per frame
-	void Update()
+        inputText = "Input";        
+    }
+
+    // Update is called once per frame
+    void Update()
     {
         debugInputText.text = inputText;
 	}

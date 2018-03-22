@@ -11,13 +11,13 @@ using System.Text;
 using System.Diagnostics;
 using UnityEngine.SceneManagement;
 
-//Player inherits from MovingObject, our base class for objects that can move, Enemy also inherits from this.
+// Player inherits from MovingObject, our base class for objects that can move, Enemy also inherits from this.
 /// <summary>
 /// A class representing the player object in the game.
-///  It also is responsible for determining which echo sound to when the user
-///  requests an echo, and for keeping track of and sending usage data
-///  to a remote server when certain events occur in the game. It takes the
-///  role of the GM_xyz objects for the Main scene too.
+/// It also is responsible for determining which echo sound to when the user
+/// requests an echo, and for keeping track of and sending usage data
+/// to a remote server when certain events occur in the game. It takes the
+/// role of the GM_xyz objects for the Main scene too.
 /// </summary>
 public class Player : MovingObject
 {
@@ -36,14 +36,14 @@ public class Player : MovingObject
         LONG,
     }
 
-    //FIXME: these should not be public
+    // FIXME: these should not be public
     public static Player instance;
-    //Delay time in seconds to restart level.
+    // Delay time in seconds to restart level.
     public float restartLevelDelay = 3.0f;
 
     bool restarted = false;
-    bool is_freezed;//is player not allowed to do anything?
-    bool tapped;//did player tap to hear an echo at this position?
+    bool is_freezed; // is player not allowed to do anything?
+    bool tapped; // did player tap to hear an echo at this position?
     bool reportSent;
     private int curLevel;
 
@@ -51,21 +51,21 @@ public class Player : MovingObject
     int max_quit_clip = 2;
     bool reset_audio;
 
-    //private SpriteRenderer spriteRenderer;
+    // private SpriteRenderer spriteRenderer;
 
     // variables to implement data collection
     public int numCrashes;
-    //Keep track of number of times user crashed into wall
+    // Keep track of number of times user crashed into wall
     public int numSteps;
-    //Keep track of number of steps taken per level
+    // Keep track of number of steps taken per level
     private int exitAttempts;
 
     private String lastEcho = "";
 
-    //Track locations of the player's crashes
+    // Track locations of the player's crashes
     private string crashLocs;
 
-    //Keep track of time taken for the game level
+    // Keep track of time taken for the game level
     private Stopwatch stopWatch;
     private DateTime startTime;
     private DateTime endTime;
@@ -77,9 +77,9 @@ public class Player : MovingObject
     bool URL_shown = false;
     bool code_entered = false;
     bool survey_activated = true;
-    bool at_pause_menu = false;//indicating if the player activated pause menu
+    bool at_pause_menu = false; // indicating if the player activated pause menu
     bool localRecordWritten = false;
-    //int score;
+    // int score;
     eventHandler eh;
    
 	string debugPlayerInfo; // String for debugging the effects of the player's actions (Tells you they rotated, swiped, etc.).
@@ -102,9 +102,13 @@ public class Player : MovingObject
     void Awake()
     {
         if (instance == null)
+        {
             instance = this;
+        }
         else if (instance != this)
+        {
             Destroy(gameObject);
+        }
 
         enabled = true;
         surveyCode = "";
@@ -118,9 +122,9 @@ public class Player : MovingObject
         numSteps = 0;
         crashLocs = "";
         Utilities.initEncrypt();
-        //Initialize list of crash locations
+        // Initialize list of crash locations
         crashLocs = "";
-        //Start the time for the game level
+        // Start the time for the game level
         stopWatch = new Stopwatch();
         stopWatch.Start();
         startTime = System.DateTime.Now;
@@ -137,7 +141,7 @@ public class Player : MovingObject
         echoLock = false;
         ad = GetComponent<AndroidDialogue>();
 
-        //score = 1000;
+        // score = 1000;
         eh = new eventHandler(InputModule.instance);
         TriggerechoTimer = new CDTimer(Const.echoCD, InputModule.instance);
         TriggermenuTimer = new CDTimer(Const.menuUpdateCD, InputModule.instance);
@@ -152,7 +156,7 @@ public class Player : MovingObject
     {
         curLevel = GameManager.instance.level;
         init();
-        //Adjust player scale
+        // Adjust player scale
         Vector3 new_scale = transform.localScale;
         new_scale *= (float)Utilities.SCALE_REF / (float)Utilities.MAZE_SIZE;
         transform.localScale = new_scale;
@@ -161,7 +165,10 @@ public class Player : MovingObject
     void OnLevelWasLoaded(int index)
     {
         // Since the gameObject is not destroyed automatically, the instance should be checked before calling this method.
-        if (this != instance) return;
+        if (this != instance)
+        {
+            return;
+        }
         init();
     }
 
@@ -196,96 +203,142 @@ public class Player : MovingObject
     {
         tapped = true;
         reportSent = true;
-        BoardManager.echoDistData data =
-            GameManager.instance.boardScript.getEchoDistData(transform.position, get_player_dir("FRONT"), get_player_dir("LEFT"));
+        BoardManager.echoDistData data = GameManager.instance.boardScript.getEchoDistData(transform.position, get_player_dir("FRONT"), get_player_dir("LEFT"));
 
         // Logging.Log(data.all_jun_to_string(), Logging.LogLevel.NORMAL);
-        String prefix = "C00-21"; //change this prefix when you change the echo files
+        String prefix = "C00-21"; // change this prefix when you change the echo files
         if (GameManager.instance.level < 26)
+        {
             prefix = "C00 - 21";
+        }
         else if ((GameManager.instance.level >= 26) && (GameManager.instance.level < 41))
+        {
             prefix = "19 dB/C00-19";
+        }
         else if ((GameManager.instance.level >= 41) && (GameManager.instance.level < 56))
+        {
             prefix = "17 dB/C00-17";
-        else //if( (GameManager.instance.level >= 56)&&(GameManager.instance.level < 71) )
+        }
+        else // if ((GameManager.instance.level >= 56) && (GameManager.instance.level < 71))
+        {
             prefix = "15 dB/C00-15";
+        }
         /*
-		else if ( (GameManager.instance.level >= 71)&&(GameManager.instance.level < 86) )
+		else if ((GameManager.instance.level >= 71) && (GameManager.instance.level < 86))
+        {
 			prefix = "13 dB/C00-13";
-		else if ( (GameManager.instance.level >= 86)&&(GameManager.instance.level < 101) )
-			prefix = "11 dB/C00-11";
-		else if ( (GameManager.instance.level >= 101)&&(GameManager.instance.level < 116) )
-			prefix = "9 dB/C00-9";
-		else if ( (GameManager.instance.level >= 116) )
-			prefix = "7 dB/C00-7";
-			*/
+		}
+        else if ((GameManager.instance.level >= 86) && (GameManager.instance.level < 101))
+		{
+            prefix = "11 dB/C00-11";
+		}
+        else if ((GameManager.instance.level >= 101) && (GameManager.instance.level < 116))
+		{
+            prefix = "9 dB/C00-9";
+		}
+        else if (GameManager.instance.level >= 116)
+		{
+            prefix = "7 dB/C00-7";
+        }
+		*/
 
         String filename;
         float wallDist = 0.8f, shortDist = 3.8f, midDist = 6.8f, longDist = 12.8f;
         dist_type f_dtype, b_dtype, l_dtype, r_dtype;
         string front_type = data.jun_to_string(data.fType), back_type = "D", left_type = "D", right_type = "D";
 
-        //catogrize the distance
-        //front
+        // catogrize the distance
+        // front
         if (data.frontDist <= wallDist)
+        {
             f_dtype = dist_type.WALL;
+        }
         else if ((data.frontDist > wallDist) && (data.frontDist <= shortDist))
+        {
             f_dtype = dist_type.SHORT;
+        }
         else if ((data.frontDist > shortDist) && (data.frontDist <= midDist))
+        {
             f_dtype = dist_type.MID;
+        }
         else
+        {
             f_dtype = dist_type.LONG;
-        //back
+        }
+        // back
         if (data.backDist <= wallDist)
+        {
             b_dtype = dist_type.WALL;
+        }
         else if ((data.backDist > wallDist) && (data.backDist <= shortDist))
+        {
             b_dtype = dist_type.SHORT;
+        }
         else if ((data.backDist > shortDist) && (data.backDist <= midDist))
+        {
             b_dtype = dist_type.MID;
+        }
         else
+        {
             b_dtype = dist_type.LONG;
-        //left
+        }
+        // left
         if (data.leftDist <= wallDist)
+        {
             l_dtype = dist_type.WALL;
+        }
         else if ((data.leftDist > wallDist) && (data.leftDist <= shortDist))
+        {
             l_dtype = dist_type.SHORT;
+        }
         else if ((data.leftDist > shortDist) && (data.leftDist <= midDist))
+        {
             l_dtype = dist_type.MID;
+        }
         else
+        {
             l_dtype = dist_type.LONG;
-        //right
+        }
+        // right
         if (data.rightDist <= wallDist)
+        {
             r_dtype = dist_type.WALL;
+        }
         else if ((data.rightDist > wallDist) && (data.rightDist <= shortDist))
+        {
             r_dtype = dist_type.SHORT;
+        }
         else if ((data.rightDist > shortDist) && (data.rightDist <= midDist))
+        {
             r_dtype = dist_type.MID;
+        }
         else
+        {
             r_dtype = dist_type.LONG;
+        }
 
-        //mark exist position as "US"
+        // mark exist position as "US"
         /*
-		switch (data.exitpos) {
-		case 1://left
-			left_type= "US";
-			break;
-		case 2://right
-			right_type = "US";
-			break;
-		case 3://front
-			front_type = "US";
-			break;
-		case 4://back
-			back_type = "US";
-			break;
-		default:
-			break;
+		switch (data.exitpos) 
+        {
+		    case 1: // left
+			    left_type= "US";
+    			break;
+	    	case 2: // right
+	    		right_type = "US";
+	    		break;
+	    	case 3: // front
+		    	front_type = "US";
+		    	break;
+	    	case 4: // back
+	    		back_type = "US";
+	    		break;
+	    	default:
+		    	break;
 		}
 		*/
 
-        filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix,
-            data.frontDist, front_type, _dist_type_to_string(b_dtype), "D",
-            _dist_type_to_string(l_dtype), left_type, _dist_type_to_string(r_dtype), right_type);
+        filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix, data.frontDist, front_type, _dist_type_to_string(b_dtype), "D", _dist_type_to_string(l_dtype), left_type, _dist_type_to_string(r_dtype), right_type);
 
         if (filename.Equals("C00-21_F-6.75-DS_B-s-D_L-w-D_R-w-D.wav"))
         {
@@ -303,30 +356,28 @@ public class Player : MovingObject
             // Logging.Log("replace US with Deadend", Logging.LogLevel.NORMAL);
             switch (data.exitpos)
             {
-                case 1://left
+                case 1: // left
                     left_typeC = "D";
                     break;
-                case 2://right
+                case 2: // right
                     right_typeC = "D";
                     break;
-                case 3://front
+                case 3: // front
                     front_typeC = "D";
                     break;
-                case 4://back
+                case 4: // back
                     back_typeC = "D";
                     break;
                 default:
                     break;
             }
-            filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix,
-                data.frontDist, front_typeC, _dist_type_to_string(b_dtype), "D",
-                _dist_type_to_string(l_dtype), left_typeC, _dist_type_to_string(r_dtype), right_typeC);
+            filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix, data.frontDist, front_typeC, _dist_type_to_string(b_dtype), "D", _dist_type_to_string(l_dtype), left_typeC, _dist_type_to_string(r_dtype), right_typeC);
             echo = Resources.Load("echoes/" + filename) as AudioClip;
         }
         lastEcho = filename;
 
-        //special cases
-        //try alternative front dist
+        // special cases
+        // try alternative front dist
 
         if (echo == null)
         {
@@ -336,45 +387,45 @@ public class Player : MovingObject
             {
                 frontString = "2.25";
 
-                filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix,
-                    frontString, front_type, _dist_type_to_string(b_dtype), "D",
-                    _dist_type_to_string(l_dtype), left_type, _dist_type_to_string(r_dtype), right_type);
+                filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix, frontString, front_type, _dist_type_to_string(b_dtype), "D", _dist_type_to_string(l_dtype), left_type, _dist_type_to_string(r_dtype), right_type);
                 echo = Resources.Load("echoes/" + filename) as AudioClip;
                 lastEcho = filename;
             }
             /*
-			else if ( f_dtype == dist_type.LONG){
-				for (int i = 0; i < frontDistL.Length; ++i) {
+			else if (f_dtype == dist_type.LONG)
+            {
+				for (int i = 0; i < frontDistL.Length; ++i) 
+                {
 					frontString = frontDistL [i];
-					filename = String.Format ("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix,
-						frontString, front_type, _dist_type_to_string (b_dtype), "D",
-						_dist_type_to_string (l_dtype), left_type, _dist_type_to_string (r_dtype), right_type);
+					filename = String.Format ("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix, frontString, front_type, _dist_type_to_string (b_dtype), "D", _dist_type_to_string (l_dtype), left_type, _dist_type_to_string (r_dtype), right_type);
 					echo = Resources.Load ("echoes/" + filename) as AudioClip;
 					lastEcho = filename;
 					if (echo != null)
+                    {
 						break;
+                    }
 				}
 			}
 			*/
         }
 
 
-        //try wall
+        // try wall
         if (echo == null)
         {
             Logging.Log("Secondary search_wall", Logging.LogLevel.ABNORMAL);
             string frontString = "";
             if (f_dtype == dist_type.WALL)
+            {
                 frontString = "0.75";
+            }
 
-            filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix,
-                frontString, front_type, _dist_type_to_string(b_dtype), "D",
-                _dist_type_to_string(l_dtype), left_type, _dist_type_to_string(r_dtype), right_type);
+            filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix, frontString, front_type, _dist_type_to_string(b_dtype), "D", _dist_type_to_string(l_dtype), left_type, _dist_type_to_string(r_dtype), right_type);
             echo = Resources.Load("echoes/" + filename) as AudioClip;
             lastEcho = filename;
         }
 
-        //other cases
+        // other cases
         if (echo == null)
         {
             bool found = false;
@@ -384,42 +435,48 @@ public class Player : MovingObject
             {
                 for (int i = 0; i < frontDistS.Length; ++i)
                 {
-                    filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix,
-                        frontDistS[i], front_type, _dist_type_to_string(b_dtype), "D",
-                        _dist_type_to_string(l_dtype), left_type, _dist_type_to_string(r_dtype), right_type);
+                    filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix, frontDistS[i], front_type, _dist_type_to_string(b_dtype), "D", _dist_type_to_string(l_dtype), left_type, _dist_type_to_string(r_dtype), right_type);
                     echo = Resources.Load("echoes/" + filename) as AudioClip;
                     if (echo != null)
+                    {
                         found = true;
+                    }
                     if (found)
+                    {
                         break;
+                    }
                 }
             }
             else if (f_dtype == dist_type.MID)
             {
                 for (int i = 0; i < frontDistM.Length; ++i)
                 {
-                    filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix,
-                        frontDistM[i], front_type, _dist_type_to_string(b_dtype), "D",
-                        _dist_type_to_string(l_dtype), left_type, _dist_type_to_string(r_dtype), right_type);
+                    filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix, frontDistM[i], front_type, _dist_type_to_string(b_dtype), "D", _dist_type_to_string(l_dtype), left_type, _dist_type_to_string(r_dtype), right_type);
                     echo = Resources.Load("echoes/" + filename) as AudioClip;
                     if (echo != null)
+                    {
                         found = true;
+                    }
                     if (found)
+                    {
                         break;
+                    }
                 }
             }
             else if (f_dtype == dist_type.LONG)
             {
                 for (int i = 0; i < frontDistL.Length; ++i)
                 {
-                    filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix,
-                        frontDistL[i], front_type, _dist_type_to_string(b_dtype), "D",
-                        _dist_type_to_string(l_dtype), left_type, _dist_type_to_string(r_dtype), right_type);
+                    filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix, frontDistL[i], front_type, _dist_type_to_string(b_dtype), "D", _dist_type_to_string(l_dtype), left_type, _dist_type_to_string(r_dtype), right_type);
                     echo = Resources.Load("echoes/" + filename) as AudioClip;
                     if (echo != null)
+                    {
                         found = true;
+                    }
                     if (found)
+                    {
                         break;
+                    }
                 }
             }
             lastEcho = filename;
@@ -434,104 +491,117 @@ public class Player : MovingObject
             {
                 for (int i = 0; i < frontDistS.Length; ++i)
                 {
-                    filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix,
-                        frontDistS[i], "D", _dist_type_to_string(b_dtype), "D",
-                        _dist_type_to_string(l_dtype), "D", _dist_type_to_string(r_dtype), "D");
+                    filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix, frontDistS[i], "D", _dist_type_to_string(b_dtype), "D", _dist_type_to_string(l_dtype), "D", _dist_type_to_string(r_dtype), "D");
                     echo = Resources.Load("echoes/" + filename) as AudioClip;
                     if (echo != null)
+                    {
                         found = true;
+                    }
                     if (found)
+                    {
                         break;
+                    }
                 }
             }
             else if (f_dtype == dist_type.MID)
             {
                 for (int i = 0; i < frontDistM.Length; ++i)
                 {
-                    filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix,
-                        frontDistM[i], "D", _dist_type_to_string(b_dtype), "D",
-                        _dist_type_to_string(l_dtype), "D", _dist_type_to_string(r_dtype), "D");
+                    filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix, frontDistM[i], "D", _dist_type_to_string(b_dtype), "D", _dist_type_to_string(l_dtype), "D", _dist_type_to_string(r_dtype), "D");
                     echo = Resources.Load("echoes/" + filename) as AudioClip;
                     if (echo != null)
+                    {
                         found = true;
+                    }
                     if (found)
+                    {
                         break;
+                    }
                 }
             }
             else if (f_dtype == dist_type.LONG)
             {
                 for (int i = 0; i < frontDistL.Length; ++i)
                 {
-                    filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix,
-                        frontDistL[i], "D", _dist_type_to_string(b_dtype), "D",
-                        _dist_type_to_string(l_dtype), "D", _dist_type_to_string(r_dtype), "D");
+                    filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix, frontDistL[i], "D", _dist_type_to_string(b_dtype), "D", _dist_type_to_string(l_dtype), "D", _dist_type_to_string(r_dtype), "D");
                     echo = Resources.Load("echoes/" + filename) as AudioClip;
                     if (echo != null)
+                    {
                         found = true;
+                    }
                     if (found)
+                    {
                         break;
+                    }
                 }
             }
             lastEcho = filename;
         }
 
-        //have to use the old files
+        // have to use the old files
         if (echo == null)
         {
             Logging.Log("did not find accurate one, searching everything", Logging.LogLevel.WARNING);
-            //Old version
-            //this is the full filename, if back is not D or Stairs, it will be "na"
+            // Old version
+            // this is the full filename, if back is not D or Stairs, it will be "na"
             prefix = "C00-21";
             back_type = "D"; front_type = ""; left_type = ""; right_type = "";
             if ((data.bType != BoardManager.JunctionType.DEADEND) && (data.exitpos != 4))
+            {
                 back_type = "na";
+            }
             if (data.exitpos != 1)
+            {
                 left_type = "D";
+            }
             if (data.exitpos != 2)
+            {
                 right_type = "D";
+            }
             if (data.exitpos != 3)
+            {
                 front_type = data.jun_to_string(data.fType);
+            }
             /*
-			switch (data.exitpos) {
-			case 1://left
-				left_type = "US";
-				break;
-			case 2://right
-				right_type = "US";
-				break;
-			case 3://front
-				front_type = "US";
-				break;
-			case 4://back
-				back_type = "US";
-				break;
-			default:
-				break;
+			switch (data.exitpos) 
+            {
+			    case 1: // left
+				    left_type = "US";
+				    break;
+			    case 2: // right
+			    	right_type = "US";
+			    	break;
+			    case 3: // front
+			    	front_type = "US";
+				    break;
+			    case 4: // back
+			    	back_type = "US";
+			    	break;
+			    default:
+				    break;
 			}
 			*/
-            //TODO this is only a dummy one, use the one above when ready
+            // TODO this is only a dummy one, use the one above when ready
             switch (data.exitpos)
             {
-                case 1://left
+                case 1: // left
                     left_type = "D";
                     break;
-                case 2://right
+                case 2: // right
                     right_type = "D";
                     break;
-                case 3://front
+                case 3: // front
                     front_type = "D";
                     break;
-                case 4://back
+                case 4: // back
                     back_type = "D";
                     break;
                 default:
                     break;
             }
 
-            //search for the most accurate one first
-            filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix,
-                data.frontDist, front_type, data.backDist, "D",
-                data.leftDist, left_type, data.rightDist, right_type);
+            // search for the most accurate one first
+            filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix, data.frontDist, front_type, data.backDist, "D", data.leftDist, left_type, data.rightDist, right_type);
             echo = Resources.Load("echoes/" + filename) as AudioClip;
             lastEcho = filename;
 
@@ -631,43 +701,65 @@ public class Player : MovingObject
                                 {
                                     for (int fsi = 0; fsi < front_str.Length; ++fsi)
                                     {
-                                        //DistS = {"2.25", "3.75"};
-                                        //DistM = {"5.25", "6.75"};
-                                        //DistL = {"8.25", "9.75", "11.25", "12.75"};
+                                        // DistS = {"2.25", "3.75"};
+                                        // DistM = {"5.25", "6.75"};
+                                        // DistL = {"8.25", "9.75", "11.25", "12.75"};
                                         string tb = "", tl = "", tr = "";
-                                        //back
-                                        if ((0.75f + 1.5f * j) >= 2 && (0.75f + 1.5f * j) <= 4)
+                                        // back
+                                        if (((0.75f + 1.5f * j) >= 2) && ((0.75f + 1.5f * j) <= 4))
+                                        {
                                             tb = "s";
-                                        else if ((0.75f + 1.5f * j) >= 5 && (0.75f + 1.5f * j) <= 7)
+                                        }
+                                        else if (((0.75f + 1.5f * j) >= 5) && ((0.75f + 1.5f * j) <= 7))
+                                        {
                                             tb = "m";
+                                        }
                                         else if ((0.75f + 1.5f * j) >= 8)
+                                        {
                                             tb = "l";
+                                        }
                                         else if ((0.75f + 1.5f * j) <= 1)
+                                        {
                                             tb = "w";
+                                        }
 
-                                        //left
-                                        if ((0.75f + 1.5f * k) >= 2 && (0.75f + 1.5f * k) <= 4)
+                                        // left
+                                        if (((0.75f + 1.5f * k) >= 2) && ((0.75f + 1.5f * k) <= 4))
+                                        {
                                             tl = "s";
-                                        else if ((0.75f + 1.5f * k) >= 5 && (0.75f + 1.5f * k) <= 7)
+                                        }
+                                        else if (((0.75f + 1.5f * k) >= 5) && ((0.75f + 1.5f * k) <= 7))
+                                        {
                                             tl = "m";
+                                        }
                                         else if ((0.75f + 1.5f * k) >= 8)
+                                        {
                                             tl = "l";
+                                        }
                                         else if ((0.75f + 1.5f * k) <= 1)
+                                        {
                                             tl = "w";
+                                        }
 
-                                        //right
-                                        if ((0.75f + 1.5f * l) >= 2 && (0.75f + 1.5f * l) <= 4)
+                                        // right
+                                        if (((0.75f + 1.5f * l) >= 2) && ((0.75f + 1.5f * l) <= 4))
+                                        {
                                             tr = "s";
-                                        else if ((0.75f + 1.5f * l) >= 5 && (0.75f + 1.5f * l) <= 7)
+                                        }
+                                        else if (((0.75f + 1.5f * l) >= 5) && ((0.75f + 1.5f * l) <= 7))
+                                        {
                                             tr = "m";
+                                        }
                                         else if ((0.75f + 1.5f * l) >= 8)
+                                        {
                                             tr = "l";
+                                        }
                                         else if ((0.75f + 1.5f * l) <= 1)
+                                        {
                                             tr = "w";
+                                        }
 
-                                        filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix,
-                                            0.75f + 1.5f * i, front_str[fsi], tb, back_str[bsi],
-                                            tl, left_type, tr, right_type);
+                                        filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix, (0.75f + 1.5f * i), front_str[fsi], tb, back_str[bsi], tl, left_type, tr, right_type);
 
                                         echo = Resources.Load("echoes/" + filename) as AudioClip;
                                         if (echo != null)
@@ -678,19 +770,29 @@ public class Player : MovingObject
                                         }
                                     }
                                     if (found)
+                                    {
                                         break;
+                                    }
                                 }
                                 if (found)
+                                {
                                     break;
+                                }
                             }
                             if (found)
+                            {
                                 break;
+                            }
                         }
                         if (found)
+                        {
                             break;
+                        }
                     }
                     if (found)
+                    {
                         break;
+                    }
                 }
             }
         }
@@ -714,60 +816,80 @@ public class Player : MovingObject
 
     /// <summary>
     /// Reports data when an echo is requested.
-    ///  The function is actually called during other actions after an echo was played.
+    /// The function is actually called during other actions after an echo was played.
     /// </summary>
 	private void reportOnEcho()
     {
-
         string echoEndpoint = "http://echolock.andrew.cmu.edu/cgi-bin/acceptEchoData.py";
 
         Vector2 idx_location = GameManager.instance.boardScript.get_idx_from_pos(transform.position);
         string location = "(" + idx_location.x.ToString() + "," + idx_location.y.ToString() + ")";
         correct_post_act = "";
-        //manually setup, TODO: warp it into a function
+        // manually setup, TODO: warp it into a function
         GameManager.instance.boardScript.sol = "";
         for (int i = 0; i < GameManager.instance.boardScript.searched_temp.Length; ++i)
+        {
             GameManager.instance.boardScript.searched_temp[i] = false;
-        //correct_post_act = GameManager.instance.boardScript.getHint (idx_location,"s");
+        }
+        // correct_post_act = GameManager.instance.boardScript.getHint (idx_location,"s");
         GameManager.instance.boardScript.solveMazeMid(idx_location, "s");
         if (GameManager.instance.boardScript.sol.Length >= 2)
+        {
             correct_post_act = GameManager.instance.boardScript.sol[GameManager.instance.boardScript.sol.Length - 2].ToString();
+        }
 
         Vector3 forward = old_dir;
         Vector3 sol_dir = new Vector3();
         if (correct_post_act == "u")
+        {
             sol_dir = Vector3.up;
+        }
         else if (correct_post_act == "d")
+        {
             sol_dir = Vector3.down;
+        }
         else if (correct_post_act == "l")
+        {
             sol_dir = Vector3.left;
+        }
         else if (correct_post_act == "r")
+        {
             sol_dir = Vector3.right;
+        }
 
         if (correct_post_act != "")
         {
             if (forward == sol_dir)
+            {
                 correct_post_act = "Forward";
+            }
             else if (forward == -sol_dir)
+            {
                 correct_post_act = "Turn Around";
+            }
             else
             {
                 Vector3 angle = Vector3.Cross(forward, sol_dir);
                 if (angle.z > 0)
+                {
                     correct_post_act = "Turn Left";
+                }
                 else
+                {
                     correct_post_act = "Turn Right";
+                }
             }
         }
         else
+        {
             correct_post_act = "Exit";
-
+        }
 
         WWWForm echoForm = new WWWForm();
         echoForm.AddField("userName", Utilities.encrypt(SystemInfo.deviceUniqueIdentifier));
         echoForm.AddField("currentLevel", Utilities.encrypt(curLevel.ToString()));
         echoForm.AddField("trackCount", Utilities.encrypt(GameManager.instance.boardScript.local_stats[curLevel].ToString()));
-        echoForm.AddField("echo", lastEcho); //fix
+        echoForm.AddField("echo", lastEcho); // fix
         echoForm.AddField("echoLocation", Utilities.encrypt(location));
         echoForm.AddField("postEchoAction", Utilities.encrypt(post_act));
         echoForm.AddField("correctAction", Utilities.encrypt(correct_post_act));
@@ -786,7 +908,9 @@ public class Player : MovingObject
         correct_post_act = "";
         GameManager.instance.boardScript.sol = "";
         for (int i = 0; i < GameManager.instance.boardScript.searched_temp.Length; ++i)
+        {
             GameManager.instance.boardScript.searched_temp[i] = false;
+        }
         correct_post_act = GameManager.instance.boardScript.getHint(idx_location, "s");
 
         AudioClip clip;
@@ -799,25 +923,41 @@ public class Player : MovingObject
         Vector3 forward = old_dir;
         Vector3 sol_dir = new Vector3();
         if (correct_post_act == "u")
+        {
             sol_dir = Vector3.up;
+        }
         else if (correct_post_act == "d")
+        {
             sol_dir = Vector3.down;
+        }
         else if (correct_post_act == "l")
+        {
             sol_dir = Vector3.left;
+        }
         else if (correct_post_act == "r")
+        {
             sol_dir = Vector3.right;
+        }
 
         if (forward == sol_dir)
+        {
             clip = Resources.Load("instructions/You should move forward") as AudioClip;
+        }
         else if (forward == -sol_dir)
+        {
             clip = Resources.Load("instructions/You should turn around by turning in the same direction twice") as AudioClip;
+        }
         else
         {
             Vector3 angle = Vector3.Cross(forward, sol_dir);
             if (angle.z > 0)
+            {
                 clip = Resources.Load("instructions/You should turn left") as AudioClip;
+            }
             else
+            {
                 clip = Resources.Load("instructions/You should turn right") as AudioClip;
+            }
         }
 
         SoundManager.instance.PlayVoice(clip, true);
@@ -829,48 +969,69 @@ public class Player : MovingObject
     public Vector3 get_player_dir(string dir)
     {
         if (dir == "FRONT")
+        {
             return transform.right.normalized;
+        }
         else if (dir == "BACK")
+        {
             return -transform.right.normalized;
+        }
         else if (dir == "LEFT")
+        {
             return transform.up.normalized;
+        }
         else if (dir == "RIGHT")
+        {
             return -transform.up.normalized;
+        }
 
         Logging.Log("INVALID direction string", Logging.LogLevel.CRITICAL);
         return Vector3.zero;
     }
-    //get the direction in world space
+    // get the direction in world space
     /*
-	Vector3 get_world_dir(string dir){
+	Vector3 get_world_dir(string dir)
+    {
 		if (dir == "FRONT")
+        {
 			return transform.right.normalized;
-		else if (dir == "BACK")
+        }
+        else if (dir == "BACK")
+        {
 			return -transform.right.normalized;
-		else if (dir == "LEFT")
+		}
+        else if (dir == "LEFT")
+        {
 			return transform.up.normalized;
-		else if (dir == "RIGHT")
+        }
+        else if (dir == "RIGHT")
+        {
 			return -transform.up.normalized;
+        }
 
 		UnityEngine.Debug.Log ("INVALID direction string");
 		return Vector3.zero;
 	}
 	*/
 
-    //please call this function to rotate player
-    //use this with get_player_dir("SOMETHING")
+    // please call this function to rotate player
+    // use this with get_player_dir("SOMETHING")
     Vector3 old_dir = new Vector3();
     /// <summary>
     /// Also a function to rotate the player. The specified direction is
-    ///  an absolute direction to make the player face toward, and is only
-    ///  valid if it corresponds to turning left or right.
+    /// an absolute direction to make the player face toward, and is only
+    /// valid if it corresponds to turning left or right.
     /// </summary>
 	void rotateplayer(Vector3 dir)
     {
         if (dir == get_player_dir("FRONT"))
+        {
             return;
+        }
         else if (dir == get_player_dir("BACK"))
+        {
             return;
+        }
         else if (dir == get_player_dir("LEFT"))
         {
             transform.Rotate(new Vector3(0, 0, 90));
@@ -891,9 +1052,13 @@ public class Player : MovingObject
     public void rotateplayer_no_update(BoardManager.Direction dir)
     {
         if (dir == BoardManager.Direction.FRONT)
+        {
             transform.Rotate(new Vector3(0, 0, 90));
+        }
         else if (dir == BoardManager.Direction.BACK)
+        {
             transform.Rotate(new Vector3(0, 0, -90));
+        }
         else if (dir == BoardManager.Direction.LEFT)
         {
             transform.Rotate(new Vector3(0, 0, 180));
@@ -910,19 +1075,21 @@ public class Player : MovingObject
 
     /// <summary>
     /// A function to determine how the player should react to the given directional command.
-    ///  If it corresponds to moving forward or backward, the player moves.
-    ///  Otherwise, the player will make a turn. This sends data online if the previous action
-    ///  was to request an echo.
+    /// If it corresponds to moving forward or backward, the player moves.
+    /// Otherwise, the player will make a turn. This sends data online if the previous action
+    /// was to request an echo.
     /// </summary>
 	private void calculateMove(Vector3 dir)
     {
         old_dir = get_player_dir("FRONT");
 
         if (dir.magnitude == 0)
+        {
             return;
+        }
 
         bool changedDir = false;
-        //print (dir);
+        // print (dir);
 
         if ((dir != get_player_dir("FRONT")) && (dir != get_player_dir("BACK")))
         {
@@ -934,16 +1101,22 @@ public class Player : MovingObject
                 {
                     post_act = "Turn ";
                     if ((dir - get_player_dir("LEFT")).magnitude <= 0.01f)
+                    {
                         post_act += "Left";
+                    }
                     else
+                    {
                         post_act += "Right";
+                    }
 
                     reportOnEcho();
                     reportSent = false;
                 }
             }
             else
+            {
                 return;
+            }
         }
 
         dir.Normalize();
@@ -958,31 +1131,38 @@ public class Player : MovingObject
                     GameManager.instance.boardScript.gamerecord += "f";
                 }
                 if (dir == get_player_dir("BACK"))
+                {
                     GameManager.instance.boardScript.gamerecord += "b";
+                }
             }
         }
 
-        //Inform player about progress
+        // Inform player about progress
         if (true)
         {
             GameManager.instance.boardScript.sol = "";
             for (int i = 0; i < GameManager.instance.boardScript.searched_temp.Length; ++i)
+            {
                 GameManager.instance.boardScript.searched_temp[i] = false;
-
+            }
+            
             Vector2 idx_location = GameManager.instance.boardScript.get_idx_from_pos(transform.position);
             GameManager.instance.boardScript.solveMazeMid(idx_location, "s");
             int remaining_steps = GameManager.instance.boardScript.sol.Length;
             if (remaining_steps >= 2)
+            {
                 remaining_steps -= 2;
+            }
             int total_step = GameManager.instance.boardScript.mazeSolution.Length - 1;
             float ratio = (float)remaining_steps / total_step;
             if ((!reachQuarter) && (ratio <= 0.75f) && (ratio > 0.5f))
             {
                 reachQuarter = true;
-                //if (GameManager.instance.boardScript.latest_clip != null) {
-                //	GameManager.instance.boardScript.restore_audio = true;
-                //	GameManager.instance.boardScript.latest_clip = SoundManager.instance.voiceSource.clip;
-                //}
+                // if (GameManager.instance.boardScript.latest_clip != null)
+                // {
+                //	  GameManager.instance.boardScript.restore_audio = true;
+                //	  GameManager.instance.boardScript.latest_clip = SoundManager.instance.voiceSource.clip;
+                // }
                 //SoundManager.instance.PlayVoice (Resources.Load ("instructions/You are 25% of the way through this level") as AudioClip);
             }
             else if ((!reachHalf) && (ratio <= 0.5f) && (ratio > 0.25f))
@@ -998,13 +1178,14 @@ public class Player : MovingObject
             }
             else if ((!reach3Quarter) && (ratio <= 0.25f))
             {
-                //reach3Quarter = true;
-                //if (GameManager.instance.boardScript.latest_clip != null) {
-                //	GameManager.instance.boardScript.restore_audio = true;
-                //	GameManager.instance.boardScript.latest_clip = SoundManager.instance.voiceSource.clip;
-                //}
-                //SoundManager.instance.PlayVoice (Resources.Load ("instructions/You are 75% of the way through this level") as AudioClip);
-                //print ("75%");
+                // reach3Quarter = true;
+                // if (GameManager.instance.boardScript.latest_clip != null) 
+                // {
+                //     GameManager.instance.boardScript.restore_audio = true;
+                //     GameManager.instance.boardScript.latest_clip = SoundManager.instance.voiceSource.clip;
+                // }
+                // SoundManager.instance.PlayVoice (Resources.Load ("instructions/You are 75% of the way through this level") as AudioClip);
+                // print ("75%");
             }
         }
     }
@@ -1019,25 +1200,25 @@ public class Player : MovingObject
 
     protected override bool AttemptMove<T>(int xDir, int yDir)
     {
-        //Call the AttemptMove method of the base class, passing in the component T (in this case Wall) and x and y direction to move.
+        // Call the AttemptMove method of the base class, passing in the component T (in this case Wall) and x and y direction to move.
         bool canMove = base.AttemptMove<T>(xDir, yDir);
         numSteps += 1;
-        //If player could not move to that location, play the crash sound
+        // If player could not move to that location, play the crash sound
         if (!canMove)
         {
             GameManager.instance.boardScript.gamerecord += "C";
-            //if(!SoundManager.instance.isBusy())
+            // if(!SoundManager.instance.isBusy())
             SoundManager.instance.playcrash(Database.instance.wallHit);
-            //Increment the crash count
+            // Increment the crash count
             numCrashes++;
-            //Decrement the step count (as no successful step was made)
-            reportOnCrash(); //send crash report
+            // Decrement the step count (as no successful step was made)
+            reportOnCrash(); // send crash report
 
-            //Add the crash location details
+            // Add the crash location details
             string loc = transform.position.x.ToString() + "," + transform.position.y.ToString();
-            //TODO put those two lines back
-            //string crashPos = getCrashDescription((int) transform.position.x, (int) transform.position.y);
-            //loc = loc + "," + crashPos;
+            // TODO put those two lines back
+            // string crashPos = getCrashDescription((int) transform.position.x, (int) transform.position.y);
+            // loc = loc + "," + crashPos;
             if (crashLocs.Equals(""))
             {
                 crashLocs = loc;
@@ -1061,10 +1242,10 @@ public class Player : MovingObject
             reportOnEcho();
             reportSent = false;
         }
-        //Hit allows us to reference the result of the Linecast done in Move.
-        //RaycastHit2D hit;
+        // Hit allows us to reference the result of the Linecast done in Move.
+        // RaycastHit2D hit;
 
-        //GameManager.instance.playersTurn = false;
+        // GameManager.instance.playersTurn = false;
         return canMove;
     }
 
@@ -1072,8 +1253,7 @@ public class Player : MovingObject
     /// Sends data over the internet when the player crashes into a wall.
     /// </summary>
 	private void reportOnCrash()
-    {
-
+    {    
         string crashEndpoint = "http://echolock.andrew.cmu.edu/cgi-bin/acceptCrashData.py";
 
         Vector2 idx_pos = GameManager.instance.boardScript.get_idx_from_pos(transform.position);
@@ -1098,24 +1278,25 @@ public class Player : MovingObject
     /// </summary>
 	private void attemptExitFromLevel()
     {
-        //Increment step count
-        //numSteps += 1;
+        // Increment step count
+        // numSteps += 1;
         exitAttempts++;
 
-        BoardManager.echoDistData data =
-            GameManager.instance.boardScript.getEchoDistData(transform.position, get_player_dir("FRONT"), get_player_dir("LEFT"));
+        BoardManager.echoDistData data = GameManager.instance.boardScript.getEchoDistData(transform.position, get_player_dir("FRONT"), get_player_dir("LEFT"));
 
         float wallDist = 0.8f;
-        //catogrize the distance
-        //front
+        // catogrize the distance
+        // front
         // if ((data.frontDist <= wallDist) && (data.leftDist <= wallDist) && (data.rightDist <= wallDist))
-            // Logging.Log("Not exit, in Wrong Dead end!", Logging.LogLevel.LOW_PRIORITY);
+        // {
+        //     Logging.Log("Not exit, in Wrong Dead end!", Logging.LogLevel.LOW_PRIORITY);
+        // }
 
         GameObject exitSign = GameObject.FindGameObjectWithTag("Exit");
         Vector2 distFromExit = transform.position - exitSign.transform.position;
         if (Vector2.SqrMagnitude(distFromExit) < 0.25)
         {
-            //Calculate time elapsed during the game level
+            // Calculate time elapsed during the game level
             endLevel();
         }
 
@@ -1138,30 +1319,33 @@ public class Player : MovingObject
         float accurateElapsed = stopWatch.ElapsedMilliseconds / 1000;
         int timeElapsed = unchecked((int)(accurateElapsed));
 
-        //Calculate the points for the game level
-        //Score based on: time taken, num crashes, steps taken, trying(num echoes played on same spot)
-        //Finish in less than 15 seconds => full score
-        //For every 10 seconds after 15 seconds, lose 100 points
-        //For every crash, lose 150 points
-        //For every step taken over the optimal steps, lose 50 points
-        //Max score currently is 1500 points
+        // Calculate the points for the game level
+        // Score based on: time taken, num crashes, steps taken, trying(num echoes played on same spot)
+        // Finish in less than 15 seconds => full score
+        // For every 10 seconds after 15 seconds, lose 100 points
+        // For every crash, lose 150 points
+        // For every step taken over the optimal steps, lose 50 points
+        // Max score currently is 1500 points
         int score = 5000;
         /*
-		if (timeElapsed > 15) {
+		if (timeElapsed > 15) 
+        {
 			score = score - (((timeElapsed - 16) / 10) + 1) * 100;
 		}
 		*/
-        //if numSteps > numOptimalSteps, then adjust score
-        //Calculate optimal steps by getting start position and end position
-        //and calculate the number of steps
+        // if numSteps > numOptimalSteps, then adjust score
+        // Calculate optimal steps by getting start position and end position
+        // and calculate the number of steps
         if (numCrashes > 0)
         {
             score = score - numCrashes * 300;
         }
 
-        if (numSteps - GameManager.instance.boardScript.mazeSolution.Length + 1 > 0)
+        if ((numSteps - GameManager.instance.boardScript.mazeSolution.Length + 1) > 0)
+        {
             score -= 100 * (numSteps - GameManager.instance.boardScript.mazeSolution.Length + 1);
-        //Check if the score went below 0
+        }
+        // Check if the score went below 0
         if (score < 1000)
         {
             score = 1000;
@@ -1170,8 +1354,8 @@ public class Player : MovingObject
         // Logging.Log(GameManager.instance.boardScript.mazeSolution.Length - 1, Logging.LogLevel.NORMAL);
         // Logging.Log(numCrashes, Logging.LogLevel.NORMAL);
 
-        //TODO(agotsis) understand this. Reimplement.
-        //Send the crash count data and level information to server
+        // TODO(agotsis) understand this. Reimplement.
+        // Send the crash count data and level information to server
         string levelDataEndpoint = "http://echolock.andrew.cmu.edu/cgi-bin/acceptLevelData.py";
         int temp = GameManager.instance.boardScript.local_stats[curLevel];
 
@@ -1190,18 +1374,18 @@ public class Player : MovingObject
 
         // Logging.Log(System.Text.Encoding.ASCII.GetString(levelCompleteForm.data), Logging.LogLevel.LOW_PRIORITY);
 
-        //Send the name of the echo files used in this level and the counts
-        //form.AddField("echoFileNames", getEchoNames());
+        // Send the name of the echo files used in this level and the counts
+        // form.AddField("echoFileNames", getEchoNames());
 
-        //Send the details of the crash locations
-        //form.AddField("crashLocations", crashLocs);
+        // Send the details of the crash locations
+        // form.AddField("crashLocations", crashLocs);
 
         levelCompleteForm.AddField("score", score);
 
         WWW www = new WWW(levelDataEndpoint, levelCompleteForm);
         StartCoroutine(Utilities.WaitForRequest(www));
 
-        //display score
+        // display score
 #if UNITY_ANDROID
         /*
 		ad.clearflag();
@@ -1214,19 +1398,19 @@ public class Player : MovingObject
 		*/
 #endif
 
-        //Invoke the Restart function to start the next level with a delay of restartLevelDelay (default 1 second).
+        // Invoke the Restart function to start the next level with a delay of restartLevelDelay (default 1 second).
         restarted = true;
         Invoke("Restart", restartLevelDelay);
-        //Disable the player object since level is over.
-        //enabled = true;
+        // Disable the player object since level is over.
+        // enabled = true;
 
         GameManager.instance.level += 1;
         GameManager.instance.boardScript.write_save(GameManager.instance.level);
         GameManager.instance.playersTurn = false;
         SoundManager.instance.PlaySingle(Database.instance.winSound);
-        //AudioSource.PlayClipAtPoint (winSound, transform.localPosition, 1.0f);
+        // AudioSource.PlayClipAtPoint (winSound, transform.localPosition, 1.0f);
 
-        //Reset extra data.
+        // Reset extra data.
         resetData();
     }
 
@@ -1250,7 +1434,7 @@ public class Player : MovingObject
         echoForm.AddField("userName", Utilities.encrypt(SystemInfo.deviceUniqueIdentifier));
         echoForm.AddField("surveyID", Utilities.encrypt(code));
         echoForm.AddField("dateTimeStamp", Utilities.encrypt(System.DateTime.Now.ToString()));
-        //the code is the first digit of device id
+        // the code is the first digit of device id
 
         // Logging.Log(System.Text.Encoding.ASCII.GetString(echoForm.data), Logging.LogLevel.LOW_PRIORITY);
 
@@ -1269,7 +1453,9 @@ public class Player : MovingObject
             {
                 cur_clip += 1;
                 if (cur_clip >= Database.instance.menuClips.Length)
+                {
                     cur_clip = 0;
+                }
             }
         }
     }
@@ -1288,7 +1474,9 @@ public class Player : MovingObject
         //UnityEngine.Debug.DrawLine (transform.position, transform.position+get_player_dir("LEFT"), Color.yellow);
         //If it's not the player's turn, exit the function.
         if (!GameManager.instance.playersTurn)
+        {
             return;
+        }
 
         if (!localRecordWritten)
         {
@@ -1329,8 +1517,10 @@ public class Player : MovingObject
                 finishedTurningInstruction = true; // We have finished the turning instruction, so the player can rotate.
             }
 
-            if (!InterceptMission(eh.getEventData())) 
+            if (!InterceptMission(eh.getEventData()))
+            {
                 return;
+            }
         }
 
         Vector3 dir = Vector3.zero;
@@ -1493,30 +1683,40 @@ public class Player : MovingObject
 #if UNITY_IOS || UNITY_ANDROID
 		//pop up the survey at the end of tutorial
 		Vector2 distFromExit = transform.position - GameManager.instance.boardScript.exitPos;
-		if ( (Vector2.SqrMagnitude (distFromExit) < 0.25f) && survey_activated ) {
-			if( (GameManager.instance.level == 11)&&(!survey_shown) ){
+		if ((Vector2.SqrMagnitude(distFromExit) < 0.25f) && survey_activated)
+        {
+			if ((GameManager.instance.level == 11) && !survey_shown)
+            {
 				ad.clearflag();
-				ad.DisplayAndroidWindow ("Would you like to take \n a short survey about the game?");
+				ad.DisplayAndroidWindow("Would you like to take \n a short survey about the game?");
 				survey_shown = true;
 			}
 
-			if(survey_shown && !URL_shown && ad.yesclicked() && !code_entered){
-
+			if (survey_shown && !URL_shown && ad.yesclicked() && !code_entered)
+            {
 				//display a code, and submit it reportSurvey()
 				// Please enter code (first six digits of UDID) on the survey page
 				code_entered = true;
 
-				if (SystemInfo.deviceUniqueIdentifier.Length <= 6)
-					surveyCode = SystemInfo.deviceUniqueIdentifier;
-				else
-					surveyCode = SystemInfo.deviceUniqueIdentifier.Substring (0, 6);
-				string codemsg = "Your survey code is: \n" + surveyCode + "\n please enter this in the survey.";
-				ad.clearflag ();
-				ad.DisplayAndroidWindow (codemsg, AndroidDialogue.DialogueType.YESONLY);
-			}else if (!URL_shown && ad.yesclicked() && code_entered){
+                if (SystemInfo.deviceUniqueIdentifier.Length <= 6)
+                {
+                    surveyCode = SystemInfo.deviceUniqueIdentifier;
+                }
+                else
+                {
+                    surveyCode = SystemInfo.deviceUniqueIdentifier.Substring(0, 6);
+                }
+                string codemsg = "Your survey code is: \n" + surveyCode + "\n please enter this in the survey.";
+				ad.clearflag();
+				ad.DisplayAndroidWindow(codemsg, AndroidDialogue.DialogueType.YESONLY);
+			}
+            else if (!URL_shown && ad.yesclicked() && code_entered)
+            {
 				URL_shown = true;
-				Application.OpenURL("https://echolock.andrew.cmu.edu/survey/");//"http://echolock.andrew.cmu.edu/survey/?"
-			}else if (URL_shown){
+				Application.OpenURL("https://echolock.andrew.cmu.edu/survey/"); // "http://echolock.andrew.cmu.edu/survey/?"
+			}
+            else if (URL_shown)
+            {
 				ad.clearflag();
 				ad.DisplayAndroidWindow("Thank you for taking the survey!", AndroidDialogue.DialogueType.YESONLY);
 				reportsurvey(surveyCode);
@@ -1683,7 +1883,7 @@ public class Player : MovingObject
 			}
 			flipEchoLock(false);
 		}
-#endif //End of mobile platform dependendent compilation section started above with #elif
+#endif // End of mobile platform dependendent compilation section started above with #elif
         calculateMove(dir);
     }
 
@@ -1702,13 +1902,13 @@ public class Player : MovingObject
         }
     }
 
-    //Returns a description of the location of the crash (for analysis)
-    //Currently, the ouput is from the following list of options
-    //["End of the Corridor", "Intersection of 2 Corridors", "Start of the Corridor",
-    //"Middle of the Corridor", "Towards End of the Corridor", "Towards Start of the Corridor"
-    //"Crashed while on the Exit Sign"];
-    //Currently not returning the Towards Start/End descriptions due to only having 7 discrete
-    //movements in each x/y direction. May be relevant in the future.
+    // Returns a description of the location of the crash (for analysis)
+    // Currently, the ouput is from the following list of options
+    // ["End of the Corridor", "Intersection of 2 Corridors", "Start of the Corridor",
+    // "Middle of the Corridor", "Towards End of the Corridor", "Towards Start of the Corridor"
+    // "Crashed while on the Exit Sign"];
+    // Currently not returning the Towards Start/End descriptions due to only having 7 discrete
+    // movements in each x/y direction. May be relevant in the future.
     /// <summary>
     /// Unused function.
     /// </summary>
@@ -1779,7 +1979,7 @@ public class Player : MovingObject
             }
         }
 
-        //positions.Contains (xLoc, yLoc);
+        // positions.Contains (xLoc, yLoc);
 
         UnityEngine.Debug.Log("Number of walls detected");
         UnityEngine.Debug.Log(walls.Length);
@@ -1794,17 +1994,17 @@ public class Player : MovingObject
         UnityEngine.Debug.Log(distYUp);
         UnityEngine.Debug.Log(distYDown);
 
-        //All the crash location options
-        //string[] locs = ["End of the Corridor", "Intersection of 2 Corridors", "Start of the Corridor", "Middle of the Corridor", "Towards End of the Corridor", "Towards Start of the Corridor"];
+        // All the crash location options
+        // string[] locs = ["End of the Corridor", "Intersection of 2 Corridors", "Start of the Corridor", "Middle of the Corridor", "Towards End of the Corridor", "Towards Start of the Corridor"];
 
-        //If Crash happened while on the Exit Sign
+        // If Crash happened while on the Exit Sign
         GameObject exitSign = GameObject.FindGameObjectWithTag("Exit");
         if ((xLoc == (int)exitSign.transform.position.x) & (yLoc == (int)exitSign.transform.position.y))
         {
             return "Crashed while on the Exit Sign";
         }
-        //TODO(agotsis/wenyuw1) This hardcoding needs to go away. Mainly here to test the database.
-        //For the x direction
+        // TODO(agotsis/wenyuw1) This hardcoding needs to go away. Mainly here to test the database.
+        // For the x direction
         if ((distXUp == 7) & (distXDown == 1) & (distYUp == 1) & (distYDown == 1))
         {
             return "Start of the Corridor";
@@ -1860,23 +2060,23 @@ public class Player : MovingObject
 
     protected override void OnCantMove<T>(T component)
     {
-        //Set hitWall to equal the component passed in as a parameter.
+        // Set hitWall to equal the component passed in as a parameter.
         Wall hitWall = component as Wall;
-        //if(!SoundManager.instance.isBusy())
+        // if(!SoundManager.instance.isBusy())
         SoundManager.instance.playcrash(Database.instance.wallHit);
     }
 
     private void OnDisable()
     {
-        //When Player object is disabled, store the current local food total in the GameManager so it can be re-loaded in next level.
-        //int nextLevel = curLevel + 1;
-        //GameManager.instance.level = nextLevel;
+        // When Player object is disabled, store the current local food total in the GameManager so it can be re-loaded in next level.
+        // int nextLevel = curLevel + 1;
+        // GameManager.instance.level = nextLevel;
     }
 
-    //Restart reloads the scene when called.
+    // Restart reloads the scene when called.
     private void Restart()
     {
-        //Load the last scene loaded, in this case Main, the only scene in the game.
+        // Load the last scene loaded, in this case Main, the only scene in the game.
         SceneManager.LoadScene("Main");
         restarted = false;
     }

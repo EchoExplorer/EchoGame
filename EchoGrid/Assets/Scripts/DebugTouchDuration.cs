@@ -19,8 +19,6 @@ public class DebugTouchDuration : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
-        DontDestroyOnLoad(gameObject);
     }
 
     // Use this for initialization
