@@ -2387,12 +2387,10 @@ public class Player : MovingObject
                                 	debugPlayerInfo = "Hold registered. Closed pause menu. Finished menu section for gesture tutorial.";
                                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                                     level1_remaining_menus--; // Decrease the number of holds left to do.
-                                    // Congratulations! You have reached the exit. Once you believe you have reached the exit in a level, triple tapping will move you to the next level and you will hear a congratulatory sound like this.
+                                    // Congratulations! You have reached the exit. Once you believe you have reached the exit in a level, swiping down will move you to the next level and you will hear a congratulatory sound like this.
                                     // Finish SOUND
-                                    // Triple tapping is quicker than tapping to get an echo. You should tap similar to this.
-                                    // TODO: TRIPLE TAB ECHO?
-                                    // Now try triple tapping to move on to the next level.
-                                    clips = new List<AudioClip> { Database.instance.tutorialClip[20], Database.instance.winSound, Database.instance.tutorialClip[21], Database.instance.inputSFX, Database.instance.tutorialClip[22] };
+                                    // Now try to swipe down to move on to the next level.
+                                    clips = new List<AudioClip> { Database.instance.tutorialClip[20], Database.instance.winSound, Database.instance.tutorialClip[22] };
                                     SoundManager.instance.PlayClips(clips);
                                 }
                             }

@@ -34,6 +34,7 @@ END
 
 LEVEL_3
 IN
+at(1,9)_T_F_RIGHT
 2sec_silence
 1sec_silence
 Now let's move on from straight hallways

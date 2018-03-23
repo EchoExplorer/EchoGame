@@ -49,15 +49,24 @@ public class GM_title : MonoBehaviour
     bool plugin_earphone = false;
     bool environment_setup = false;
     bool orientation_correct = false;
+    bool clip_talkback_reset = true;
     bool clip0_reset = true;
     bool clip1_reset = true;
     bool clip2_reset = true;
 
     void play_audio()
     {
+        if (!determined_talkback)
+        {
+            if (SoundManager.instance.PlayVoice(Database.instance.settingClip[3], clip_talkback_reset))
+            {
+                clip_talkback_reset = false;
+            }
+            return;
+        }
         if ((determined_talkback == true) && !plugin_earphone)
         {
-            if (SoundManager.instance.PlayVoice(Database.instance.settingClips[0], clip0_reset, 1))
+            if (SoundManager.instance.PlayVoice(Database.instance.settingClip[0], clip0_reset, 1))
             {
                 clip0_reset = false;
             }
@@ -67,7 +76,7 @@ public class GM_title : MonoBehaviour
         {
             if (!Utilities.isDeviceLandscape())
             {//not landscape!
-                if (SoundManager.instance.PlayVoice(Database.instance.settingClips[1], clip1_reset))
+                if (SoundManager.instance.PlayVoice(Database.instance.settingClip[1], clip1_reset))
                 {
                     clip1_reset = false;
                 }
@@ -76,7 +85,7 @@ public class GM_title : MonoBehaviour
             }
             else
             {
-                if (SoundManager.instance.PlayVoice(Database.instance.settingClips[2], clip2_reset))
+                if (SoundManager.instance.PlayVoice(Database.instance.settingClip[2], clip2_reset))
                 {
                     clip2_reset = false;
                 }

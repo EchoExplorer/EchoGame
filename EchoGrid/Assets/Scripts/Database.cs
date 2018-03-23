@@ -26,7 +26,7 @@ public class Database : MonoBehaviour
     public AudioClip[] tutorialClip = new AudioClip[28];
     //General
     [HideInInspector]
-    public AudioClip[] settingClips = new AudioClip[3];
+    public AudioClip[] settingClip = new AudioClip[4];
     //main
     [HideInInspector]
     public AudioClip[] menuClips = new AudioClip[5];
@@ -88,9 +88,10 @@ public class Database : MonoBehaviour
             tutorialClip[i] = Resources.Load("Instruction/Tutorials/" + i) as AudioClip;
         }
         //general
-        settingClips[0] = Resources.Load("Instruction/earphone_hint") as AudioClip;
-        settingClips[1] = Resources.Load("Instruction/orient_hint") as AudioClip;
-        settingClips[2] = Resources.Load("Instruction/orient_main") as AudioClip;
+        settingClip[0] = Resources.Load("Instruction/earphone_hint") as AudioClip;
+        settingClip[1] = Resources.Load("Instruction/orient_hint") as AudioClip;
+        settingClip[2] = Resources.Load("Instruction/orient_main") as AudioClip;
+        settingClip[3] = Resources.Load("Instruction/temp_begining") as AudioClip;
         //Main
         menuOn = Resources.Load("instructions/Menu opened") as AudioClip;
         menuOff = Resources.Load("instructions/Menu closed") as AudioClip;
