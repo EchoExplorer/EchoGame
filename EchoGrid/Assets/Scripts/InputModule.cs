@@ -396,10 +396,10 @@ public class InputModule : MonoBehaviour
 				// Some weird error occured.
 				else 
 				{
-					debugTouch2Info = "Cannot compute";
+                    debugTouch2Info = "Cannot compute";
                     DebugTouch2.instance.ChangeDebugTouch2Text(debugTouch2Info); // Update the debug textbox.
                 }
-			}
+            }
 
 			ievent.elapsedTime = Time.time - touchTime;
 		}

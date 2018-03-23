@@ -13,7 +13,7 @@ public class GM_main_pre : MonoBehaviour
     bool at_confirm = false;
     bool reset_audio = false;
 
-    enum SelectMode { NONE, CONTINUE, NEW, CONFIRM }
+    enum SelectMode { NONE, CONTINUE, NEW, CONFIRM, BACK }
 
     eventHandler eh;
     CDTimer TriggerStartNewGame;
@@ -103,6 +103,11 @@ public class GM_main_pre : MonoBehaviour
                         selectMode = SelectMode.NEW;
                     }
                     break;
+                // If the down arrow key was pressed.
+                case KeyCode.DownArrow:
+                    // If we want to go back to the main menu.
+                    selectMode = SelectMode.BACK;
+                    break;
                 // If the 'f' key was pressed.
                 case KeyCode.F:
             		// We have confirmed we want to start a new game, so set mode to Confirm.
@@ -166,7 +171,7 @@ public class GM_main_pre : MonoBehaviour
                         selectMode = SelectMode.CONTINUE;
 					}
 				} 
-				// If the swipe was right.
+				// If the swipe was left.
 				else if (ie.isLeft == true)
 				{
 					// If we have not confirmed we want to start a new game, do nothing.
@@ -180,6 +185,11 @@ public class GM_main_pre : MonoBehaviour
                         selectMode = SelectMode.NEW;
 					}
 				}
+                // If the swipe was down.
+                else if (ie.isDown == true)
+                {
+                    selectMode = SelectMode.BACK; // Let the player go back to the main menu.
+                }
 			}
 			// If a tap was registered and we are able to start a new game, set mode to Continue.
 			else if ((ie.isTap == true) && TriggerStartNewGame.CDfinish())
@@ -192,33 +202,40 @@ public class GM_main_pre : MonoBehaviour
         {
         	// If mode is set to Continue, we have swiped right, so continue from where we left off.
             case SelectMode.CONTINUE:
-            	debugPlayerInfo = "Swiped right. Continuing from where you left off.";
-                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                //debugPlayerInfo = "Swiped right. Continuing from where you left off.";
+                //DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 SoundManager.instance.PlaySingle(Database.instance.inputSFX);
                 SoundManager.instance.PlayVoice(Database.instance.MainPreContinueGame, true);
                 SceneManager.LoadScene("Main"); 
                 break;
             // If mode is set to New, we have confirmed and swiped left, so start a new game from either the tutorial or the first non-tutorial level.
             case SelectMode.NEW:
-            	debugPlayerInfo = "Swiped left. Starting new game.";
-                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                //debugPlayerInfo = "Swiped left. Starting new game.";
+                //DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 SoundManager.instance.PlaySingle(Database.instance.inputSFX);
                 if (GameMode.instance.gamemode == GameMode.Game_Mode.TUTORIAL)
                     GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL_RESTART;
                 else
-                    GameMode.instance.gamemode = GameMode.Game_Mode.RESTART;
-                SoundManager.instance.PlayVoice(Database.instance.MainPreNewGame, true);
+                    GameMode.instance.gamemode = GameMode.Game_Mode.RESTART;                
                 // Utilities.write_save(0); ???
                 SceneManager.LoadScene("Main");
                 break;
             // If mode is set to Confirm, we have tapped to confirm we want to start a new game, so let the player swipe left to start.
 			case SelectMode.CONFIRM:
-				debugPlayerInfo = "Tap registered. Confirmed action.";
-                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                //debugPlayerInfo = "Tap registered. Confirmed action.";
+                //DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 cur_clip = 0;
                 reset_audio = true;
                 at_confirm = !at_confirm;
                 SoundManager.instance.PlaySingle(Database.instance.inputSFX);
+                break;
+            // If mode is set to Back, go back to the main menu.
+            case SelectMode.BACK:
+                //debugPlayerInfo = "Swiped down. Going back to main menu.";
+                //DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                SoundManager.instance.PlaySingle(Database.instance.inputSFX);
+                SceneManager.LoadScene("Title_Screen");
+
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
 #endif
 #if UNITY_IOS || UNITY_ANDROID

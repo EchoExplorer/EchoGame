@@ -26,6 +26,7 @@ public class DebugPlayer : MonoBehaviour
     {
         debugPlayerText = GetComponent<Text>();
         playerText = "Player";
+        instance.gameObject.SetActive(false);
     }
 	
 	// Update is called once per frame

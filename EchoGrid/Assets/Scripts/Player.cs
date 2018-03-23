@@ -1163,7 +1163,7 @@ public class Player : MovingObject
                 //	  GameManager.instance.boardScript.restore_audio = true;
                 //	  GameManager.instance.boardScript.latest_clip = SoundManager.instance.voiceSource.clip;
                 // }
-                //SoundManager.instance.PlayVoice (Resources.Load ("instructions/You are 25% of the way through this level") as AudioClip);
+                // SoundManager.instance.PlayVoice (Resources.Load ("instructions/You are 25% of the way through this level") as AudioClip);
             }
             else if ((!reachHalf) && (ratio <= 0.5f) && (ratio > 0.25f))
             {
@@ -1470,9 +1470,9 @@ public class Player : MovingObject
     void Update()
     {
         play_audio();
-        //UnityEngine.Debug.DrawLine (transform.position, transform.position+get_player_dir("FRONT"), Color.green);
-        //UnityEngine.Debug.DrawLine (transform.position, transform.position+get_player_dir("LEFT"), Color.yellow);
-        //If it's not the player's turn, exit the function.
+        // UnityEngine.Debug.DrawLine (transform.position, transform.position+get_player_dir("FRONT"), Color.green);
+        // UnityEngine.Debug.DrawLine (transform.position, transform.position+get_player_dir("LEFT"), Color.yellow);
+        // If it's not the player's turn, exit the function.
         if (!GameManager.instance.playersTurn)
         {
             return;
@@ -1539,7 +1539,7 @@ public class Player : MovingObject
                 	// If the player is not in the pause menu, rotate them 90 degrees to the right.
                     if (!want_exit)
                     {
-                    	debugPlayerInfo = "Rotated right. Turning player right 90 degrees.";
+                        debugPlayerInfo = "Rotated right. Turning player right 90 degrees.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         dir = -transform.up; // Rotate the player right 90 degrees.
                         SoundManager.instance.PlaySingle(Database.instance.swipeRight);
@@ -1547,7 +1547,7 @@ public class Player : MovingObject
                     // If the player is in the pause menu, restart the level.
                     else
                     {
-                    	debugPlayerInfo = "Swiped right. Restarting level.";
+                        debugPlayerInfo = "Swiped right. Restarting level.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         SoundManager.instance.playcrash(Database.instance.inputSFX);
                         GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
@@ -1561,7 +1561,7 @@ public class Player : MovingObject
                 	// If the player is not in the pause menu, rotate them 90 degrees to the left.
                     if (!want_exit)
                     {
-                    	debugPlayerInfo = "Rotated left. Turning player left 90 degrees.";
+                        debugPlayerInfo = "Rotated left. Turning player left 90 degrees.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         dir = get_player_dir("LEFT"); // Rotate the player left 90 degrees.
                         SoundManager.instance.PlaySingle(Database.instance.swipeLeft);
@@ -1569,7 +1569,7 @@ public class Player : MovingObject
                     // If the player is in the pause menu, move to the main menu.
                     else
                     {
-                    	debugPlayerInfo = "Swiped left. Returning to main menu.";
+                        debugPlayerInfo = "Swiped left. Returning to main menu.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         SoundManager.instance.playcrash(Database.instance.inputSFX);
                         // SceneManager.UnloadScene("Main");
@@ -1583,7 +1583,7 @@ public class Player : MovingObject
                 	// If the player is not in the pause menu, move them forward.
                     if (!want_exit)
                     {
-                    	debugPlayerInfo = "Swiped up. Moved player forward.";
+                        debugPlayerInfo = "Swiped up. Moved player forward.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         dir = transform.right; // Move the player forward.
                         SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
@@ -1591,7 +1591,7 @@ public class Player : MovingObject
                     // If the player is in the pause menu, give them a hint.
                     else
                     {
-                    	debugPlayerInfo = "Swiped up. Gave player hint";
+                        debugPlayerInfo = "Swiped up. Gave player hint";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         getHint(); // Give the player a hint.
                     }
@@ -1631,7 +1631,7 @@ public class Player : MovingObject
                 	// If the player is not in the pause menu, play an echo.
                 	if (!want_exit)
                 	{
-                		debugPlayerInfo = "Tap registered. Played echo.";
+                        debugPlayerInfo = "Tap registered. Played echo.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         GameManager.instance.boardScript.gamerecord += "E{"; // Record the echo.
                     	PlayEcho(); // Play the echo.
@@ -1644,7 +1644,7 @@ public class Player : MovingObject
                 	// If the player is not in the pause menu, open the pause menu.
                 	if (want_exit == false) 
                 	{
-                		debugPlayerInfo = "Hold registered. Opened pause menu.";
+                        debugPlayerInfo = "Hold registered. Opened pause menu.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         if (SoundManager.instance.voiceSource.isPlaying)
 						{
@@ -1658,7 +1658,7 @@ public class Player : MovingObject
                 	// If the player is in the pause menu, close the pause menu.
                 	else if (want_exit == true)
                 	{
-                		debugPlayerInfo = "Hold registered. Closed pause menu.";
+                        debugPlayerInfo = "Hold registered. Closed pause menu.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         SoundManager.instance.PlayVoice(Database.instance.menuOff, true);
 						want_exit = false; // Close the pause menu.
@@ -1666,8 +1666,8 @@ public class Player : MovingObject
                 	}
                     break;
                 // If the 'p' key has been pressed.
-				case KeyCode.P: 
-					debugPlayerInfo = "P key pressed. Moving to main menu.";
+				case KeyCode.P:
+                    debugPlayerInfo = "P key pressed. Moving to main menu.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     SoundManager.instance.playcrash(Database.instance.inputSFX);
 					//SceneManager.UnloadScene("Main");
@@ -1694,7 +1694,7 @@ public class Player : MovingObject
 
 			if (survey_shown && !URL_shown && ad.yesclicked() && !code_entered)
             {
-				//display a code, and submit it reportSurvey()
+				// display a code, and submit it reportSurvey()
 				// Please enter code (first six digits of UDID) on the survey page
 				code_entered = true;
 
@@ -1737,7 +1737,7 @@ public class Player : MovingObject
 				{
 					if (!echoLock)
 					{
-						debugPlayerInfo = "Tap registered. Played echo.";
+                        debugPlayerInfo = "Tap registered. Played echo.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         GameManager.instance.boardScript.gamerecord += "E{"; // Record the echo.
 						PlayEcho(); // Play the echo.
@@ -1754,7 +1754,7 @@ public class Player : MovingObject
 				// If the player is not in the pause menu, open the pause menu.
 				if (at_pause_menu == false)
 				{
-					debugPlayerInfo = "Hold registered. Opened pause menu.";
+                    debugPlayerInfo = "Hold registered. Opened pause menu.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     at_pause_menu = true; // The player is now in the pause menu.
 					if (SoundManager.instance.voiceSource.isPlaying)
@@ -1767,7 +1767,7 @@ public class Player : MovingObject
 				// If the player is in the pause menu, close the pause menu.
 				else if (at_pause_menu == true)
 				{
-					debugPlayerInfo = "Hold registered. Closed pause menu.";
+                    debugPlayerInfo = "Hold registered. Closed pause menu.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     at_pause_menu = false; // The player is no longer in the pause menu.
 					SoundManager.instance.PlayVoice(Database.instance.menuOff, true);
@@ -1783,7 +1783,7 @@ public class Player : MovingObject
 					// If the swipe was up, move the player forward.
 					if (ie.isUp == true)
 					{
-						debugPlayerInfo = "Swiped up. Moved player forward.";
+                        debugPlayerInfo = "Swiped up. Moved player forward.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         dir = get_player_dir("FRONT"); // Move the player forward.
 						SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
@@ -1806,7 +1806,7 @@ public class Player : MovingObject
 						// If the visual map for debugging is on, turn it off.
 						if (GameManager.levelImageActive)
 						{
-							debugPlayerInfo = "Swiped down. Turning off visual map for debugging.";
+                            debugPlayerInfo = "Swiped down. Turning off visual map for debugging.";
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                             GameManager.instance.HideLevelImage(); // Turn off the map.
 							GameManager.instance.boardScript.gamerecord += "S_OFF"; // Record the switch off.
@@ -1814,7 +1814,7 @@ public class Player : MovingObject
 						// If the visual map for debugging is off, turn it on.
 						else
 						{
-							debugPlayerInfo = "Swiped down. Turning on visual map for debugging.";
+                            debugPlayerInfo = "Swiped down. Turning on visual map for debugging.";
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                             GameManager.instance.UnHideLevelImage(); // Turn on the map.
 							GameManager.instance.boardScript.gamerecord += "S_ON"; // Record the switch.
@@ -1823,7 +1823,7 @@ public class Player : MovingObject
 					// If the swipe was left, restart the level.
 					else if (ie.isLeft == true)
 					{
-						debugPlayerInfo = "Swiped left. Restarting level.";
+                        debugPlayerInfo = "Swiped left. Restarting level.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         SoundManager.instance.playcrash(Database.instance.inputSFX);
 						//GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
@@ -1835,7 +1835,7 @@ public class Player : MovingObject
 					// If the swipe was right, return to the main menu.
 					else if (ie.isRight == true)
 					{
-						debugPlayerInfo = "Swiped right. Moving to main menu.";
+                        debugPlayerInfo = "Swiped right. Moving to main menu.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         SoundManager.instance.playcrash(Database.instance.inputSFX);
 						Destroy(GameObject.Find("GameManager"));
@@ -1844,7 +1844,7 @@ public class Player : MovingObject
 					// If the swipe was up, give the player a hint.
 					else if (ie.isUp == true)
 					{
-						debugPlayerInfo = "Swiped up. Gave player hint.";
+                        debugPlayerInfo = "Swiped up. Gave player hint.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         getHint(); // Give the player a hint.
 					}					
@@ -1860,7 +1860,7 @@ public class Player : MovingObject
 					// If the rotation was left, rotate the player left 90 degrees.
 					if (ie.isLeft == true)
 					{
-						debugPlayerInfo = "Rotated left. Turning player left 90 degrees.";
+                        debugPlayerInfo = "Rotated left. Turning player left 90 degrees.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         dir = get_player_dir("LEFT"); // Rotate the player left 90 degrees.
 						if (!GameManager.instance.boardScript.turning_lock)
@@ -1871,7 +1871,7 @@ public class Player : MovingObject
 					// If the rotation was right, rotate the player right 90 degrees.
 					else if (ie.isRight == true)
 					{
-						debugPlayerInfo = "Rotated right. Turning player right 90 degrees.";
+                        debugPlayerInfo = "Rotated right. Turning player right 90 degrees.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         dir = get_player_dir("RIGHT"); // Rotate the player right 90 degrees.
 						if (!GameManager.instance.boardScript.turning_lock) 
@@ -2062,7 +2062,7 @@ public class Player : MovingObject
     {
         // Set hitWall to equal the component passed in as a parameter.
         Wall hitWall = component as Wall;
-        // if(!SoundManager.instance.isBusy())
+        // if (!SoundManager.instance.isBusy())
         SoundManager.instance.playcrash(Database.instance.wallHit);
     }
 
@@ -2110,6 +2110,7 @@ public class Player : MovingObject
                 finishedTappingInstruction = false; // Reset if the player is going through this tutorial level again.
                 finishedSwipingInstruction = false; // Reset if the player is going through this tutorial level again.
                 finishedMenuInstruction = false; // Reset if the player is going through this tutorial level again.
+                SoundManager.instance.PlayVoice(Database.instance.MainPreNewGame, true);
                 clips = new List<AudioClip>() { Database.instance.tutorialClip[0], Database.instance.tutorialClip[1], Database.instance.TitletoMainClips[0], Database.instance.TitletoMainClips[0], Database.instance.tutorialClip[2], Database.instance.tutorialClip[3]};
                 SoundManager.instance.PlayClips(clips, 0, () => PlayEcho(), 3);
                 level1_remaining_taps = 3; // Set the remaining taps for the tutorial to 3.
@@ -2262,7 +2263,7 @@ public class Player : MovingObject
                 	// If the action was a tap.
                     if ((action == InterceptAction.TAP) && (finishedTappingInstruction == true))
                     {
-                    	debugPlayerInfo = "Tapped for gesture tutorial. Played echo.";
+                        debugPlayerInfo = "Tapped for gesture tutorial. Played echo.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         level1_remaining_taps--; // Decrease the amount of taps left to do.
                         if (level1_remaining_taps == 2) 
@@ -2297,7 +2298,7 @@ public class Player : MovingObject
                     // If the action was not a tap.
                     else if (((action == InterceptAction.MENU) || (action == InterceptAction.LEFT) || (action == InterceptAction.RIGHT) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || (ie.isUnrecognized == true)) && (finishedTappingInstruction == true))
                     {
-                    	debugPlayerInfo = "Incorrect tap for gesture tutorial.";
+                        debugPlayerInfo = "Incorrect tap for gesture tutorial.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         // This tap was too long/short. Please tap again.
                         SoundManager.instance.PlayVoice(Database.instance.tutorialClip[10], true);
@@ -2307,7 +2308,7 @@ public class Player : MovingObject
                     {
                         debugPlayerInfo = "Please wait for the instructions to finish.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    }                   
+                    }
                 }
                 // If the player has finished the tapping part of the tutorial.
                 else if (level1_remaining_taps == 0)
@@ -2318,7 +2319,7 @@ public class Player : MovingObject
                     	// If the action was a swipe up.
                         if ((action == InterceptAction.UP) && (finishedSwipingInstruction == true))
                         {
-							debugPlayerInfo = "Swiped up for gesture tutorial.";
+                            debugPlayerInfo = "Swiped up for gesture tutorial.";
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                             level1_remaining_ups--; // Decrease the number of swipes up left to do.
                             if (level1_remaining_ups == 2) 
@@ -2361,7 +2362,7 @@ public class Player : MovingObject
                         {
                             debugPlayerInfo = "Please wait for the instructions to finish.";
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                        }                        
+                        }
                     }
                     // If the player has finished the swiping section of the tutorial.
                     else if (level1_remaining_ups == 0)
@@ -2375,7 +2376,7 @@ public class Player : MovingObject
                             	// If the pause menu has not been opened.
                                 if (level1_remaining_menus == 2)
                                 {
-                                	debugPlayerInfo = "Hold registered. Opened pause menu for gesture tutorial.";
+                                    debugPlayerInfo = "Hold registered. Opened pause menu for gesture tutorial.";
                                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                                     level1_remaining_menus--; // Decrease the number of holds left to do.
                                     // You are now in the pause menu. To get a hint, swipe up. To restart the level, swipe left. To go to the main menu, swipe right. To close the pause menu, tap and hold with two fingers for 2 seconds. Please close the pause menu now.
@@ -2384,7 +2385,7 @@ public class Player : MovingObject
                                 // If the pause menu has not been closed.
                                 else if (level1_remaining_menus == 1)
                                 {
-                                	debugPlayerInfo = "Hold registered. Closed pause menu. Finished menu section for gesture tutorial.";
+                                    debugPlayerInfo = "Hold registered. Closed pause menu. Finished menu section for gesture tutorial.";
                                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                                     level1_remaining_menus--; // Decrease the number of holds left to do.
                                     // Congratulations! You have reached the exit. Once you believe you have reached the exit in a level, swiping down will move you to the next level and you will hear a congratulatory sound like this.
@@ -2397,7 +2398,7 @@ public class Player : MovingObject
                             // If the action was not a hold.
 							else if (((action == InterceptAction.TAP) || (action == InterceptAction.LEFT) || (action == InterceptAction.RIGHT) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || (ie.isUnrecognized == true)) && (finishedMenuInstruction == true))
 							{
-								debugPlayerInfo = "Incorrect hold for menu in gesture tutorial.";
+                                debugPlayerInfo = "Incorrect hold for menu in gesture tutorial.";
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                             }
                             // If the pause menu instruction has not finished yet.
@@ -2413,7 +2414,7 @@ public class Player : MovingObject
 							// If the action was a swipe down.
                             if (action == InterceptAction.DOWN)
                             {
-								debugPlayerInfo = "Swiped down. Starting tutorial level 1.";
+                                debugPlayerInfo = "Swiped down. Starting tutorial level 1.";
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                                 // TODO: Replace the winSound with "Congratulations! You have completed the tutorial. Now we will move back to the game!"
                                 clips = new List<AudioClip> { Database.instance.winSound };
@@ -2422,7 +2423,7 @@ public class Player : MovingObject
                             // If the action was not a swipe down.
 							else if ((action == InterceptAction.TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.LEFT) || (action == InterceptAction.RIGHT) || (action == InterceptAction.UP) || (ie.isUnrecognized == true))
 							{
-								debugPlayerInfo = "Incorrect swipe down for gesture tutorial.";
+                                debugPlayerInfo = "Incorrect swipe down for gesture tutorial.";
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                             }
                         }
@@ -2437,7 +2438,7 @@ public class Player : MovingObject
                 	// If the action was a left or right rotation.
                 	if (((action == InterceptAction.LEFT) || (action == InterceptAction.RIGHT)) && (finishedTurningInstruction == true))
                 	{
-						debugPlayerInfo = "Rotated for gesture tutorial. Turned player 90 degrees.";
+                        debugPlayerInfo = "Rotated for gesture tutorial. Turned player 90 degrees.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         level3_remaining_turns--; // Decrease the number of turns left to do.
                  		if (level3_remaining_turns == 3) 
@@ -2460,7 +2461,7 @@ public class Player : MovingObject
                         {
                             debugPlayerInfo = "Finished rotations for gesture tutorial. Completed gesture tutorial. Continuing with level 3.";
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                                                                                         // Good job! now we will move back to the game. Try and get around the corner!
+                            // Good job! now we will move back to the game. Try and get around the corner!
                             clips = new List<AudioClip> { Database.instance.TitletoMainClips[0], Database.instance.tutorialClip[27] };
                             SoundManager.instance.PlayClips(clips, 0, () => quitInterception(), 2);
                         }
@@ -2468,10 +2469,10 @@ public class Player : MovingObject
                     // If the action was not a right or left rotation.
 					else if (((action == InterceptAction.TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || (ie.isUnrecognized == true)) && (finishedTurningInstruction == true))
                 	{
-                		debugPlayerInfo = "Incorrect rotation for gesture tutorial.";
+                        debugPlayerInfo = "Incorrect rotation for gesture tutorial.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    	// This rotation was not correct/in the same direction. Please rotate again.
-                    	SoundManager.instance.PlayVoice(Database.instance.tutorialClip[26], true);
+                        // This rotation was not correct/in the same direction. Please rotate again.
+                        SoundManager.instance.PlayVoice(Database.instance.tutorialClip[26], true);
                 	}
                     // If the turning instruction has not finished yet.
                     else if (((action == InterceptAction.TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.LEFT) || (action == InterceptAction.RIGHT) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || (ie.isUnrecognized == true)) && (finishedTurningInstruction == false))

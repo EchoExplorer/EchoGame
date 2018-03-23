@@ -25,7 +25,8 @@ public class DebugInput : MonoBehaviour
     void Start()
     {
         debugInputText = GetComponent<Text>();
-        inputText = "Input";        
+        inputText = "Input";
+        instance.gameObject.SetActive(false);
     }
 
     // Update is called once per frame

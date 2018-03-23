@@ -32,6 +32,8 @@ public class GM_title : MonoBehaviour
 
     public bool isUsingTalkback = false; // Tells us if the player has told us that they are using Talkback or not.
 
+    static bool hasGoneThroughSetup = false; // Tells us if the player has gone through and finished all the game environment hints.
+
     string debugPlayerInfo; // String for debugging the effects of the player's actions (Tells you they rotated, swiped, etc.).
 
     enum Direction { NONE, UP, DOWN, LEFT, RIGHT }
@@ -56,7 +58,7 @@ public class GM_title : MonoBehaviour
 
     void play_audio()
     {
-        if (!determined_talkback)
+        if ((hasGoneThroughSetup == false) && !determined_talkback)
         {
             if (SoundManager.instance.PlayVoice(Database.instance.settingClip[3], clip_talkback_reset))
             {
@@ -64,7 +66,7 @@ public class GM_title : MonoBehaviour
             }
             return;
         }
-        if ((determined_talkback == true) && !plugin_earphone)
+        if ((hasGoneThroughSetup == false) && (determined_talkback == true) && !plugin_earphone)
         {
             if (SoundManager.instance.PlayVoice(Database.instance.settingClip[0], clip0_reset, 1))
             {
@@ -72,7 +74,7 @@ public class GM_title : MonoBehaviour
             }
             return;
         }
-        if ((determined_talkback == true) && (plugin_earphone == true) && !orientation_correct)
+        if ((hasGoneThroughSetup == false) && (determined_talkback == true) && (plugin_earphone == true) && !orientation_correct)
         {
             if (!Utilities.isDeviceLandscape())
             {//not landscape!
@@ -92,7 +94,7 @@ public class GM_title : MonoBehaviour
                 orientation_correct = true;
             }
         }
-        if ((environment_setup == true) && !listenToCmd)
+        if (((hasGoneThroughSetup == true) || (environment_setup == true)) && !listenToCmd)
         {
             if (SoundManager.instance.PlayVoice(Database.instance.TitleClips[cur_clip], reset_audio))
             {
@@ -102,14 +104,17 @@ public class GM_title : MonoBehaviour
                     cur_clip = 0;
             }
         }
-        else if ((environment_setup == true) && listenToCmd)
+        else if (((hasGoneThroughSetup == true) || (environment_setup == true)) && listenToCmd)
         {
             if (SoundManager.instance.PlayVoice(Database.instance.TitleCmdlistClips[cmd_cur_clip], reset_audio))
             {
                 reset_audio = false;
                 cmd_cur_clip += 1;
                 if (cmd_cur_clip >= Database.instance.TitleCmdlistClips.Length)
+                {
                     cmd_cur_clip = 0;
+                    listenToCmd = false;
+                }
             }
         }
     }
@@ -152,16 +157,16 @@ public class GM_title : MonoBehaviour
             	// If the 'f' key was pressed.
                 case KeyCode.F:
                 	// If the player has plugged in headphones and single tapped, let them perform actions for the main menu.
-                    if ((determined_talkback == true) && !plugin_earphone)
+                    if ((hasGoneThroughSetup == false) && (determined_talkback == true) && !plugin_earphone)
                     {
-                    	debugPlayerInfo = "Tap registered. Earphones in.";
+                        debugPlayerInfo = "Tap registered. Earphones in.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         plugin_earphone = true;	// The player has plugged in earphones.
                     } 
                     // If the player's game environment is set up properly, let them go to the main menu.
-                    else if ((determined_talkback == true) && (plugin_earphone == true) && (orientation_correct == true) && !environment_setup)
+                    else if ((hasGoneThroughSetup == true) || ((determined_talkback == true) && (plugin_earphone == true) && (orientation_correct == true) && !environment_setup))
                     {
-                    	debugPlayerInfo = "Tap registered. Game environment set up.";
+                        debugPlayerInfo = "Tap registered. Game environment set up.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         environment_setup = true;
                         reset_audio = true;
@@ -170,7 +175,7 @@ public class GM_title : MonoBehaviour
                 // If the right arrow key was pressed.
                 case KeyCode.RightArrow:
                     // If the player has not informed us if they are using Talkback or not.
-                    if (determined_talkback == false)
+                    if ((hasGoneThroughSetup == false) && (determined_talkback == false))
                     {
                         debugPlayerInfo = "Swiped right. Player is not using Talkback.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
@@ -178,7 +183,7 @@ public class GM_title : MonoBehaviour
                         determined_talkback = true; // Determined if the player is using Talkback or not.
                     }
                     // If the player's game environment is set up properly.
-                    if ((determined_talkback == true) && (plugin_earphone == true) && (orientation_correct == true) && (environment_setup == true))
+                    if ((hasGoneThroughSetup == true) || ((determined_talkback == true) && (plugin_earphone == true) && (orientation_correct == true) && (environment_setup == true)))
 					{
 						inputDirection = Direction.RIGHT;
 					}
@@ -186,7 +191,7 @@ public class GM_title : MonoBehaviour
                 // If the left arrow key was pressed.
                 case KeyCode.LeftArrow:
                     // If the player has not informed us if they are using Talkback or not.
-                    if (determined_talkback == false)
+                    if ((hasGoneThroughSetup == false) && (determined_talkback == false))
                     {
                         debugPlayerInfo = "Swiped left. Player is using Talkback.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
@@ -194,7 +199,7 @@ public class GM_title : MonoBehaviour
                         determined_talkback = true; // Determined if the player is using Talkback or not.
                     }
                     // If the player's game environment is set up properly.
-                    if ((determined_talkback == true) && (plugin_earphone == true) && (orientation_correct == true) && (environment_setup == true))
+                    if ((hasGoneThroughSetup == true) || ((determined_talkback == true) && (plugin_earphone == true) && (orientation_correct == true) && (environment_setup == true)))
                     {
 						inputDirection = Direction.LEFT;
 					}
@@ -202,7 +207,7 @@ public class GM_title : MonoBehaviour
                 // If the up arrow key was pressed.
                 case KeyCode.UpArrow:
                     // If the player's game environment is set up properly.
-                    if ((determined_talkback == true) && (plugin_earphone == true) && (orientation_correct == true) && (environment_setup == true))
+                    if ((hasGoneThroughSetup == true) || ((determined_talkback == true) && (plugin_earphone == true) && (orientation_correct == true) && (environment_setup == true)))
                     {
 						inputDirection = Direction.UP;
 					}
@@ -210,7 +215,7 @@ public class GM_title : MonoBehaviour
                 // If the down arrow key was pressed.
                 case KeyCode.DownArrow:
                     // If the player's game environment is set up properly.
-                    if ((determined_talkback == true) && (plugin_earphone == true) && (orientation_correct == true) && (environment_setup == true))
+                    if ((hasGoneThroughSetup == true) || ((determined_talkback == true) && (plugin_earphone == true) && (orientation_correct == true) && (environment_setup == true)))
                     {
 						inputDirection = Direction.DOWN;
 					}
@@ -230,7 +235,7 @@ public class GM_title : MonoBehaviour
 			InputEvent ie = eh.getEventData();  // Get input event data from InputModule.cs
 
             // If the player has not informed us if they are using Talkback or not.
-            if (determined_talkback == false)
+            if ((hasGoneThroughSetup == false) && (determined_talkback == false))
             {
                 // If a swipe was registered.
                 if (ie.isSwipe == true)
@@ -254,24 +259,24 @@ public class GM_title : MonoBehaviour
                 }           
             }
             // If the player has not put in headphones.
-            else if ((determined_talkback == true) && !plugin_earphone)
+            else if ((hasGoneThroughSetup == false) && (determined_talkback == true) && !plugin_earphone)
             {
                 // If a tap was registered.
                 if (ie.isTap == true)
                 {
-					debugPlayerInfo = "Tap registered. Earphones in.";
+                    debugPlayerInfo = "Tap registered. Earphones in.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     plugin_earphone = true; // The player has put in headphones.
                 }
             }
 
             // If the player's game environment is set up properly.
-            else if ((determined_talkback == true) && (plugin_earphone == true) && (orientation_correct == true) && !environment_setup)
+            else if ((hasGoneThroughSetup == false) && (determined_talkback == true) && (plugin_earphone == true) && (orientation_correct == true) && !environment_setup)
             {
                 // If a tap was registered.
                 if (ie.isTap == true)
                 {
-					debugPlayerInfo = "Tap registered. Game environment set up.";
+                    debugPlayerInfo = "Tap registered. Game environment set up.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     environment_setup = true; // Player environment is now set up.
 					reset_audio = true;
@@ -314,24 +319,26 @@ public class GM_title : MonoBehaviour
         {
         	// If the player swiped right, move to the pregame menu to continue where you left off.
             case Direction.RIGHT:
-            	debugPlayerInfo = "Swiped right. Moving to pregame menu to continue where you left off.";
+                debugPlayerInfo = "Swiped right. Moving to pregame menu to continue where you left off.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
 				SceneManager.LoadScene("Main_pre"); // Move to pregame menu.
 				SoundManager.instance.PlayVoice(Database.instance.TitletoMainClips[0], true);
+                hasGoneThroughSetup = true; // Since the player has gotten to this point and has chosen to continue a game, they must have gone through the environment setup.
                 break;
             // If the player swiped left, move to the pregame menu to start the tutorial.
             case Direction.LEFT:
-            	debugPlayerInfo = "Swiped left. Moving to pregame menu to start tutorial.";
+                debugPlayerInfo = "Swiped left. Moving to pregame menu to start tutorial.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
                 SceneManager.LoadScene("Main_pre"); // Move to pregame menu.
 				SoundManager.instance.PlayVoice(Database.instance.TitletoMainClips[0], true);
-				//SceneManager.LoadScene("Main");
+                //SceneManager.LoadScene("Main");
+                hasGoneThroughSetup = true; // Since the player has gotten to this point and has chosen to start the tutorial, they must have gone through the environment setup.
                 break;
             // If the player swiped up, listen to the commands.
             case Direction.UP:
-            	debugPlayerInfo = "Swiped up. Listening to commands.";
+                debugPlayerInfo = "Swiped up. Listening to commands.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
 				if (!listenToCmd)
@@ -340,18 +347,11 @@ public class GM_title : MonoBehaviour
 					reset_audio = true;
 					cur_clip = 0;
 					cmd_cur_clip = 0;
-				}
-				else
-				{
-					listenToCmd = false;
-					reset_audio = true;
-					cur_clip = 0;
-					cmd_cur_clip = 0;
-				}
+				}		
                 break;
             // If the player swiped down, do nothing.
             case Direction.DOWN:
-            	debugPlayerInfo = "Swiped down. Does nothing here.";
+                debugPlayerInfo = "Swiped down. Does nothing here.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
 				//credit
