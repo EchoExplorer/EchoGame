@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 /// <summary>
 /// A script to display the user agreement dialogues.
@@ -20,10 +21,16 @@ public class GM_main_pre : MonoBehaviour
 
     string debugPlayerInfo; // String for debugging the effects of the player's actions (Tells you they rotated, swiped, etc.).
 
+    public static bool hasGoneThroughSetup = false;
+
+    List<AudioClip> clips;
+
+    bool canRepeat = true;
+
     // Use this for initialization
     void Start()
     {
-        init();
+        init();    
     }
 
     void OnLevelWasLoaded(int index)
@@ -36,6 +43,7 @@ public class GM_main_pre : MonoBehaviour
         Screen.orientation = ScreenOrientation.Landscape;
         at_confirm = false;
         reset_audio = false;
+        hasGoneThroughSetup = true;
         eh = new eventHandler(InputModule.instance);
         TriggerStartNewGame = new CDTimer(1f, InputModule.instance);
         TriggerStartNewGame.TakeDownTime();
@@ -48,23 +56,42 @@ public class GM_main_pre : MonoBehaviour
     {
         if (!at_confirm)
         {
-            if (SoundManager.instance.PlayVoice(Database.instance.MainPreGameClips[cur_clip], reset_audio))
+            if (GameMode.instance.gamemode == GameMode.Game_Mode.TUTORIAL)
             {
-                reset_audio = false;
-                cur_clip += 1;
-                if (cur_clip >= Database.instance.MainPreGameClips.Length)
-                    cur_clip = 0;
+                if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
+                {
+                    if (GM_title.isUsingTalkback == true)
+                    {
+                        canRepeat = false;
+                        clips = new List<AudioClip>() { Database.instance.preGameMenuClips[1], Database.instance.preGameMenuClips[3], Database.instance.preGameMenuClips[7] };
+                        SoundManager.instance.PlayClips(clips);
+                    }
+                    else if (GM_title.isUsingTalkback == false)
+                    {
+                        canRepeat = false;
+                        clips = new List<AudioClip>() { Database.instance.preGameMenuClips[0], Database.instance.preGameMenuClips[2], Database.instance.preGameMenuClips[6] };
+                        SoundManager.instance.PlayClips(clips);
+                    }
+                }
             }
-        }
-        else
-        {
-            if (SoundManager.instance.PlayVoice(Database.instance.MainPreConfirmClips[cur_clip], reset_audio))
+            else
             {
-                reset_audio = false;
-                cur_clip += 1;
-                if (cur_clip >= Database.instance.MainPreConfirmClips.Length)
-                    cur_clip = 0;
-            }
+                if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
+                {
+                    if (GM_title.isUsingTalkback == true)
+                    {
+                        canRepeat = false;
+                        clips = new List<AudioClip>() { Database.instance.preGameMenuClips[1], Database.instance.preGameMenuClips[5], Database.instance.preGameMenuClips[7] };
+                        SoundManager.instance.PlayClips(clips);
+                    }
+                    else if (GM_title.isUsingTalkback == false)
+                    {
+                        canRepeat = false;
+                        clips = new List<AudioClip>() { Database.instance.preGameMenuClips[0], Database.instance.preGameMenuClips[4], Database.instance.preGameMenuClips[6] };
+                        SoundManager.instance.PlayClips(clips);
+                    }
+                }
+            }          
         }
     }
 
@@ -89,29 +116,23 @@ public class GM_main_pre : MonoBehaviour
             {
               	// If the right arrow key was pressed.
                 case KeyCode.RightArrow:
-                	// If we have not confirmed we want to start a new game and have swiped right, set mode to Continue.
-                    if (!at_confirm)
-                    {	
-                        selectMode = SelectMode.CONTINUE;
-                    }
+                    selectMode = SelectMode.CONTINUE; // If we have swiped right, set mode to Continue.
                     break;
                 // If the left arrow key was pressed.
-                case KeyCode.LeftArrow:
-                	// If we have confirmed we want to start a new game and have swiped left, set mode to New.
-                    if (at_confirm)
-                    {
-                        selectMode = SelectMode.NEW;
-                    }
+                case KeyCode.LeftArrow:                	
+                    selectMode = SelectMode.NEW; // If we have swiped left, set mode to New.
                     break;
                 // If the down arrow key was pressed.
                 case KeyCode.DownArrow:
-                    // If we want to go back to the main menu.
-                    selectMode = SelectMode.BACK;
+                    selectMode = SelectMode.BACK; // If we want to go back to the main menu.
                     break;
                 // If the 'f' key was pressed.
                 case KeyCode.F:
-            		// We have confirmed we want to start a new game, so set mode to Confirm.
-                    selectMode = SelectMode.CONFIRM;
+                    // We have swiped left to start a new game and confirmed that this is the action we want, so set mode to Confirm.
+                    if (at_confirm)
+                    {
+                        selectMode = SelectMode.CONFIRM;
+                    }
                     break;
                 default:
                     break;
@@ -151,7 +172,7 @@ public class GM_main_pre : MonoBehaviour
 		}
 		*/
 #endif
-// Check if we are running on iOS/Android.
+        // Check if we are running on iOS/Android.
 #if UNITY_IOS || UNITY_ANDROID
 		Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
@@ -164,26 +185,13 @@ public class GM_main_pre : MonoBehaviour
 			{
 				// If the swipe was right.
 				if (ie.isRight == true)
-				{
-					// If we have not confirmed we want to start a new game and have swiped right, set mode to Continue.
-					if (!at_confirm)
-					{
-                        selectMode = SelectMode.CONTINUE;
-					}
+				{                    
+                    selectMode = SelectMode.CONTINUE; // If we have swiped right, set mode to Continue.
 				} 
 				// If the swipe was left.
 				else if (ie.isLeft == true)
-				{
-					// If we have not confirmed we want to start a new game, do nothing.
-					if (!at_confirm)
-					{
-						// nothing
-					}
-					// If we have confirmed we want to start a new game and have swiped left, set mode to New.
-					else
-					{ 
-                        selectMode = SelectMode.NEW;
-					}
+				{					
+                    selectMode = SelectMode.NEW; // If we have swiped left, set mode to New.
 				}
                 // If the swipe was down.
                 else if (ie.isDown == true)
@@ -191,10 +199,13 @@ public class GM_main_pre : MonoBehaviour
                     selectMode = SelectMode.BACK; // Let the player go back to the main menu.
                 }
 			}
-			// If a tap was registered and we are able to start a new game, set mode to Continue.
+			// If a tap was registered and we are able to start a new game, set mode to Confirm.
 			else if ((ie.isTap == true) && TriggerStartNewGame.CDfinish())
 			{
-                selectMode = SelectMode.CONFIRM;
+                if (at_confirm)
+                {
+                    selectMode = SelectMode.CONFIRM; // We have swiped left to start a new game and confirmed that this is the action we want, so set mode to Confirm.
+                }
 			}
 		}
 #endif //End of mobile platform dependendent compilation section started above with #elif
@@ -202,38 +213,57 @@ public class GM_main_pre : MonoBehaviour
         {
         	// If mode is set to Continue, we have swiped right, so continue from where we left off.
             case SelectMode.CONTINUE:
-                //debugPlayerInfo = "Swiped right. Continuing from where you left off.";
-                //DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                SoundManager.instance.PlaySingle(Database.instance.inputSFX);
-                SoundManager.instance.PlayVoice(Database.instance.MainPreContinueGame, true);
-                SceneManager.LoadScene("Main"); 
+                debugPlayerInfo = "Swiped right. Continuing from where you left off.";
+                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                clips = new List<AudioClip>() { Database.instance.soundEffectClips[6], Database.instance.preGameMenuClips[12] };
+                SoundManager.instance.PlayClips(clips, 0, () => SceneManager.LoadScene("Main"), 2);
                 break;
             // If mode is set to New, we have confirmed and swiped left, so start a new game from either the tutorial or the first non-tutorial level.
             case SelectMode.NEW:
-                //debugPlayerInfo = "Swiped left. Starting new game.";
-                //DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                SoundManager.instance.PlaySingle(Database.instance.inputSFX);
-                if (GameMode.instance.gamemode == GameMode.Game_Mode.TUTORIAL)
-                    GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL_RESTART;
-                else
-                    GameMode.instance.gamemode = GameMode.Game_Mode.RESTART;                
-                // Utilities.write_save(0); ???
-                SceneManager.LoadScene("Main");
+                debugPlayerInfo = "Swiped left. Going to confirm we want to start a new game.";
+                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.                
+                cur_clip = 0;
+                reset_audio = true;
+                at_confirm = true;
+                if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
+                {
+                    if (GM_title.isUsingTalkback == true)
+                    {
+                        canRepeat = false;
+                        clips = new List<AudioClip>() { Database.instance.soundEffectClips[6], Database.instance.preGameMenuClips[8], Database.instance.preGameMenuClips[10] };
+                        SoundManager.instance.PlayClips(clips);
+                    }
+                    else if (GM_title.isUsingTalkback == false)
+                    {
+                        canRepeat = false;
+                        clips = new List<AudioClip>() { Database.instance.soundEffectClips[6], Database.instance.preGameMenuClips[8], Database.instance.preGameMenuClips[9] };
+                        SoundManager.instance.PlayClips(clips);
+                    }
+                }
                 break;
             // If mode is set to Confirm, we have tapped to confirm we want to start a new game, so let the player swipe left to start.
 			case SelectMode.CONFIRM:
-                //debugPlayerInfo = "Tap registered. Confirmed action.";
-                //DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                cur_clip = 0;
-                reset_audio = true;
-                at_confirm = !at_confirm;
-                SoundManager.instance.PlaySingle(Database.instance.inputSFX);
+                debugPlayerInfo = "Tap registered. Confirmed we want to start a new game.";
+                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.                               
+                if (GameMode.instance.gamemode == GameMode.Game_Mode.TUTORIAL)
+                {
+                    GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL_RESTART;
+                }
+                else
+                {
+                    GameMode.instance.gamemode = GameMode.Game_Mode.RESTART;
+                }
+                // Utilities.write_save(0); ???
+                BoardManager.finishedTutorialLevel1 = false;
+                BoardManager.finishedTutorialLevel3 = false;
+                clips = new List<AudioClip>() { Database.instance.soundEffectClips[6], Database.instance.preGameMenuClips[11] };
+                SoundManager.instance.PlayClips(clips, 0, () => SceneManager.LoadScene("Main"), 2);
                 break;
             // If mode is set to Back, go back to the main menu.
             case SelectMode.BACK:
-                //debugPlayerInfo = "Swiped down. Going back to main menu.";
-                //DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                SoundManager.instance.PlaySingle(Database.instance.inputSFX);
+                debugPlayerInfo = "Swiped down. Going back to main menu.";
+                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                SoundManager.instance.PlaySingle(Database.instance.soundEffectClips[6]);
                 SceneManager.LoadScene("Title_Screen");
 
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR

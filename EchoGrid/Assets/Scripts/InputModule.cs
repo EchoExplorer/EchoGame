@@ -98,7 +98,7 @@ public class InputModule : MonoBehaviour
 	bool[] hasRegistered = {false, false, false}; // For some reason TouchPhase.Began does not seem to be recognized. This fills a similar purpose, determining if the touch has been on the screen during a frame or not.
 	bool stillHolding = false; // For if the user makes a hold longer than 1.0f. Because on each update call isHold is set back to false, we don't want to have it change back to true unless the user has let go and held for another 1.0f.
 
-	int tapTimes = 0; // Number of times the player has made a single tap. Helpful for debugging if multiple single taps are made in a row.
+    int tapTimes = 0; // Number of times the player has made a single tap. Helpful for debugging if multiple single taps are made in a row.
     int holdTimes = 0; // Number of times the player has made a hold. Helpful for debugging if multiple holds are made in a row.
     int swipeLeftTimes = 0; // Number of times the player has made a swipe left. Helpful for debugging if multiple swipe lefts are made in a row.
 	int swipeRightTimes = 0; // Number of times the player has made a swipe right. Helpful for debugging if multiple swipe rights are made in a row.
@@ -449,7 +449,7 @@ public class InputModule : MonoBehaviour
                 float crossPz = cross.z; // Get the z-component of the cross product.
 
                 // If the gesture could be a tap.
-                if ((touchDuration < 1.0f) && (TouchTapCount == 3) && (Mathf.Abs(x0) < minSwipeHorizontalDist) && (Mathf.Abs(y0) < minSwipeVerticalDist) && (Mathf.Abs(x1) < minSwipeHorizontalDist) && (Mathf.Abs(y1) < minSwipeVerticalDist) && (Mathf.Abs(x2) < minSwipeHorizontalDist) && (Mathf.Abs(y2) < minSwipeVerticalDist) && (angle <= 20))
+                if ((touchDuration < 1.0f) && (TouchTapCount == 3) && (Mathf.Abs(x0) < minSwipeHorizontalDist) && (Mathf.Abs(y0) < minSwipeVerticalDist) && (Mathf.Abs(x1) < minSwipeHorizontalDist) && (Mathf.Abs(y1) < minSwipeVerticalDist) && (Mathf.Abs(x2) < minSwipeHorizontalDist) && (Mathf.Abs(y2) < minSwipeVerticalDist) && (angle < 30))
                 {
                     // If time passed since last tap is equal to/past the tap cooldown time and another gesture has not been registered already for this update. 
                     if (((Time.time - tapGestStartTime) >= tapCD) && (ievent.isTap == false) && (ievent.isHold == false) && (ievent.isSwipe == false) && (ievent.isRotate == false) && (ievent.isUnrecognized == false))
@@ -465,7 +465,7 @@ public class InputModule : MonoBehaviour
                 }
 
                 // If the gesture could be a swipe left or right.
-                else if ((touchDuration < 1.0f) && (Mathf.Abs(x0) > Mathf.Abs(y0)) && (Mathf.Abs(x0) >= minSwipeHorizontalDist) && (Mathf.Abs(x1) > Mathf.Abs(y1)) && (Mathf.Abs(x1) >= minSwipeHorizontalDist) && (Mathf.Abs(x2) > Mathf.Abs(y2)) && (Mathf.Abs(x2) >= minSwipeHorizontalDist) && (angle <= 20))
+                else if ((touchDuration < 1.0f) && (Mathf.Abs(x0) > Mathf.Abs(y0)) && (Mathf.Abs(x0) >= minSwipeHorizontalDist) && (Mathf.Abs(x1) > Mathf.Abs(y1)) && (Mathf.Abs(x1) >= minSwipeHorizontalDist) && (Mathf.Abs(x2) > Mathf.Abs(y2)) && (Mathf.Abs(x2) >= minSwipeHorizontalDist) && (angle <= 30))
                 {
                     // If time passed since last swipe is equal to/past the swipe cooldown time and another gesture has not been registered already for this update. 
                     if (((Time.time - swipeGestStartTime) >= swipeGestCD) && (ievent.isTap == false) && (ievent.isHold == false) && (ievent.isSwipe == false) && (ievent.isRotate == false) && (ievent.isUnrecognized == false))
@@ -497,7 +497,7 @@ public class InputModule : MonoBehaviour
                     }
                 }
                 // If the gesture could be a swipe up or down.
-                else if ((touchDuration < 1.0f) && (Mathf.Abs(y0) > Mathf.Abs(x0)) && (Mathf.Abs(y0) >= minSwipeVerticalDist) && (Mathf.Abs(y1) > Mathf.Abs(x1)) && (Mathf.Abs(y1) >= minSwipeVerticalDist) && (Mathf.Abs(y2) > Mathf.Abs(x2)) && (Mathf.Abs(y2) >= minSwipeVerticalDist) && (angle <= 20))
+                else if ((touchDuration < 1.0f) && (Mathf.Abs(y0) > Mathf.Abs(x0)) && (Mathf.Abs(y0) >= minSwipeVerticalDist) && (Mathf.Abs(y1) > Mathf.Abs(x1)) && (Mathf.Abs(y1) >= minSwipeVerticalDist) && (Mathf.Abs(y2) > Mathf.Abs(x2)) && (Mathf.Abs(y2) >= minSwipeVerticalDist) && (angle <= 30))
                 {
                     // If time passed since last swipe is equal to/past the swipe cooldown time and another gesture has not been registered already for this update. 
                     if (((Time.time - swipeGestStartTime) >= swipeGestCD) && (ievent.isTap == false) && (ievent.isHold == false) && (ievent.isSwipe == false) && (ievent.isRotate == false) && (ievent.isUnrecognized == false))
@@ -530,7 +530,7 @@ public class InputModule : MonoBehaviour
                 }
 
                 // If the gesture could be a left rotation.
-                else if ((touchDuration < 1.0f) && (crossPz >= 0) && (angle >= 45) && (Mathf.Abs(x0) <= maxRotateHorizontalDist) && (Mathf.Abs(y0) <= maxRotateVerticalDist) && (Mathf.Abs(x1) <= maxRotateHorizontalDist) && (Mathf.Abs(y1) <= maxRotateVerticalDist) && (Mathf.Abs(x2) <= maxRotateHorizontalDist) && (Mathf.Abs(y2) <= maxRotateVerticalDist))
+                else if ((touchDuration < 1.0f) && (crossPz >= 0) && (angle >= 45))
                 {
                     // If time passed since last rotation is equal to/past the rotation cooldown time and another gesture has not been registered already for this update. 
                     if (((Time.time - rotateGestStartTime) >= rotateGestCD) && (ievent.isTap == false) && (ievent.isHold == false) && (ievent.isSwipe == false) && (ievent.isRotate == false) && (ievent.isUnrecognized == false))
@@ -546,7 +546,7 @@ public class InputModule : MonoBehaviour
                     }
                 }
                 // If the gesture could be right rotation.
-                else if ((touchDuration < 1.0f) && (crossPz < 0) && (angle >= 45) && (Mathf.Abs(x0) <= maxRotateHorizontalDist) && (Mathf.Abs(y0) <= maxRotateVerticalDist) && (Mathf.Abs(x1) <= maxRotateHorizontalDist) && (Mathf.Abs(y1) <= maxRotateVerticalDist) && (Mathf.Abs(x2) <= maxRotateHorizontalDist) && (Mathf.Abs(y2) <= maxRotateVerticalDist))
+                else if ((touchDuration < 1.0f) && (crossPz < 0) && (angle >= 45))
                 {
                     // If time passed since last rotation is equal to/past the rotation cooldown time and another gesture has not been registered already for this update. 
                     if (((Time.time - rotateGestStartTime) >= rotateGestCD) && (ievent.isTap == false) && (ievent.isHold == false) && (ievent.isSwipe == false) && (ievent.isRotate == false) && (ievent.isUnrecognized == false))
@@ -562,8 +562,8 @@ public class InputModule : MonoBehaviour
                     }
                 }
 
-                // If the x or y distances covered by each finger have not exceeded the maximum distances for a hold.
-                else if ((touchDuration >= 1.0f) && (Mathf.Abs(x0) <= maxHoldHorizontalDist) && (Mathf.Abs(x1) <= maxHoldHorizontalDist) && (Mathf.Abs(x2) <= maxHoldHorizontalDist) && (Mathf.Abs(y0) <= maxHoldVerticalDist) && (Mathf.Abs(y1) <= maxHoldVerticalDist) && (Mathf.Abs(y2) <= maxHoldVerticalDist) && (angle <= 20))
+                // If the gesture could be a hold.
+                else if ((touchDuration >= 1.0f) && (Mathf.Abs(x0) <= maxHoldHorizontalDist) && (Mathf.Abs(x1) <= maxHoldHorizontalDist) && (Mathf.Abs(x2) <= maxHoldHorizontalDist) && (Mathf.Abs(y0) <= maxHoldVerticalDist) && (Mathf.Abs(y1) <= maxHoldVerticalDist) && (Mathf.Abs(y2) <= maxHoldVerticalDist) && (angle <= 30))
                 {
                     if ((stillHolding == true) && (ievent.isTap == false) && (ievent.isHold == false) && (ievent.isSwipe == false) && (ievent.isRotate == false) && (ievent.isUnrecognized == false))
                     {
@@ -587,6 +587,21 @@ public class InputModule : MonoBehaviour
                     tapRegister = 0; // Reset the tapRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     TouchTapCount = 0; // Reset the TouchTapCount just to make sure that more than one tap is not recognized.                   
                 }                                
+            }
+
+            // If there was an error with one of the fingers and it did not end correctly.
+            if (tapRegister < 3)
+            {
+                // If another gesture has not been registered already for this update.
+                if ((ievent.isTap == false) && (stillHolding == false) && (ievent.isSwipe == false) && (ievent.isRotate == false) && (ievent.isUnrecognized == false))
+                {
+                    ievent.isUnrecognized = true; // There was an unrecognized gesture.
+                    unrecognizedTimes += 1; // Update the number of times an unrecognized gesture has been made.
+                    debugInputInfo = "Unrecognized input has been made " + unrecognizedTimes + " times";
+                    DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.               
+                    tapRegister = 0; // Reset the tapRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
+                    TouchTapCount = 0; // Reset the TouchTapCount just to make sure that more than one tap is not recognized.                   
+                }
             }
 
             touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.          

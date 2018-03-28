@@ -5,7 +5,7 @@ using System;
 
 /// <summary>
 /// A central manager for playing voice instrctions, certain sound effects and echo
-///  sounds (provided as ``AudioClip`` instances).
+/// sounds (provided as ``AudioClip`` instances).
 /// </summary>
 public class SoundManager : MonoBehaviour
 {
@@ -23,26 +23,31 @@ public class SoundManager : MonoBehaviour
     void Awake()
     {
         if (instance == null)
-            //if not, set it to this.
+        {
+            // If not, set it to this.
             instance = this;
-        //If instance already exists:
+        }
+        // If instance already exists:
         else if (instance != this)
-            //Destroy this, this enforces our singleton pattern so there can only be one instance of SoundManager.
+        {
+            // Destroy this, this enforces our singleton pattern so there can only be one instance of SoundManager.
             Destroy(gameObject);
+        }
 
-        //Set SoundManager to DontDestroyOnLoad so that it won't be destroyed when reloading our scene.
-        //efxSource = new AudioSource[max_sfx_playing];
-        //for (int i = 0; i < max_sfx_playing; ++i) {
-        //	efxSource[i] = new AudioSource();
-        //}
-        //voiceSource = new AudioSource();
-        //voiceSource = GetComponent<AudioSource>();
+        // Set SoundManager to DontDestroyOnLoad so that it won't be destroyed when reloading our scene.
+        // efxSource = new AudioSource[max_sfx_playing];
+        // for (int i = 0; i < max_sfx_playing; ++i)
+        // {
+        //	 efxSource[i] = new AudioSource();
+        // }
+        // voiceSource = new AudioSource();
+        // voiceSource = GetComponent<AudioSource>();
         DontDestroyOnLoad(gameObject);
     }
 
     /// <summary>
     /// Sets various parameters for the audio clips every frame.
-    ///  Retries upon failure until the first successful run.
+    /// Retries upon failure until the first successful run.
     /// </summary>
     void Update()
     {
@@ -64,11 +69,13 @@ public class SoundManager : MonoBehaviour
             if (voiceSource != null)
             {
                 voiceSource.volume = 1f;
-                //voiceSource.pitch = 0.9f;
+                // voiceSource.pitch = 0.9f;
                 voice_adjusted = true;
             }
             else
+            {
                 voice_adjusted = false;
+            }
 
             if (crashSource != null)
             {
@@ -76,7 +83,9 @@ public class SoundManager : MonoBehaviour
                 voice_adjusted = true;
             }
             else
+            {
                 voice_adjusted = false;
+            }
         }
     }
 
@@ -85,13 +94,13 @@ public class SoundManager : MonoBehaviour
     /// </summary>
 	public void PlaySingle(AudioClip clip)
     {
-        //Set the clip of our efxSource audio source to the clip passed in as a parameter.
+        // Set the clip of our efxSource audio source to the clip passed in as a parameter.
         for (int i = 0; i < max_sfx_playing; ++i)
         {
             if (!efxSource[i].isPlaying)
             {
                 efxSource[i].clip = clip;
-                //Play the clip.
+                // Play the clip.
                 efxSource[i].Play();
                 return;
             }
@@ -112,7 +121,7 @@ public class SoundManager : MonoBehaviour
     /// </summary>
 	public void PlayEcho(AudioClip echoClip, Action callback = null)
     {
-        echoSource.clip = Database.instance.TitletoMainClips[0];
+        echoSource.clip = Database.instance.soundEffectClips[0];
         echoSource.Play();
         StartCoroutine(EchoWait(echoSource.clip.length, echoClip, callback));
     }
@@ -142,8 +151,8 @@ public class SoundManager : MonoBehaviour
             voiceSource.clip = clip;
 			// Set balance (-1 to 1 from left to right, default 0)
 			voiceSource.panStereo = balance;
-			//Play the clip.
-            voiceSource.Play();
+			// Play the clip.
+            voiceSource.Play();       
             return true;
         }
 

@@ -164,7 +164,7 @@ public class GM_TC : MonoBehaviour
 			InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.           
         }
         SceneManager.LoadScene("Title_Screen"); // Move to main menu
-        SoundManager.instance.PlaySingle(Database.instance.swipeAhead); // To notify that this scene loaded, but it immediately moves to the main menu.
+        SoundManager.instance.PlaySingle(Database.instance.soundEffectClips[3]); // To notify that this scene loaded, but it immediately moves to the main menu.
 #endif
         // Check if we are running on iOS/Android.
 #if UNITY_IOS || UNITY_ANDROID
@@ -174,7 +174,7 @@ public class GM_TC : MonoBehaviour
         }
         Utilities.writefile("consentRecord", "1");
         SceneManager.LoadScene("Title_Screen"); // Move to main menu.
-        SoundManager.instance.PlaySingle(Database.instance.swipeAhead); // To notify that this scene loaded, but it immediately moves to the main menu.
+        SoundManager.instance.PlaySingle(Database.instance.soundEffectClips[3]); // To notify that this scene loaded, but it immediately moves to the main menu.
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
         Screen.orientation = ScreenOrientation.Landscape;
 #endif // End of mobile platform dependendent compilation section started above with #elif

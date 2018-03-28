@@ -39,14 +39,14 @@ public class GM_Agreement : MonoBehaviour
     	eh = new eventHandler(InputModule.instance);
 
         ad = GetComponent<AndroidDialogue>();
-        swipeAhead = Resources.Load("fx/swipe-ahead") as AudioClip;
+        swipeAhead = Database.instance.soundEffectClips[3];
         orit = new AudioClip[2];
         orit[0] = Resources.Load("instructions/Please hold your phone horizontally for this game") as AudioClip;
-        orit[1] = Resources.Load("instructions/2sec_silence") as AudioClip;
+        orit[1] = Database.instance.soundEffectClips[2];
         clips = new AudioClip[3];
         clips[0] = Resources.Load("instructions/Swipe left to confirm") as AudioClip;
-        clips[1] = Resources.Load("instructions/2sec_silence") as AudioClip;
-        clips[2] = Resources.Load("instructions/2sec_silence") as AudioClip;
+        clips[1] = Database.instance.soundEffectClips[2];
+        clips[2] = Database.instance.soundEffectClips[2];
 
         //total_num_agreements = AgreementTexts.transform.childCount;
         cur_text = 0;
@@ -132,7 +132,7 @@ public class GM_Agreement : MonoBehaviour
 					debugPlayerInfo = "Swiped left. Moving to next agreement.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     gotoNextAgreement();
-            		SoundManager.instance.PlaySingle(swipeAhead);
+            		SoundManager.instance.PlaySingle(Database.instance.soundEffectClips[3]);
             		break;
             	// If the up arrow key was pressed.
 				case KeyCode.UpArrow:
@@ -193,7 +193,7 @@ public class GM_Agreement : MonoBehaviour
 					debugPlayerInfo = "Swiped left. Moving to next agreement.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     gotoNextAgreement();
-                    SoundManager.instance.PlaySingle(swipeAhead);
+                    SoundManager.instance.PlaySingle(Database.instance.soundEffectClips[3]);
         		}
         		// If the swipe was up.
         		else if (ie.isUp == true)

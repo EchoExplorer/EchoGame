@@ -1,139 +1,135 @@
 LEVEL_1
 Begin
-2sec_silence
-1sec_silence
-Welcome to echo adventure, in this game you are in a dark maze, in order to escape, you will learn to use echolocation to navigate
-Swipe up to move forward
-Currently we are in a straight hallway
-The stairs are at the end of the hallway
-If you hit a wall, you will hear a sound like this
-wallHitting
-Try to get to the stairs without crashing
+2_sec_silence
+1_sec_silence
+welcome_you_are_in_a_dark_maze
+swipe_up_to_move_forward
+currently_in_straight_hallway
+stairs_at_end_of_hallway
+if_you_hit_a_wall
+wall_hitting
+get_to_stairs_without_crashing
 IN
 Inend
 RETURN
-You are back at the entrance, please turn around
+back_at_entrance_turn_around
 Inend
 Exit
-Good job
-Double tap to attempt to exit
+good_job
+swipe_down_to_attempt_exit
 END
 
 LEVEL_2
 Begin
-2sec_silence
-1sec_silence
-This is another straight hallway
-Try to get to the stairs without crashing
+2_sec_silence
+1_sec_silence
+another_straight_hallway
+get_to_stairs_without_crashing
 RETURN
-You are back at the entrance, please turn around
+back_at_entrance_turn_around
 Inend
 Exit
-Good job
+good_job
 END
 
 LEVEL_3
 IN
 at(1,9)_T_F_RIGHT
-2sec_silence
-1sec_silence
-Now let's move on from straight hallways
-There is a right turn in this hallway
+2_sec_silence
+1_sec_silence
+move_on_from_straight_hallways
+this_is_level_3
 Inend
 IN
 at(6,9)_T_F_RIGHT
-As you move forward, notice what the echoes sound like
-Inend
-IN
-at(9,9)_T_F_RIGHT
+approaching_corner
 Inend
 IN
 at(9,9)_T_F_BACK
-1sec_silence
-Now move forward until you reach the stairs
+1_sec_silence
+move_forward_until_stairs
 Inend
 RETURN
-You are back at the entrance, please turn around
+back_at_entrance_turn_around
 Inend
 END
 
 LEVEL_4
 Begin
-2sec_silence
-1sec_silence
-This hallway has another right turn, try to find the exit
+2_sec_silence
+1_sec_silence
+hallway_has_another_right_turn
 RETURN
-You are back at the entrance, please turn around
+back_at_entrance_turn_around
 Inend
 END
 
 LEVEL_5
 Begin
-2sec_silence
-1sec_silence
-This hallway has a left turn
+2_sec_silence
+1_sec_silence
+hallway_has_left_turn
 IN
 at(4,9)_T_F_LEFT
-Tap once to hear what it sounds like before your reach a left turn
+approaching_corner
 Inend
 IN
 at(1,9)_T_F_LEFT
-1sec_silence
+1_sec_silence
 Now you are at the left turn
-Turn turn left, rotate two fingers counterclockwise, like you are turning a dial
 Inend
 IN
 at(1,9)_T_F_BACK
-1sec_silence
+1_sec_silence
 You have turned left 90 degrees 
-Now move forward until you reach the stairs
+move_forward_until_stairs
 Inend
 RETURN
-You are back at the entrance, please turn around
+back_at_entrance_turn_around
 Inend
 END
 
 LEVEL_6
 RETURN
-You are back at the entrance, please turn around
+back_at_entrance_turn_around
 Inend
 END
 
 LEVEL_7
 Begin
-2sec_silence
-1sec_silence
-You have finished the first part of the tutorial, good job!
-Now let's challenge ourselves with some harder levels
+2_sec_silence
+1_sec_silence
+finished_first_part_of_tutorial
+some_harder_levels
 RETURN
-You are back at the entrance, please turn around
+back_at_entrance_turn_around
 Inend
 END
 
 LEVEL_8
 RETURN
-You are back at the entrance, please turn around
+back_at_entrance_turn_around
 Inend
 END
 
 LEVEL_9
 RETURN
-You are back at the entrance, please turn around
+back_at_entrance_turn_around
 Inend
 END
 
 LEVEL_10
 RETURN
-You are back at the entrance, please turn around
+back_at_entrance_turn_around
 Inend
 END
 
 LEVEL_11
 Begin
-2sec_silence
-1sec_silence
-Now let's introduce something new, a T hallway
-The stairs are in one of the two arms of the T
+2_sec_silence
+1_sec_silence
+introduce_T_hallway
+stairs_in_one_of_two_arms_of_T
 If you find yourself in the wrong arm, swipe twice to turn around
 turn around by turning in the same direction twice
 IN
@@ -142,18 +138,18 @@ You are in the T now, tap to hear echoes
 The echoes you hear will give you information about your surroundings
 Inend
 RETURN
-You are back at the entrance, please turn around
+back_at_entrance_turn_around
 Inend
 Exit
-Good job
-You have now completed all of the tutorial, congratulations!
+good_job
+completed_all_of_tutorial
 END
 
 LEVEL_DEFAULT
 Begin
-2sec_silence
-1sec_silence
+2_sec_silence
+1_sec_silence
 RETURN
-You are back at the entrance, please turn around
+back_at_entrance_turn_around
 Inend
 END

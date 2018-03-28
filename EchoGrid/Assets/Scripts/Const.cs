@@ -29,5 +29,5 @@ public class Const : MonoBehaviour
 
     public const float MENU_TOUCH_TIME = 1.0f;
     public const float echoTapTime = 0.16f;//tap for how long to get an echo
-    public const float opsToEchoCD = 0.14f;//CD between any operation and an echo, this is used to prevent accidential echo
+    public const float opsToEchoCD = 0.14f;//CD between any operation and an echo, this is used to prevent accidential echo   
 }

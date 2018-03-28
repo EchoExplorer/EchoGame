@@ -163,7 +163,7 @@ public class GameManager : MonoBehaviour
         doingSetup = false;
         playersTurn = true;
         if (!GameObject.Find("Player").GetComponent<Player>().intercepted)
-            SoundManager.instance.PlayVoice((AudioClip)Resources.Load("instructions/Level Start"), true);
+            SoundManager.instance.PlayVoice(Database.instance.mainGameClips[0], true);
     }
 
     /// <summary>

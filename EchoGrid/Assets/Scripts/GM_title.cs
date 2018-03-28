@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 /// <summary>
 /// A script to display the user agreement dialogues.
@@ -30,9 +31,7 @@ public class GM_title : MonoBehaviour
     GameObject touch2Textbox;
     GameObject touchDurationTextbox;
 
-    public bool isUsingTalkback = false; // Tells us if the player has told us that they are using Talkback or not.
-
-    static bool hasGoneThroughSetup = false; // Tells us if the player has gone through and finished all the game environment hints.
+    public static bool isUsingTalkback = false; // Tells us if the player has told us that they are using Talkback or not.
 
     string debugPlayerInfo; // String for debugging the effects of the player's actions (Tells you they rotated, swiped, etc.).
 
@@ -51,70 +50,109 @@ public class GM_title : MonoBehaviour
     bool plugin_earphone = false;
     bool environment_setup = false;
     bool orientation_correct = false;
-    bool clip_talkback_reset = true;
     bool clip0_reset = true;
     bool clip1_reset = true;
     bool clip2_reset = true;
+    bool clip3_reset = true;
+
+    List<AudioClip> clips;
+
+    bool canRepeat = true;
 
     void play_audio()
     {
-        if ((hasGoneThroughSetup == false) && !determined_talkback)
+        if ((GM_main_pre.hasGoneThroughSetup == false) && !determined_talkback)
         {
-            if (SoundManager.instance.PlayVoice(Database.instance.settingClip[3], clip_talkback_reset))
+            if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
             {
-                clip_talkback_reset = false;
+                canRepeat = false;
+                clips = new List<AudioClip>() { Database.instance.settingsClips[0], Database.instance.settingsClips[1] };
+                SoundManager.instance.PlayClips(clips);
+                return;
             }
-            return;
         }
-        if ((hasGoneThroughSetup == false) && (determined_talkback == true) && !plugin_earphone)
+        if ((GM_main_pre.hasGoneThroughSetup == false) && (determined_talkback == true) && !plugin_earphone)
         {
-            if (SoundManager.instance.PlayVoice(Database.instance.settingClip[0], clip0_reset, 1))
+            if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
             {
-                clip0_reset = false;
+                if (isUsingTalkback == true)
+                {
+                    canRepeat = false;
+                    clips = new List<AudioClip>() { Database.instance.settingsClips[3], Database.instance.settingsClips[4], Database.instance.settingsClips[6] };
+                    SoundManager.instance.PlayClips(clips);
+                }
+                else if (isUsingTalkback == false)
+                {
+                    canRepeat = false;
+                    clips = new List<AudioClip>() { Database.instance.settingsClips[2], Database.instance.settingsClips[5] };
+                    SoundManager.instance.PlayClips(clips);
+                }
+                return;
             }
-            return;
         }
-        if ((hasGoneThroughSetup == false) && (determined_talkback == true) && (plugin_earphone == true) && !orientation_correct)
+        if ((GM_main_pre.hasGoneThroughSetup == false) && (determined_talkback == true) && (plugin_earphone == true) && !orientation_correct)
         {
             if (!Utilities.isDeviceLandscape())
             {//not landscape!
-                if (SoundManager.instance.PlayVoice(Database.instance.settingClip[1], clip1_reset))
-                {
-                    clip1_reset = false;
-                }
-                return;
-
-            }
-            else
-            {
-                if (SoundManager.instance.PlayVoice(Database.instance.settingClip[2], clip2_reset))
+                if (SoundManager.instance.PlayVoice(Database.instance.settingsClips[7], clip2_reset))
                 {
                     clip2_reset = false;
                 }
+                return;
+            }
+            else
+            {
+                if (isUsingTalkback == true)
+                {
+                    if (SoundManager.instance.PlayVoice(Database.instance.settingsClips[9], clip3_reset))
+                    {
+                        clip3_reset = false;
+                    }
+                }
+                else if (isUsingTalkback == false)
+                {
+                    if (SoundManager.instance.PlayVoice(Database.instance.settingsClips[8], clip3_reset))
+                    {
+                        clip3_reset = false;
+                    }
+                }                
                 orientation_correct = true;
             }
         }
-        if (((hasGoneThroughSetup == true) || (environment_setup == true)) && !listenToCmd)
+        if (((GM_main_pre.hasGoneThroughSetup == true) || (environment_setup == true)) && !listenToCmd)
         {
-            if (SoundManager.instance.PlayVoice(Database.instance.TitleClips[cur_clip], reset_audio))
+            if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
             {
-                reset_audio = false;
-                cur_clip += 1;
-                if (cur_clip >= Database.instance.TitleClips.Length)
-                    cur_clip = 0;
+                if (isUsingTalkback == true)
+                {
+                    canRepeat = false;
+                    clips = new List<AudioClip>() { Database.instance.mainMenuClips[0], Database.instance.mainMenuClips[2], Database.instance.mainMenuClips[4], Database.instance.mainMenuClips[6] };
+                    SoundManager.instance.PlayClips(clips);
+                }
+                else if (isUsingTalkback == false)
+                {
+                    canRepeat = false;
+                    clips = new List<AudioClip>() { Database.instance.mainMenuClips[0], Database.instance.mainMenuClips[1], Database.instance.mainMenuClips[3], Database.instance.mainMenuClips[5] };
+                    SoundManager.instance.PlayClips(clips);
+                }
+                return;
             }
         }
-        else if (((hasGoneThroughSetup == true) || (environment_setup == true)) && listenToCmd)
+        else if (((GM_main_pre.hasGoneThroughSetup == true) || (environment_setup == true)) && listenToCmd)
         {
-            if (SoundManager.instance.PlayVoice(Database.instance.TitleCmdlistClips[cmd_cur_clip], reset_audio))
+            if (isUsingTalkback == true)
             {
-                reset_audio = false;
-                cmd_cur_clip += 1;
-                if (cmd_cur_clip >= Database.instance.TitleCmdlistClips.Length)
-                {
-                    cmd_cur_clip = 0;
-                    listenToCmd = false;
-                }
+                clips = new List<AudioClip>() { Database.instance.mainMenuClips[8], Database.instance.mainMenuClips[10], Database.instance.mainMenuClips[12], Database.instance.mainMenuClips[14], Database.instance.mainMenuClips[16] };
+                SoundManager.instance.PlayClips(clips);
+            }
+            else if (isUsingTalkback == false)
+            {
+                clips = new List<AudioClip>() { Database.instance.mainMenuClips[7], Database.instance.mainMenuClips[9], Database.instance.mainMenuClips[11], Database.instance.mainMenuClips[13], Database.instance.mainMenuClips[15] };
+                SoundManager.instance.PlayClips(clips);
+            }
+            if (SoundManager.instance.finishedAllClips == true)
+            {
+                listenToCmd = false;
             }
         }
     }
@@ -141,6 +179,14 @@ public class GM_title : MonoBehaviour
             }
         }
 
+        if (GM_main_pre.hasGoneThroughSetup == true)
+        {
+            determined_talkback = true;
+            plugin_earphone = true;
+            environment_setup = true;
+            orientation_correct = true;
+        }
+
         play_audio();
 
         Direction inputDirection = Direction.NONE;
@@ -157,33 +203,35 @@ public class GM_title : MonoBehaviour
             	// If the 'f' key was pressed.
                 case KeyCode.F:
                 	// If the player has plugged in headphones and single tapped, let them perform actions for the main menu.
-                    if ((hasGoneThroughSetup == false) && (determined_talkback == true) && !plugin_earphone)
+                    if ((GM_main_pre.hasGoneThroughSetup == false) && (determined_talkback == true) && !plugin_earphone)
                     {
                         debugPlayerInfo = "Tap registered. Earphones in.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         plugin_earphone = true;	// The player has plugged in earphones.
                     } 
                     // If the player's game environment is set up properly, let them go to the main menu.
-                    else if ((hasGoneThroughSetup == true) || ((determined_talkback == true) && (plugin_earphone == true) && (orientation_correct == true) && !environment_setup))
+                    else if ((determined_talkback == true) && (plugin_earphone == true) && (orientation_correct == true) && !environment_setup)
                     {
                         debugPlayerInfo = "Tap registered. Game environment set up.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         environment_setup = true;
                         reset_audio = true;
+                        canRepeat = true;
                     }
                     break;             
                 // If the right arrow key was pressed.
                 case KeyCode.RightArrow:
                     // If the player has not informed us if they are using Talkback or not.
-                    if ((hasGoneThroughSetup == false) && (determined_talkback == false))
+                    if ((GM_main_pre.hasGoneThroughSetup == false) && (determined_talkback == false))
                     {
                         debugPlayerInfo = "Swiped right. Player is not using Talkback.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         isUsingTalkback = false; // The player has told us they are not using Talkback.
                         determined_talkback = true; // Determined if the player is using Talkback or not.
+                        canRepeat = true;
                     }
                     // If the player's game environment is set up properly.
-                    if ((hasGoneThroughSetup == true) || ((determined_talkback == true) && (plugin_earphone == true) && (orientation_correct == true) && (environment_setup == true)))
+                    if ((determined_talkback == true) && (plugin_earphone == true) && (orientation_correct == true) && (environment_setup == true))
 					{
 						inputDirection = Direction.RIGHT;
 					}
@@ -191,23 +239,24 @@ public class GM_title : MonoBehaviour
                 // If the left arrow key was pressed.
                 case KeyCode.LeftArrow:
                     // If the player has not informed us if they are using Talkback or not.
-                    if ((hasGoneThroughSetup == false) && (determined_talkback == false))
+                    if ((GM_main_pre.hasGoneThroughSetup == false) && (determined_talkback == false))
                     {
                         debugPlayerInfo = "Swiped left. Player is using Talkback.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         isUsingTalkback = true; // The player has told us they are using Talkback.
                         determined_talkback = true; // Determined if the player is using Talkback or not.
+                        canRepeat = true;
                     }
                     // If the player's game environment is set up properly.
-                    if ((hasGoneThroughSetup == true) || ((determined_talkback == true) && (plugin_earphone == true) && (orientation_correct == true) && (environment_setup == true)))
+                    if ((determined_talkback == true) && (plugin_earphone == true) && (orientation_correct == true) && (environment_setup == true))
                     {
-						inputDirection = Direction.LEFT;
-					}
+                        inputDirection = Direction.LEFT;
+                    }    
                     break;
                 // If the up arrow key was pressed.
                 case KeyCode.UpArrow:
                     // If the player's game environment is set up properly.
-                    if ((hasGoneThroughSetup == true) || ((determined_talkback == true) && (plugin_earphone == true) && (orientation_correct == true) && (environment_setup == true)))
+                    if ((determined_talkback == true) && (plugin_earphone == true) && (orientation_correct == true) && (environment_setup == true))
                     {
 						inputDirection = Direction.UP;
 					}
@@ -215,7 +264,7 @@ public class GM_title : MonoBehaviour
                 // If the down arrow key was pressed.
                 case KeyCode.DownArrow:
                     // If the player's game environment is set up properly.
-                    if ((hasGoneThroughSetup == true) || ((determined_talkback == true) && (plugin_earphone == true) && (orientation_correct == true) && (environment_setup == true)))
+                    if ((determined_talkback == true) && (plugin_earphone == true) && (orientation_correct == true) && (environment_setup == true))
                     {
 						inputDirection = Direction.DOWN;
 					}
@@ -235,7 +284,7 @@ public class GM_title : MonoBehaviour
 			InputEvent ie = eh.getEventData();  // Get input event data from InputModule.cs
 
             // If the player has not informed us if they are using Talkback or not.
-            if ((hasGoneThroughSetup == false) && (determined_talkback == false))
+            if ((GM_main_pre.hasGoneThroughSetup == false) && (determined_talkback == false))
             {
                 // If a swipe was registered.
                 if (ie.isSwipe == true)
@@ -247,6 +296,7 @@ public class GM_title : MonoBehaviour
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         isUsingTalkback = true; // The player has told us they are using Talkback.
                         determined_talkback = true; // Determined if the player is using Talkback or not.
+                        canRepeat = true;
                     }
                     // If the swipe was right, the user is not using Talkback.
                     else if (ie.isRight == true)
@@ -255,11 +305,12 @@ public class GM_title : MonoBehaviour
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         isUsingTalkback = false; // The player has told us they are not using Talkback.
                         determined_talkback = true; // Determined if the player is using Talkback or not.
+                        canRepeat = true;
                     }
                 }           
             }
             // If the player has not put in headphones.
-            else if ((hasGoneThroughSetup == false) && (determined_talkback == true) && !plugin_earphone)
+            else if ((GM_main_pre.hasGoneThroughSetup == false) && (determined_talkback == true) && !plugin_earphone)
             {
                 // If a tap was registered.
                 if (ie.isTap == true)
@@ -267,11 +318,12 @@ public class GM_title : MonoBehaviour
                     debugPlayerInfo = "Tap registered. Earphones in.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     plugin_earphone = true; // The player has put in headphones.
+                    canRepeat = true;
                 }
             }
 
             // If the player's game environment is set up properly.
-            else if ((hasGoneThroughSetup == false) && (determined_talkback == true) && (plugin_earphone == true) && (orientation_correct == true) && !environment_setup)
+            else if ((GM_main_pre.hasGoneThroughSetup == false) && (determined_talkback == true) && (plugin_earphone == true) && (orientation_correct == true) && !environment_setup)
             {
                 // If a tap was registered.
                 if (ie.isTap == true)
@@ -280,6 +332,7 @@ public class GM_title : MonoBehaviour
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     environment_setup = true; // Player environment is now set up.
 					reset_audio = true;
+                    canRepeat = true;
                 }
             }         
             else
@@ -322,25 +375,24 @@ public class GM_title : MonoBehaviour
                 debugPlayerInfo = "Swiped right. Moving to pregame menu to continue where you left off.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
-				SceneManager.LoadScene("Main_pre"); // Move to pregame menu.
-				SoundManager.instance.PlayVoice(Database.instance.TitletoMainClips[0], true);
-                hasGoneThroughSetup = true; // Since the player has gotten to this point and has chosen to continue a game, they must have gone through the environment setup.
+                SoundManager.instance.PlayVoice(Database.instance.soundEffectClips[5], true);
+                SceneManager.LoadScene("Main_pre"); // Move to pregame menu.				
+                GM_main_pre.hasGoneThroughSetup = true; // Since the player has gotten to this point and has chosen to continue a game, they must have gone through the environment setup.
                 break;
             // If the player swiped left, move to the pregame menu to start the tutorial.
             case Direction.LEFT:
                 debugPlayerInfo = "Swiped left. Moving to pregame menu to start tutorial.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
-                SceneManager.LoadScene("Main_pre"); // Move to pregame menu.
-				SoundManager.instance.PlayVoice(Database.instance.TitletoMainClips[0], true);
+                SoundManager.instance.PlayVoice(Database.instance.soundEffectClips[4], true);
+                SceneManager.LoadScene("Main_pre"); // Move to pregame menu.				
                 //SceneManager.LoadScene("Main");
-                hasGoneThroughSetup = true; // Since the player has gotten to this point and has chosen to start the tutorial, they must have gone through the environment setup.
+                GM_main_pre.hasGoneThroughSetup = true; // Since the player has gotten to this point and has chosen to start the tutorial, they must have gone through the environment setup.
                 break;
             // If the player swiped up, listen to the commands.
             case Direction.UP:
                 debugPlayerInfo = "Swiped up. Listening to commands.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
 				if (!listenToCmd)
 				{
 					listenToCmd = true;
@@ -353,7 +405,6 @@ public class GM_title : MonoBehaviour
             case Direction.DOWN:
                 debugPlayerInfo = "Swiped down. Does nothing here.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                SoundManager.instance.PlaySingle(Database.instance.swipeAhead);
 				//credit
                 break;
             default:
