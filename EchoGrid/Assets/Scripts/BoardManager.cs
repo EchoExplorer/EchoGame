@@ -509,7 +509,7 @@ public class BoardManager : MonoBehaviour
 
         return Direction.OTHER;
     }
-
+    
     //Sets up the outer walls and floor (background) of the game board.
     void BoardSetup()
     {
@@ -533,12 +533,18 @@ public class BoardManager : MonoBehaviour
 
                 //Check if we current position is at board edge, if so choose a random outer wall prefab from our array of outer wall tiles.
                 if (x == 0 || x == columns + 1 || y == 0 || y == rows + 1)
-                    toInstantiate = outerWallTiles[Random.Range(0, outerWallTiles.Length)];
+                {
+                    toInstantiate = wallTiles[0];// outerWallTiles[Random.Range(0, outerWallTiles.Length)];
+                }
 
                 //Instantiate the GameObject instance using the prefab chosen for toInstantiate at the Vector3 corresponding to current grid position in loop, cast it to GameObject.
                 GameObject instance =
                     Instantiate(toInstantiate, gridPositions[y * (rows + 2) + x], Quaternion.identity) as GameObject;
                 //Instantiate (toInstantiate, new Vector3 (x*scale, y*scale, 0f), Quaternion.identity) as GameObject;
+                if (x == 0 || x == columns + 1 || y == 0 || y == rows + 1)
+                {
+                    instance.name = "Wall_" + gridPositions[y * (rows + 2) + x].x + "_" + gridPositions[y * (rows + 2) + x].y;
+                }
 
                 //Set the parent of our newly instantiated object instance to boardHolder, this is just organizational to avoid cluttering hierarchy.
                 Vector3 new_scale = instance.transform.localScale;
@@ -612,6 +618,7 @@ public class BoardManager : MonoBehaviour
             GameObject tileChoice = wallTiles[0];
             //Instantiate tileChoice at the position returned by RandomPosition with no change in rotation
             GameObject new_wall = Instantiate(tileChoice, position, Quaternion.identity) as GameObject;
+            new_wall.name = "Wall_" + position.x + "_" + position.y;
             Vector3 new_scale = new_wall.transform.localScale;
             new_scale *= scale;
             new_wall.transform.localScale = new_scale;

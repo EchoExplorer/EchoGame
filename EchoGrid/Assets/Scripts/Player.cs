@@ -204,6 +204,28 @@ public class Player : MovingObject
     /// </summary>
 	private void PlayEcho()
     {
+        Vector3 dir = transform.right;
+        int x = (int)transform.position.x;
+        int y = (int)transform.position.y;
+        print("Position: " + transform.position);
+        print("Rotation: " + transform.rotation);
+        print("Forward: " + transform.forward);
+        print("Right: " + transform.right);
+        print("Up: " + transform.up);
+        print(GameObject.Find("Wall_" + 1 + "_" + 0).transform.position);
+        GameObject frontWall;
+        do
+        {
+            x += (int)dir.x;
+            y += (int)dir.y;
+            frontWall = GameObject.Find("Wall_" + x + "_" + y);
+        }
+        while (frontWall == null);
+        GvrAudioSource frontGAS = frontWall.GetComponent<GvrAudioSource>();
+        //frontGAS = GameObject.Find("Wall_" + 1 + "_" + 0).GetComponent<GvrAudioSource>();/////
+        frontGAS.clip = Database.instance.soundEffectClips[6];
+        frontGAS.Play();
+        return;
         tapped = true;
         reportSent = true;
         BoardManager.echoDistData data = GameManager.instance.boardScript.getEchoDistData(transform.position, get_player_dir("FRONT"), get_player_dir("LEFT"));
@@ -1037,12 +1059,12 @@ public class Player : MovingObject
         }
         else if (dir == get_player_dir("LEFT"))
         {
-            transform.Rotate(new Vector3(0, 0, 90));
+            transform.Rotate(0, 0, 90);
             GameManager.instance.boardScript.gamerecord += "l";
         }
         else if (dir == get_player_dir("RIGHT"))
         {
-            transform.Rotate(new Vector3(0, 0, -90));
+            transform.Rotate(0, 0, -90);
             GameManager.instance.boardScript.gamerecord += "r";
         }
     }
