@@ -198,33 +198,64 @@ public class Player : MovingObject
     string[] frontDistS = { "2.25", "3.75" };
     string[] frontDistM = { "5.25", "6.75" };
     string[] frontDistL = { "8.25", "9.75", "11.25", "12.75" };
-    
+
     /// <summary>
     /// A function that determines which echo file to play based on the surrounding environment.
     /// </summary>
 	private void PlayEcho()
     {
         Vector3 dir = transform.right;
+        int dir_x = (int)dir.x;
+        int dir_y = (int)dir.y;
         int x = (int)transform.position.x;
         int y = (int)transform.position.y;
-        print("Position: " + transform.position);
-        print("Rotation: " + transform.rotation);
-        print("Forward: " + transform.forward);
-        print("Right: " + transform.right);
-        print("Up: " + transform.up);
-        print(GameObject.Find("Wall_" + 1 + "_" + 0).transform.position);
-        GameObject frontWall;
+        //print("Position: " + transform.position);/////
+        //print("Rotation: " + transform.rotation);/////
+        //print("Forward: " + transform.forward);/////
+        //print("Right: " + transform.right);/////
+        //print("Up: " + transform.up);/////
+        //print("Facing: " + dir_x + ", " + dir_y);
+        
+        GameObject frontWall, leftWall, rightWall, leftFrontWall, rightFrontWall, tempWall;
+        leftWall = GameObject.Find("Wall_" + x + "_" + y);
+        rightWall = GameObject.Find("Wall_" + x + "_" + y);
+        // assume dir.x != 0
+        leftWall = GameObject.Find("Wall_" + (x + dir_y) + "_" + (y + dir_x));
+        rightWall = GameObject.Find("Wall_" + (x + -dir_y) + "_" + (y + -dir_x));
+        leftFrontWall = GameObject.Find("Wall_" + (x + dir_y + dir_x) + "_" + (y + dir_x + dir_y));
+        rightFrontWall = GameObject.Find("Wall_" + (x + -dir_y + dir_x) + "_" + (y + -dir_x + dir_y));
+        if (dir.y != 0)
+        {
+            tempWall = leftWall;
+            leftWall = rightWall;
+            rightWall = tempWall;
+            tempWall = leftFrontWall;
+            leftFrontWall = rightFrontWall;
+            rightFrontWall = tempWall;
+        }
+        /*
+        if (leftWall != null)
+            print("left: " + leftWall.transform.position);
+        if (rightWall != null)
+            print("right: " + rightWall.transform.position);
+        if (leftFrontWall != null)
+            print("leftfront: " + leftFrontWall.transform.position);
+        if (rightFrontWall != null)
+            print("rightfront: " + rightFrontWall.transform.position);
+        */
         do
         {
-            x += (int)dir.x;
-            y += (int)dir.y;
+            x += dir_x;
+            y += dir_y;
             frontWall = GameObject.Find("Wall_" + x + "_" + y);
         }
         while (frontWall == null);
         GvrAudioSource frontGAS = frontWall.GetComponent<GvrAudioSource>();
+        //print("GAS pos: " + frontGAS.transform.position);/////
         //frontGAS = GameObject.Find("Wall_" + 1 + "_" + 0).GetComponent<GvrAudioSource>();/////
-        frontGAS.clip = Database.instance.soundEffectClips[6];
-        frontGAS.Play();
+        frontGAS.clip = Resources.Load("echoes/" + "C00-21_F-0.75-D_B-m-D_L-s-D_R-s-US") as AudioClip;
+        float blocksToFrontWall = Vector3.Distance(transform.position, frontWall.transform.position) - 1;
+        frontGAS.PlayDelayed(1.5f * blocksToFrontWall * 3 / 340);
         return;
         tapped = true;
         reportSent = true;
