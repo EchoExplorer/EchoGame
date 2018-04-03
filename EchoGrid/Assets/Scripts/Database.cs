@@ -21,6 +21,10 @@ public class Database : MonoBehaviour
     }
 
     // audios
+    // Single click echo
+    [HideInInspector]
+    public AudioClip attenuatedClick;
+
     // Game environment settings clips
     [HideInInspector]
     public AudioClip[] settingsClips = new AudioClip[10];
@@ -65,6 +69,7 @@ public class Database : MonoBehaviour
 
     void LoadData()
     {
+        attenuatedClick = Resources.Load("fx/attenuatedClick") as AudioClip;
         // Game environment setting clips
         settingsClips[0] = Resources.Load("instructions/listen_to_instructions") as AudioClip;
         settingsClips[1] = Resources.Load("instructions/using_talkback") as AudioClip;

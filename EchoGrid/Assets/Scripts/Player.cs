@@ -233,16 +233,6 @@ public class Player : MovingObject
             leftFrontWall = rightFrontWall;
             rightFrontWall = tempWall;
         }
-        /*
-        if (leftWall != null)
-            print("left: " + leftWall.transform.position);
-        if (rightWall != null)
-            print("right: " + rightWall.transform.position);
-        if (leftFrontWall != null)
-            print("leftfront: " + leftFrontWall.transform.position);
-        if (rightFrontWall != null)
-            print("rightfront: " + rightFrontWall.transform.position);
-        */
         do
         {
             x += dir_x;
@@ -250,12 +240,52 @@ public class Player : MovingObject
             frontWall = GameObject.Find("Wall_" + x + "_" + y);
         }
         while (frontWall == null);
+        // Player echo preparation
+        GvrAudioSource playerGAS = this.GetComponent<GvrAudioSource>();
+        playerGAS.clip = Database.instance.attenuatedClick;
+        // Front wall echo preparation
         GvrAudioSource frontGAS = frontWall.GetComponent<GvrAudioSource>();
-        //print("GAS pos: " + frontGAS.transform.position);/////
-        //frontGAS = GameObject.Find("Wall_" + 1 + "_" + 0).GetComponent<GvrAudioSource>();/////
-        frontGAS.clip = Resources.Load("echoes/" + "C00-21_F-0.75-D_B-m-D_L-s-D_R-s-US") as AudioClip;
+        frontGAS.clip = Database.instance.attenuatedClick;
         float blocksToFrontWall = Vector3.Distance(transform.position, frontWall.transform.position) - 1;
-        frontGAS.PlayDelayed(1.5f * blocksToFrontWall * 3 / 340);
+        // Four-wall echoes preparation
+        GvrAudioSource leftGAS = null, rightGAS = null, leftFrontGAS = null, rightFrontGAS = null;
+        if (leftWall != null)
+        {
+            leftGAS = leftWall.GetComponent<GvrAudioSource>();
+            leftGAS.clip = Database.instance.attenuatedClick;
+        }
+        if (rightWall != null)
+        {
+            rightGAS = rightWall.GetComponent<GvrAudioSource>();
+            rightGAS.clip = Database.instance.attenuatedClick;
+        }
+        if (leftFrontWall != null)
+        {
+            if (((int)blocksToFrontWall) != 0 || leftWall == null)
+            {
+                leftFrontGAS = leftFrontWall.GetComponent<GvrAudioSource>();
+                leftFrontGAS.clip = Database.instance.attenuatedClick;
+            }
+        }
+        if (rightFrontWall != null)
+        {
+            if (((int)blocksToFrontWall) != 0 || rightWall == null)
+            {
+                rightFrontGAS = rightFrontWall.GetComponent<GvrAudioSource>();
+                rightFrontGAS.clip = Database.instance.attenuatedClick;
+            }
+        }
+        // Play all echoes
+        playerGAS.Play();
+        if (leftGAS != null)
+            leftGAS.PlayDelayed(1.5f / 340);
+        if (rightGAS != null)
+            rightGAS.PlayDelayed(1.5f / 340);
+        if (leftFrontGAS != null)
+            leftFrontGAS.PlayDelayed(2.12132f / 340);
+        if (rightFrontGAS != null)
+            rightFrontGAS.PlayDelayed(2.12132f / 340);
+        frontGAS.PlayDelayed((1.5f * blocksToFrontWall + 0.75f) * 2 / 340);
         return;
         tapped = true;
         reportSent = true;
