@@ -229,24 +229,35 @@ public class BoardManager : MonoBehaviour
     // Intercept the game
     bool hasIntercepted = false;
 
+    eventHandler eh;
+
+    string debugPlayerInfo; // String for debugging the effects of the player's actions (Tells you they rotated, swiped, etc.).
+
+    public static bool hasTappedAtCorner = false;
+
     public static bool finishedTutorialLevel1 = false;
     public static bool finishedTutorialLevel3 = false;
 
-    //Clears our list gridPositions and prepares it to generate a new board.
+    private void Start()
+    {
+        eh = new eventHandler(InputModule.instance);
+    }
+
+    // Clears our list gridPositions and prepares it to generate a new board.
     void InitialiseList()
     {
-        //Clear our list gridPositions.
+        // Clear our list gridPositions.
         gridPositions.Clear();
 
         float scale = (float)Utilities.SCALE_REF / (float)Utilities.MAZE_SIZE;
 
-        //Loop through x axis (columns).
+        // Loop through x axis (columns).
         for (int x = -1; x < rows + 1; x++)
         {
-            //Within each column, loop through y axis (rows).
+            // Within each column, loop through y axis (rows).
             for (int y = -1; y < columns + 1; y++)
             {
-                //At each index add a new Vector3 to our list with the x and y coordinates of that position.
+                // At each index add a new Vector3 to our list with the x and y coordinates of that position.
                 gridPositions.Add(new Vector3((float)y * scale, (float)x * scale, 0f));
             }
         }
@@ -257,7 +268,7 @@ public class BoardManager : MonoBehaviour
     /// </summary>
     void LoadAudio()
     {
-        //load the audio with those filename
+        // load the audio with those filename
         level_voices.clip_at_begin.Clear();
         foreach (string clip_name in level_voices.play_at_begin)
         {
@@ -403,32 +414,79 @@ public class BoardManager : MonoBehaviour
     /// </summary>
     void Update()
     {
-
         float threshold = 0.001f;
-        Vector2 idx_pos = get_idx_from_pos(player_ref.transform.position);
-        // Intercept the game on specific levels
+        Vector2 idx_pos = get_idx_from_pos(player_ref.transform.position);    
+
+        // Intercept the game on specific levels    
         // Level 1
+        // If the player has not done the gesture tutorial for level 1 yet, intercept.
         if (!hasIntercepted && (finishedTutorialLevel1 == false) && (cur_level == 1))
         {
             player_script.Intercept(1);
             hasIntercepted = true;
         }
+
         // Level 3
         Vector2 level3_corner = new Vector2(9, 9);
-        if (!hasIntercepted && (finishedTutorialLevel3 == false) && (cur_level == 3) && ((idx_pos - level3_corner).magnitude <= threshold))
+        // If the player has reached the right turn in level 3 and has not started the gesture tutorial for this level, intercept.
+        if (!hasIntercepted && (finishedTutorialLevel3 == false) && (cur_level == 3) && ((idx_pos - level3_corner).magnitude <= threshold) && (hasTappedAtCorner == true))
         {
             player_script.Intercept(3);
             hasIntercepted = true;
-        }       
+        }
         if (hasIntercepted && player_script.intercepted)
+        {
             return;
+        }
 
         bool ingame_playing = false;
         //play sounds according to positions
+
+        // If the player reaches the right turn in level 3 and they have finished the gesture tutorial.
+        if ((finishedTutorialLevel3 == true) && (cur_level == 3) && ((idx_pos - level3_corner).magnitude <= threshold))
+        {
+            // Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
+            if (eh.isActivate())
+            {
+                InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
+
+                // If a swipe is registered.
+                if (ie.isSwipe == true)
+                {
+                    // If they swipe up here and they are facing the wall, tell them they have crashed into the wall and that they have to rotate right to progress further in the level.
+                    if ((ie.isUp == true) && (get_player_dir_world() == Direction.RIGHT))
+                    {
+                        SoundManager.instance.PlayVoice(Database.tutorialClips[41], true); // Plat the appropriate clip.
+                    }
+                }
+            }
+        }
+
+        Vector2 level5_corner = new Vector2(1, 9);
+        // If the player reaches the left turn in level 5.
+        if ((cur_level == 5) && ((idx_pos - level5_corner).magnitude <= threshold))
+        {
+            // Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
+            if (eh.isActivate())
+            {
+                InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
+
+                // If a swipe is registered.
+                if (ie.isSwipe == true)
+                {
+                    // If they swipe up here and they are facing the wall, tell them they have crashed into the wall and that they have to rotate left to progress further in the level.
+                    if ((ie.isUp == true) && (get_player_dir_world() == Direction.LEFT))
+                    {
+                        SoundManager.instance.PlayVoice(Database.tutorialClips[42], true); // Play the appropriate clip.
+                    }
+                }
+            }
+        }
+
         if ((idx_pos - get_idx_from_pos(exitPos)).magnitude <= threshold)
         {
             if (level_voices.clip_exit < level_voices.clip_at_exit.Count)
-                level_voices.clip_exit = play_audio(level_voices.clip_at_exit, level_voices.clip_exit);
+                level_voices.clip_exit = play_audio(level_voices.clip_at_exit, level_voices.clip_exit);            
         }
         else if (((idx_pos - get_idx_from_pos(startPos)).magnitude <= threshold) && left_start_pt && (player_script.get_player_dir("BACK") == startDir))
         {

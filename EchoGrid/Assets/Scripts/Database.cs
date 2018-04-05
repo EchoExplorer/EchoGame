@@ -23,35 +23,35 @@ public class Database : MonoBehaviour
     // audios
     // Game environment settings clips
     [HideInInspector]
-    public AudioClip[] settingsClips = new AudioClip[10];
+    public static AudioClip[] settingsClips = new AudioClip[10];
     
     // Main menu clips
     [HideInInspector]
-    public AudioClip[] mainMenuClips = new AudioClip[17];
+    public static AudioClip[] mainMenuClips = new AudioClip[17];
     
     // Pregame menu clips
     [HideInInspector]
-    public AudioClip[] preGameMenuClips = new AudioClip[13];
+    public static AudioClip[] preGameMenuClips = new AudioClip[13];
     
     // Gesture tutorial clips
     [HideInInspector]
-    public AudioClip[] tutorialClips = new AudioClip[29];
+    public static AudioClip[] tutorialClips = new AudioClip[30];
 
     // Main game clips
     [HideInInspector]
-    public AudioClip[] mainGameClips = new AudioClip[37];
+    public static AudioClip[] mainGameClips = new AudioClip[43];
     [HideInInspector]
-    public AudioClip[] pauseMenuClips = new AudioClip[12];
+    public static AudioClip[] pauseMenuClips = new AudioClip[12];
     [HideInInspector]
-    public AudioClip[] hintClips = new AudioClip[4];
+    public static AudioClip[] hintClips = new AudioClip[4];
     
     // Error clips
     [HideInInspector]
-    public AudioClip[] errorClips = new AudioClip[19];
+    public static AudioClip[] errorClips = new AudioClip[27];
     
     // Sound effect clips
     [HideInInspector]
-    public AudioClip[] soundEffectClips = new AudioClip[9];
+    public static AudioClip[] soundEffectClips = new AudioClip[9];
 
     // strings
     // Title Screen
@@ -73,9 +73,9 @@ public class Database : MonoBehaviour
         settingsClips[4] = Resources.Load("instructions/add_talkback_hold") as AudioClip;
         settingsClips[5] = Resources.Load("instructions/headphones_normal") as AudioClip;
         settingsClips[6] = Resources.Load("instructions/headphones_talkback") as AudioClip;
-        settingsClips[7] = Resources.Load("instructions/orient_hint") as AudioClip;
-        settingsClips[8] = Resources.Load("instructions/orient_main_normal") as AudioClip;
-        settingsClips[9] = Resources.Load("instructions/orient_main_talkback") as AudioClip;
+        settingsClips[7] = Resources.Load("instructions/orient_phone") as AudioClip;
+        settingsClips[8] = Resources.Load("instructions/environment_setup_normal") as AudioClip;
+        settingsClips[9] = Resources.Load("instructions/environment_setup_talkback") as AudioClip;
 
         // Main menu clips
         mainMenuClips[0] = Resources.Load("instructions/welcome_to_echo_adventure") as AudioClip;
@@ -132,15 +132,16 @@ public class Database : MonoBehaviour
         tutorialClips[17] = Resources.Load("instructions/pause_menu_explanation_talkback") as AudioClip;
         tutorialClips[18] = Resources.Load("instructions/exit_level_instruction_normal") as AudioClip;
         tutorialClips[19] = Resources.Load("instructions/exit_level_instruction_talkback") as AudioClip;
-        tutorialClips[20] = Resources.Load("instructions/try_swipe_down") as AudioClip;       
-        tutorialClips[21] = Resources.Load("instructions/rotation_instruction_normal") as AudioClip;
-        tutorialClips[22] = Resources.Load("instructions/rotation_instruction_talkback") as AudioClip;
-        tutorialClips[23] = Resources.Load("instructions/tap_after_rotating") as AudioClip;
-        tutorialClips[24] = Resources.Load("instructions/rotate_4_times") as AudioClip;
-        tutorialClips[25] = Resources.Load("instructions/rotation_correct_3_more") as AudioClip;
-        tutorialClips[26] = Resources.Load("instructions/rotation_correct_2_more") as AudioClip;
-        tutorialClips[27] = Resources.Load("instructions/rotation_correct_1_more") as AudioClip;
-        tutorialClips[28] = Resources.Load("instructions/get_around_corner") as AudioClip;
+        tutorialClips[20] = Resources.Load("instructions/try_swipe_down") as AudioClip;
+        tutorialClips[21] = Resources.Load("instructions/reached_corner") as AudioClip;
+        tutorialClips[22] = Resources.Load("instructions/rotation_instruction_normal") as AudioClip;
+        tutorialClips[23] = Resources.Load("instructions/rotation_instruction_talkback") as AudioClip;
+        tutorialClips[24] = Resources.Load("instructions/tap_after_rotating") as AudioClip;
+        tutorialClips[25] = Resources.Load("instructions/rotate_4_times") as AudioClip;
+        tutorialClips[26] = Resources.Load("instructions/rotation_correct_3_more") as AudioClip;
+        tutorialClips[27] = Resources.Load("instructions/rotation_correct_2_more") as AudioClip;
+        tutorialClips[28] = Resources.Load("instructions/rotation_correct_1_more") as AudioClip;
+        tutorialClips[29] = Resources.Load("instructions/get_around_corner") as AudioClip;
 
         // Main game clips
         mainGameClips[0] = Resources.Load("instructions/level_start") as AudioClip;
@@ -154,35 +155,38 @@ public class Database : MonoBehaviour
         mainGameClips[8] = Resources.Load("instructions/swipe_up_to_move_forward") as AudioClip;
         mainGameClips[9] = Resources.Load("instructions/get_to_stairs_without_crashing") as AudioClip;
         mainGameClips[10] = Resources.Load("instructions/good_job") as AudioClip;
-        mainGameClips[11] = Resources.Load("instructions/swipe_down_to_attempt_exit") as AudioClip;
+        mainGameClips[11] = Resources.Load("instructions/tap_at_exit") as AudioClip;       
         mainGameClips[12] = Resources.Load("instructions/another_straight_hallway") as AudioClip;
-        mainGameClips[13] = Resources.Load("instructions/this_is_level_3") as AudioClip;
-        mainGameClips[14] = Resources.Load("instructions/move_on_from_straight_hallways") as AudioClip;
-        mainGameClips[15] = Resources.Load("instructions/navigate_a_right_turn") as AudioClip;
-        mainGameClips[16] = Resources.Load("instructions/right_turn_in_hallway") as AudioClip;
-        mainGameClips[17] = Resources.Load("instructions/approaching_corner") as AudioClip;
-        mainGameClips[18] = Resources.Load("instructions/move_forward_until_stairs") as AudioClip;
-        mainGameClips[19] = Resources.Load("instructions/hallway_has_another_right_turn") as AudioClip;
-        mainGameClips[20] = Resources.Load("instructions/hallway_has_left_turn") as AudioClip;
-        mainGameClips[21] = Resources.Load("instructions/navigate_a_left_turn") as AudioClip;
-        mainGameClips[22] = Resources.Load("instructions/finished_first_part_of_tutorial") as AudioClip;
-        mainGameClips[23] = Resources.Load("instructions/some_harder_levels") as AudioClip;
-        mainGameClips[24] = Resources.Load("instructions/introduce_T_hallway") as AudioClip;
+        mainGameClips[13] = Resources.Load("instructions/swipe_down_to_attempt_exit") as AudioClip;
+        mainGameClips[14] = Resources.Load("instructions/this_is_level_3") as AudioClip;
+        mainGameClips[15] = Resources.Load("instructions/move_on_from_straight_hallways") as AudioClip;
+        mainGameClips[16] = Resources.Load("instructions/navigate_a_right_turn") as AudioClip;
+        mainGameClips[17] = Resources.Load("instructions/right_turn_in_hallway") as AudioClip;
+        mainGameClips[18] = Resources.Load("instructions/approaching_corner") as AudioClip;
+        mainGameClips[19] = Resources.Load("instructions/move_forward_until_stairs") as AudioClip;
+        mainGameClips[20] = Resources.Load("instructions/hallway_has_another_right_turn") as AudioClip;
+        mainGameClips[21] = Resources.Load("instructions/hallway_has_left_turn") as AudioClip;
+        mainGameClips[22] = Resources.Load("instructions/navigate_a_left_turn") as AudioClip;
+        mainGameClips[23] = Resources.Load("instructions/finished_first_part_of_tutorial") as AudioClip;
+        mainGameClips[24] = Resources.Load("instructions/some_harder_levels") as AudioClip;
+        mainGameClips[25] = Resources.Load("instructions/introduce_T_hallway") as AudioClip;
         mainGameClips[26] = Resources.Load("instructions/stairs_in_one_of_two_arms_of_T") as AudioClip;
-        mainGameClips[26] = Resources.Load("instructions/If you find yourself in the wrong arm, swipe twice to turn around") as AudioClip;
-        mainGameClips[26] = Resources.Load("instructions/Turn around by turning in the same direction twice") as AudioClip;
-        mainGameClips[26] = Resources.Load("instructions/You are in the T now, tap to hear echoes") as AudioClip;
-        mainGameClips[26] = Resources.Load("instructions/The echoes you hear will give you information about your surroundings") as AudioClip;
-        mainGameClips[27] = Resources.Load("instructions/completed_all_of_tutorial") as AudioClip;
-        mainGameClips[28] = Resources.Load("instructions/0_5_sec_silence") as AudioClip;
-        mainGameClips[29] = Resources.Load("instructions/1_sec_silence") as AudioClip;
-        mainGameClips[30] = Resources.Load("instructions/2_sec_silence") as AudioClip;
-        mainGameClips[31] = Resources.Load("instructions/back_at_entrance_turn_around") as AudioClip;
-        mainGameClips[32] = Resources.Load("instructions/good") as AudioClip;
-        mainGameClips[33] = Resources.Load("instructions/good_progress") as AudioClip;
-        mainGameClips[34] = Resources.Load("instructions/halfway_there") as AudioClip;
-        mainGameClips[35] = Resources.Load("instructions/keep_moving_forward") as AudioClip;
-        mainGameClips[36] = Resources.Load("instructions/not_the_exit") as AudioClip;
+        mainGameClips[27] = Resources.Load("instructions/turn_around_in_wrong_arm") as AudioClip;
+        mainGameClips[28] = Resources.Load("instructions/in_T_fork") as AudioClip;
+        mainGameClips[29] = Resources.Load("instructions/completed_all_of_tutorial") as AudioClip;
+        mainGameClips[30] = Resources.Load("instructions/0_5_sec_silence") as AudioClip;
+        mainGameClips[31] = Resources.Load("instructions/1_sec_silence") as AudioClip;
+        mainGameClips[32] = Resources.Load("instructions/2_sec_silence") as AudioClip;
+        mainGameClips[33] = Resources.Load("instructions/proceed_by_tapping") as AudioClip;
+        mainGameClips[34] = Resources.Load("instructions/back_at_entrance_turn_around") as AudioClip;
+        mainGameClips[35] = Resources.Load("instructions/good") as AudioClip;
+        mainGameClips[36] = Resources.Load("instructions/good_progress") as AudioClip;
+        mainGameClips[37] = Resources.Load("instructions/halfway_there") as AudioClip;
+        mainGameClips[38] = Resources.Load("instructions/keep_moving_forward") as AudioClip;       
+        mainGameClips[39] = Resources.Load("instructions/not_the_exit") as AudioClip;
+        mainGameClips[40] = Resources.Load("instructions/crashed_at_exit") as AudioClip;
+        mainGameClips[41] = Resources.Load("instructions/crashed_right_corner") as AudioClip;
+        mainGameClips[42] = Resources.Load("instructions/crashed_left_corner") as AudioClip;
 
         pauseMenuClips[0] = Resources.Load("instructions/pause_menu_opened") as AudioClip;
         pauseMenuClips[1] = Resources.Load("instructions/pause_menu_swipe_up_normal") as AudioClip;
@@ -222,6 +226,14 @@ public class Database : MonoBehaviour
         errorClips[16] = Resources.Load("instructions/hold_rotation_error") as AudioClip;
         errorClips[17] = Resources.Load("instructions/hold_horizontal_error") as AudioClip;
         errorClips[18] = Resources.Load("instructions/hold_vertical_error") as AudioClip;
+        errorClips[19] = Resources.Load("instructions/not_a_tap") as AudioClip;
+        errorClips[20] = Resources.Load("instructions/not_a_swipe_up") as AudioClip;
+        errorClips[21] = Resources.Load("instructions/not_a_hold") as AudioClip;
+        errorClips[22] = Resources.Load("instructions/not_a_swipe_down") as AudioClip;
+        errorClips[23] = Resources.Load("instructions/not_a_rotation") as AudioClip;
+        errorClips[24] = Resources.Load("instructions/less_than_three_fingers") as AudioClip;
+        errorClips[25] = Resources.Load("instructions/more_than_three_fingers") as AudioClip;
+        errorClips[26] = Resources.Load("instructions/wait_for_instruction_to_finish") as AudioClip;           
 
         // Sound effect clips
         soundEffectClips[0] = Resources.Load("fx/0_5_sec_silence") as AudioClip;

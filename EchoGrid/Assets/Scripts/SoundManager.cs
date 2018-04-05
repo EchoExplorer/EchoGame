@@ -10,15 +10,17 @@ using System;
 public class SoundManager : MonoBehaviour
 {
 
-    public AudioSource[] efxSource;                 //Drag a reference to the audio source which will play the sound effects.
+    public AudioSource[] efxSource;                 // Drag a reference to the audio source which will play the sound effects.
     public AudioSource voiceSource;
+    public AudioSource clipSource;
     public AudioSource echoSource;
     public AudioSource crashSource;
-    public static SoundManager instance = null;     //Allows other scripts to call functions from SoundManager.				
+    public static SoundManager instance = null;     // Allows other scripts to call functions from SoundManager.				
     int max_sfx_playing = 5;
     bool voice_adjusted = false;
 
-    public bool finishedAllClips = false; // Determines if we have gone through all the clips in our list.
+    public bool finishedClip = true; // Determines if we have finished the clip we wanted to play.
+    public bool finishedAllClips = true; // Determines if we have gone through all the clips in our list.
 
     void Awake()
     {
@@ -77,6 +79,16 @@ public class SoundManager : MonoBehaviour
                 voice_adjusted = false;
             }
 
+            if (clipSource != null)
+            {
+                clipSource.volume = 1f;
+                voice_adjusted = true;
+            }
+            else
+            {
+                voice_adjusted = false;
+            }
+
             if (crashSource != null)
             {
                 crashSource.volume = 1f;
@@ -99,10 +111,9 @@ public class SoundManager : MonoBehaviour
         {
             if (!efxSource[i].isPlaying)
             {
-                efxSource[i].clip = clip;
+                efxSource[i].clip = clip;               
                 // Play the clip.
-                efxSource[i].Play();
-                return;
+                efxSource[i].Play();               
             }
         }
     }
@@ -121,7 +132,7 @@ public class SoundManager : MonoBehaviour
     /// </summary>
 	public void PlayEcho(AudioClip echoClip, Action callback = null)
     {
-        echoSource.clip = Database.instance.soundEffectClips[0];
+        echoSource.clip = Database.soundEffectClips[0];
         echoSource.Play();
         StartCoroutine(EchoWait(echoSource.clip.length, echoClip, callback));
     }
@@ -144,15 +155,45 @@ public class SoundManager : MonoBehaviour
     /// <summary>
     /// Plays an instruction voice.
     /// </summary>
-	public bool PlayVoice(AudioClip clip, bool reset = false, float balance = 0)
+	public bool PlayVoice(AudioClip clip, bool reset = false, float balance = 0, float delay = 0.0f)
     {
         if ((voiceSource.isPlaying == false) || reset)
         {
+            finishedClip = false;
             voiceSource.clip = clip;
 			// Set balance (-1 to 1 from left to right, default 0)
 			voiceSource.panStereo = balance;
-			// Play the clip.
-            voiceSource.Play();       
+            float clipLength = voiceSource.clip.length;            
+            // Play the clip.
+            voiceSource.PlayDelayed(delay);
+            StartCoroutine(WaitForVoice(clipLength, clip));
+            return true;
+        }
+
+        return false;
+    }
+
+    private IEnumerator WaitForVoice(float clipLength, AudioClip clip)
+    {
+        yield return new WaitForSeconds(clipLength + 0.3f);
+        if ((voiceSource.time == clipLength) || (voiceSource.time == 0.0f))
+        {      
+            finishedClip = true;
+        }
+    }
+
+    /// <summary>
+    /// Plays an instruction voice.
+    /// </summary>
+	public bool PlayClip(AudioClip clip, bool reset = false, float balance = 0)
+    {
+        if ((clipSource.isPlaying == false) || reset)
+        {
+            clipSource.clip = clip;
+            // Set balance (-1 to 1 from left to right, default 0)
+            clipSource.panStereo = balance;
+            // Play the clip.
+            clipSource.Play();
             return true;
         }
 
@@ -160,7 +201,7 @@ public class SoundManager : MonoBehaviour
     }
 
     // Play a list of clips in their order with 0.5 seconds pausing. Callback function and its index allowed.
-    public void PlayClips(List<AudioClip> clips, int current = 0, Action callback = null, int callback_index = 0, bool isFirstClip = true)
+    public void PlayClips(List<AudioClip> clips, int current = 0, Action callback = null, int callback_index = 0, bool isFirstClip = true, float balance = 0)
     {
         // If this clip is the first clip in our list.
         if (isFirstClip == true)
@@ -174,7 +215,7 @@ public class SoundManager : MonoBehaviour
         }
         AudioClip clip = clips[current];
         float clipLength = clip.length;
-        PlayVoice(clip, true);        
+        PlayClip(clip, true, balance);        
         StartCoroutine(WaitForLength(clipLength, clips, current, callback, callback_index));                   
     }
 
@@ -182,11 +223,11 @@ public class SoundManager : MonoBehaviour
     {        
         yield return new WaitForSeconds(clipLength + 0.3f);
         // Check if this clip is the last clip in the list and make sure this clip has finished playing.
-        if (((current + 1) == clips.Count) && (!voiceSource.isPlaying))
+        if (((current + 1) == clips.Count) && (!clipSource.isPlaying))
         {
             finishedAllClips = true; // We have played all clips in the list.
         }
-        else if (current + 1 < clips.Count && !voiceSource.isPlaying && voiceSource.clip == clips[current])
+        else if (current + 1 < clips.Count && !clipSource.isPlaying && clipSource.clip == clips[current])
         {
             PlayClips(clips, current + 1, callback, callback_index, false);
         }

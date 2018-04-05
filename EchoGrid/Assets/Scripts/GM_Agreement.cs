@@ -39,14 +39,14 @@ public class GM_Agreement : MonoBehaviour
     	eh = new eventHandler(InputModule.instance);
 
         ad = GetComponent<AndroidDialogue>();
-        swipeAhead = Database.instance.soundEffectClips[3];
+        swipeAhead = Database.soundEffectClips[3];
         orit = new AudioClip[2];
         orit[0] = Resources.Load("instructions/Please hold your phone horizontally for this game") as AudioClip;
-        orit[1] = Database.instance.soundEffectClips[2];
+        orit[1] = Database.soundEffectClips[2];
         clips = new AudioClip[3];
         clips[0] = Resources.Load("instructions/Swipe left to confirm") as AudioClip;
-        clips[1] = Database.instance.soundEffectClips[2];
-        clips[2] = Database.instance.soundEffectClips[2];
+        clips[1] = Database.soundEffectClips[2];
+        clips[2] = Database.soundEffectClips[2];
 
         //total_num_agreements = AgreementTexts.transform.childCount;
         cur_text = 0;
@@ -112,41 +112,72 @@ public class GM_Agreement : MonoBehaviour
     {
         play_audio();
 
-// Check if we are running either in the Unity editor or in a standalone build.
+        // Check if we are running either in the Unity editor or in a standalone build.
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
-		// Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
-		if (eh.isActivate())
-		{
-			InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
+        // Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
+        if (eh.isActivate())
+        {
+            InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
 
-			// Do something based on this event info.
-			switch(ie.keycode)
-			{
-				// If the right arrow key was pressed.
-				case KeyCode.RightArrow:
-					// SoundManager.instance.PlaySingle(swipeRight);
-					break;
-				// If the left arrow key was pressed.
-				case KeyCode.LeftArrow:
-					// Move to the next agreement.
-					debugPlayerInfo = "Swiped left. Moving to next agreement.";
+            // Do something based on this event info.
+            if (ie.isTap == true)
+            {
+                debugPlayerInfo = "This gesture does nothing in this menu.";
+                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+            }
+            // If a swipe was registered.
+            if (ie.isSwipe == true)
+            {
+                // If the swipe was left.
+                if (ie.isLeft == true)
+                {
+                    // Move to the next agreement.
+                    debugPlayerInfo = "Swiped left. Moving to next agreement.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     gotoNextAgreement();
-            		SoundManager.instance.PlaySingle(Database.instance.soundEffectClips[3]);
-            		break;
-            	// If the up arrow key was pressed.
-				case KeyCode.UpArrow:
-					// Up
-					break;
-				// If the down arrow key was pressed.
-				case KeyCode.DownArrow:
-					// Back
-					// SoundManager.instance.PlaySingle(swipeAhead);
-        			// credit
-					break;
-				default:
-					break;
-			}
+                    SoundManager.instance.PlayVoice(Database.soundEffectClips[3], true);
+                }
+                // If the swipe was right.
+                else if (ie.isRight == true)
+                {
+                    debugPlayerInfo = "This gesture does nothing in this menu.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                }
+                // If the swipe was up.
+                else if (ie.isUp == true)
+                {
+                    debugPlayerInfo = "This gesture does nothing in this menu.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                }
+                // If the swipe was down.
+                else if (ie.isDown == true)
+                {
+                    debugPlayerInfo = "This gesture does nothing in this menu.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                }
+            }
+            // If a rotation was registered.
+            else if (ie.isRotate == true)
+            {
+                // If it was a left rotation.
+                if (ie.isLeft == true)
+                {
+                    debugPlayerInfo = "This gesture does nothing in this menu.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                }
+                // If it was a right rotation.
+                else if (ie.isRight == true)
+                {
+                    debugPlayerInfo = "This gesture does nothing in this menu.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                }
+            }
+            // If a hold was registered.
+            else if (ie.isHold == true)
+            {
+                debugPlayerInfo = "This gesture does nothing in this menu.";
+                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+            }		
 		}
 #endif
 // Check if we are running on iOS/Android.
@@ -193,7 +224,7 @@ public class GM_Agreement : MonoBehaviour
 					debugPlayerInfo = "Swiped left. Moving to next agreement.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     gotoNextAgreement();
-                    SoundManager.instance.PlaySingle(Database.instance.soundEffectClips[3]);
+                    SoundManager.instance.PlayVoice(Database.soundEffectClips[3], true);
         		}
         		// If the swipe was up.
         		else if (ie.isUp == true)
