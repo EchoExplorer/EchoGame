@@ -98,12 +98,12 @@ Inend
 IN
 at(1,9)_T_F_LEFT
 1_sec_silence
-Now you are at the left turn
+you_are_at_left_turn
 Inend
 IN
 at(1,9)_T_F_BACK
 1_sec_silence
-You have turned left 90 degrees 
+you_have_turned_left
 0_5_sec_silence
 move_forward_until_stairs
 Inend

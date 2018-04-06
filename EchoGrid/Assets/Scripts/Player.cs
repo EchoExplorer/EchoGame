@@ -101,6 +101,10 @@ public class Player : MovingObject
 
     bool endingLevel = false;
 
+    bool playLeftSound = false;
+    bool playRightSound = false;
+    bool playUpSound = false;
+
     public int level1_remaining_taps = -1; // Gesture tutorial level 1 remaining taps. Initially set to -1 as there are checks for if they are greater or equal to 0, and we don't want hints playing at the wrong time.
 	public int level1_remaining_ups = -1; // Gesture tutorial level 1 remaining swipes up. Initially set to -1 as there are checks for if they are greater or equal to 0, and we don't want hints playing at the wrong time.
 	public int level1_remaining_menus = -1; // Gesture tutorial level 1 remaining holds for pause menu. Initially set to -1 as there are checks for if they are greater or equal to 0, and we don't want hints playing at the wrong time.
@@ -1509,7 +1513,6 @@ public class Player : MovingObject
 
                 if (SoundManager.instance.finishedClip == true)
                 {
-                    canRepeat = true;
                     finishedCornerInstruction = true;
                 }
             }
@@ -2811,27 +2814,11 @@ public class Player : MovingObject
         // Based on the action, play the appropriate sound.
         switch (action)
         {
-            case InterceptAction.UP:               
-                if ((finishedSwipingInstruction == true) && (level1_remaining_ups > 0))
-                {
-                    SoundManager.instance.PlayVoice(Database.soundEffectClips[3], true); // If the swiping instructions have played and the player has more swipes left to do, play the swipe up sound.
-                }
-                break;
-            case InterceptAction.LEFT:
-                if ((finishedTurningInstruction == true) && (level3_remaining_turns > 0))
-                {
-                    SoundManager.instance.PlayVoice(Database.soundEffectClips[4], true); // If the rotation instructions have played and the player has more rotations left to do, play the rotate left sound.
-                }
-                break;
-            case InterceptAction.RIGHT:
-                if ((finishedTurningInstruction == true) && (level3_remaining_turns > 0))
-                {
-                    SoundManager.instance.PlayVoice(Database.soundEffectClips[5], true); // If the rotation instructions have played and the player has more rotations left to do, play the rotate right sound.
-                }
-                break;
             case InterceptAction.TAP:
                 if ((finishedTappingInstruction == true) && (level1_remaining_taps > 0))
                 {
+					//debugPlayerInfo = "Playing tap sound.";
+                	//DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                     PlayEcho(); // If the tapping instructions have played and the player has more taps left to do, play an echo.
                 }
                 break;
@@ -2945,12 +2932,12 @@ public class Player : MovingObject
                             level1_remaining_ups--; // Decrease the number of swipes up left to do.
                             if (level1_remaining_ups == 2)
                             {
-                                clips = new List<AudioClip> { Database.soundEffectClips[0], Database.tutorialClips[11] };
+                                clips = new List<AudioClip> { Database.soundEffectClips[3], Database.soundEffectClips[0], Database.tutorialClips[11] };
                                 SoundManager.instance.PlayClips(clips); // This swipe was correct. Please swipe X more times.
                             }
                             else if (level1_remaining_ups == 1)
                             {
-                                clips = new List<AudioClip> { Database.soundEffectClips[0], Database.tutorialClips[12] };
+								clips = new List<AudioClip> { Database.soundEffectClips[3], Database.soundEffectClips[0], Database.tutorialClips[12] };
                                 SoundManager.instance.PlayClips(clips); // This swipe was correct. Please swipe X more times.
                             }
                             // If the player has finished the swiping section of the tutorial.
@@ -2963,12 +2950,12 @@ public class Player : MovingObject
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                                 if (GM_title.isUsingTalkback == true)
                                 {
-                                    clips = new List<AudioClip> { Database.soundEffectClips[0], Database.tutorialClips[13], Database.tutorialClips[15] };
+									clips = new List<AudioClip> { Database.soundEffectClips[3], Database.soundEffectClips[0], Database.tutorialClips[13], Database.tutorialClips[15] };
                                     SoundManager.instance.PlayClips(clips); // If they are using Talkback, play the correct instructions.  
                                 }
                                 else if (GM_title.isUsingTalkback == false)
                                 {
-                                    clips = new List<AudioClip> { Database.soundEffectClips[0], Database.tutorialClips[13], Database.tutorialClips[14] };
+									clips = new List<AudioClip> { Database.soundEffectClips[3], Database.soundEffectClips[0], Database.tutorialClips[13], Database.tutorialClips[14] };
                                     SoundManager.instance.PlayClips(clips); // If they are not using Talkback, play the correct instructions.  
                                 }
                             }
@@ -3209,17 +3196,38 @@ public class Player : MovingObject
                         level3_remaining_turns--; // Decrease the number of turns left to do.
                  		if (level3_remaining_turns == 3) 
                  		{
-                            clips = new List<AudioClip> { Database.soundEffectClips[0], Database.tutorialClips[26] };
+                 			if (action == InterceptAction.LEFT)
+                 			{
+								clips = new List<AudioClip> { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.tutorialClips[26] };
+                 			}
+							else if (action == InterceptAction.RIGHT)
+							{
+								clips = new List<AudioClip> { Database.soundEffectClips[5], Database.soundEffectClips[0], Database.tutorialClips[26] };
+							}
                             SoundManager.instance.PlayClips(clips); // This rotation was correct. Please rotate X more times.
                  		}
                         else if (level3_remaining_turns == 2)
                         {
-                            clips = new List<AudioClip> { Database.soundEffectClips[0], Database.tutorialClips[27] };
+							if (action == InterceptAction.LEFT)
+                 			{
+								clips = new List<AudioClip> { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.tutorialClips[27] };
+                 			}
+							else if (action == InterceptAction.RIGHT)
+							{
+								clips = new List<AudioClip> { Database.soundEffectClips[5], Database.soundEffectClips[0], Database.tutorialClips[27] };
+							}
                             SoundManager.instance.PlayClips(clips); // This rotation was correct. Please rotate X more times.
                         }
                         else if (level3_remaining_turns == 1)
                         {
-                            clips = new List<AudioClip> { Database.soundEffectClips[0], Database.tutorialClips[28] };
+							if (action == InterceptAction.LEFT)
+                 			{
+								clips = new List<AudioClip> { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.tutorialClips[28] };
+                 			}
+							else if (action == InterceptAction.RIGHT)
+							{
+								clips = new List<AudioClip> { Database.soundEffectClips[5], Database.soundEffectClips[0], Database.tutorialClips[28] };
+							}
                             SoundManager.instance.PlayClips(clips); // This rotation was correct. Please rotate X more times.
                         }
                         // If the player has finished the rotation section of the tutorial.
@@ -3229,8 +3237,15 @@ public class Player : MovingObject
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                             BoardManager.finishedTutorialLevel3 = true; // Make sure the player does not have to go through the tutorial again if they have gone through it once.
                             // Good job! now we will move back to the game. Try and get around the corner!
-                            clips = new List<AudioClip> { Database.soundEffectClips[0], Database.tutorialClips[29] };
-                            SoundManager.instance.PlayClips(clips, 0, () => quitInterception(), 2);
+						if (action == InterceptAction.LEFT)
+                 			{
+								clips = new List<AudioClip> { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.tutorialClips[29] };
+                 			}
+							else if (action == InterceptAction.RIGHT)
+							{
+								clips = new List<AudioClip> { Database.soundEffectClips[5], Database.soundEffectClips[0], Database.tutorialClips[29] };
+							}
+                            SoundManager.instance.PlayClips(clips, 0, () => quitInterception(), 3);
                         }
                     }
                     // If the action was not a right or left rotation.
