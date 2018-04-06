@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
 
         DontDestroyOnLoad(gameObject);
-        
+             
         boardScript = GetComponent<BoardManager>();
         // Duplicated loading: LoadSaved() will be called in InitGame().
         // LoadSaved();
@@ -162,8 +162,11 @@ public class GameManager : MonoBehaviour
         //Set doingSetup to false allowing player to move again.
         doingSetup = false;
         playersTurn = true;
-        if (!GameObject.Find("Player").GetComponent<Player>().intercepted)
+
+        if (GameObject.Find("Player").GetComponent<Player>().intercepted == false)
+        {
             SoundManager.instance.PlayVoice(Database.mainGameClips[0], true);
+        }
     }
 
     /// <summary>

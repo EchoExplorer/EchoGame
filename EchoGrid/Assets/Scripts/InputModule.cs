@@ -357,6 +357,7 @@ public class InputModule : MonoBehaviour
             ievent.isMain = true; // The 'p' key was registered.
             holdingDownKey = false;
         }
+        // If any other key or button is pressed, tell them it does not do anything.
         else if ((Input.anyKey == false) && (holdingDownKey == true))
         {
             debugInputInfo = "This key does not do anything. Please only use F, R, P, and the arrow keys.";
@@ -1286,7 +1287,8 @@ public class InputModule : MonoBehaviour
                             ievent.isUnrecognized = true; // An unrecognized gesture was registered.
                             unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                             debugInputInfo = "An unrecognized gesture has been made " + unrecognizedTimes + " times";
-                            DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.                                
+                            DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.    
+                            tempGestures.Clear(); // Clear the stack of all gestures made.
                             gesturesMadePhone.Clear(); // Clear the stack of all gestures made.
                             touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                             gestStartTime = Time.time; // Set the end time to now.
@@ -1310,7 +1312,8 @@ public class InputModule : MonoBehaviour
                             ievent.isUnrecognized = true; // An unrecognized gesture was registered.
                             unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                             debugInputInfo = "An unrecognized gesture has been made " + unrecognizedTimes + " times";
-                            DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.                                
+                            DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.       
+                            tempGestures.Clear(); // Clear the stack of all gestures made.
                             gesturesMadePhone.Clear(); // Clear the stack of all gestures made.
                             touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                             gestStartTime = Time.time; // Set the end time to now.
@@ -1323,6 +1326,7 @@ public class InputModule : MonoBehaviour
                             unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                             debugInputInfo = "An unrecognized gesture has been made " + unrecognizedTimes + " times";
                             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.                                
+                            tempGestures.Clear(); // Clear the stack of all gestures made.
                             gesturesMadePhone.Clear(); // Clear the stack of all gestures made.
                             touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                             gestStartTime = Time.time; // Set the end time to now.
@@ -1346,7 +1350,8 @@ public class InputModule : MonoBehaviour
                             ievent.isUnrecognized = true; // An unrecognized gesture was registered.
                             unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                             debugInputInfo = "An unrecognized gesture has been made " + unrecognizedTimes + " times";
-                            DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.                               
+                            DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.       
+                            tempGestures.Clear(); // Clear the stack of all gestures made.
                             gesturesMadePhone.Clear(); // Clear the stack of all gestures made.
                             touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                             gestStartTime = Time.time; // Set the end time to now.
@@ -1358,7 +1363,8 @@ public class InputModule : MonoBehaviour
                             ievent.isUnrecognized = true; // An unrecognized gesture was registered.
                             unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                             debugInputInfo = "An unrecognized gesture has been made " + unrecognizedTimes + " times";
-                            DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.                               
+                            DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.     
+                            tempGestures.Clear(); // Clear the stack of all gestures made.                        
                             gesturesMadePhone.Clear(); // Clear the stack of all gestures made.
                             touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                             gestStartTime = Time.time; // Set the end time to now.
@@ -1370,7 +1376,8 @@ public class InputModule : MonoBehaviour
                             ievent.isUnrecognized = true; // An unrecognized gesture was registered.
                             unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                             debugInputInfo = "An unrecognized gesture has been made " + unrecognizedTimes + " times";
-                            DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.                               
+                            DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox. 
+                            tempGestures.Clear(); // Clear the stack of all gestures made.
                             gesturesMadePhone.Clear(); // Clear the stack of all gestures made.
                             touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                             gestStartTime = Time.time; // Set the end time to now.
@@ -1382,7 +1389,8 @@ public class InputModule : MonoBehaviour
                             ievent.isUnrecognized = true; // An unrecognized gesture was registered.
                             unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                             debugInputInfo = "An unrecognized gesture has been made " + unrecognizedTimes + " times";
-                            DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.                               
+                            DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.    
+                            tempGestures.Clear(); // Clear the stack of all gestures made.
                             gesturesMadePhone.Clear(); // Clear the stack of all gestures made.
                             touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                             gestStartTime = Time.time; // Set the end time to now.
@@ -1394,7 +1402,8 @@ public class InputModule : MonoBehaviour
                             ievent.isUnrecognized = true; // An unrecognized gesture was registered.
                             unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                             debugInputInfo = "An unrecognized gesture has been made " + unrecognizedTimes + " times";
-                            DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.                               
+                            DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.  
+                            tempGestures.Clear(); // Clear the stack of all gestures made.
                             gesturesMadePhone.Clear(); // Clear the stack of all gestures made.
                             touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                             gestStartTime = Time.time; // Set the end time to now.
@@ -1418,7 +1427,8 @@ public class InputModule : MonoBehaviour
                             ievent.isUnrecognized = true; // An unrecognized gesture was registered.
                             unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                             debugInputInfo = "An unrecognized gesture has been made " + unrecognizedTimes + " times";
-                            DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.                               
+                            DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.       
+                            tempGestures.Clear(); // Clear the stack of all gestures made.
                             gesturesMadePhone.Clear(); // Clear the stack of all gestures made.
                             touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                             gestStartTime = Time.time; // Set the end time to now.
@@ -1430,7 +1440,8 @@ public class InputModule : MonoBehaviour
                             ievent.isUnrecognized = true; // An unrecognized gesture was registered.
                             unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                             debugInputInfo = "An unrecognized gesture has been made " + unrecognizedTimes + " times";
-                            DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.                               
+                            DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.     
+                            tempGestures.Clear(); // Clear the stack of all gestures made.
                             gesturesMadePhone.Clear(); // Clear the stack of all gestures made.
                             touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                             gestStartTime = Time.time; // Set the end time to now.
@@ -1442,7 +1453,8 @@ public class InputModule : MonoBehaviour
                             ievent.isUnrecognized = true; // An unrecognized gesture was registered.
                             unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                             debugInputInfo = "An unrecognized gesture has been made " + unrecognizedTimes + " times";
-                            DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.                                
+                            DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.     
+                            tempGestures.Clear(); // Clear the stack of all gestures made.
                             gesturesMadePhone.Clear(); // Clear the stack of all gestures made.
                             touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                             gestStartTime = Time.time; // Set the end time to now.
@@ -1454,7 +1466,8 @@ public class InputModule : MonoBehaviour
                             ievent.isUnrecognized = true; // An unrecognized gesture was registered.
                             unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                             debugInputInfo = "An unrecognized gesture has been made " + unrecognizedTimes + " times";
-                            DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.                                
+                            DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.  
+                            tempGestures.Clear(); // Clear the stack of all gestures made.
                             gesturesMadePhone.Clear(); // Clear the stack of all gestures made.
                             touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                             gestStartTime = Time.time; // Set the end time to now.
@@ -1466,11 +1479,15 @@ public class InputModule : MonoBehaviour
                             ievent.isUnrecognized = true; // An unrecognized gesture was registered.
                             unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                             debugInputInfo = "An unrecognized gesture has been made " + unrecognizedTimes + " times";
-                            DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.                                
+                            DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.     
+                            tempGestures.Clear(); // Clear the stack of all gestures made.
                             gesturesMadePhone.Clear(); // Clear the stack of all gestures made.
                             touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                             gestStartTime = Time.time; // Set the end time to now.
-                        }            
+                        }
+
+                        tempGestures.Clear(); // Clear the stack of all gestures made.
+                        gesturesMadePhone.Clear(); // Clear the stack of all gestures made.
                     }
                 }
             }
@@ -1494,7 +1511,6 @@ public class InputModule : MonoBehaviour
 
             touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.          
             stillHolding = false; // Let the player register another hold.
-            gesturesMadePhone.Clear(); // Clear the stack of all gestures made.
           
             hasRegistered[0] = false; // Touch0 is no longer on the screen. Make sure it is not registered for the next time it touches so that its start position can be obtained.
 			hasRegistered[1] = false; // Touch1 is no longer on the screen. Make sure it is not registered for the next time it touches so that its start position can be obtained.

@@ -184,8 +184,11 @@ public class GM_main_pre : MonoBehaviour
                 // If the swipe was up.
                 if (ie.isUp == true)
                 {
-                    debugPlayerInfo = "This gesture does nothing in this menu.";
-                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    BoardManager.finishedTutorialLevel1 = true;
+                    BoardManager.finishedTutorialLevel3 = true;
+                    SceneManager.LoadScene("Main");                    
+                    // debugPlayerInfo = "This gesture does nothing in this menu.";
+                    // DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 }
                 // If the swipe was down.
                 if (ie.isDown == true)
@@ -344,8 +347,11 @@ public class GM_main_pre : MonoBehaviour
                 // If the swipe was up.
                 else if (ie.isUp == true)
                 {
-                    debugPlayerInfo = "This gesture does nothing in this menu.";
-                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    BoardManager.finishedTutorialLevel1 = true;
+                    BoardManager.finishedTutorialLevel3 = true;
+                    SceneManager.LoadScene("Main");
+                    // debugPlayerInfo = "This gesture does nothing in this menu.";
+                    // DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 }
 			}
 			

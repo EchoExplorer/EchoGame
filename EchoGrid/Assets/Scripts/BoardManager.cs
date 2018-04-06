@@ -211,9 +211,9 @@ public class BoardManager : MonoBehaviour
     private List<Vector3> playerPositions = new List<Vector3>();
     public string mazeSolution = "";
     level_voice_list level_voices = new level_voice_list();
-    public Vector3 exitPos;
-    Vector3 startPos;
-    Vector3 startDir;
+    public static Vector3 exitPos;
+    public static Vector3 startPos;
+    public static Vector3 startDir;
 
     //audios
     int cur_clip = 1;
@@ -232,6 +232,10 @@ public class BoardManager : MonoBehaviour
     eventHandler eh;
 
     string debugPlayerInfo; // String for debugging the effects of the player's actions (Tells you they rotated, swiped, etc.).
+
+    List<AudioClip> clips;
+
+    public static bool canRepeat = true;
 
     public static bool hasTappedAtCorner = false;
 
@@ -403,7 +407,7 @@ public class BoardManager : MonoBehaviour
     /// <summary>
     /// A function to signal the fact that the player has moved at least once.
     /// </summary>
-    bool left_start_pt = false;
+    public static bool left_start_pt = false;
     public void set_left_start_pt(bool newf)
     {
         left_start_pt = newf;
@@ -420,21 +424,22 @@ public class BoardManager : MonoBehaviour
         // Intercept the game on specific levels    
         // Level 1
         // If the player has not done the gesture tutorial for level 1 yet, intercept.
-        if (!hasIntercepted && (finishedTutorialLevel1 == false) && (cur_level == 1))
+        if ((hasIntercepted == false) && (finishedTutorialLevel1 == false) && (cur_level == 1))
         {
-            player_script.Intercept(1);
+            player_script.Intercept(1); // Intercept.
             hasIntercepted = true;
         }
-
-        // Level 3
-        Vector2 level3_corner = new Vector2(9, 9);
+         
         // If the player has reached the right turn in level 3 and has not started the gesture tutorial for this level, intercept.
-        if (!hasIntercepted && (finishedTutorialLevel3 == false) && (cur_level == 3) && ((idx_pos - level3_corner).magnitude <= threshold) && (hasTappedAtCorner == true))
+        Vector2 level3_corner = new Vector2(9, 9);        
+        if ((hasIntercepted == false) && (finishedTutorialLevel3 == false) && (cur_level == 3) && ((idx_pos - level3_corner).magnitude <= threshold) && (hasTappedAtCorner == true))
         {
-            player_script.Intercept(3);
+            player_script.Intercept(3); // Intercept.
             hasIntercepted = true;
         }
-        if (hasIntercepted && player_script.intercepted)
+              
+        // If we have intercepted a level.
+        if ((hasIntercepted == true) && (player_script.intercepted == true))
         {
             return;
         }
@@ -443,7 +448,7 @@ public class BoardManager : MonoBehaviour
         //play sounds according to positions
 
         // If the player reaches the right turn in level 3 and they have finished the gesture tutorial.
-        if ((finishedTutorialLevel3 == true) && (cur_level == 3) && ((idx_pos - level3_corner).magnitude <= threshold))
+        if ((finishedTutorialLevel3 == true) && (cur_level == 3) && ((idx_pos - level3_corner).magnitude <= threshold) && (get_player_dir_world() == Direction.RIGHT))
         {
             // Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
             if (eh.isActivate())
@@ -456,16 +461,21 @@ public class BoardManager : MonoBehaviour
                     // If they swipe up here and they are facing the wall, tell them they have crashed into the wall and that they have to rotate right to progress further in the level.
                     if ((ie.isUp == true) && (get_player_dir_world() == Direction.RIGHT))
                     {
-                        SoundManager.instance.PlayVoice(Database.tutorialClips[41], true); // Plat the appropriate clip.
+                        if ((SoundManager.instance.finishedClip == true) && (canRepeat == true))
+                        {
+                            canRepeat = false;
+                            clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.tutorialClips[41] };
+                            SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                        }
                     }
                 }
             }
         }
-
-        Vector2 level5_corner = new Vector2(1, 9);
+ 
         // If the player reaches the left turn in level 5.
+        Vector2 level5_corner = new Vector2(1, 9);
         if ((cur_level == 5) && ((idx_pos - level5_corner).magnitude <= threshold))
-        {
+        {            
             // Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
             if (eh.isActivate())
             {
@@ -477,7 +487,8 @@ public class BoardManager : MonoBehaviour
                     // If they swipe up here and they are facing the wall, tell them they have crashed into the wall and that they have to rotate left to progress further in the level.
                     if ((ie.isUp == true) && (get_player_dir_world() == Direction.LEFT))
                     {
-                        SoundManager.instance.PlayVoice(Database.tutorialClips[42], true); // Play the appropriate clip.
+                        clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.tutorialClips[42] };
+                        SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
                     }
                 }
             }

@@ -39,7 +39,7 @@ public class Database : MonoBehaviour
 
     // Main game clips
     [HideInInspector]
-    public static AudioClip[] mainGameClips = new AudioClip[43];
+    public static AudioClip[] mainGameClips = new AudioClip[45];
     [HideInInspector]
     public static AudioClip[] pauseMenuClips = new AudioClip[12];
     [HideInInspector]
@@ -51,7 +51,7 @@ public class Database : MonoBehaviour
     
     // Sound effect clips
     [HideInInspector]
-    public static AudioClip[] soundEffectClips = new AudioClip[9];
+    public static AudioClip[] soundEffectClips = new AudioClip[10];
 
     // strings
     // Title Screen
@@ -187,6 +187,8 @@ public class Database : MonoBehaviour
         mainGameClips[40] = Resources.Load("instructions/crashed_at_exit") as AudioClip;
         mainGameClips[41] = Resources.Load("instructions/crashed_right_corner") as AudioClip;
         mainGameClips[42] = Resources.Load("instructions/crashed_left_corner") as AudioClip;
+        mainGameClips[43] = Resources.Load("instructions/you_are_at_left_turn") as AudioClip;
+        mainGameClips[44] = Resources.Load("instructions/you_have_turned_left") as AudioClip;
 
         pauseMenuClips[0] = Resources.Load("instructions/pause_menu_opened") as AudioClip;
         pauseMenuClips[1] = Resources.Load("instructions/pause_menu_swipe_up_normal") as AudioClip;
@@ -244,6 +246,7 @@ public class Database : MonoBehaviour
         soundEffectClips[5] = Resources.Load("fx/swipe-right") as AudioClip;
         soundEffectClips[6] = Resources.Load("fx/inputSFX") as AudioClip;
         soundEffectClips[7] = Resources.Load("fx/wall_hitting") as AudioClip;
-        soundEffectClips[8] = Resources.Load("fx/winSound") as AudioClip;        
+        soundEffectClips[8] = Resources.Load("fx/winSound") as AudioClip;
+        soundEffectClips[9] = Resources.Load("fx/0_25_sec_silence") as AudioClip;
     }
 }

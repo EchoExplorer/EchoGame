@@ -7,7 +7,7 @@ LEVEL_1
 ---------
 ---------
 wwwwwwwww
-ssss---ew
+ss-----ew
 END
 LEVEL_2
 wwwwwwwww
