@@ -24,6 +24,8 @@ public class Database : MonoBehaviour
     // Single click echo
     [HideInInspector]
     public AudioClip attenuatedClick;
+	public AudioClip attenuatedaround;
+	public AudioClip attenuatedClickfront;
 
     // Game environment settings clips
     [HideInInspector]
@@ -69,7 +71,9 @@ public class Database : MonoBehaviour
 
     void LoadData()
     {
-        attenuatedClick = Resources.Load("fx/attenuatedClick") as AudioClip;
+		attenuatedClickfront = Resources.Load("fx/attenuatedClick_45ms") as AudioClip;
+		attenuatedClick = Resources.Load("fx/attenuatedClick_45ms") as AudioClip;
+		attenuatedaround = Resources.Load("fx/attenuatedClick_45ms") as AudioClip;
         // Game environment setting clips
         settingsClips[0] = Resources.Load("instructions/listen_to_instructions") as AudioClip;
         settingsClips[1] = Resources.Load("instructions/using_talkback") as AudioClip;

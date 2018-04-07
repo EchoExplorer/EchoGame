@@ -241,50 +241,68 @@ public class Player : MovingObject
         }
         while (frontWall == null);
         // Player echo preparation
+
         GvrAudioSource playerGAS = this.GetComponent<GvrAudioSource>();
         playerGAS.clip = Database.instance.attenuatedClick;
         // Front wall echo preparation
         GvrAudioSource frontGAS = frontWall.GetComponent<GvrAudioSource>();
-        frontGAS.clip = Database.instance.attenuatedClick;
+		frontGAS.clip = Database.instance.attenuatedClickfront;
         float blocksToFrontWall = Vector3.Distance(transform.position, frontWall.transform.position) - 1;
         // Four-wall echoes preparation
         GvrAudioSource leftGAS = null, rightGAS = null, leftFrontGAS = null, rightFrontGAS = null;
+		float fourblockdb = 5;
+		float frontwalldb = 2;
         if (leftWall != null)
         {
             leftGAS = leftWall.GetComponent<GvrAudioSource>();
-            leftGAS.clip = Database.instance.attenuatedClick;
+			leftGAS.clip = Database.instance.attenuatedaround;
+			leftGAS.gainDb=fourblockdb;
+
         }
         if (rightWall != null)
         {
             rightGAS = rightWall.GetComponent<GvrAudioSource>();
-            rightGAS.clip = Database.instance.attenuatedClick;
+			rightGAS.clip = Database.instance.attenuatedaround;
+			rightGAS.gainDb = fourblockdb;
         }
-        if (leftFrontWall != null)
+		if (frontWall==null && leftFrontWall != null)
         {
             if (((int)blocksToFrontWall) != 0 || leftWall == null)
             {
                 leftFrontGAS = leftFrontWall.GetComponent<GvrAudioSource>();
-                leftFrontGAS.clip = Database.instance.attenuatedClick;
+				leftFrontGAS.clip = Database.instance.attenuatedaround;
+				leftFrontGAS.gainDb=fourblockdb;
             }
         }
-        if (rightFrontWall != null)
+		if (frontWall==null && rightFrontWall != null)
         {
             if (((int)blocksToFrontWall) != 0 || rightWall == null)
             {
                 rightFrontGAS = rightFrontWall.GetComponent<GvrAudioSource>();
-                rightFrontGAS.clip = Database.instance.attenuatedClick;
+				rightFrontGAS.clip = Database.instance.attenuatedaround;
+				rightFrontGAS.gainDb=fourblockdb;
             }
         }
         // Play all echoes
-        playerGAS.Play();
-        if (leftGAS != null)
-            leftGAS.PlayDelayed(1.5f / 340);
-        if (rightGAS != null)
+		// The SoundManager would be interrupted by GVR, Use GVR or Coroutine to avoid this. 
+        //playerGAS.Play(); 
+		SoundManager.instance.PlaySingle(Database.instance.attenuatedClick);
+		if (leftGAS != null) {
+			leftGAS.PlayDelayed (1.5f / 340);
+			UnityEngine.Debug.Log ("Left wall played");
+		}
+		if (rightGAS != null){
             rightGAS.PlayDelayed(1.5f / 340);
-        if (leftFrontGAS != null)
+			UnityEngine.Debug.Log ("Right wall played");
+		}
+		if (frontWall==null && leftFrontGAS != null){
             leftFrontGAS.PlayDelayed(2.12132f / 340);
-        if (rightFrontGAS != null)
+			UnityEngine.Debug.Log ("LeftFront wall played");
+		}
+		if (frontWall==null && rightFrontGAS != null){
             rightFrontGAS.PlayDelayed(2.12132f / 340);
+			UnityEngine.Debug.Log ("RightFront wall played");
+		}
         frontGAS.PlayDelayed((1.5f * blocksToFrontWall + 0.75f) * 2 / 340);
         return;
         tapped = true;
