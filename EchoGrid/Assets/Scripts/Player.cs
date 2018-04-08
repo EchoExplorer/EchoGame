@@ -202,7 +202,7 @@ public class Player : MovingObject
     /// <summary>
     /// A function that determines which echo file to play based on the surrounding environment.
     /// </summary>
-	private void PlayEcho()
+	private void PlayEcho(bool real=true)
     {
         Vector3 dir = transform.right;
         int dir_x = (int)dir.x;
@@ -241,7 +241,6 @@ public class Player : MovingObject
         }
         while (frontWall == null);
         // Player echo preparation
-
         GvrAudioSource playerGAS = this.GetComponent<GvrAudioSource>();
         playerGAS.clip = Database.instance.attenuatedClick;
         // Front wall echo preparation
@@ -284,25 +283,47 @@ public class Player : MovingObject
             }
         }
         // Play all echoes
-		// The SoundManager would be interrupted by GVR, Use GVR or Coroutine to avoid this. 
+        // The SoundManager would be interrupted by GVR, Use GVR or Coroutine to avoid this. 
         //playerGAS.Play(); 
-		SoundManager.instance.PlaySingle(Database.instance.attenuatedClick);
+        if (!real)
+        {
+            if (frontGAS != null)
+                frontGAS.volume = 0;
+            if (leftGAS != null)
+                leftGAS.volume = 0;
+            if (rightGAS != null)
+                rightGAS.volume = 0;
+            if (leftFrontGAS != null)
+                leftFrontGAS.volume = 0;
+            if (rightFrontGAS != null)
+                rightFrontGAS.volume = 0;
+        }
+        else
+        {
+            SoundManager.instance.PlaySingle(Database.instance.attenuatedClick);
+            if (frontGAS != null)
+                frontGAS.volume = 1;
+            if (leftGAS != null)
+                leftGAS.volume = 1;
+            if (rightGAS != null)
+                rightGAS.volume = 1;
+            if (leftFrontGAS != null)
+                leftFrontGAS.volume = 1;
+            if (rightFrontGAS != null)
+                rightFrontGAS.volume = 1;
+        }
 		if (leftGAS != null) {
 			leftGAS.PlayDelayed (1.5f / 340);
-			UnityEngine.Debug.Log ("Left wall played");
 		}
 		if (rightGAS != null){
             rightGAS.PlayDelayed(1.5f / 340);
-			UnityEngine.Debug.Log ("Right wall played");
 		}
 		if (frontWall==null && leftFrontGAS != null){
             leftFrontGAS.PlayDelayed(2.12132f / 340);
-			UnityEngine.Debug.Log ("LeftFront wall played");
 		}
 		if (frontWall==null && rightFrontGAS != null){
             rightFrontGAS.PlayDelayed(2.12132f / 340);
-			UnityEngine.Debug.Log ("RightFront wall played");
-		}
+        }
         frontGAS.PlayDelayed((1.5f * blocksToFrontWall + 0.75f) * 2 / 340);
         return;
         tapped = true;
@@ -1653,6 +1674,7 @@ public class Player : MovingObject
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         dir = -transform.up; // Rotate the player right 90 degrees.
                         SoundManager.instance.PlaySingle(Database.instance.soundEffectClips[5]);
+                        PlayEcho(false);
                     }
                     // If the player is in the pause menu, they have told us they want to go back to the main menu.
                     else
@@ -1679,6 +1701,7 @@ public class Player : MovingObject
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         dir = get_player_dir("LEFT"); // Rotate the player left 90 degrees.
                         SoundManager.instance.PlaySingle(Database.instance.soundEffectClips[4]);
+                        PlayEcho(false);
                     }
                     // If the player is in the pause menu, they have told us they want to restart the level.
                     else
@@ -1705,6 +1728,7 @@ public class Player : MovingObject
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         dir = transform.right; // Move the player forward.
                         SoundManager.instance.PlaySingle(Database.instance.soundEffectClips[3]);
+                        PlayEcho(false);
                     } 
                     // If the player is in the pause menu, give them a hint.
                     else
@@ -1928,7 +1952,8 @@ public class Player : MovingObject
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         dir = get_player_dir("FRONT"); // Move the player forward.
 						SoundManager.instance.PlaySingle(Database.instance.soundEffectClips[3]);
-					}
+                        PlayEcho(false);
+                    }
                     // If the swipe was down, attempt to exit the level.
                     if (ie.isDown == true)
                     {
@@ -2008,7 +2033,8 @@ public class Player : MovingObject
 						{
 							SoundManager.instance.PlaySingle(Database.instance.soundEffectClips[4]);
 						}
-					}
+                        PlayEcho(false);
+                    }
 					// If the rotation was right, rotate the player right 90 degrees.
 					else if (ie.isRight == true)
 					{
@@ -2019,7 +2045,8 @@ public class Player : MovingObject
 						{
 							SoundManager.instance.PlaySingle(Database.instance.soundEffectClips[5]);
 						}
-					}
+                        PlayEcho(false);
+                    }
 				}
 			}
 			flipEchoLock(false);
