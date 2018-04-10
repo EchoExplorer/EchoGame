@@ -163,6 +163,7 @@ public class Player : MovingObject
         Vector3 new_scale = transform.localScale;
         new_scale *= (float)Utilities.SCALE_REF / (float)Utilities.MAZE_SIZE;
         transform.localScale = new_scale;
+		PlayEcho (false);
     }
 
     void OnLevelWasLoaded(int index)
@@ -249,7 +250,7 @@ public class Player : MovingObject
         float blocksToFrontWall = Vector3.Distance(transform.position, frontWall.transform.position) - 1;
         // Four-wall echoes preparation
         GvrAudioSource leftGAS = null, rightGAS = null, leftFrontGAS = null, rightFrontGAS = null;
-		float fourblockdb = 5;
+		float fourblockdb = 0;
 		float frontwalldb = 2;
         if (leftWall != null)
         {
@@ -301,8 +302,10 @@ public class Player : MovingObject
         else
         {
             SoundManager.instance.PlaySingle(Database.instance.attenuatedClick);
-            if (frontGAS != null)
-                frontGAS.volume = 1;
+			if (frontGAS != null) {
+				frontGAS.volume = 1;
+				frontGAS.gainDb = frontwalldb;
+			}
             if (leftGAS != null)
                 leftGAS.volume = 1;
             if (rightGAS != null)
@@ -325,6 +328,7 @@ public class Player : MovingObject
             rightFrontGAS.PlayDelayed(2.12132f / 340);
         }
         frontGAS.PlayDelayed((1.5f * blocksToFrontWall + 0.75f) * 2 / 340);
+
         return;
         tapped = true;
         reportSent = true;

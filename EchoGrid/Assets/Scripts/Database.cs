@@ -71,9 +71,21 @@ public class Database : MonoBehaviour
 
     void LoadData()
     {
-		attenuatedClickfront = Resources.Load("fx/attenuatedClick_45ms") as AudioClip;
-		attenuatedClick = Resources.Load("fx/attenuatedClick_45ms") as AudioClip;
-		attenuatedaround = Resources.Load("fx/attenuatedClick_45ms") as AudioClip;
+		//Option1:
+		attenuatedClickfront = Resources.Load("fx/00-0_F-2.25-D_B-w-D_L-w-D_R-w-D") as AudioClip;
+		attenuatedClick = Resources.Load("fx/attenuatedClick") as AudioClip;
+		attenuatedaround = Resources.Load("fx/00-0_F-0.75-D_B-w-D_L-m-D_R-m-D") as AudioClip;
+
+		//Option2:
+		//attenuatedClickfront = Resources.Load("fx/attenuatedClick_45ms") as AudioClip;
+		//attenuatedClick = Resources.Load("fx/attenuatedClick_45ms") as AudioClip;
+		//attenuatedaround = Resources.Load("fx/attenuatedClick_45ms") as AudioClip;
+
+		//Option2:
+		//attenuatedClickfront = Resources.Load("fx/attenuatedClick_45ms") as AudioClip;
+		//attenuatedClick = Resources.Load("fx/attenuatedClick_45ms") as AudioClip;
+		//attenuatedaround = Resources.Load("fx/attenuatedClick_45ms") as AudioClip;
+
         // Game environment setting clips
         settingsClips[0] = Resources.Load("instructions/listen_to_instructions") as AudioClip;
         settingsClips[1] = Resources.Load("instructions/using_talkback") as AudioClip;
