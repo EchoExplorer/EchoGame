@@ -61,6 +61,8 @@ public class GameManager : MonoBehaviour
             svdata_split = System.IO.File.ReadAllLines(filename);
             //read existing data
             level = Int32.Parse(svdata_split[0]);
+            BoardManager.finishedTutorialLevel1 = BoardManager.StringToBool(svdata_split[1]);
+            BoardManager.finishedTutorialLevel3 = BoardManager.StringToBool(svdata_split[2]);
         }
         else
         {
@@ -110,12 +112,32 @@ public class GameManager : MonoBehaviour
     bool write_save_mode(int lv, GameMode.Game_Mode mode)
     {
         string filename = "";
+        string[] fileLines = new string[3];
 
         if (mode == GameMode.Game_Mode.RESTART || mode == GameMode.Game_Mode.CONTINUE)
             filename = Application.persistentDataPath + "echosaved";
         else
             filename = Application.persistentDataPath + "echosaved_tutorial";
-        System.IO.File.WriteAllText(filename, lv.ToString());
+
+        fileLines[0] = lv.ToString();
+        if (BoardManager.finishedTutorialLevel1 == true)
+        {
+            fileLines[1] = "True";
+        }        
+        else if (BoardManager.finishedTutorialLevel1 == false)
+        {
+            fileLines[1] = "False";
+        }
+        if (BoardManager.finishedTutorialLevel3 == true)
+        {
+            fileLines[2] = "True";
+        }
+        else if (BoardManager.finishedTutorialLevel3 == false)
+        {
+            fileLines[2] = "False";
+        }
+
+        System.IO.File.WriteAllLines(filename, fileLines);
         return true;
     }
 
@@ -162,11 +184,6 @@ public class GameManager : MonoBehaviour
         //Set doingSetup to false allowing player to move again.
         doingSetup = false;
         playersTurn = true;
-
-        if (GameObject.Find("Player").GetComponent<Player>().intercepted == false)
-        {
-            SoundManager.instance.PlayVoice(Database.mainGameClips[0], true);
-        }
     }
 
     /// <summary>

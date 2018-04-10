@@ -193,6 +193,7 @@ public class BoardManager : MonoBehaviour
     int rows = Utilities.MAZE_SIZE;
     public int max_total_level;//same as max_level in Main mode, for local stats use only
     public int[] local_stats;
+    public bool[] tutorial_stats;
 
     // number of walls and such
     public GameObject[] floorTiles;
@@ -231,16 +232,12 @@ public class BoardManager : MonoBehaviour
 
     eventHandler eh;
 
-    string debugPlayerInfo; // String for debugging the effects of the player's actions (Tells you they rotated, swiped, etc.).
-
-    List<AudioClip> clips;
-
-    public static bool canRepeat = true;
-
     public static bool hasTappedAtCorner = false;
 
     public static bool finishedTutorialLevel1 = false;
     public static bool finishedTutorialLevel3 = false;
+
+    public static bool reachedExit = false;
 
     private void Start()
     {
@@ -416,100 +413,56 @@ public class BoardManager : MonoBehaviour
     /// <summary>
     /// At every frame, the player's position and game state is used to determine if certain sounds should be played.
     /// </summary>
-    void Update()
-    {
-        float threshold = 0.001f;
-        Vector2 idx_pos = get_idx_from_pos(player_ref.transform.position);    
+    void Update ()
+	{
+		float threshold = 0.001f;
+		Vector2 idx_pos = get_idx_from_pos (player_ref.transform.position);    
 
-        // Intercept the game on specific levels    
-        // Level 1
-        // If the player has not done the gesture tutorial for level 1 yet, intercept.
-        if ((hasIntercepted == false) && (finishedTutorialLevel1 == false) && (cur_level == 1))
+		// Intercept the game on specific levels    
+		// Level 1
+		// If the player has not done the gesture tutorial for level 1 yet, intercept.
+		if ((hasIntercepted == false) && (finishedTutorialLevel1 == false) && (cur_level == 1))
         {
-            player_script.Intercept(1); // Intercept.
-            hasIntercepted = true;
-        }
+			player_script.Intercept(1); // Intercept.
+			hasIntercepted = true;
+		}
          
-        // If the player has reached the right turn in level 3 and has not started the gesture tutorial for this level, intercept.
-        Vector2 level3_corner = new Vector2(9, 9);        
-        if ((hasIntercepted == false) && (finishedTutorialLevel3 == false) && (cur_level == 3) && ((idx_pos - level3_corner).magnitude <= threshold) && (hasTappedAtCorner == true))
+		// If the player has reached the right turn in level 3 and has not started the gesture tutorial for this level, intercept.
+		Vector2 level3_corner = new Vector2(9, 9);        
+		if ((hasIntercepted == false) && (finishedTutorialLevel3 == false) && (cur_level == 3) && ((idx_pos - level3_corner).magnitude <= threshold) && (hasTappedAtCorner == true))
         {
-            player_script.Intercept(3); // Intercept.
-            hasIntercepted = true;
-        }
+			player_script.Intercept(3); // Intercept.
+			hasIntercepted = true;
+		}
               
-        // If we have intercepted a level.
-        if ((hasIntercepted == true) && (player_script.intercepted == true))
+		// If we have intercepted a level.
+		if ((hasIntercepted == true) && (player_script.intercepted == true))
         {
-            return;
-        }
+			return;
+		}
 
-        bool ingame_playing = false;
-        //play sounds according to positions
-
-        // If the player reaches the right turn in level 3 and they have finished the gesture tutorial.
-        if ((finishedTutorialLevel3 == true) && (cur_level == 3) && ((idx_pos - level3_corner).magnitude <= threshold) && (get_player_dir_world() == Direction.RIGHT))
-        {
-            // Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
-            if (eh.isActivate())
-            {
-                InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
-
-                // If a swipe is registered.
-                if (ie.isSwipe == true)
-                {
-                    // If they swipe up here and they are facing the wall, tell them they have crashed into the wall and that they have to rotate right to progress further in the level.
-                    if ((ie.isUp == true) && (get_player_dir_world() == Direction.RIGHT))
-                    {
-                        if ((SoundManager.instance.finishedClip == true) && (canRepeat == true))
-                        {
-                            canRepeat = false;
-                            clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.tutorialClips[41] };
-                            SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
-                        }
-                    }
-                }
-            }
-        }
- 
-        // If the player reaches the left turn in level 5.
-        Vector2 level5_corner = new Vector2(1, 9);
-        if ((cur_level == 5) && ((idx_pos - level5_corner).magnitude <= threshold))
-        {            
-            // Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
-            if (eh.isActivate())
-            {
-                InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
-
-                // If a swipe is registered.
-                if (ie.isSwipe == true)
-                {
-                    // If they swipe up here and they are facing the wall, tell them they have crashed into the wall and that they have to rotate left to progress further in the level.
-                    if ((ie.isUp == true) && (get_player_dir_world() == Direction.LEFT))
-                    {
-                        clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.tutorialClips[42] };
-                        SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
-                    }
-                }
-            }
-        }
+		bool ingame_playing = false;
+        //play sounds according to positions		
 
         if ((idx_pos - get_idx_from_pos(exitPos)).magnitude <= threshold)
         {
+            reachedExit = true;
+             
             if (level_voices.clip_exit < level_voices.clip_at_exit.Count)
-                level_voices.clip_exit = play_audio(level_voices.clip_at_exit, level_voices.clip_exit);            
-        }
+				level_voices.clip_exit = play_audio (level_voices.clip_at_exit, level_voices.clip_exit);            
+		}       
+
         else if (((idx_pos - get_idx_from_pos(startPos)).magnitude <= threshold) && left_start_pt && (player_script.get_player_dir("BACK") == startDir))
         {
             if (level_voices.clip_return < level_voices.clip_when_return.Count)
                 level_voices.clip_return = play_audio(level_voices.clip_when_return, level_voices.clip_return, true, true);
         }
+
         else
         {
             for (int i = 0; i < level_voices.ingame.Count; ++i)
             {//find out that if player is in specific position and dir
-                if (((idx_pos - level_voices.ingame[i].pos).magnitude <= threshold) &&
-                     ((get_player_dir_world() == level_voices.ingame[i].dir) || (level_voices.ingame[i].dir == Direction.OTHER)))
+                if (((idx_pos - level_voices.ingame[i].pos).magnitude <= threshold) && ((get_player_dir_world() == level_voices.ingame[i].dir) || (level_voices.ingame[i].dir == Direction.OTHER)))
                 {
                     //if player tapped(played echo)
                     if ((level_voices.ingame[i].tap) && (player_script.tapped_at_this_block()))
@@ -627,7 +580,7 @@ public class BoardManager : MonoBehaviour
     }
 
     /*TODO(agotsis) I will rewrite my Python Code in C#, for these purposes.*/
-    void setup_level(int level)
+    void setup_level(int level, bool finishedLevel1Tutorial, bool finishedLevel3Tutorial)
     {
         //Clear our list gridPositions.
         wallPositions.Clear();
@@ -655,6 +608,9 @@ public class BoardManager : MonoBehaviour
         cur_clip = level;
         cur_level = level;
         hasIntercepted = false;
+
+        finishedTutorialLevel1 = finishedLevel1Tutorial;
+        finishedTutorialLevel3 = finishedLevel3Tutorial;
 
         //build level
         load_level_from_file("GameData/levels", level);
@@ -1011,10 +967,12 @@ public class BoardManager : MonoBehaviour
         //Creates the outer walls and floor.
         BoardSetup();
         LoadLoaclStats();
-        setup_level(level);
+        tutorial_stats = new bool[3];
+        read_save(tutorial_stats);
+        setup_level(level, tutorial_stats[1], tutorial_stats[2]);
         //if( (GameMode.instance.get_mode() == GameMode.Game_Mode.RESTART)||
         //	(GameMode.instance.get_mode() == GameMode.Game_Mode.CONTINUE) )
-        write_save(level);
+        write_save(level, finishedTutorialLevel1, finishedTutorialLevel3);
 
         //local_stats[level] += 1;
         //write_local_stats ();
@@ -1025,20 +983,58 @@ public class BoardManager : MonoBehaviour
         latest_clip_idx = 0;
         skip_clip = false;
     }
+    
+    bool read_save(bool[] tutorial_info)
+    {
+        string filename = "";
+        if (GameMode.instance.get_mode() == GameMode.Game_Mode.RESTART || GameMode.instance.get_mode() == GameMode.Game_Mode.CONTINUE)
+            filename = Application.persistentDataPath + "echosaved";
+        else // load specific save for tutorial
+            filename = Application.persistentDataPath + "echosaved_tutorial";
+            
+        string[] svdata_split;
+        if (System.IO.File.Exists(filename))
+        {
+            svdata_split = System.IO.File.ReadAllLines(filename);
+            tutorial_info = Array.ConvertAll<string, bool>(svdata_split, new Converter<string, bool>(StringToBool));
+        }
+        return true;
+    }
+
+    public static bool StringToBool(string convertString)
+    {
+        if (convertString.Equals("True"))
+        {
+            return true;
+        }
+        else if (convertString.Equals("False"))
+        {
+            return false;
+        }
+        else
+        {
+            return false;
+        }
+    }
 
     /// <summary>
     /// Saves information about the game state as persistent data.
     /// </summary>
-    public bool write_save(int lv)
+    public static bool write_save(int lv, bool finishedLevel1Tutorial, bool finishedLevel3Tutorial)
     {
         string filename = "";
+        string[] fileLines = new string[3];        
 
         if (GameMode.instance.get_mode() == GameMode.Game_Mode.RESTART || GameMode.instance.get_mode() == GameMode.Game_Mode.CONTINUE)
             filename = Application.persistentDataPath + "echosaved";
-        else//load specific save for tutorial
+        else // load specific save for tutorial
             filename = Application.persistentDataPath + "echosaved_tutorial";
 
-        System.IO.File.WriteAllText(filename, lv.ToString());
+        fileLines[0] = lv.ToString();
+        fileLines[1] = finishedLevel1Tutorial.ToString();
+        fileLines[2] = finishedLevel3Tutorial.ToString();
+
+        System.IO.File.WriteAllLines(filename,fileLines);
         return true;
     }
 

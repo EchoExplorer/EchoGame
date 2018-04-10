@@ -13,7 +13,7 @@ public class GM_main_pre : MonoBehaviour
     bool at_confirm = false;
     bool reset_audio = false;
 
-    enum SelectMode { NONE, CONTINUE, NEW, CONFIRM, BACK }
+    enum SelectMode { NONE, CONTINUE, NEW, CONFIRM, BACK, SKIP }
 
     eventHandler eh;
     CDTimer TriggerStartNewGame;
@@ -184,11 +184,7 @@ public class GM_main_pre : MonoBehaviour
                 // If the swipe was up.
                 if (ie.isUp == true)
                 {
-                    BoardManager.finishedTutorialLevel1 = true;
-                    BoardManager.finishedTutorialLevel3 = true;
-                    SceneManager.LoadScene("Main");                    
-                    // debugPlayerInfo = "This gesture does nothing in this menu.";
-                    // DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    selectMode = SelectMode.SKIP; // If we have swiped up, set mode to Skip.
                 }
                 // If the swipe was down.
                 if (ie.isDown == true)
@@ -209,76 +205,6 @@ public class GM_main_pre : MonoBehaviour
                 debugPlayerInfo = "This gesture does nothing in this menu.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
             }         
-            // If there was an unrecognized gesture made.
-            else if (ie.isUnrecognized == true)
-            {
-                // If this error was registered.
-                if (ie.isTapGapError == true)
-                {
-                    // If a clip is not playing, tell them about the error.
-                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false))
-                    {
-                        SoundManager.instance.PlayVoice(Database.errorClips[0], true); // Play the appropriate clip.
-                    }
-                    debugPlayerInfo = "Nothing happened due to error with gap between tap and the most recent gesture.";
-                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                }
-                // If this error was registered.
-                else if (ie.isSwipeLeftGapError == true)
-                {
-                    // If a clip is not playing, tell them about the error.
-                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false))
-                    {
-                        SoundManager.instance.PlayVoice(Database.errorClips[4], true); // Play the appropriate clip.
-                    }
-                    debugPlayerInfo = "Nothing happened due to error with gap between swipe left and the most recent gesture.";
-                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                }
-                // If this error was registered.
-                else if (ie.isSwipeRightGapError == true)
-                {
-                    // If a clip is not playing, tell them about the error.
-                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false))
-                    {
-                        SoundManager.instance.PlayVoice(Database.errorClips[4], true); // Play the appropriate clip.
-                    }
-                    debugPlayerInfo = "Nothing happened due to error with gap between swipe right and the most recent gesture.";
-                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.   
-                }
-                // If this error was registered.
-                else if (ie.isSwipeUpGapError == true)
-                {
-                    // If a clip is not playing, tell them about the error.
-                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false))
-                    {
-                        SoundManager.instance.PlayVoice(Database.errorClips[4], true); // Play the appropriate clip.
-                    }
-                    debugPlayerInfo = "Nothing happened due to error with gap between swipe up and the most recent gesture.";
-                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                }
-                // If this error was registered.
-                else if (ie.isSwipeDownGapError == true)
-                {
-                    // If a clip is not playing, tell them about the error.
-                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false))
-                    {
-                        SoundManager.instance.PlayVoice(Database.errorClips[4], true); // Play the appropriate clip.
-                    }
-                    debugPlayerInfo = "Nothing happened due to error with gap between swipe down and the most recent gesture.";
-                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.              
-                }
-                // If this error was registered.
-                else if (ie.isRotationGapError == true)
-                {
-                    // If a clip is not playing, tell them about the error.
-                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false))
-                    {
-                        SoundManager.instance.PlayVoice(Database.errorClips[14], true); // Play the appropriate clip.
-                    }
-                    debugPlayerInfo = "Nothing happened due to error with gap between turn and the most recent gesture.";
-                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.                 
-                }
-            }
         }       
 
         /*
@@ -347,11 +273,7 @@ public class GM_main_pre : MonoBehaviour
                 // If the swipe was up.
                 else if (ie.isUp == true)
                 {
-                    BoardManager.finishedTutorialLevel1 = true;
-                    BoardManager.finishedTutorialLevel3 = true;
-                    SceneManager.LoadScene("Main");
-                    // debugPlayerInfo = "This gesture does nothing in this menu.";
-                    // DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    selectMode = SelectMode.SKIP; // If we have swiped up, set mode to Skip.
                 }
 			}
 			
@@ -379,14 +301,7 @@ public class GM_main_pre : MonoBehaviour
                 if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false))
                 {
                     // If this error was registered.
-                    if (ie.isTapGapError == true)
-                    {
-                        debugPlayerInfo = "Nothing happened due to error with gap between a tap and the most recent gesture.";
-                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                        SoundManager.instance.PlayVoice(Database.errorClips[0], true); // Play the appropriate clip.
-                    }
-                    // If this error was registered.
-                    else if (ie.isTapHorizontalError == true)
+                    if (ie.isTapHorizontalError == true)
                     {
                         debugPlayerInfo = "Nothing happened due to error with horizontal distance on tap.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
@@ -405,32 +320,7 @@ public class GM_main_pre : MonoBehaviour
                         debugPlayerInfo = "Nothing happened due to error with rotation on tap.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         SoundManager.instance.PlayVoice(Database.errorClips[3], true); // Play the appropriate clip.
-                    }
-                    // If this error was registered.
-                    else if (ie.isSwipeLeftGapError == true)
-                    {
-                        debugPlayerInfo = "Nothing happened due to error with gap between swipe left and the most recent gesture.";
-                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                        SoundManager.instance.PlayVoice(Database.errorClips[4], true); // Play the appropriate clip.
-                    }
-                    else if (ie.isSwipeRightGapError == true)
-                    {
-                        debugPlayerInfo = "Nothing happened due to error with gap between swipe right and the most recent gesture.";
-                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                        SoundManager.instance.PlayVoice(Database.errorClips[4], true); // Play the appropriate clip.
-                    }
-                    else if (ie.isSwipeUpGapError == true)
-                    {
-                        debugPlayerInfo = "Nothing happened due to error with gap between swipe up and the most recent gesture.";
-                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                        SoundManager.instance.PlayVoice(Database.errorClips[4], true); // Play the appropriate clip.
-                    }
-                    else if (ie.isSwipeDownGapError == true)
-                    {
-                        debugPlayerInfo = "Nothing happened due to error with gap between swipe down and the most recent gesture.";
-                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                        SoundManager.instance.PlayVoice(Database.errorClips[4], true); // Play the appropriate clip.
-                    }
+                    }               
                     // If this error was registered.
                     else if (ie.isSwipeLeftHorizontalError == true)
                     {
@@ -486,13 +376,6 @@ public class GM_main_pre : MonoBehaviour
                         debugPlayerInfo = "Nothing happened due to error with rotation on swipe down.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         SoundManager.instance.PlayVoice(Database.errorClips[5], true); // Play the appropriate clip.
-                    }
-                    // If this error was registered.
-                    else if (ie.isRotationGapError == true)
-                    {
-                        debugPlayerInfo = "Nothing happened due to error with gap between turn and the most recent gesture.";
-                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                        SoundManager.instance.PlayVoice(Database.errorClips[14], true); // Play the appropriate clip.
                     }
                     // If this error was registered.
                     else if (ie.isRotationAngleError == true)
@@ -552,7 +435,8 @@ public class GM_main_pre : MonoBehaviour
                 {
                     canRepeat = false;
                     firstConfirm = true;
-                    clips = new List<AudioClip>() { Database.soundEffectClips[6], Database.soundEffectClips[0], Database.preGameMenuClips[12] };
+                    BoardManager.write_save(1, BoardManager.finishedTutorialLevel1, BoardManager.finishedTutorialLevel3);
+                    clips = new List<AudioClip>() { Database.soundEffectClips[6], Database.soundEffectClips[9], Database.preGameMenuClips[12] };
                     SoundManager.instance.PlayClips(clips, 0, () => SceneManager.LoadScene("Main"), 3); // Play the appropriate clips.
                 }
                 break;
@@ -582,7 +466,8 @@ public class GM_main_pre : MonoBehaviour
                 {                   
                     canRepeat = false;
                     firstConfirm = true;
-                    clips = new List<AudioClip>() { Database.soundEffectClips[6], Database.soundEffectClips[0], Database.preGameMenuClips[11] };
+                    BoardManager.write_save(1, BoardManager.finishedTutorialLevel1, BoardManager.finishedTutorialLevel3);
+                    clips = new List<AudioClip>() { Database.soundEffectClips[6], Database.soundEffectClips[9], Database.preGameMenuClips[11] };
                     SoundManager.instance.PlayClips(clips, 0, () => SceneManager.LoadScene("Main"), 3); // Play the appropriate clips.                  
                 }
                 break;
@@ -603,6 +488,22 @@ public class GM_main_pre : MonoBehaviour
 #if UNITY_IOS || UNITY_ANDROID
                 TriggerStartNewGame.reset();
 #endif
+                break;
+            // If the mode is set to Skip, skip the tutorials and load the first tutorial level or load the first main level.
+            case SelectMode.SKIP:
+                BoardManager.finishedTutorialLevel1 = true;
+                BoardManager.finishedTutorialLevel3 = true;
+                if (GameMode.instance.gamemode == GameMode.Game_Mode.TUTORIAL)
+                {
+                    GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL_RESTART;
+                }
+                else
+                {
+                    GameMode.instance.gamemode = GameMode.Game_Mode.RESTART;
+                }
+                BoardManager.write_save(1, BoardManager.finishedTutorialLevel1, BoardManager.finishedTutorialLevel3);
+                clips = new List<AudioClip>() { Database.soundEffectClips[6], Database.soundEffectClips[9] };
+                SoundManager.instance.PlayClips(clips, 0, () => SceneManager.LoadScene("Main"), 3); // Play the appropriate clips.
                 break;
             default:
                 break;

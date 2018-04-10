@@ -1,7 +1,6 @@
 LEVEL_1
 Begin
 IN
-Inend
 RETURN
 Inend
 Exit
@@ -9,18 +8,15 @@ END
 
 LEVEL_2
 Begin
+IN
 RETURN
 Inend
 Exit
 END
 
 LEVEL_3
+Begin
 IN
-Inend
-IN
-Inend
-In
-Inend
 RETURN
 Inend
 Exit
@@ -28,62 +24,72 @@ END
 
 LEVEL_4
 Begin
+IN
 RETURN
 Inend
+Exit
 END
 
 LEVEL_5
 Begin
 IN
-Inend
-IN
-Inend
-IN
-Inend
 RETURN
 Inend
+Exit
 END
 
 LEVEL_6
 Begin
+IN
 RETURN
 Inend
+Exit
 END
 
 LEVEL_7
 Begin
+IN
 RETURN
 Inend
+Exit
 END
 
 LEVEL_8
 Begin
+IN
 RETURN
 Inend
+Exit
 END
 
 LEVEL_9
 Begin
+IN
 RETURN
 Inend
+Exit
 END
 
 LEVEL_10
 Begin
+IN
 RETURN
 Inend
+Exit
 END
 
 LEVEL_11
 Begin
 IN
-Inend
 RETURN
 Inend
 Exit
 END
 
 LEVEL_DEFAULT
+Begin
+IN
 RETURN
 Inend
+Exit
 END

@@ -203,7 +203,7 @@ public class GM_TC : MonoBehaviour
         {
 			InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
 
-            clips = new List<AudioClip>() { Database.soundEffectClips[3] };
+            /*clips = new List<AudioClip>() { Database.soundEffectClips[3] };
 
             // If a tap was registered.
             if (ie.isTap == true)
@@ -260,7 +260,7 @@ public class GM_TC : MonoBehaviour
             {
                 // Notify the player we are moving to the main menu with the sound, then go to the main menu.
                 SoundManager.instance.PlayClips(clips, 0, () => SceneManager.LoadScene("Title_Screen"), 1);
-            }           
+            }*/           
         }
 
         // debugPlayerInfo = "Read Terms and Conditions. Moving to main menu.";
@@ -274,7 +274,7 @@ public class GM_TC : MonoBehaviour
         {
             InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
 
-            clips = new List<AudioClip>() { Database.soundEffectClips[3] };
+            /*clips = new List<AudioClip>() { Database.soundEffectClips[3] };
 
             if (ie.isTap == true)
             {
@@ -345,7 +345,7 @@ public class GM_TC : MonoBehaviour
                     Screen.sleepTimeout = SleepTimeout.NeverSleep;
                     Screen.orientation = ScreenOrientation.Landscape;
                 }
-            }            
+            }*/          
         }
 
         Utilities.writefile("consentRecord", "1");
