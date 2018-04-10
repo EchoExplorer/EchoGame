@@ -250,8 +250,8 @@ public class Player : MovingObject
         float blocksToFrontWall = Vector3.Distance(transform.position, frontWall.transform.position) - 1;
         // Four-wall echoes preparation
         GvrAudioSource leftGAS = null, rightGAS = null, leftFrontGAS = null, rightFrontGAS = null;
-		float fourblockdb = 0;
-		float frontwalldb = 2;
+		float fourblockdb = -20;
+		float frontwalldb = -10;
         if (leftWall != null)
         {
             leftGAS = leftWall.GetComponent<GvrAudioSource>();
