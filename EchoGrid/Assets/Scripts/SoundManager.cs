@@ -132,7 +132,7 @@ public class SoundManager : MonoBehaviour
     /// </summary>
 	public void PlayEcho(AudioClip echoClip, Action callback = null)
     {
-        echoSource.clip = Database.soundEffectClips[0];
+        echoSource.clip = Database.soundEffectClips[1];
         echoSource.Play();
         StartCoroutine(EchoWait(echoSource.clip.length, echoClip, callback));
     }
@@ -201,7 +201,7 @@ public class SoundManager : MonoBehaviour
     }
 
     // Play a list of clips in their order with 0.5 seconds pausing. Callback function and its index allowed.
-    public void PlayClips(List<AudioClip> clips, int current = 0, Action callback = null, int callback_index = 0, bool isFirstClip = true, float balance = 0)
+    public void PlayClips(List<AudioClip> clips, float[] balances = null, int current = 0, Action callback = null, int callback_index = 0, bool isFirstClip = true)
     {
         // If this clip is the first clip in our list.
         if (isFirstClip == true)
@@ -215,11 +215,20 @@ public class SoundManager : MonoBehaviour
         }
         AudioClip clip = clips[current];
         float clipLength = clip.length;
-        PlayClip(clip, true, balance);        
-        StartCoroutine(WaitForLength(clipLength, clips, current, callback, callback_index));                   
+
+        if (balances == null)
+        {
+            PlayClip(clip, true, 0);
+        }
+        else
+        {
+            PlayClip(clip, true, balances[current]);
+        }
+              
+        StartCoroutine(WaitForLength(clipLength, clips, balances, current, callback, callback_index));                   
     }
 
-    private IEnumerator WaitForLength(float clipLength, List<AudioClip> clips, int current, Action callback, int callback_index)
+    private IEnumerator WaitForLength(float clipLength, List<AudioClip> clips, float[] balances, int current, Action callback, int callback_index)
     {        
         yield return new WaitForSeconds(clipLength + 0.3f);
         // Check if this clip is the last clip in the list and make sure this clip has finished playing.
@@ -229,7 +238,7 @@ public class SoundManager : MonoBehaviour
         }
         else if (current + 1 < clips.Count && !clipSource.isPlaying && clipSource.clip == clips[current])
         {
-            PlayClips(clips, current + 1, callback, callback_index, false);
+            PlayClips(clips, balances, current + 1, callback, callback_index, false);
         }
         if (callback_index >= clips.Count && current >= clips.Count - 1 && callback != null)
         {

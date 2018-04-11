@@ -193,7 +193,7 @@ public class BoardManager : MonoBehaviour
     int rows = Utilities.MAZE_SIZE;
     public int max_total_level;//same as max_level in Main mode, for local stats use only
     public int[] local_stats;
-    public bool[] tutorial_stats;
+    public static bool[] tutorial_stats;
 
     // number of walls and such
     public GameObject[] floorTiles;
@@ -237,11 +237,14 @@ public class BoardManager : MonoBehaviour
     public static bool finishedTutorialLevel1 = false;
     public static bool finishedTutorialLevel3 = false;
 
+    static bool tutorial1Finished;
+    static bool tutorial3Finished; 
+
     public static bool reachedExit = false;
 
     private void Start()
     {
-        eh = new eventHandler(InputModule.instance);
+        eh = new eventHandler(InputModule.instance);        
     }
 
     // Clears our list gridPositions and prepares it to generate a new board.
@@ -405,7 +408,7 @@ public class BoardManager : MonoBehaviour
     /// A function to signal the fact that the player has moved at least once.
     /// </summary>
     public static bool left_start_pt = false;
-    public void set_left_start_pt(bool newf)
+    public static void set_left_start_pt(bool newf)
     {
         left_start_pt = newf;
     }
@@ -415,13 +418,16 @@ public class BoardManager : MonoBehaviour
     /// </summary>
     void Update ()
 	{
+        tutorial1Finished = finishedTutorialLevel1;
+        tutorial3Finished = finishedTutorialLevel3;
+
 		float threshold = 0.001f;
 		Vector2 idx_pos = get_idx_from_pos (player_ref.transform.position);    
 
 		// Intercept the game on specific levels    
 		// Level 1
 		// If the player has not done the gesture tutorial for level 1 yet, intercept.
-		if ((hasIntercepted == false) && (finishedTutorialLevel1 == false) && (cur_level == 1))
+		if ((hasIntercepted == false) && (tutorial1Finished == false) && (cur_level == 1))
         {
 			player_script.Intercept(1); // Intercept.
 			hasIntercepted = true;
@@ -429,7 +435,7 @@ public class BoardManager : MonoBehaviour
          
 		// If the player has reached the right turn in level 3 and has not started the gesture tutorial for this level, intercept.
 		Vector2 level3_corner = new Vector2(9, 9);        
-		if ((hasIntercepted == false) && (finishedTutorialLevel3 == false) && (cur_level == 3) && ((idx_pos - level3_corner).magnitude <= threshold) && (hasTappedAtCorner == true))
+		if ((hasIntercepted == false) && (tutorial3Finished == false) && (cur_level == 3) && ((idx_pos - level3_corner).magnitude <= threshold) && (hasTappedAtCorner == true))
         {
 			player_script.Intercept(3); // Intercept.
 			hasIntercepted = true;
@@ -611,6 +617,9 @@ public class BoardManager : MonoBehaviour
 
         finishedTutorialLevel1 = finishedLevel1Tutorial;
         finishedTutorialLevel3 = finishedLevel3Tutorial;
+
+        tutorial1Finished = finishedTutorialLevel1;
+        tutorial3Finished = finishedTutorialLevel3;
 
         //build level
         load_level_from_file("GameData/levels", level);
@@ -956,7 +965,7 @@ public class BoardManager : MonoBehaviour
     /// <summary>
     /// Sets up the game board (grid positions), sound clips and save data as an initialization step. 
     /// </summary>
-    public void SetupScene(int level)
+    public void SetupScene(int level, bool finishedLevel1Tutorial, bool finishedLevel3Tutorial)
     {
         //find player
         player_ref = GameObject.Find("Player");//Player.instance.gameObject;
@@ -967,12 +976,10 @@ public class BoardManager : MonoBehaviour
         //Creates the outer walls and floor.
         BoardSetup();
         LoadLoaclStats();
-        tutorial_stats = new bool[3];
-        read_save(tutorial_stats);
-        setup_level(level, tutorial_stats[1], tutorial_stats[2]);
+        setup_level(level, finishedLevel1Tutorial, finishedLevel3Tutorial);
         //if( (GameMode.instance.get_mode() == GameMode.Game_Mode.RESTART)||
         //	(GameMode.instance.get_mode() == GameMode.Game_Mode.CONTINUE) )
-        write_save(level, finishedTutorialLevel1, finishedTutorialLevel3);
+        write_save(level, finishedLevel1Tutorial, finishedLevel3Tutorial);
 
         //local_stats[level] += 1;
         //write_local_stats ();
@@ -983,24 +990,7 @@ public class BoardManager : MonoBehaviour
         latest_clip_idx = 0;
         skip_clip = false;
     }
-    
-    bool read_save(bool[] tutorial_info)
-    {
-        string filename = "";
-        if (GameMode.instance.get_mode() == GameMode.Game_Mode.RESTART || GameMode.instance.get_mode() == GameMode.Game_Mode.CONTINUE)
-            filename = Application.persistentDataPath + "echosaved";
-        else // load specific save for tutorial
-            filename = Application.persistentDataPath + "echosaved_tutorial";
-            
-        string[] svdata_split;
-        if (System.IO.File.Exists(filename))
-        {
-            svdata_split = System.IO.File.ReadAllLines(filename);
-            tutorial_info = Array.ConvertAll<string, bool>(svdata_split, new Converter<string, bool>(StringToBool));
-        }
-        return true;
-    }
-
+   
     public static bool StringToBool(string convertString)
     {
         if (convertString.Equals("True"))

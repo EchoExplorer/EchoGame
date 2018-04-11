@@ -39,14 +39,14 @@ public class GM_Agreement : MonoBehaviour
     	eh = new eventHandler(InputModule.instance);
 
         ad = GetComponent<AndroidDialogue>();
-        swipeAhead = Database.soundEffectClips[3];
+        swipeAhead = Database.soundEffectClips[4];
         orit = new AudioClip[2];
         orit[0] = Resources.Load("instructions/Please hold your phone horizontally for this game") as AudioClip;
-        orit[1] = Database.soundEffectClips[2];
+        orit[1] = Database.soundEffectClips[3];
         clips = new AudioClip[3];
         clips[0] = Resources.Load("instructions/Swipe left to confirm") as AudioClip;
-        clips[1] = Database.soundEffectClips[2];
-        clips[2] = Database.soundEffectClips[2];
+        clips[1] = Database.soundEffectClips[3];
+        clips[2] = Database.soundEffectClips[3];
 
         //total_num_agreements = AgreementTexts.transform.childCount;
         cur_text = 0;
@@ -135,7 +135,7 @@ public class GM_Agreement : MonoBehaviour
                     debugPlayerInfo = "Swiped left. Moving to next agreement.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     gotoNextAgreement();
-                    SoundManager.instance.PlayVoice(Database.soundEffectClips[3], true);
+                    SoundManager.instance.PlayVoice(Database.soundEffectClips[7], true);
                 }
                 // If the swipe was right.
                 else if (ie.isRight == true)
@@ -224,7 +224,7 @@ public class GM_Agreement : MonoBehaviour
 					debugPlayerInfo = "Swiped left. Moving to next agreement.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     gotoNextAgreement();
-                    SoundManager.instance.PlayVoice(Database.soundEffectClips[3], true);
+                    SoundManager.instance.PlayVoice(Database.soundEffectClips[7], true);
         		}
         		// If the swipe was up.
         		else if (ie.isUp == true)

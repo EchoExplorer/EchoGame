@@ -203,7 +203,7 @@ public class GM_TC : MonoBehaviour
         {
 			InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
 
-            /*clips = new List<AudioClip>() { Database.soundEffectClips[3] };
+            /*clips = new List<AudioClip>() { Database.soundEffectClips[7] };
 
             // If a tap was registered.
             if (ie.isTap == true)
@@ -264,17 +264,18 @@ public class GM_TC : MonoBehaviour
         }
 
         // debugPlayerInfo = "Read Terms and Conditions. Moving to main menu.";
-        // DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+        // DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.        
+        // clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+        // SoundManager.instance.PlayClips(clips); // To notify that this scene loaded, but it immediately moves to the main menu.
         SceneManager.LoadScene("Title_Screen"); // Move to main menu.
-        SoundManager.instance.PlayVoice(Database.soundEffectClips[3], true); // To notify that this scene loaded, but it immediately moves to the main menu.
 #endif
-// Check if we are running on iOS/Android.
+        // Check if we are running on iOS/Android.
 #if UNITY_IOS || UNITY_ANDROID
         if (eh.isActivate())
         {
             InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
 
-            /*clips = new List<AudioClip>() { Database.soundEffectClips[3] };
+            /*clips = new List<AudioClip>() { Database.soundEffectClips[7] };
 
             if (ie.isTap == true)
             {
@@ -351,8 +352,9 @@ public class GM_TC : MonoBehaviour
         Utilities.writefile("consentRecord", "1");
         // debugPlayerInfo = "Read Terms and Conditions. Moving to main menu.";
         // DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+        // clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+        // SoundManager.instance.PlayClips(clips); // To notify that this scene loaded, but it immediately moves to the main menu.
         SceneManager.LoadScene("Title_Screen"); // Move to main menu.
-        SoundManager.instance.PlayVoice(Database.soundEffectClips[3], true); // To notify that this scene loaded, but it immediately moves to the main menu.
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
         Screen.orientation = ScreenOrientation.Landscape;
 #endif // End of mobile platform dependendent compilation section started above with #elif

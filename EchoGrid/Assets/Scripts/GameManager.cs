@@ -13,13 +13,17 @@ using System.IO;
 /// </summary>
 public class GameManager : MonoBehaviour
 {
-
     public BoardManager boardScript;
 
     public static GameManager instance = null;
     public static bool levelImageActive = true;
     [HideInInspector]
     public bool playersTurn = true;
+
+    bool finishedLevel1Tutorial = false;
+    bool finishedLevel3Tutorial = false;
+
+    string debugPlayerInfo = "";
 
     private const int MAX_TUTORIAL_LEVEL = 11;
     private const int MAX_LEVEL = 150;
@@ -38,8 +42,9 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
 
         DontDestroyOnLoad(gameObject);
-             
+
         boardScript = GetComponent<BoardManager>();
+
         // Duplicated loading: LoadSaved() will be called in InitGame().
         // LoadSaved();
     }
@@ -60,12 +65,14 @@ public class GameManager : MonoBehaviour
         {
             svdata_split = System.IO.File.ReadAllLines(filename);
             //read existing data
-            level = Int32.Parse(svdata_split[0]);
-            BoardManager.finishedTutorialLevel1 = BoardManager.StringToBool(svdata_split[1]);
-            BoardManager.finishedTutorialLevel3 = BoardManager.StringToBool(svdata_split[2]);
+            level = Int32.Parse(svdata_split[0]);       
+            finishedLevel1Tutorial = BoardManager.StringToBool(svdata_split[1]);
+            finishedLevel3Tutorial = BoardManager.StringToBool(svdata_split[2]);
         }
         else
         {
+            finishedLevel1Tutorial = false;
+            finishedLevel3Tutorial = false;
             if (current == GameMode.Game_Mode.RESTART || current == GameMode.Game_Mode.CONTINUE)
                 level = MAX_TUTORIAL_LEVEL + 1;
             else
@@ -109,7 +116,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Saves information about the game state as persistent data.
     /// </summary>
-    bool write_save_mode(int lv, GameMode.Game_Mode mode)
+    public bool write_save_mode(int lv, GameMode.Game_Mode mode)
     {
         string filename = "";
         string[] fileLines = new string[3];
@@ -168,9 +175,29 @@ public class GameManager : MonoBehaviour
 
         boardScript.max_total_level = boardScript.get_level_count("GameData/levels");
 
-        LoadSaved();
+        if (GM_main_pre.skippingTutorial == 2)
+        {  
+            finishedLevel1Tutorial = true;
+            finishedLevel3Tutorial = true;
+            GameMode.Game_Mode current = GameMode.instance.get_mode();
+            if (current == GameMode.Game_Mode.RESTART)
+            {
+                GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
+                level = MAX_TUTORIAL_LEVEL + 1;
+            }
+            else if (current == GameMode.Game_Mode.TUTORIAL_RESTART)
+            {
+                GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;                
+                level = 1;
+            }
+            write_save_mode(1, GameMode.Game_Mode.TUTORIAL);
+        }
+        else if ((GM_main_pre.skippingTutorial == 0) || (GM_main_pre.skippingTutorial == 1))
+        {
+            LoadSaved();
+        }
         levelText.text = "Loading level " + level.ToString();
-        boardScript.SetupScene(level);
+        boardScript.SetupScene(level, finishedLevel1Tutorial, finishedLevel3Tutorial);
     }
 
     //Hides black image used between levels
@@ -183,7 +210,7 @@ public class GameManager : MonoBehaviour
             UnHideLevelImage();
         //Set doingSetup to false allowing player to move again.
         doingSetup = false;
-        playersTurn = true;
+        playersTurn = true;        
     }
 
     /// <summary>
@@ -225,6 +252,8 @@ public class GameManager : MonoBehaviour
         levelText.transform.localScale -= new Vector3(0.3f, 0.3f, 0.3f);
 #endif
 
+        Player.reachedExit = false;
+        BoardManager.reachedExit = false;
         levelImage.SetActive(false);
         InitGame();
     }
