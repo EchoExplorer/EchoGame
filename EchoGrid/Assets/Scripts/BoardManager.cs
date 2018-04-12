@@ -241,6 +241,7 @@ public class BoardManager : MonoBehaviour
     static bool tutorial3Finished; 
 
     public static bool reachedExit = false;
+    public static bool gotBackToStart = false;
 
     private void Start()
     {
@@ -435,7 +436,7 @@ public class BoardManager : MonoBehaviour
          
 		// If the player has reached the right turn in level 3 and has not started the gesture tutorial for this level, intercept.
 		Vector2 level3_corner = new Vector2(9, 9);        
-		if ((hasIntercepted == false) && (tutorial3Finished == false) && (cur_level == 3) && ((idx_pos - level3_corner).magnitude <= threshold) && (hasTappedAtCorner == true))
+		if ((hasIntercepted == false) && (tutorial3Finished == false) && (cur_level == 3) && (idx_pos.x == level3_corner.x) && (idx_pos.y == level3_corner.y))
         {
 			player_script.Intercept(3); // Intercept.
 			hasIntercepted = true;
@@ -456,12 +457,24 @@ public class BoardManager : MonoBehaviour
              
             if (level_voices.clip_exit < level_voices.clip_at_exit.Count)
 				level_voices.clip_exit = play_audio (level_voices.clip_at_exit, level_voices.clip_exit);            
-		}       
+		}
+
+        else if ((idx_pos - get_idx_from_pos(exitPos)).magnitude > threshold)
+        {
+            reachedExit = false;
+        }
 
         else if (((idx_pos - get_idx_from_pos(startPos)).magnitude <= threshold) && left_start_pt && (player_script.get_player_dir("BACK") == startDir))
         {
+            gotBackToStart = true;
+
             if (level_voices.clip_return < level_voices.clip_when_return.Count)
                 level_voices.clip_return = play_audio(level_voices.clip_when_return, level_voices.clip_return, true, true);
+        }
+
+        else if (((idx_pos - get_idx_from_pos(startPos)).magnitude > threshold) && left_start_pt)
+        {
+            gotBackToStart = false;
         }
 
         else
@@ -524,7 +537,7 @@ public class BoardManager : MonoBehaviour
     /// <summary>
     /// Deserializes a string representing a direction.
     /// </summary>
-    public Direction StringToDir(string str)
+    public static Direction StringToDir(string str)
     {
         if (str == "FRONT")
             return Direction.FRONT;
@@ -737,9 +750,9 @@ public class BoardManager : MonoBehaviour
         int y_idx = -1, x_idx = -1;
 
         //get which index of gridPos() player is in
-        for (int i = 1; i <= rows; i++)
+        for (int i = 1; i < (rows + 1); i++)
         {
-            for (int j = 1; j <= columns; ++j)
+            for (int j = 1; j < (columns + 1); ++j)
             {
                 if ((gridPositions[i * (columns + 2) + j] - pos).magnitude <= threshhold)
                 {
@@ -979,7 +992,9 @@ public class BoardManager : MonoBehaviour
         setup_level(level, finishedLevel1Tutorial, finishedLevel3Tutorial);
         //if( (GameMode.instance.get_mode() == GameMode.Game_Mode.RESTART)||
         //	(GameMode.instance.get_mode() == GameMode.Game_Mode.CONTINUE) )
-        write_save(level, finishedLevel1Tutorial, finishedLevel3Tutorial);
+        GameManager.finishedLevel1Tutorial = finishedLevel1Tutorial;
+        GameManager.finishedLevel3Tutorial = finishedLevel3Tutorial;
+        GameManager.write_save_mode(level, GameManager.finishedLevel1Tutorial, GameManager.finishedLevel3Tutorial, GameMode.instance.gamemode);
 
         //local_stats[level] += 1;
         //write_local_stats ();
@@ -1261,16 +1276,20 @@ public class BoardManager : MonoBehaviour
                     //do things
                     for (int i = 0; i < line.Length; ++i)
                     {
-                        if (line[i] == 'w')
-                        {//wall
+                        if (line[i] == 'w') // wall
+                        {
                             wallPositions.Add(gridPositions[(cur_y + 1) * (columns + 2) + (i + 1)]);
                             wallIdxes.Add(i + 1);
                             wallIdxes.Add(cur_y + 1);
                         }
-                        else if (line[i] == 'e')//exit
+                        else if (line[i] == 'e') // exit
+                        {
                             exitPos = gridPositions[(cur_y + 1) * (columns + 2) + (i + 1)];
-                        else if (line[i] == 's')//start positions
+                        }
+                        else if (line[i] == 's') // start positions
+                        {
                             playerPositions.Add(gridPositions[(cur_y + 1) * (columns + 2) + (i + 1)]);
+                        }
                     }
                     cur_y -= 1;
                 }

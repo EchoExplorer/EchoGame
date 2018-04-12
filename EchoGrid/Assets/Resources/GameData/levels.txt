@@ -43,7 +43,7 @@ wwwwwwww-
 wwwwwwwwe
 END
 LEVEL_5
------sss-
+--------s
 -wwwwwwww
 -w-------
 -w-------

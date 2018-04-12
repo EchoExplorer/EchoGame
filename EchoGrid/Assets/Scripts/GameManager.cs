@@ -20,8 +20,8 @@ public class GameManager : MonoBehaviour
     [HideInInspector]
     public bool playersTurn = true;
 
-    bool finishedLevel1Tutorial = false;
-    bool finishedLevel3Tutorial = false;
+    public static bool finishedLevel1Tutorial = false;
+    public static bool finishedLevel3Tutorial = false;
 
     string debugPlayerInfo = "";
 
@@ -55,91 +55,102 @@ public class GameManager : MonoBehaviour
         string[] svdata_split;
         GameMode.Game_Mode current = GameMode.instance.get_mode();
 
-        //choose save for tutorial and normal game
-        if (current == GameMode.Game_Mode.RESTART || current == GameMode.Game_Mode.CONTINUE)
+        // choose save for tutorial and normal game
+        if ((current == GameMode.Game_Mode.RESTART) || (current == GameMode.Game_Mode.CONTINUE))
+        {
             filename = Application.persistentDataPath + "echosaved";
-        else//load specific save for tutorial
+        }
+        // load specific save for tutorial
+        else
+        {
             filename = Application.persistentDataPath + "echosaved_tutorial";
+        }
 
         if (System.IO.File.Exists(filename))
         {
-            svdata_split = System.IO.File.ReadAllLines(filename);
-            //read existing data
-            level = Int32.Parse(svdata_split[0]);       
-            finishedLevel1Tutorial = BoardManager.StringToBool(svdata_split[1]);
-            finishedLevel3Tutorial = BoardManager.StringToBool(svdata_split[2]);
+            // If we are continuing from where we left off.
+            if (GM_main_pre.skippingTutorial == 1)
+            {
+                svdata_split = System.IO.File.ReadAllLines(filename);
+                //read existing data
+                level = Int32.Parse(svdata_split[0]);
+                finishedLevel1Tutorial = BoardManager.StringToBool(svdata_split[1]);
+                finishedLevel3Tutorial = BoardManager.StringToBool(svdata_split[2]);
+                if (level <= 11)
+                {
+                    GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
+                    write_save_mode(level, finishedLevel1Tutorial, finishedLevel3Tutorial, GameMode.Game_Mode.TUTORIAL);
+                }
+                else if (level >= 12)
+                {
+                    GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
+                    write_save_mode(level, finishedLevel1Tutorial, finishedLevel3Tutorial, GameMode.Game_Mode.CONTINUE);
+                }
+            }
+            // If we are starting a new game and not skipping the tutorial.
+            else if (GM_main_pre.skippingTutorial == 0)
+            {
+                level = 1;
+                finishedLevel1Tutorial = false;
+                finishedLevel3Tutorial = false;
+
+            }
+                     
         }
         else
         {
-            finishedLevel1Tutorial = false;
-            finishedLevel3Tutorial = false;
-            if (current == GameMode.Game_Mode.RESTART || current == GameMode.Game_Mode.CONTINUE)
+            if ((current == GameMode.Game_Mode.RESTART) || (current == GameMode.Game_Mode.CONTINUE))
+            {
                 level = MAX_TUTORIAL_LEVEL + 1;
-            else
-                level = 1;
-        }
-        switch (current)
-        {
-            case GameMode.Game_Mode.TUTORIAL_RESTART:
-                level = 1;
-                // Set game mode to TUTORIAL for next levels
-                GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
-                break;
-            case GameMode.Game_Mode.TUTORIAL:
-                if (level < 1)
-                    level = 1;
-                else if (level > MAX_TUTORIAL_LEVEL)
-                {
-                    // Start Normal levels
-                    level = MAX_TUTORIAL_LEVEL + 1;
-                    GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
-                    // Reset tutorial level and write to saved_tutorial file
-                    write_save_mode(1, GameMode.Game_Mode.TUTORIAL);
-                }
-                break;
-            case GameMode.Game_Mode.RESTART:
-                level = MAX_TUTORIAL_LEVEL + 1;
-                // Set game mode to CONTINUE for next levels
+                finishedLevel1Tutorial = true;
+                finishedLevel3Tutorial = true;
                 GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
-                break;
-            case GameMode.Game_Mode.CONTINUE:
-                if (level < 1 || level > MAX_LEVEL)
-                    level = MAX_TUTORIAL_LEVEL + 1;
-                break;
-            default:
-                level = MAX_TUTORIAL_LEVEL + 1;
-                return false;
+                write_save_mode(level, finishedLevel1Tutorial, finishedLevel3Tutorial, GameMode.Game_Mode.CONTINUE);
+            }
+            else
+            {
+                level = 1;
+                finishedLevel1Tutorial = false;
+                finishedLevel3Tutorial = false;
+                GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
+                write_save_mode(level, finishedLevel1Tutorial, finishedLevel3Tutorial, GameMode.Game_Mode.TUTORIAL);
+            }                      
         }
+               
         return true;
     }
 
     /// <summary>
     /// Saves information about the game state as persistent data.
     /// </summary>
-    public bool write_save_mode(int lv, GameMode.Game_Mode mode)
+    public static bool write_save_mode(int lv, bool level1TutorialFinished, bool level3TutorialFinished, GameMode.Game_Mode mode)
     {
         string filename = "";
         string[] fileLines = new string[3];
 
-        if (mode == GameMode.Game_Mode.RESTART || mode == GameMode.Game_Mode.CONTINUE)
+        if ((mode == GameMode.Game_Mode.RESTART) || (mode == GameMode.Game_Mode.CONTINUE))
+        {
             filename = Application.persistentDataPath + "echosaved";
+        }
         else
+        {
             filename = Application.persistentDataPath + "echosaved_tutorial";
+        }
 
         fileLines[0] = lv.ToString();
-        if (BoardManager.finishedTutorialLevel1 == true)
+        if (level1TutorialFinished == true)
         {
             fileLines[1] = "True";
         }        
-        else if (BoardManager.finishedTutorialLevel1 == false)
+        else if (level1TutorialFinished == false)
         {
             fileLines[1] = "False";
         }
-        if (BoardManager.finishedTutorialLevel3 == true)
+        if (level3TutorialFinished == true)
         {
             fileLines[2] = "True";
         }
-        else if (BoardManager.finishedTutorialLevel3 == false)
+        else if (level3TutorialFinished == false)
         {
             fileLines[2] = "False";
         }
@@ -176,9 +187,7 @@ public class GameManager : MonoBehaviour
         boardScript.max_total_level = boardScript.get_level_count("GameData/levels");
 
         if (GM_main_pre.skippingTutorial == 2)
-        {  
-            finishedLevel1Tutorial = true;
-            finishedLevel3Tutorial = true;
+        {
             GameMode.Game_Mode current = GameMode.instance.get_mode();
             if (current == GameMode.Game_Mode.RESTART)
             {
@@ -187,10 +196,12 @@ public class GameManager : MonoBehaviour
             }
             else if (current == GameMode.Game_Mode.TUTORIAL_RESTART)
             {
-                GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;                
+                GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
                 level = 1;
             }
-            write_save_mode(1, GameMode.Game_Mode.TUTORIAL);
+            finishedLevel1Tutorial = true;
+            finishedLevel3Tutorial = true;           
+            write_save_mode(level, finishedLevel1Tutorial, finishedLevel3Tutorial, current);
         }
         else if ((GM_main_pre.skippingTutorial == 0) || (GM_main_pre.skippingTutorial == 1))
         {
