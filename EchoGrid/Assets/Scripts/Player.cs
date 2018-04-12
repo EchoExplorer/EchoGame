@@ -195,6 +195,12 @@ public class Player : MovingObject
         return "na";
     }
 
+    private IEnumerator DelayedEcho(GvrAudioSource gas, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        gas.Play();
+    }
+
     // A breakdown of short, medium and long distances
     string[] frontDistS = { "2.25", "3.75" };
     string[] frontDistM = { "5.25", "6.75" };
@@ -250,8 +256,8 @@ public class Player : MovingObject
         float blocksToFrontWall = Vector3.Distance(transform.position, frontWall.transform.position) - 1;
         // Four-wall echoes preparation
         GvrAudioSource leftGAS = null, rightGAS = null, leftFrontGAS = null, rightFrontGAS = null;
-		float fourblockdb = -20;
-		float frontwalldb = -10;
+		float fourblockdb = -5;
+		float frontwalldb = 10;
         if (leftWall != null)
         {
             leftGAS = leftWall.GetComponent<GvrAudioSource>();
@@ -265,7 +271,7 @@ public class Player : MovingObject
 			rightGAS.clip = Database.instance.attenuatedaround;
 			rightGAS.gainDb = fourblockdb;
         }
-		if (frontWall==null && leftFrontWall != null)
+		if (blocksToFrontWall > 0 && leftFrontWall != null)
         {
             if (((int)blocksToFrontWall) != 0 || leftWall == null)
             {
@@ -274,7 +280,7 @@ public class Player : MovingObject
 				leftFrontGAS.gainDb=fourblockdb;
             }
         }
-		if (frontWall==null && rightFrontWall != null)
+		if (blocksToFrontWall > 0 && rightFrontWall != null)
         {
             if (((int)blocksToFrontWall) != 0 || rightWall == null)
             {
@@ -302,7 +308,7 @@ public class Player : MovingObject
         else
         {
             SoundManager.instance.PlaySingle(Database.instance.attenuatedClick);
-			if (frontGAS != null) {
+            if (frontGAS != null) {
 				frontGAS.volume = 1;
 				frontGAS.gainDb = frontwalldb;
 			}
@@ -316,15 +322,15 @@ public class Player : MovingObject
                 rightFrontGAS.volume = 1;
         }
 		if (leftGAS != null) {
-			leftGAS.PlayDelayed (1.5f / 340);
+			leftGAS.PlayDelayed(1.5f / 340);
 		}
 		if (rightGAS != null){
             rightGAS.PlayDelayed(1.5f / 340);
 		}
-		if (frontWall==null && leftFrontGAS != null){
+		if (blocksToFrontWall > 0 && leftFrontGAS != null){
             leftFrontGAS.PlayDelayed(2.12132f / 340);
 		}
-		if (frontWall==null && rightFrontGAS != null){
+		if (blocksToFrontWall > 0 && rightFrontGAS != null){
             rightFrontGAS.PlayDelayed(2.12132f / 340);
         }
         frontGAS.PlayDelayed((1.5f * blocksToFrontWall + 0.75f) * 2 / 340);

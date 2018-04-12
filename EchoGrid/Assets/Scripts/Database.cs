@@ -72,9 +72,9 @@ public class Database : MonoBehaviour
     void LoadData()
     {
 		//Option1:
-		attenuatedClickfront = Resources.Load("fx/00-0_F-2.25-D_B-w-D_L-w-D_R-w-D") as AudioClip;
+		attenuatedClickfront = Resources.Load("fx/attenuatedClickFront_NoBlank") as AudioClip;
 		attenuatedClick = Resources.Load("fx/attenuatedClick") as AudioClip;
-		attenuatedaround = Resources.Load("fx/00-0_F-0.75-D_B-w-D_L-m-D_R-m-D") as AudioClip;
+		attenuatedaround = Resources.Load("fx/attenuatedaround_NoBlank") as AudioClip;
 
 		//Option2:
 		//attenuatedClickfront = Resources.Load("fx/attenuatedClick_45ms") as AudioClip;
