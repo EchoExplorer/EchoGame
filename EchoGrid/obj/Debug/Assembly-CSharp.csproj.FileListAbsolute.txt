@@ -66,3 +66,5 @@ D:\Unity\Echo Adventure\EchoGame\EchoGrid\Temp\bin\Debug\UnityEngine.VR.xml
 D:\Unity\Echo Adventure\EchoGame\EchoGrid\obj\Debug\Assembly-CSharp.csprojResolveAssemblyReference.cache
 D:\Unity\Echo Adventure\EchoGame\EchoGrid\obj\Debug\Assembly-CSharp.dll
 D:\Unity\Echo Adventure\EchoGame\EchoGrid\obj\Debug\Assembly-CSharp.pdb
+C:\Users\hellerlab\Desktop\Echo Adventure\EchoGame\EchoGrid\obj\Debug\Assembly-CSharp.csproj.CoreCompileInputs.cache
+C:\Users\hellerlab\Desktop\Echo Adventure\EchoGame\EchoGrid\obj\Debug\Assembly-CSharp.csproj.CopyComplete

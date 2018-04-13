@@ -106,7 +106,6 @@ public class InputModule : MonoBehaviour
     Vector2 VecStart = new Vector2(); // Vector for the difference between the start position vectors of touch0 and touch1.
     Vector2 VecEnd = new Vector2(); // Vector for the difference between the end position vectors of touch0 and touch1.
 
-    bool holdingDownKey = false; // If a key is being held down.
     float touchDuration = 0.0f; // How long the player has been holding on the screen for. Used to determine the difference between a hold and a tap/swipe/rotation.
     int touchRegister = 0; // Used to determine how many fingers have left the screen after initial touches have been made. Gestures are only recognized if this is equal to 3.
     bool[] hasRegistered = { false, false, false }; // For some reason TouchPhase.Began does not seem to be recognized. This fills a similar purpose, determining if the touch has been on the screen during a frame or not.
@@ -182,11 +181,6 @@ public class InputModule : MonoBehaviour
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR       
         Scene activeScene = SceneManager.GetActiveScene(); // Gets the active scene.
 
-        if (Input.anyKey == true)
-        {
-            holdingDownKey = true;
-        }
-
         if (Input.GetKeyUp(KeyCode.RightArrow) == true)
         {
             // For swipe rights.
@@ -208,7 +202,6 @@ public class InputModule : MonoBehaviour
                 debugInputInfo = "Right arrow key pressed " + totalRightTimes + " times.";                                        
             }
             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
-            holdingDownKey = false;
         }
         else if (Input.GetKeyUp(KeyCode.LeftArrow) == true)
         {           
@@ -231,7 +224,6 @@ public class InputModule : MonoBehaviour
                 debugInputInfo = "Left arrow key pressed " + totalLeftTimes + " times.";
             }
             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.                
-            holdingDownKey = false;
         }
         else if (Input.GetKeyUp(KeyCode.UpArrow) == true)
         {
@@ -240,7 +232,6 @@ public class InputModule : MonoBehaviour
             swipeUpTimes += 1; // Update the number of times the up arrow key has been pressed.
             debugInputInfo = "Up arrow key pressed " + swipeUpTimes + " times.";
             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.                
-            holdingDownKey = false;
         }
         else if (Input.GetKeyUp(KeyCode.DownArrow) == true)
         {
@@ -249,7 +240,6 @@ public class InputModule : MonoBehaviour
             swipeDownTimes += 1; // Update the number of times the down arrow key has been pressed.
             debugInputInfo = "Down arrow key pressed " + swipeDownTimes + " times.";
             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.                
-            holdingDownKey = false;
         }
         else if (Input.GetKeyUp(KeyCode.F) == true)
         {         
@@ -257,7 +247,6 @@ public class InputModule : MonoBehaviour
             tapTimes += 1; // Update the number of times the 'f' key has been pressed.
             debugInputInfo = "F key pressed " + tapTimes + " times.";
             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.                
-            holdingDownKey = false;
         }
         else if (Input.GetKeyUp(KeyCode.R) == true)
         {
@@ -265,7 +254,6 @@ public class InputModule : MonoBehaviour
             holdTimes += 1; // Update the number of times the 'r' key has been pressed.
             debugInputInfo = "R key pressed " + holdTimes + " times.";
             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.                              
-            holdingDownKey = false;
         }
         // If the 'p' key was pressed.
         else if (Input.GetKeyUp(KeyCode.P) == true)
@@ -274,15 +262,7 @@ public class InputModule : MonoBehaviour
             mainTimes += 1; // Update the number of times the 'p' key has been pressed.
             debugInputInfo = "P key pressed " + mainTimes + " times.";
             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.            
-            holdingDownKey = false;
         }
-        // If any other key or button is pressed, tell them it does not do anything.
-        else if ((Input.anyKey == false) && (holdingDownKey == true))
-        {
-            debugInputInfo = "This key does not do anything. Please only use F, R, P, and the arrow keys.";
-            DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
-            holdingDownKey = false;
-        }   
 #endif
 #if UNITY_IOS || UNITY_ANDROID
         //Check if Input has registered more than zero touches

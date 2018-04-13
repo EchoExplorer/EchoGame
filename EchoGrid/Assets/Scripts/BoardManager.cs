@@ -978,7 +978,7 @@ public class BoardManager : MonoBehaviour
     /// <summary>
     /// Sets up the game board (grid positions), sound clips and save data as an initialization step. 
     /// </summary>
-    public void SetupScene(int level, bool finishedLevel1Tutorial, bool finishedLevel3Tutorial)
+    public void SetupScene(int level, bool finishedLevel1Tutorial, bool finishedLevel3Tutorial, GameMode.Game_Mode mode)
     {
         //find player
         player_ref = GameObject.Find("Player");//Player.instance.gameObject;
@@ -992,9 +992,10 @@ public class BoardManager : MonoBehaviour
         setup_level(level, finishedLevel1Tutorial, finishedLevel3Tutorial);
         //if( (GameMode.instance.get_mode() == GameMode.Game_Mode.RESTART)||
         //	(GameMode.instance.get_mode() == GameMode.Game_Mode.CONTINUE) )
-        GameManager.finishedLevel1Tutorial = finishedLevel1Tutorial;
-        GameManager.finishedLevel3Tutorial = finishedLevel3Tutorial;
-        GameManager.write_save_mode(level, GameManager.finishedLevel1Tutorial, GameManager.finishedLevel3Tutorial, GameMode.instance.gamemode);
+        
+        // GameMode.finishedLevel1Tutorial = finishedLevel1Tutorial;
+        // GameMode.finishedLevel3Tutorial = finishedLevel3Tutorial;
+        // GameMode.write_save_mode(level, finishedLevel1Tutorial, finishedLevel3Tutorial, mode);
 
         //local_stats[level] += 1;
         //write_local_stats ();

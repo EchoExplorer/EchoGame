@@ -222,7 +222,7 @@ public class Database : MonoBehaviour
         errorClips[16] = Resources.Load("instructions/not_a_hold") as AudioClip;
         errorClips[17] = Resources.Load("instructions/not_a_swipe_down") as AudioClip;
         errorClips[18] = Resources.Load("instructions/not_a_rotation") as AudioClip;
-        errorClips[19] = Resources.Load("instructions/not_a_swipe_up") as AudioClip;
+        errorClips[19] = Resources.Load("instructions/not_a_left_right_swipe") as AudioClip;
 
         // Sound effect clips
         soundEffectClips[0] = Resources.Load("fx/0_25_sec_silence") as AudioClip;

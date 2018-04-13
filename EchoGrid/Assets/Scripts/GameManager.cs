@@ -20,9 +20,6 @@ public class GameManager : MonoBehaviour
     [HideInInspector]
     public bool playersTurn = true;
 
-    public static bool finishedLevel1Tutorial = false;
-    public static bool finishedLevel3Tutorial = false;
-
     string debugPlayerInfo = "";
 
     private const int MAX_TUTORIAL_LEVEL = 11;
@@ -68,96 +65,61 @@ public class GameManager : MonoBehaviour
 
         if (System.IO.File.Exists(filename))
         {
-            // If we are continuing from where we left off.
-            if (GM_main_pre.skippingTutorial == 1)
+            svdata_split = System.IO.File.ReadAllLines(filename);
+            //read existing data
+            level = Int32.Parse(svdata_split[0]);
+            string level1Finished = svdata_split[1];
+            string level3Finished = svdata_split[2];
+            if (level1Finished.Equals("True") == true)
             {
-                svdata_split = System.IO.File.ReadAllLines(filename);
-                //read existing data
-                level = Int32.Parse(svdata_split[0]);
-                finishedLevel1Tutorial = BoardManager.StringToBool(svdata_split[1]);
-                finishedLevel3Tutorial = BoardManager.StringToBool(svdata_split[2]);
-                if (level <= 11)
-                {
-                    GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
-                    write_save_mode(level, finishedLevel1Tutorial, finishedLevel3Tutorial, GameMode.Game_Mode.TUTORIAL);
-                }
-                else if (level >= 12)
-                {
-                    GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
-                    write_save_mode(level, finishedLevel1Tutorial, finishedLevel3Tutorial, GameMode.Game_Mode.CONTINUE);
-                }
+                GameMode.finishedLevel1Tutorial = true;
             }
-            // If we are starting a new game and not skipping the tutorial.
-            else if (GM_main_pre.skippingTutorial == 0)
+            else if (level1Finished.Equals("False") == true)
             {
-                level = 1;
-                finishedLevel1Tutorial = false;
-                finishedLevel3Tutorial = false;
+                GameMode.finishedLevel1Tutorial = false;
+            }
+            if (level3Finished.Equals("True") == true)
+            {
+                GameMode.finishedLevel3Tutorial = true;
+            }
+            else if (level3Finished.Equals("False") == true)
+            {
+                GameMode.finishedLevel3Tutorial = false;
+            }
 
+            if (level <= 11)
+            {
+                GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
+                GameMode.write_save_mode(level, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.Game_Mode.TUTORIAL);
             }
-                     
+            else if (level >= 12)
+            {
+                GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
+                GameMode.write_save_mode(level, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.Game_Mode.CONTINUE);
+            }            
         }
         else
         {
             if ((current == GameMode.Game_Mode.RESTART) || (current == GameMode.Game_Mode.CONTINUE))
             {
                 level = MAX_TUTORIAL_LEVEL + 1;
-                finishedLevel1Tutorial = true;
-                finishedLevel3Tutorial = true;
+                GameMode.finishedLevel1Tutorial = true;
+                GameMode.finishedLevel3Tutorial = true;
                 GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
-                write_save_mode(level, finishedLevel1Tutorial, finishedLevel3Tutorial, GameMode.Game_Mode.CONTINUE);
+                GameMode.write_save_mode(level, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.Game_Mode.CONTINUE);
             }
             else
             {
                 level = 1;
-                finishedLevel1Tutorial = false;
-                finishedLevel3Tutorial = false;
+                GameMode.finishedLevel1Tutorial = false;
+                GameMode.finishedLevel3Tutorial = false;
                 GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
-                write_save_mode(level, finishedLevel1Tutorial, finishedLevel3Tutorial, GameMode.Game_Mode.TUTORIAL);
+                GameMode.write_save_mode(level, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.Game_Mode.TUTORIAL);
             }                      
         }
                
         return true;
-    }
-
-    /// <summary>
-    /// Saves information about the game state as persistent data.
-    /// </summary>
-    public static bool write_save_mode(int lv, bool level1TutorialFinished, bool level3TutorialFinished, GameMode.Game_Mode mode)
-    {
-        string filename = "";
-        string[] fileLines = new string[3];
-
-        if ((mode == GameMode.Game_Mode.RESTART) || (mode == GameMode.Game_Mode.CONTINUE))
-        {
-            filename = Application.persistentDataPath + "echosaved";
-        }
-        else
-        {
-            filename = Application.persistentDataPath + "echosaved_tutorial";
-        }
-
-        fileLines[0] = lv.ToString();
-        if (level1TutorialFinished == true)
-        {
-            fileLines[1] = "True";
-        }        
-        else if (level1TutorialFinished == false)
-        {
-            fileLines[1] = "False";
-        }
-        if (level3TutorialFinished == true)
-        {
-            fileLines[2] = "True";
-        }
-        else if (level3TutorialFinished == false)
-        {
-            fileLines[2] = "False";
-        }
-
-        System.IO.File.WriteAllLines(filename, fileLines);
-        return true;
-    }
+    }    
 
     //Initializes the game for each level.
     //TODO(agotsis) Analyze database
@@ -186,29 +148,49 @@ public class GameManager : MonoBehaviour
 
         boardScript.max_total_level = boardScript.get_level_count("GameData/levels");
 
-        if (GM_main_pre.skippingTutorial == 2)
+        if (Player.changingLevel == false)
         {
-            GameMode.Game_Mode current = GameMode.instance.get_mode();
-            if (current == GameMode.Game_Mode.RESTART)
+            if (GM_main_pre.skippingTutorial == 0)
             {
-                GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
-                level = MAX_TUTORIAL_LEVEL + 1;
+                GameMode.Game_Mode current = GameMode.instance.get_mode();
+                if (current == GameMode.Game_Mode.RESTART)
+                {
+                    GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
+                    level = MAX_TUTORIAL_LEVEL + 1;
+                }
+                else if (current == GameMode.Game_Mode.TUTORIAL_RESTART)
+                {
+                    GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
+                    level = 1;
+                }
+                GameMode.finishedLevel1Tutorial = false;
+                GameMode.finishedLevel3Tutorial = false;
+                GameMode.write_save_mode(level, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, current);
             }
-            else if (current == GameMode.Game_Mode.TUTORIAL_RESTART)
+            else if (GM_main_pre.skippingTutorial == 1)
             {
-                GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
-                level = 1;
+                LoadSaved();
             }
-            finishedLevel1Tutorial = true;
-            finishedLevel3Tutorial = true;           
-            write_save_mode(level, finishedLevel1Tutorial, finishedLevel3Tutorial, current);
-        }
-        else if ((GM_main_pre.skippingTutorial == 0) || (GM_main_pre.skippingTutorial == 1))
-        {
-            LoadSaved();
+            else if (GM_main_pre.skippingTutorial == 2)
+            {
+                GameMode.Game_Mode current = GameMode.instance.get_mode();
+                if (current == GameMode.Game_Mode.RESTART)
+                {
+                    GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
+                    level = MAX_TUTORIAL_LEVEL + 1;
+                }
+                else if (current == GameMode.Game_Mode.TUTORIAL_RESTART)
+                {
+                    GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
+                    level = 1;
+                }
+                GameMode.finishedLevel1Tutorial = true;
+                GameMode.finishedLevel3Tutorial = true;
+                GameMode.write_save_mode(level, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, current);
+            }
         }
         levelText.text = "Loading level " + level.ToString();
-        boardScript.SetupScene(level, finishedLevel1Tutorial, finishedLevel3Tutorial);
+        boardScript.SetupScene(level, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.instance.gamemode);
     }
 
     //Hides black image used between levels

@@ -108,8 +108,6 @@ public class Player : MovingObject
     bool rotatedLeft;
     bool rotatedRight;
 
-    bool madeLevel5Turn = false;
-
     public static bool[,] canPlayClip = new bool[12,7];
     public static bool playedExitClip;
     public static bool canGoToNextLevel;
@@ -120,6 +118,8 @@ public class Player : MovingObject
 
     bool restartLevel = false;
     bool goBackToMain = false;
+
+    public static bool changingLevel = false; 
 
     bool haveTappedThreeTimes = false;
     bool haveSwipedThreeTimes = false;
@@ -1498,9 +1498,9 @@ public class Player : MovingObject
         // enabled = true;
 
         GameManager.instance.level += 1;
-        GameManager.finishedLevel1Tutorial = BoardManager.finishedTutorialLevel1;
-        GameManager.finishedLevel3Tutorial = BoardManager.finishedTutorialLevel3;       
-        GameManager.write_save_mode(GameManager.instance.level, GameManager.finishedLevel1Tutorial, GameManager.finishedLevel3Tutorial, GameMode.instance.gamemode);
+        GameMode.finishedLevel1Tutorial = BoardManager.finishedTutorialLevel1;
+        GameMode.finishedLevel3Tutorial = BoardManager.finishedTutorialLevel3;
+        GameMode.write_save_mode(GameManager.instance.level, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.instance.gamemode);
         GameManager.instance.playersTurn = false;       
 
         // AudioSource.PlayClipAtPoint (winSound, transform.localPosition, 1.0f);
@@ -2256,12 +2256,14 @@ public class Player : MovingObject
                 canPlayClip[11, 6] = true;
             }
             restartLevel = false;
+            changingLevel = true;
             SceneManager.LoadScene("Main"); // Restart the level.      
         }
 
         if ((goBackToMain == true) && (SoundManager.instance.finishedAllClips == true))
         {
             goBackToMain = false;
+            changingLevel = false;
             Destroy(GameObject.Find("GameManager"));
             SceneManager.LoadScene("Title_Screen"); // Move to the main menu.
         }
@@ -2299,6 +2301,7 @@ public class Player : MovingObject
             GameObject exitSign = GameObject.FindGameObjectWithTag("Exit");
             Vector2 distFromExit = transform.position - exitSign.transform.position;
 
+            // If the player has reached the exit and not swiped down, play the appropriate exit clip.
             if ((endingLevel == false) && (playedExitClip == false))
             {
                 if ((curLevel <= 11) && (canPlayClip[(curLevel - 1), 2] == true))
@@ -2375,6 +2378,7 @@ public class Player : MovingObject
                 debugPlayerInfo = "Swiped down. Exiting level.";                
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 GameManager.instance.boardScript.gamerecord += "X"; // Record the attempt.
+                changingLevel = true;
                 attemptExitFromLevel(); // Attempt to exit the level.                  
             }
         }
@@ -2418,17 +2422,17 @@ public class Player : MovingObject
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 finishedTappingInstruction = true; // We have finished the tapping instruction, so the player can tap.
             }
-            if ((finishedSwipingInstruction == false) && (level1_remaining_taps == 0) && (SoundManager.instance.finishedAllClips == true) && (haveTappedThreeTimes == true))
+            if ((finishedSwipingInstruction == false) && (level1_remaining_taps == 0) && (level1_remaining_ups == 3) && (SoundManager.instance.finishedAllClips == true) && (haveTappedThreeTimes == true))
             {
                 debugPlayerInfo = "Finished swiping instruction.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 finishedSwipingInstruction = true; // We have finished the swiping instruction, so the player can swipe up.
             }
             // Make sure all the clips have finished playing before allowing the player to swipe.
-            if ((finishedSwipingInstruction == false) && (level1_remaining_taps == 0) && (SoundManager.instance.finishedAllClips == true) && (haveTappedThreeTimes == false))
+            if ((finishedSwipingInstruction == false) && (level1_remaining_taps == 0) && (level1_remaining_ups == 3) && (SoundManager.instance.finishedAllClips == true) && (haveTappedThreeTimes == false))
             {
                 haveTappedThreeTimes = true;
-            }       
+            }
             // Make sure all the clips have finished playing before allowing the player to open the pause menu.
             if ((finishedMenuInstruction == false) && (level1_remaining_ups == 0) && (level1_remaining_menus == 2) && (SoundManager.instance.finishedAllClips == true) && (haveSwipedThreeTimes == true))
             {
@@ -2437,7 +2441,7 @@ public class Player : MovingObject
                 finishedMenuInstruction = true; // We have finished the first pause menu instruction, so the player can open the pause menu.
             }
             // Make sure all the clips have finished playing before allowing the player to hold.
-            if ((finishedMenuInstruction == false) && (level1_remaining_ups == 0) && (level1_remaining_menus == 2) && (SoundManager.instance.finishedAllClips == true) && (haveTappedThreeTimes == false))
+            if ((finishedMenuInstruction == false) && (level1_remaining_ups == 0) && (level1_remaining_menus == 2) && (SoundManager.instance.finishedAllClips == true) && (haveSwipedThreeTimes == false))
             {
                 haveSwipedThreeTimes = true;
             }
@@ -2515,9 +2519,9 @@ public class Player : MovingObject
                         GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
                         clips = new List<AudioClip>() { Database.pauseMenuClips[11] };
                         SoundManager.instance.PlayClips(clips); // should have another set of sound effect
-                        GameManager.finishedLevel1Tutorial = BoardManager.finishedTutorialLevel1;
-                        GameManager.finishedLevel3Tutorial = BoardManager.finishedTutorialLevel3;
-                        GameManager.write_save_mode(curLevel, GameManager.finishedLevel1Tutorial, GameManager.finishedLevel3Tutorial, GameMode.instance.gamemode);
+                        GameMode.finishedLevel1Tutorial = BoardManager.finishedTutorialLevel1;
+                        GameMode.finishedLevel3Tutorial = BoardManager.finishedTutorialLevel3;
+                        GameMode.write_save_mode(curLevel, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.instance.gamemode);
                         restartLevel = true;                                         
                     }
                     // If the player has told us they want to return to the main menu, then return to the main menu.
@@ -2528,9 +2532,9 @@ public class Player : MovingObject
                         // SceneManager.UnloadScene("Main");
                         clips = new List<AudioClip>() { Database.pauseMenuClips[11] };
                         SoundManager.instance.PlayClips(clips); // should have another set of sound effect
-                        GameManager.finishedLevel1Tutorial = BoardManager.finishedTutorialLevel1;
-                        GameManager.finishedLevel3Tutorial = BoardManager.finishedTutorialLevel3;
-                        GameManager.write_save_mode(curLevel, GameManager.finishedLevel1Tutorial, GameManager.finishedLevel3Tutorial, GameMode.instance.gamemode);
+                        GameMode.finishedLevel1Tutorial = BoardManager.finishedTutorialLevel1;
+                        GameMode.finishedLevel3Tutorial = BoardManager.finishedTutorialLevel3;
+                        GameMode.write_save_mode(curLevel, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.instance.gamemode);
                         goBackToMain = true;                     
                     }
                 }
@@ -2735,8 +2739,183 @@ public class Player : MovingObject
                 // SceneManager.UnloadScene("Main");
                 Destroy(GameObject.Find("GameManager"));
                 SceneManager.LoadScene("Title_Screen"); // Move to the main menu.
-            }                       
-		}
+            }
+
+            // If there was an unrecognized gesture made.
+            if (ie.isUnrecognized == true)
+            {
+                // If this error was registered.
+                if (ie.isTapHorizontalError == true)
+                {
+                    debugPlayerInfo = "Nothing happened due to error with horizontal distance on tap.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false))
+                    {
+                        SoundManager.instance.PlayVoice(Database.errorClips[0], true); // Play the appropriate clip.
+                    }
+                }
+                // If this error was registered.
+                else if (ie.isTapVerticalError == true)
+                {
+                    debugPlayerInfo = "Nothing happened due to error with vertical distance on tap.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false) || (curLevel >= 12))
+                    {
+                        SoundManager.instance.PlayVoice(Database.errorClips[1], true); // Play the appropriate clip.
+                    }
+                }
+                // If this error was registered.
+                else if (ie.isTapRotationError == true)
+                {
+                    debugPlayerInfo = "Nothing happened due to error with rotation on tap.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false) || (curLevel >= 12))
+                    {
+                        SoundManager.instance.PlayVoice(Database.errorClips[2], true); // Play the appropriate clip.
+                    }
+                }
+                // If this error was registered.
+                else if (ie.isSwipeLeftHorizontalError == true)
+                {
+                    debugPlayerInfo = "Nothing happened due to error with horizontal distance on swipe left.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false) || (curLevel >= 12))
+                    {
+                        SoundManager.instance.PlayVoice(Database.errorClips[3], true); // Play the appropriate clip.
+                    }
+                }
+                // If this error was registered.
+                else if (ie.isSwipeRightHorizontalError == true)
+                {
+                    debugPlayerInfo = "Nothing happened due to error with horizontal distance on swipe right.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false) || (curLevel >= 12))
+                    {
+                        SoundManager.instance.PlayVoice(Database.errorClips[4], true); // Play the appropriate clip.
+                    }
+                }
+                // If this error was registered.
+                else if (ie.isSwipeUpVerticalError == true)
+                {
+                    debugPlayerInfo = "Nothing happened due to error with vertical distance on swipe up.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false) || (curLevel >= 12))
+                    {
+                        SoundManager.instance.PlayVoice(Database.errorClips[5], true); // Play the appropriate clip.
+                    }
+                }
+                // If this error was registered.
+                else if (ie.isSwipeDownVerticalError == true)
+                {
+                    debugPlayerInfo = "Nothing happened due to error with vertical distance on swipe down.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false) || (curLevel >= 12))
+                    {
+                        SoundManager.instance.PlayVoice(Database.errorClips[6], true); // Play the appropriate clip.
+                    }
+                }
+                // If this error was registered.
+                else if (ie.isSwipeLeftRotationError == true)
+                {
+                    debugPlayerInfo = "Nothing happened due to error with rotation on swipe left.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false) || (curLevel >= 12))
+                    {
+                        SoundManager.instance.PlayVoice(Database.errorClips[7], true); // Play the appropriate clip.
+                    }
+                }
+                // If this error was registered.
+                else if (ie.isSwipeRightRotationError == true)
+                {
+                    debugPlayerInfo = "Nothing happened due to error with rotation on swipe right.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false) || (curLevel >= 12))
+                    {
+                        SoundManager.instance.PlayVoice(Database.errorClips[7], true); // Play the appropriate clip.
+                    }
+                }
+                // If this error was registered.
+                else if (ie.isSwipeUpRotationError == true)
+                {
+                    debugPlayerInfo = "Nothing happened due to error with rotation on swipe up.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false) || (curLevel >= 12))
+                    {
+                        SoundManager.instance.PlayVoice(Database.errorClips[7], true); // Play the appropriate clip.
+                    }
+                }
+                // If this error was registered.
+                else if (ie.isSwipeDownRotationError == true)
+                {
+                    debugPlayerInfo = "Nothing happened due to error with rotation on swipe down.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false) || (curLevel >= 12))
+                    {
+                        SoundManager.instance.PlayVoice(Database.errorClips[7], true); // Play the appropriate clip.
+                    }
+                }
+                // If this error was registered.
+                else if (ie.isRotationAngleError == true)
+                {
+                    debugPlayerInfo = "Nothing happened due to error with angle on rotation.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false) || (curLevel >= 12))
+                    {
+                        SoundManager.instance.PlayVoice(Database.errorClips[8], true); // Play the appropriate clip.
+                    }
+                }
+                // If this error was registered.
+                else if (ie.isHoldHorizontalError == true)
+                {
+                    debugPlayerInfo = "Nothing happened due to error with horizontal distance on hold.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false) || (curLevel >= 12))
+                    {
+                        SoundManager.instance.PlayVoice(Database.errorClips[9], true); // Play the appropriate clip.
+                    }
+                }
+                // If this error was registered.
+                else if (ie.isHoldVerticalError == true)
+                {
+                    debugPlayerInfo = "Nothing happened due to error with vertical distance on hold.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false) || (curLevel >= 12))
+                    {
+                        SoundManager.instance.PlayVoice(Database.errorClips[10], true); // Play the appropriate clip.
+                    }
+                }
+                // If this error was registered.
+                else if (ie.isHoldRotationError == true)
+                {
+                    debugPlayerInfo = "Nothing happened due to error with rotation on hold.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false) || (curLevel >= 12))
+                    {
+                        SoundManager.instance.PlayVoice(Database.errorClips[11], true); // Play the appropriate clip.
+                    }
+                }
+                // If this error was registered.
+                else if (ie.isLessThanThreeError == true)
+                {
+                    debugPlayerInfo = "Nothing happened due to error with less than three fingers on the screen.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false) || (curLevel >= 12))
+                    {
+                        SoundManager.instance.PlayVoice(Database.errorClips[12], true); // Tell the player they had less than three fingers on the screen.
+                    }
+                }
+                // If this error was registered.
+                else if (ie.isMoreThanThreeError == true)
+                {
+                    debugPlayerInfo = "Nothing happened due to error with more than three fingers on the screen.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false) || (curLevel >= 12))
+                    {
+                        SoundManager.instance.PlayVoice(Database.errorClips[13], true); // Tell the player they had more than three fingers on the screen.
+                    }
+                }
+            }
+        }
 #endif
 
 #if UNITY_ANDROID && !UNITY_EDITOR
@@ -2825,9 +3004,9 @@ public class Player : MovingObject
                         GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
                         clips = new List<AudioClip>() { Database.pauseMenuClips[11] };
                         SoundManager.instance.PlayClips(clips); // should have another set of sound effect
-                        GameManager.finishedLevel1Tutorial = BoardManager.finishedTutorialLevel1;
-                        GameManager.finishedLevel3Tutorial = BoardManager.finishedTutorialLevel3;
-                        GameManager.write_save_mode(curLevel, GameManager.finishedLevel1Tutorial, GameManager.finishedLevel3Tutorial, GameMode.instance.gamemode);
+                        GameMode.finishedLevel1Tutorial = BoardManager.finishedTutorialLevel1;
+                        GameMode.finishedLevel3Tutorial = BoardManager.finishedTutorialLevel3;
+                        GameMode.write_save_mode(curLevel, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.instance.gamemode);
                         restartLevel = true;
                     }
                     // If the player has told us they want to return to the main menu, then return to the main menu.
@@ -2838,9 +3017,9 @@ public class Player : MovingObject
                         // SceneManager.UnloadScene("Main");
                         clips = new List<AudioClip>() { Database.pauseMenuClips[11] };
                         SoundManager.instance.PlayClips(clips); // should have another set of sound effect
-                        GameManager.finishedLevel1Tutorial = BoardManager.finishedTutorialLevel1;
-                        GameManager.finishedLevel3Tutorial = BoardManager.finishedTutorialLevel3;
-                        GameManager.write_save_mode(curLevel, GameManager.finishedLevel1Tutorial, GameManager.finishedLevel3Tutorial, GameMode.instance.gamemode);
+                        GameMode.finishedLevel1Tutorial = BoardManager.finishedTutorialLevel1;
+                        GameMode.finishedLevel3Tutorial = BoardManager.finishedTutorialLevel3;
+                        GameMode.write_save_mode(curLevel, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.instance.gamemode);
                         goBackToMain = true;
                     }
                 }
@@ -3036,7 +3215,7 @@ public class Player : MovingObject
                 {
                     debugPlayerInfo = "Nothing happened due to error with horizontal distance on tap.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false))
+                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false) || (curLevel >= 12))
                     {
                         SoundManager.instance.PlayVoice(Database.errorClips[0], true); // Play the appropriate clip.
                     }
@@ -3046,7 +3225,7 @@ public class Player : MovingObject
                 {
                     debugPlayerInfo = "Nothing happened due to error with vertical distance on tap.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false))
+                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false) || (curLevel >= 12))
                     {
                         SoundManager.instance.PlayVoice(Database.errorClips[1], true); // Play the appropriate clip.
                     }
@@ -3056,7 +3235,7 @@ public class Player : MovingObject
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on tap.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false))
+                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false) || (curLevel >= 12))
                     {
                         SoundManager.instance.PlayVoice(Database.errorClips[2], true); // Play the appropriate clip.
                     }
@@ -3066,7 +3245,7 @@ public class Player : MovingObject
                 {
                     debugPlayerInfo = "Nothing happened due to error with horizontal distance on swipe left.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false))
+                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false) || (curLevel >= 12))
                     {
                         SoundManager.instance.PlayVoice(Database.errorClips[3], true); // Play the appropriate clip.
                     }
@@ -3076,7 +3255,7 @@ public class Player : MovingObject
                 {
                     debugPlayerInfo = "Nothing happened due to error with horizontal distance on swipe right.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false))
+                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false) || (curLevel >= 12))
                     {
                         SoundManager.instance.PlayVoice(Database.errorClips[4], true); // Play the appropriate clip.
                     }
@@ -3086,7 +3265,7 @@ public class Player : MovingObject
                 {
                     debugPlayerInfo = "Nothing happened due to error with vertical distance on swipe up.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false))
+                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false) || (curLevel >= 12))
                     {
                         SoundManager.instance.PlayVoice(Database.errorClips[5], true); // Play the appropriate clip.
                     }
@@ -3096,7 +3275,7 @@ public class Player : MovingObject
                 {
                     debugPlayerInfo = "Nothing happened due to error with vertical distance on swipe down.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false))
+                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false) || (curLevel >= 12))
                     {
                         SoundManager.instance.PlayVoice(Database.errorClips[6], true); // Play the appropriate clip.
                     }
@@ -3106,7 +3285,7 @@ public class Player : MovingObject
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on swipe left.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false))
+                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false) || (curLevel >= 12))
                     {
                         SoundManager.instance.PlayVoice(Database.errorClips[7], true); // Play the appropriate clip.
                     }
@@ -3116,7 +3295,7 @@ public class Player : MovingObject
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on swipe right.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false))
+                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false) || (curLevel >= 12))
                     {
                         SoundManager.instance.PlayVoice(Database.errorClips[7], true); // Play the appropriate clip.
                     }
@@ -3126,7 +3305,7 @@ public class Player : MovingObject
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on swipe up.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false))
+                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false) || (curLevel >= 12))
                     {
                         SoundManager.instance.PlayVoice(Database.errorClips[7], true); // Play the appropriate clip.
                     }
@@ -3136,7 +3315,7 @@ public class Player : MovingObject
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on swipe down.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false))
+                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false) || (curLevel >= 12))
                     {
                         SoundManager.instance.PlayVoice(Database.errorClips[7], true); // Play the appropriate clip.
                     }
@@ -3146,7 +3325,7 @@ public class Player : MovingObject
                 {
                     debugPlayerInfo = "Nothing happened due to error with angle on rotation.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false))
+                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false) || (curLevel >= 12))
                     {
                         SoundManager.instance.PlayVoice(Database.errorClips[8], true); // Play the appropriate clip.
                     }
@@ -3156,7 +3335,7 @@ public class Player : MovingObject
                 {
                     debugPlayerInfo = "Nothing happened due to error with horizontal distance on hold.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false))
+                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false) || (curLevel >= 12))
                     {
                         SoundManager.instance.PlayVoice(Database.errorClips[9], true); // Play the appropriate clip.
                     }
@@ -3166,7 +3345,7 @@ public class Player : MovingObject
                 {
                     debugPlayerInfo = "Nothing happened due to error with vertical distance on hold.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false))
+                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false) || (curLevel >= 12))
                     {
                         SoundManager.instance.PlayVoice(Database.errorClips[10], true); // Play the appropriate clip.
                     }
@@ -3176,7 +3355,7 @@ public class Player : MovingObject
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on hold.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false))
+                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false) || (curLevel >= 12))
                     {
                         SoundManager.instance.PlayVoice(Database.errorClips[11], true); // Play the appropriate clip.
                     }
@@ -3186,7 +3365,7 @@ public class Player : MovingObject
                 {
                     debugPlayerInfo = "Nothing happened due to error with less than three fingers on the screen.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false))
+                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false) || (curLevel >= 12))
                     {
                         SoundManager.instance.PlayVoice(Database.errorClips[12], true); // Tell the player they had less than three fingers on the screen.
                     }
@@ -3196,7 +3375,7 @@ public class Player : MovingObject
                 {
                     debugPlayerInfo = "Nothing happened due to error with more than three fingers on the screen.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false))
+                    if ((SoundManager.instance.voiceSource.isPlaying == false) || (SoundManager.instance.clipSource.isPlaying == false) || (curLevel >= 12))
                     {
                         SoundManager.instance.PlayVoice(Database.errorClips[13], true); // Tell the player they had more than three fingers on the screen.
                     }
@@ -3434,12 +3613,12 @@ public class Player : MovingObject
                 finishedExitingInstruction = false; // Reset if the player is going through this tutorial level again.   
                 if (GM_title.isUsingTalkback == true)
                 {
-                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.tutorialClips[0], Database.tutorialClips[2], Database.soundEffectClips[0], Database.tutorialClips[3], Database.tutorialClips[4] };
+                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.tutorialClips[0], Database.tutorialClips[2], Database.soundEffectClips[1],  Database.tutorialClips[3], Database.tutorialClips[4] };
                     SoundManager.instance.PlayClips(clips, null, 0, () => PlayEcho(), 3); // If they are using Talkback, play the correct instructions.  
                 }
                 else if (GM_title.isUsingTalkback == false)
                 {
-                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.tutorialClips[0], Database.tutorialClips[1], Database.soundEffectClips[0], Database.tutorialClips[3], Database.tutorialClips[4] };
+                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.tutorialClips[0], Database.tutorialClips[1], Database.soundEffectClips[1], Database.tutorialClips[3], Database.tutorialClips[4] };
                     SoundManager.instance.PlayClips(clips, null, 0, () => PlayEcho(), 3); // If they are not using Talkback, play the correct instructions.  
                 }               
                 level1_remaining_taps = 3; // Set the remaining taps for the tutorial to 3.
@@ -3589,12 +3768,12 @@ public class Player : MovingObject
                         level1_remaining_taps--; // Decrease the amount of taps left to do.
                         if (level1_remaining_taps == 2)
                         {
-                            clips = new List<AudioClip> { Database.soundEffectClips[0], Database.tutorialClips[5] };
+                            clips = new List<AudioClip> { Database.soundEffectClips[1], Database.tutorialClips[5] };
                             SoundManager.instance.PlayClips(clips); // This tap was correct. Please tap X more times.
                         }
                         else if (level1_remaining_taps == 1)
                         {
-                            clips = new List<AudioClip> { Database.soundEffectClips[0], Database.tutorialClips[6] };
+                            clips = new List<AudioClip> { Database.soundEffectClips[1], Database.tutorialClips[6] };
                             SoundManager.instance.PlayClips(clips); // This tap was correct. Please tap X more times.
                         }
                         // If the player has finished the tapping section.
@@ -3609,12 +3788,12 @@ public class Player : MovingObject
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                             if (GM_title.isUsingTalkback == true)
                             {
-                                clips = new List<AudioClip> { Database.soundEffectClips[0], Database.tutorialClips[7], Database.tutorialClips[9], Database.soundEffectClips[0], Database.soundEffectClips[4], Database.tutorialClips[10] };
+                                clips = new List<AudioClip> { Database.soundEffectClips[1], Database.tutorialClips[7], Database.tutorialClips[9], Database.soundEffectClips[0], Database.soundEffectClips[4], Database.soundEffectClips[0], Database.tutorialClips[10] };
                                 SoundManager.instance.PlayClips(clips); // If they are using Talkback, play the correct instructions.  
                             }
                             else if (GM_title.isUsingTalkback == false)
                             {
-                                clips = new List<AudioClip> { Database.soundEffectClips[0], Database.tutorialClips[7], Database.tutorialClips[8], Database.soundEffectClips[0], Database.soundEffectClips[4], Database.tutorialClips[10] };
+                                clips = new List<AudioClip> { Database.soundEffectClips[1], Database.tutorialClips[7], Database.tutorialClips[8], Database.soundEffectClips[0], Database.soundEffectClips[4], Database.soundEffectClips[0], Database.tutorialClips[10] };
                                 SoundManager.instance.PlayClips(clips); // If they are not using Talkback, play the correct instructions.  
                             }
                         }
@@ -3802,12 +3981,12 @@ public class Player : MovingObject
                                     // Now try to swipe down to move on to the next level.                                    
                                     if (GM_title.isUsingTalkback == true)
                                     {
-                                        clips = new List<AudioClip> { Database.soundEffectClips[0], Database.tutorialClips[19], Database.soundEffectClips[9], Database.tutorialClips[20] };
+                                        clips = new List<AudioClip> { Database.soundEffectClips[0], Database.tutorialClips[19], Database.soundEffectClips[9], Database.soundEffectClips[0], Database.tutorialClips[20] };
                                         SoundManager.instance.PlayClips(clips); // If they are using Talkback, play the correct instructions.  
                                     }
                                     else if (GM_title.isUsingTalkback == false)
                                     {
-                                        clips = new List<AudioClip> { Database.soundEffectClips[0], Database.tutorialClips[18], Database.soundEffectClips[9], Database.tutorialClips[20] };
+                                        clips = new List<AudioClip> { Database.soundEffectClips[0], Database.tutorialClips[18], Database.soundEffectClips[9], Database.soundEffectClips[0], Database.tutorialClips[20] };
                                         SoundManager.instance.PlayClips(clips); // If they are not using Talkback, play the correct instructions.  
                                     }
                                 }
@@ -3876,9 +4055,9 @@ public class Player : MovingObject
                                 // TODO: Replace the winSound with "Congratulations! You have completed the tutorial. Now we will move back to the game!"
                                 clips = new List<AudioClip> { Database.soundEffectClips[9] };
                                 BoardManager.finishedTutorialLevel1 = true; // Make sure the player does not have to go through the tutorial again if they have gone through it once.
-                                GameManager.finishedLevel1Tutorial = BoardManager.finishedTutorialLevel1;
-                                GameManager.finishedLevel3Tutorial = BoardManager.finishedTutorialLevel3;
-                                GameManager.write_save_mode(curLevel, GameManager.finishedLevel1Tutorial, GameManager.finishedLevel3Tutorial, GameMode.instance.gamemode);
+                                GameMode.finishedLevel1Tutorial = BoardManager.finishedTutorialLevel1;
+                                GameMode.finishedLevel3Tutorial = BoardManager.finishedTutorialLevel3;
+                                GameMode.write_save_mode(curLevel, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.instance.gamemode);
                                 SoundManager.instance.PlayClips(clips, null, 0, () => quitInterception(), 1);
                             }
                             // If the action was not a swipe down.
@@ -3943,13 +4122,13 @@ public class Player : MovingObject
                         hasTappedAtCorner = true;
                         if (GM_title.isUsingTalkback == true)
                         {
-                            clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.tutorialClips[23], Database.soundEffectClips[0], Database.soundEffectClips[6], Database.soundEffectClips[0], Database.tutorialClips[24], Database.tutorialClips[25] };
-                            SoundManager.instance.PlayClips(clips); // If they are using Talkback, play the correct instructions.  
+                            clips = new List<AudioClip>() { Database.soundEffectClips[1], Database.tutorialClips[23], Database.soundEffectClips[0], Database.soundEffectClips[6], Database.soundEffectClips[0], Database.tutorialClips[24], Database.tutorialClips[25] };
+                            SoundManager.instance.PlayClips(clips, null, 0, () => PlayEcho(), 0, true); // If they are using Talkback, play the correct instructions.  
                         }
                         else if (GM_title.isUsingTalkback == false)
                         {
-                            clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.tutorialClips[22], Database.soundEffectClips[0], Database.soundEffectClips[6], Database.soundEffectClips[0], Database.tutorialClips[24], Database.tutorialClips[25] };
-                            SoundManager.instance.PlayClips(clips); // If they are not using Talkback, play the correct instructions.
+                            clips = new List<AudioClip>() { Database.soundEffectClips[1], Database.tutorialClips[22], Database.soundEffectClips[0], Database.soundEffectClips[6], Database.soundEffectClips[0], Database.tutorialClips[24], Database.tutorialClips[25] };
+                            SoundManager.instance.PlayClips(clips, null, 0, () => PlayEcho(), 0, true); // If they are not using Talkback, play the correct instructions. 
                         }
                     }
                     // If the player has not tapped at the corner yet and the gesture was not a tap.
@@ -4052,9 +4231,9 @@ public class Player : MovingObject
                             debugPlayerInfo = "Finished rotations for gesture tutorial. Completed gesture tutorial. Continuing with level 3.";
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                             BoardManager.finishedTutorialLevel3 = true; // Make sure the player does not have to go through the tutorial again if they have gone through it once.
-                            GameManager.finishedLevel1Tutorial = BoardManager.finishedTutorialLevel1;
-                            GameManager.finishedLevel3Tutorial = BoardManager.finishedTutorialLevel3;
-                            GameManager.write_save_mode(curLevel, GameManager.finishedLevel1Tutorial, GameManager.finishedLevel3Tutorial, GameMode.instance.gamemode);
+                            GameMode.finishedLevel1Tutorial = BoardManager.finishedTutorialLevel1;
+                            GameMode.finishedLevel3Tutorial = BoardManager.finishedTutorialLevel3;
+                            GameMode.write_save_mode(curLevel, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.instance.gamemode);
                             // Good job! now we will move back to the game. Try and get around the corner!
                             if (action == InterceptAction.LEFT)
                  			{
