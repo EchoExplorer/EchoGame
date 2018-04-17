@@ -32,3 +32,6 @@ At the root directory you can fild the folders Sprites and Sprites_Old. Copy the
 
 *** How can I disable the pink noise in the game? ***
 Open the prefabs folder, select the "Exit" object and set the volume inside the Audio Source component to 0. Don't delete the Audio Source component or modify the curves unless you know what you are doing (it was kind of hard to set up that component).
+
+*** The compiler gives fatal error after git pull!***
+Delete all the setting files and try again.
