@@ -216,6 +216,8 @@ public class BoardManager : MonoBehaviour
     public static Vector3 startPos;
     public static Vector3 startDir;
 
+    public static int numCornersAndDeadends = 0;
+
     //audios
     int cur_clip = 1;
     int cur_level;
@@ -988,7 +990,7 @@ public class BoardManager : MonoBehaviour
         InitialiseList();
         //Creates the outer walls and floor.
         BoardSetup();
-        LoadLoaclStats();
+        LoadLocalStats();
         setup_level(level, finishedLevel1Tutorial, finishedLevel3Tutorial);
         //if( (GameMode.instance.get_mode() == GameMode.Game_Mode.RESTART)||
         //	(GameMode.instance.get_mode() == GameMode.Game_Mode.CONTINUE) )
@@ -1066,7 +1068,7 @@ public class BoardManager : MonoBehaviour
         return true;
     }
 
-    bool LoadLoaclStats()
+    bool LoadLocalStats()
     {
         string filename = Application.persistentDataPath + "echostats";
         local_stats = new int[max_total_level + 1];
@@ -1220,9 +1222,10 @@ public class BoardManager : MonoBehaviour
                 {
                     //get the current level we are reading
                     int remain_length = line.Length - 6;
-                    if (line.Substring(6, remain_length - 1) != "DEFAULT")
-                    {
-                        level_reading = Int32.Parse(line.Substring(6, remain_length));
+                    
+                    if (line.Substring(6, remain_length - 1) != "DEFAULT")                    
+                    {                          
+                        level_reading = Int32.Parse(line.Substring(6, remain_length));                        
                         if (level_reading == level_wanted)
                         {//we found the level we want
                             reading_level = true;
@@ -1302,12 +1305,112 @@ public class BoardManager : MonoBehaviour
                 if (line.Substring(0, 6) == "LEVEL_")
                 {
                     //get the current level we are reading
-                    int remain_length = line.Length - 6;
-                    if (line.Substring(6, remain_length - 1) != "DEFAULT")
+                    // int remain_length = line.Length - 6;                
+                    string currentLevelString = "";
+                    int cornerInfoStart = 0;
+
+                    // Find the level we are reading
+                    for (int i = 0; i < 3; i++)
                     {
-                        int level_reading = Int32.Parse(line.Substring(6, remain_length));
+                        // If the current character is not a '_'
+                        if (line.Substring((6 + i), 1) != "_")
+                        {
+                            // If the line has 'DEFAULT'
+                            if (line.Substring((6 + i), 1) == "D")
+                            {
+                                currentLevelString = "DEFAULT";
+                                print("Level Searched: Level Default.\n");
+                            }
+                            // Otherwise, add the character to the level string.
+                            else if (line.Substring((6 + i), 1) != "D")
+                            {
+                                currentLevelString += line.Substring((6 + i), 1);
+                                if (i == 2)
+                                {
+                                    // Get the start position of the corner information.
+                                    cornerInfoStart = (6 + i) + 3;
+                                }
+                            }
+                        }
+                        // If the current character is a '_', we have found the level number, so stop searching.
+                        else if (line.Substring((6 + i), 1) == "_")
+                        {
+                            // Get the start position of the corner information.
+                            cornerInfoStart = (6 + i) + 2;
+                            i = 3;
+                        }
+                    }
+
+                    // if (line.Substring(6, remain_length - 1) != "DEFAULT")
+                    if ((currentLevelString != "DEFAULT") && (currentLevelString != "0"))
+                    {                        
+                        // Find the number of corners in the level
+                        string cornerString = "";
+                        int deadendInfoStart = 0;
+
+                        for (int j = 0; j < 2; j++)
+                        {
+                            if ((currentLevelString != "0") && (cornerInfoStart != 0))
+                            {
+                                if (line.Substring((cornerInfoStart + j), 1) != "_")
+                                {
+                                    cornerString += line.Substring((cornerInfoStart + j), 1);
+                                    if (j == 1)
+                                    {
+                                        // Get the start position of the deadend information.
+                                        deadendInfoStart = (cornerInfoStart + j) + 3;
+                                    }
+                                }
+                                else if (line.Substring((cornerInfoStart + j), 1) == "_")
+                                {
+                                    if (j == 0)
+                                    {
+                                        print("Level Searched: No corner information.");
+                                    }
+                                    // Get the start position of the deadend information.
+                                    deadendInfoStart = (cornerInfoStart + j) + 2;
+                                }
+                            }
+                        }                        
+
+                        string deadendString = "";
+
+                        if ((currentLevelString != "0") && (cornerInfoStart != 0) && (deadendInfoStart != 0))
+                        {
+                            int remainingCharacters = line.Length - deadendInfoStart;
+                            if ((remainingCharacters == 1) || (remainingCharacters == 2))
+                            {
+                                deadendString = line.Substring(deadendInfoStart, remainingCharacters);
+                            }
+                            else if (remainingCharacters == 0)
+                            {
+                                print("Level Searched: No deadend information.");
+                            }
+                            else if (remainingCharacters > 2)
+                            {
+                                print("Level Searched: Too many deadend characters.");
+                            }
+                        }                                                
+
+                        // int level_reading = Int32.Parse(line.Substring(6, remain_length));
+                        int level_reading = Convert.ToInt32(currentLevelString);
                         if (level_reading == level_wanted)
                         {//we found the level we want
+                            print("Level Searched: Level = " + currentLevelString + "\n");
+                            if (cornerString != "")
+                            {
+                                print("Level Searched: Corners in Level " + currentLevelString + " = " + cornerString);
+                            }
+                            if (deadendString != "")
+                            {
+                                print("Level Searched: Deadends in Level " + currentLevelString + " = " + deadendString);
+                            }
+                            if ((cornerString != "") && (deadendString != ""))
+                            {
+                                int levelCorners = Convert.ToInt32(cornerString);
+                                int levelDeadends = Convert.ToInt32(deadendString);
+                                numCornersAndDeadends = levelCorners + levelDeadends;
+                            }
                             reading_level = true;
                         }
                         else if (level_reading > level_wanted)
