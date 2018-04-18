@@ -1,155 +1,95 @@
 LEVEL_1
 Begin
-2_sec_silence
-1_sec_silence
-welcome_you_are_in_a_dark_maze
-swipe_up_to_move_forward
-currently_in_straight_hallway
-stairs_at_end_of_hallway
-if_you_hit_a_wall
-wall_hitting
-get_to_stairs_without_crashing
 IN
-Inend
 RETURN
-back_at_entrance_turn_around
 Inend
 Exit
-good_job
-swipe_down_to_attempt_exit
 END
 
 LEVEL_2
 Begin
-2_sec_silence
-1_sec_silence
-another_straight_hallway
-get_to_stairs_without_crashing
+IN
 RETURN
-back_at_entrance_turn_around
 Inend
 Exit
-good_job
 END
 
 LEVEL_3
+Begin
 IN
-at(1,9)_T_F_RIGHT
-2_sec_silence
-1_sec_silence
-move_on_from_straight_hallways
-this_is_level_3
-Inend
-IN
-at(6,9)_T_F_RIGHT
-approaching_corner
-Inend
-IN
-at(9,9)_T_F_BACK
-1_sec_silence
-move_forward_until_stairs
-Inend
 RETURN
-back_at_entrance_turn_around
 Inend
+Exit
 END
 
 LEVEL_4
 Begin
-2_sec_silence
-1_sec_silence
-hallway_has_another_right_turn
+IN
 RETURN
-back_at_entrance_turn_around
 Inend
+Exit
 END
 
 LEVEL_5
 Begin
-2_sec_silence
-1_sec_silence
-hallway_has_left_turn
 IN
-at(4,9)_T_F_LEFT
-approaching_corner
-Inend
-IN
-at(1,9)_T_F_LEFT
-1_sec_silence
-Now you are at the left turn
-Inend
-IN
-at(1,9)_T_F_BACK
-1_sec_silence
-You have turned left 90 degrees 
-move_forward_until_stairs
-Inend
 RETURN
-back_at_entrance_turn_around
 Inend
+Exit
 END
 
 LEVEL_6
+Begin
+IN
 RETURN
-back_at_entrance_turn_around
 Inend
+Exit
 END
 
 LEVEL_7
 Begin
-2_sec_silence
-1_sec_silence
-finished_first_part_of_tutorial
-some_harder_levels
+IN
 RETURN
-back_at_entrance_turn_around
 Inend
+Exit
 END
 
 LEVEL_8
+Begin
+IN
 RETURN
-back_at_entrance_turn_around
 Inend
+Exit
 END
 
 LEVEL_9
+Begin
+IN
 RETURN
-back_at_entrance_turn_around
 Inend
+Exit
 END
 
 LEVEL_10
+Begin
+IN
 RETURN
-back_at_entrance_turn_around
 Inend
+Exit
 END
 
 LEVEL_11
 Begin
-2_sec_silence
-1_sec_silence
-introduce_T_hallway
-stairs_in_one_of_two_arms_of_T
-If you find yourself in the wrong arm, swipe twice to turn around
-turn around by turning in the same direction twice
 IN
-at(5,6)_T_F_OTHER
-You are in the T now, tap to hear echoes
-The echoes you hear will give you information about your surroundings
-Inend
 RETURN
-back_at_entrance_turn_around
 Inend
 Exit
-good_job
-completed_all_of_tutorial
 END
 
 LEVEL_DEFAULT
 Begin
-2_sec_silence
-1_sec_silence
+IN
 RETURN
-back_at_entrance_turn_around
 Inend
+Exit
 END

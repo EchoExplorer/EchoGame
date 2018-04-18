@@ -13,13 +13,14 @@ using System.IO;
 /// </summary>
 public class GameManager : MonoBehaviour
 {
-
     public BoardManager boardScript;
 
     public static GameManager instance = null;
     public static bool levelImageActive = true;
     [HideInInspector]
     public bool playersTurn = true;
+
+    string debugPlayerInfo = "";
 
     private const int MAX_TUTORIAL_LEVEL = 11;
     private const int MAX_LEVEL = 150;
@@ -38,8 +39,9 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
 
         DontDestroyOnLoad(gameObject);
-        
+
         boardScript = GetComponent<BoardManager>();
+
         // Duplicated loading: LoadSaved() will be called in InitGame().
         // LoadSaved();
     }
@@ -50,74 +52,74 @@ public class GameManager : MonoBehaviour
         string[] svdata_split;
         GameMode.Game_Mode current = GameMode.instance.get_mode();
 
-        //choose save for tutorial and normal game
-        if (current == GameMode.Game_Mode.RESTART || current == GameMode.Game_Mode.CONTINUE)
+        // choose save for tutorial and normal game
+        if ((current == GameMode.Game_Mode.RESTART) || (current == GameMode.Game_Mode.CONTINUE))
+        {
             filename = Application.persistentDataPath + "echosaved";
-        else//load specific save for tutorial
+        }
+        // load specific save for tutorial
+        else
+        {
             filename = Application.persistentDataPath + "echosaved_tutorial";
+        }
 
         if (System.IO.File.Exists(filename))
         {
             svdata_split = System.IO.File.ReadAllLines(filename);
             //read existing data
             level = Int32.Parse(svdata_split[0]);
-        }
-        else
-        {
-            if (current == GameMode.Game_Mode.RESTART || current == GameMode.Game_Mode.CONTINUE)
-                level = MAX_TUTORIAL_LEVEL + 1;
-            else
-                level = 1;
-        }
-        switch (current)
-        {
-            case GameMode.Game_Mode.TUTORIAL_RESTART:
-                level = 1;
-                // Set game mode to TUTORIAL for next levels
+            string level1Finished = svdata_split[1];
+            string level3Finished = svdata_split[2];
+            if (level1Finished.Equals("True") == true)
+            {
+                GameMode.finishedLevel1Tutorial = true;
+            }
+            else if (level1Finished.Equals("False") == true)
+            {
+                GameMode.finishedLevel1Tutorial = false;
+            }
+            if (level3Finished.Equals("True") == true)
+            {
+                GameMode.finishedLevel3Tutorial = true;
+            }
+            else if (level3Finished.Equals("False") == true)
+            {
+                GameMode.finishedLevel3Tutorial = false;
+            }
+
+            if (level <= 11)
+            {
                 GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
-                break;
-            case GameMode.Game_Mode.TUTORIAL:
-                if (level < 1)
-                    level = 1;
-                else if (level > MAX_TUTORIAL_LEVEL)
-                {
-                    // Start Normal levels
-                    level = MAX_TUTORIAL_LEVEL + 1;
-                    GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
-                    // Reset tutorial level and write to saved_tutorial file
-                    write_save_mode(1, GameMode.Game_Mode.TUTORIAL);
-                }
-                break;
-            case GameMode.Game_Mode.RESTART:
-                level = MAX_TUTORIAL_LEVEL + 1;
-                // Set game mode to CONTINUE for next levels
+                GameMode.write_save_mode(level, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.Game_Mode.TUTORIAL);
+            }
+            else if (level >= 12)
+            {
                 GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
-                break;
-            case GameMode.Game_Mode.CONTINUE:
-                if (level < 1 || level > MAX_LEVEL)
-                    level = MAX_TUTORIAL_LEVEL + 1;
-                break;
-            default:
-                level = MAX_TUTORIAL_LEVEL + 1;
-                return false;
+                GameMode.write_save_mode(level, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.Game_Mode.CONTINUE);
+            }            
         }
-        return true;
-    }
-
-    /// <summary>
-    /// Saves information about the game state as persistent data.
-    /// </summary>
-    bool write_save_mode(int lv, GameMode.Game_Mode mode)
-    {
-        string filename = "";
-
-        if (mode == GameMode.Game_Mode.RESTART || mode == GameMode.Game_Mode.CONTINUE)
-            filename = Application.persistentDataPath + "echosaved";
         else
-            filename = Application.persistentDataPath + "echosaved_tutorial";
-        System.IO.File.WriteAllText(filename, lv.ToString());
+        {
+            if ((current == GameMode.Game_Mode.RESTART) || (current == GameMode.Game_Mode.CONTINUE))
+            {
+                level = MAX_TUTORIAL_LEVEL + 1;
+                GameMode.finishedLevel1Tutorial = true;
+                GameMode.finishedLevel3Tutorial = true;
+                GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
+                GameMode.write_save_mode(level, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.Game_Mode.CONTINUE);
+            }
+            else
+            {
+                level = 1;
+                GameMode.finishedLevel1Tutorial = false;
+                GameMode.finishedLevel3Tutorial = false;
+                GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
+                GameMode.write_save_mode(level, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.Game_Mode.TUTORIAL);
+            }                      
+        }
+               
         return true;
-    }
+    }    
 
     //Initializes the game for each level.
     //TODO(agotsis) Analyze database
@@ -146,9 +148,49 @@ public class GameManager : MonoBehaviour
 
         boardScript.max_total_level = boardScript.get_level_count("GameData/levels");
 
-        LoadSaved();
+        if (Player.changingLevel == false)
+        {
+            if (GM_main_pre.skippingTutorial == 0)
+            {
+                GameMode.Game_Mode current = GameMode.instance.get_mode();
+                if (current == GameMode.Game_Mode.RESTART)
+                {
+                    GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
+                    level = MAX_TUTORIAL_LEVEL + 1;
+                }
+                else if (current == GameMode.Game_Mode.TUTORIAL_RESTART)
+                {
+                    GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
+                    level = 1;
+                }
+                GameMode.finishedLevel1Tutorial = false;
+                GameMode.finishedLevel3Tutorial = false;
+                GameMode.write_save_mode(level, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, current);
+            }
+            else if (GM_main_pre.skippingTutorial == 1)
+            {
+                LoadSaved();
+            }
+            else if (GM_main_pre.skippingTutorial == 2)
+            {
+                GameMode.Game_Mode current = GameMode.instance.get_mode();
+                if (current == GameMode.Game_Mode.RESTART)
+                {
+                    GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
+                    level = MAX_TUTORIAL_LEVEL + 1;
+                }
+                else if (current == GameMode.Game_Mode.TUTORIAL_RESTART)
+                {
+                    GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
+                    level = 1;
+                }
+                GameMode.finishedLevel1Tutorial = true;
+                GameMode.finishedLevel3Tutorial = true;
+                GameMode.write_save_mode(level, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, current);
+            }
+        }
         levelText.text = "Loading level " + level.ToString();
-        boardScript.SetupScene(level);
+        boardScript.SetupScene(level, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.instance.gamemode);
     }
 
     //Hides black image used between levels
@@ -161,9 +203,7 @@ public class GameManager : MonoBehaviour
             UnHideLevelImage();
         //Set doingSetup to false allowing player to move again.
         doingSetup = false;
-        playersTurn = true;
-        if (!GameObject.Find("Player").GetComponent<Player>().intercepted)
-            SoundManager.instance.PlayVoice(Database.instance.mainGameClips[0], true);
+        playersTurn = true;        
     }
 
     /// <summary>
@@ -205,6 +245,8 @@ public class GameManager : MonoBehaviour
         levelText.transform.localScale -= new Vector3(0.3f, 0.3f, 0.3f);
 #endif
 
+        Player.reachedExit = false;
+        BoardManager.reachedExit = false;
         levelImage.SetActive(false);
         InitGame();
     }

@@ -193,6 +193,7 @@ public class BoardManager : MonoBehaviour
     int rows = Utilities.MAZE_SIZE;
     public int max_total_level;//same as max_level in Main mode, for local stats use only
     public int[] local_stats;
+    public static bool[] tutorial_stats;
 
     // number of walls and such
     public GameObject[] floorTiles;
@@ -211,9 +212,9 @@ public class BoardManager : MonoBehaviour
     private List<Vector3> playerPositions = new List<Vector3>();
     public string mazeSolution = "";
     level_voice_list level_voices = new level_voice_list();
-    public Vector3 exitPos;
-    Vector3 startPos;
-    Vector3 startDir;
+    public static Vector3 exitPos;
+    public static Vector3 startPos;
+    public static Vector3 startDir;
 
     //audios
     int cur_clip = 1;
@@ -229,24 +230,39 @@ public class BoardManager : MonoBehaviour
     // Intercept the game
     bool hasIntercepted = false;
 
+    eventHandler eh;
+
+    public static bool hasTappedAtCorner = false;
+
     public static bool finishedTutorialLevel1 = false;
     public static bool finishedTutorialLevel3 = false;
 
-    //Clears our list gridPositions and prepares it to generate a new board.
+    static bool tutorial1Finished;
+    static bool tutorial3Finished; 
+
+    public static bool reachedExit = false;
+    public static bool gotBackToStart = false;
+
+    private void Start()
+    {
+        eh = new eventHandler(InputModule.instance);        
+    }
+
+    // Clears our list gridPositions and prepares it to generate a new board.
     void InitialiseList()
     {
-        //Clear our list gridPositions.
+        // Clear our list gridPositions.
         gridPositions.Clear();
 
         float scale = (float)Utilities.SCALE_REF / (float)Utilities.MAZE_SIZE;
 
-        //Loop through x axis (columns).
+        // Loop through x axis (columns).
         for (int x = -1; x < rows + 1; x++)
         {
-            //Within each column, loop through y axis (rows).
+            // Within each column, loop through y axis (rows).
             for (int y = -1; y < columns + 1; y++)
             {
-                //At each index add a new Vector3 to our list with the x and y coordinates of that position.
+                // At each index add a new Vector3 to our list with the x and y coordinates of that position.
                 gridPositions.Add(new Vector3((float)y * scale, (float)x * scale, 0f));
             }
         }
@@ -257,7 +273,7 @@ public class BoardManager : MonoBehaviour
     /// </summary>
     void LoadAudio()
     {
-        //load the audio with those filename
+        // load the audio with those filename
         level_voices.clip_at_begin.Clear();
         foreach (string clip_name in level_voices.play_at_begin)
         {
@@ -392,8 +408,8 @@ public class BoardManager : MonoBehaviour
     /// <summary>
     /// A function to signal the fact that the player has moved at least once.
     /// </summary>
-    bool left_start_pt = false;
-    public void set_left_start_pt(bool newf)
+    public static bool left_start_pt = false;
+    public static void set_left_start_pt(bool newf)
     {
         left_start_pt = newf;
     }
@@ -401,46 +417,71 @@ public class BoardManager : MonoBehaviour
     /// <summary>
     /// At every frame, the player's position and game state is used to determine if certain sounds should be played.
     /// </summary>
-    void Update()
-    {
+    void Update ()
+	{
+        tutorial1Finished = finishedTutorialLevel1;
+        tutorial3Finished = finishedTutorialLevel3;
 
-        float threshold = 0.001f;
-        Vector2 idx_pos = get_idx_from_pos(player_ref.transform.position);
-        // Intercept the game on specific levels
-        // Level 1
-        if (!hasIntercepted && (finishedTutorialLevel1 == false) && (cur_level == 1))
-        {
-            player_script.Intercept(1);
-            hasIntercepted = true;
-        }
-        // Level 3
-        Vector2 level3_corner = new Vector2(9, 9);
-        if (!hasIntercepted && (finishedTutorialLevel3 == false) && (cur_level == 3) && ((idx_pos - level3_corner).magnitude <= threshold))
-        {
-            player_script.Intercept(3);
-            hasIntercepted = true;
-        }       
-        if (hasIntercepted && player_script.intercepted)
-            return;
+		float threshold = 0.001f;
+		Vector2 idx_pos = get_idx_from_pos (player_ref.transform.position);    
 
-        bool ingame_playing = false;
-        //play sounds according to positions
+		// Intercept the game on specific levels    
+		// Level 1
+		// If the player has not done the gesture tutorial for level 1 yet, intercept.
+		if ((hasIntercepted == false) && (tutorial1Finished == false) && (cur_level == 1))
+        {
+			player_script.Intercept(1); // Intercept.
+			hasIntercepted = true;
+		}
+         
+		// If the player has reached the right turn in level 3 and has not started the gesture tutorial for this level, intercept.
+		Vector2 level3_corner = new Vector2(9, 9);        
+		if ((hasIntercepted == false) && (tutorial3Finished == false) && (cur_level == 3) && (idx_pos.x == level3_corner.x) && (idx_pos.y == level3_corner.y))
+        {
+			player_script.Intercept(3); // Intercept.
+			hasIntercepted = true;
+		}
+              
+		// If we have intercepted a level.
+		if ((hasIntercepted == true) && (player_script.intercepted == true))
+        {
+			return;
+		}
+
+		bool ingame_playing = false;
+        //play sounds according to positions		
+
         if ((idx_pos - get_idx_from_pos(exitPos)).magnitude <= threshold)
         {
+            reachedExit = true;
+             
             if (level_voices.clip_exit < level_voices.clip_at_exit.Count)
-                level_voices.clip_exit = play_audio(level_voices.clip_at_exit, level_voices.clip_exit);
+				level_voices.clip_exit = play_audio (level_voices.clip_at_exit, level_voices.clip_exit);            
+		}
+
+        else if ((idx_pos - get_idx_from_pos(exitPos)).magnitude > threshold)
+        {
+            reachedExit = false;
         }
+
         else if (((idx_pos - get_idx_from_pos(startPos)).magnitude <= threshold) && left_start_pt && (player_script.get_player_dir("BACK") == startDir))
         {
+            gotBackToStart = true;
+
             if (level_voices.clip_return < level_voices.clip_when_return.Count)
                 level_voices.clip_return = play_audio(level_voices.clip_when_return, level_voices.clip_return, true, true);
         }
+
+        else if (((idx_pos - get_idx_from_pos(startPos)).magnitude > threshold) && left_start_pt)
+        {
+            gotBackToStart = false;
+        }
+
         else
         {
             for (int i = 0; i < level_voices.ingame.Count; ++i)
             {//find out that if player is in specific position and dir
-                if (((idx_pos - level_voices.ingame[i].pos).magnitude <= threshold) &&
-                     ((get_player_dir_world() == level_voices.ingame[i].dir) || (level_voices.ingame[i].dir == Direction.OTHER)))
+                if (((idx_pos - level_voices.ingame[i].pos).magnitude <= threshold) && ((get_player_dir_world() == level_voices.ingame[i].dir) || (level_voices.ingame[i].dir == Direction.OTHER)))
                 {
                     //if player tapped(played echo)
                     if ((level_voices.ingame[i].tap) && (player_script.tapped_at_this_block()))
@@ -496,7 +537,7 @@ public class BoardManager : MonoBehaviour
     /// <summary>
     /// Deserializes a string representing a direction.
     /// </summary>
-    public Direction StringToDir(string str)
+    public static Direction StringToDir(string str)
     {
         if (str == "FRONT")
             return Direction.FRONT;
@@ -564,7 +605,7 @@ public class BoardManager : MonoBehaviour
     }
 
     /*TODO(agotsis) I will rewrite my Python Code in C#, for these purposes.*/
-    void setup_level(int level)
+    void setup_level(int level, bool finishedLevel1Tutorial, bool finishedLevel3Tutorial)
     {
         //Clear our list gridPositions.
         wallPositions.Clear();
@@ -592,6 +633,12 @@ public class BoardManager : MonoBehaviour
         cur_clip = level;
         cur_level = level;
         hasIntercepted = false;
+
+        finishedTutorialLevel1 = finishedLevel1Tutorial;
+        finishedTutorialLevel3 = finishedLevel3Tutorial;
+
+        tutorial1Finished = finishedTutorialLevel1;
+        tutorial3Finished = finishedTutorialLevel3;
 
         //build level
         load_level_from_file("GameData/levels", level);
@@ -710,9 +757,9 @@ public class BoardManager : MonoBehaviour
         int y_idx = -1, x_idx = -1;
 
         //get which index of gridPos() player is in
-        for (int i = 1; i <= rows; i++)
+        for (int i = 1; i < (rows + 1); i++)
         {
-            for (int j = 1; j <= columns; ++j)
+            for (int j = 1; j < (columns + 1); ++j)
             {
                 if ((gridPositions[i * (columns + 2) + j] - pos).magnitude <= threshhold)
                 {
@@ -938,7 +985,7 @@ public class BoardManager : MonoBehaviour
     /// <summary>
     /// Sets up the game board (grid positions), sound clips and save data as an initialization step. 
     /// </summary>
-    public void SetupScene(int level)
+    public void SetupScene(int level, bool finishedLevel1Tutorial, bool finishedLevel3Tutorial, GameMode.Game_Mode mode)
     {
         //find player
         player_ref = GameObject.Find("Player");//Player.instance.gameObject;
@@ -949,10 +996,13 @@ public class BoardManager : MonoBehaviour
         //Creates the outer walls and floor.
         BoardSetup();
         LoadLoaclStats();
-        setup_level(level);
+        setup_level(level, finishedLevel1Tutorial, finishedLevel3Tutorial);
         //if( (GameMode.instance.get_mode() == GameMode.Game_Mode.RESTART)||
         //	(GameMode.instance.get_mode() == GameMode.Game_Mode.CONTINUE) )
-        write_save(level);
+        
+        // GameMode.finishedLevel1Tutorial = finishedLevel1Tutorial;
+        // GameMode.finishedLevel3Tutorial = finishedLevel3Tutorial;
+        // GameMode.write_save_mode(level, finishedLevel1Tutorial, finishedLevel3Tutorial, mode);
 
         //local_stats[level] += 1;
         //write_local_stats ();
@@ -963,20 +1013,41 @@ public class BoardManager : MonoBehaviour
         latest_clip_idx = 0;
         skip_clip = false;
     }
+   
+    public static bool StringToBool(string convertString)
+    {
+        if (convertString.Equals("True"))
+        {
+            return true;
+        }
+        else if (convertString.Equals("False"))
+        {
+            return false;
+        }
+        else
+        {
+            return false;
+        }
+    }
 
     /// <summary>
     /// Saves information about the game state as persistent data.
     /// </summary>
-    public bool write_save(int lv)
+    public static bool write_save(int lv, bool finishedLevel1Tutorial, bool finishedLevel3Tutorial)
     {
         string filename = "";
+        string[] fileLines = new string[3];        
 
         if (GameMode.instance.get_mode() == GameMode.Game_Mode.RESTART || GameMode.instance.get_mode() == GameMode.Game_Mode.CONTINUE)
             filename = Application.persistentDataPath + "echosaved";
-        else//load specific save for tutorial
+        else // load specific save for tutorial
             filename = Application.persistentDataPath + "echosaved_tutorial";
 
-        System.IO.File.WriteAllText(filename, lv.ToString());
+        fileLines[0] = lv.ToString();
+        fileLines[1] = finishedLevel1Tutorial.ToString();
+        fileLines[2] = finishedLevel3Tutorial.ToString();
+
+        System.IO.File.WriteAllLines(filename,fileLines);
         return true;
     }
 
@@ -1213,16 +1284,20 @@ public class BoardManager : MonoBehaviour
                     //do things
                     for (int i = 0; i < line.Length; ++i)
                     {
-                        if (line[i] == 'w')
-                        {//wall
+                        if (line[i] == 'w') // wall
+                        {
                             wallPositions.Add(gridPositions[(cur_y + 1) * (columns + 2) + (i + 1)]);
                             wallIdxes.Add(i + 1);
                             wallIdxes.Add(cur_y + 1);
                         }
-                        else if (line[i] == 'e')//exit
+                        else if (line[i] == 'e') // exit
+                        {
                             exitPos = gridPositions[(cur_y + 1) * (columns + 2) + (i + 1)];
-                        else if (line[i] == 's')//start positions
+                        }
+                        else if (line[i] == 's') // start positions
+                        {
                             playerPositions.Add(gridPositions[(cur_y + 1) * (columns + 2) + (i + 1)]);
+                        }
                     }
                     cur_y -= 1;
                 }
