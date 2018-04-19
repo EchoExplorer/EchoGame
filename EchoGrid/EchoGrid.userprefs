@@ -1,12 +1,12 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/GoogleVR/Legacy/Scripts/Audio/GvrAudioSource.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/Player.cs">
     <Files>
-      <File FileName="Assets/Scripts/Player.cs" Line="291" Column="23" />
-      <File FileName="Assets/Scripts/Database.cs" Line="239" Column="25" />
-      <File FileName="Assets/Scripts/SoundManager.cs" Line="136" Column="27" />
-      <File FileName="Assets/Scripts/GM_Agreement.cs" Line="22" Column="25" />
-      <File FileName="Assets/Scripts/BoardManager.cs" Line="440" Column="1" />
+      <File FileName="Assets/Scripts/Player.cs" Line="140" Column="26" />
+      <File FileName="Assets/Scripts/Database.cs" Line="29" Column="1" />
+      <File FileName="Assets/Scripts/SoundManager.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/GM_Agreement.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/BoardManager.cs" Line="1" Column="1" />
       <File FileName="Assets/GoogleVR/Legacy/Scripts/Audio/GvrAudioSource.cs" Line="391" Column="49" />
     </Files>
   </MonoDevelop.Ide.Workbench>
