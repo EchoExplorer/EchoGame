@@ -1,4 +1,4 @@
-LEVEL_1
+LEVEL_1_C0_D2
 ---------
 ---------
 ---------
@@ -9,7 +9,7 @@ LEVEL_1
 wwwwwwwww
 ss-----ew
 END
-LEVEL_2
+LEVEL_2_C0_D2
 wwwwwwwww
 wwwwwwwww
 wwwwwwwww
@@ -20,7 +20,7 @@ wwwwwwwww
 wwwwwwwww
 wwwwwwwww
 END
-LEVEL_3
+LEVEL_3_C1_D2
 ss-------
 wwwwwwww-
 -------w-
@@ -31,7 +31,7 @@ wwwwwwww-
 -------w-
 -------we
 END
-LEVEL_4
+LEVEL_4_C1_D2
 wwwwwwwww
 wwwwwwwww
 wwwwwwwww
@@ -42,7 +42,7 @@ wwwwwwww-
 wwwwwwww-
 wwwwwwwwe
 END
-LEVEL_5
+LEVEL_5_C1_D2
 --------s
 -wwwwwwww
 -w-------
@@ -53,7 +53,7 @@ LEVEL_5
 -w-------
 ew-------
 END
-LEVEL_6
+LEVEL_6_C1_D2
 wwwwwwwww
 wwwwwwwww
 wwwwwwwww
@@ -64,7 +64,7 @@ wwwwwwwww
 -wwwwwwww
 ewwwwwwww
 END
-LEVEL_7
+LEVEL_7_C3_D2
 wwwwwwwww
 ewwwwwwww
 -wwwwwwww
@@ -75,7 +75,7 @@ wwww-wwww
 wwww-wwww
 ssss-wwww
 END
-LEVEL_8
+LEVEL_8_C3_D2
 wwwwwwwww
 wwwwwwwww
 wwwwwwwww
@@ -86,7 +86,7 @@ ww-wwwwwe
 ww-wwwwww
 ww------s
 END
-LEVEL_9
+LEVEL_9_C8_D2
 ----ssss-
 -wwwwwwww
 ---------
@@ -97,7 +97,7 @@ wwwwwwww-
 wwwwwwww-
 e--------
 END
-LEVEL_10
+LEVEL_10_C5_D2
 wwwwwwwww
 ---------
 -wwwwwww-
@@ -108,7 +108,7 @@ wwww-wwww
 wwww-wwww
 ssss-wwww
 END
-LEVEL_11
+LEVEL_11_C1_D3
 wwwwwwwww
 wwwwwwwww
 wwwwwwwww
@@ -119,7 +119,7 @@ wwww-wwww
 wwww-wwww
 wwwwswwww
 END
-LEVEL_12
+LEVEL_12_C5_D2
 wwwwwwwww
 wwwwwwwww
 ww---wwww
@@ -130,7 +130,7 @@ ww-wwwwws
 ww-wwwww-
 ww-------
 END
-LEVEL_13
+LEVEL_13_C6_D2
 ---wwwwww
 -w-wwwwww
 -w---wwww
@@ -141,7 +141,7 @@ wwww--sww
 wwwwwwwww
 wwwwwwwww
 END
-LEVEL_14
+LEVEL_14_C3_D2
 -----wwww
 -www-wwww
 swww-wwww
@@ -152,7 +152,7 @@ wwww----e
 wwwwwwwww
 wwwwwwwww
 END
-LEVEL_15
+LEVEL_15_C7_D2
 wwww-----
 wwww-www-
 --ewsw---
@@ -163,7 +163,7 @@ wwwwwwwww
 wwwwwwwww
 wwwwwwwww
 END
-LEVEL_16
+LEVEL_16_C1_D2
 wwwwwwwww
 wwwwwwwww
 wwwwwwwww
@@ -174,7 +174,7 @@ ww-wwwwww
 ww-wwwwww
 ww------s
 END
-LEVEL_17
+LEVEL_17_C5_D2
 wwwwwwwww
 wwwwwwwww
 -------ws
@@ -185,7 +185,7 @@ wwwwwwwww
 -wwwwwwww
 ------eww
 END
-LEVEL_18
+LEVEL_18_C6_D2
 wwwwewwww
 wwww-wwww
 ww---wwww
@@ -196,7 +196,7 @@ wwww-----
 wwwwwwww-
 wwwwwwwws
 END
-LEVEL_19
+LEVEL_19_C5_D2
 wwwwwwwww
 wwwwwwwww
 ---wwwwww
@@ -207,7 +207,7 @@ swwwww-ww
 wwwwww-ww
 wwwwww--e
 END
-LEVEL_20
+LEVEL_20_C5_D2
 wwwwwwwww
 wwwwwwwww
 wwww---ww
@@ -218,7 +218,7 @@ ww-wwwwww
 ww-wwwwww
 ww--ewwww
 END
-LEVEL_21
+LEVEL_21_C5_D2
 wwe--wwww
 wwww-wwww
 wwww-wwww
@@ -229,7 +229,7 @@ wwww-w---
 wwww-w-w-
 wwww---ws
 END
-LEVEL_22
+LEVEL_22_C12_D2
 wwww---ww
 wwww-w-ww
 wws--w---
@@ -240,7 +240,7 @@ wwwwwwww-
 ww-www-ww
 ww-----ww
 END
-LEVEL_23
+LEVEL_23_C1_D2
 wwwwwwwww
 wwwwwwwww
 wwwwwwwww
@@ -251,7 +251,7 @@ wwwwwwwws
 wwwwwwww-
 e--------
 END
-LEVEL_24
+LEVEL_24_C7_D2
 ww-------
 ww-wwwww-
 ww-wwwww-
@@ -262,7 +262,7 @@ ww-wwwww-
 -www-wwww
 --ewswwww
 END
-LEVEL_25
+LEVEL_25_C4_D2
 wwewwwwww
 ww-wwwwww
 ww---wwww
@@ -273,7 +273,7 @@ wwww-wwww
 -wwwwwwww
 swwwwwwww
 END
-LEVEL_26
+LEVEL_26_C4_D2
 wwwwwwwww
 wwwwwwwww
 wwwwwwwww
@@ -284,7 +284,7 @@ wwwwww---
 wwwwwwww-
 wwwwwws--
 END
-LEVEL_27
+LEVEL_27_C3_D2
 wwwwwwwww
 wwwwwwwww
 wwwwwwwww
@@ -295,7 +295,7 @@ wwwwwwwww
 -wwwww-ww
 swwwe--ww
 END
-LEVEL_28
+LEVEL_28_C2_D2
 wwww----e
 wwww-wwww
 wwww----s
@@ -306,7 +306,7 @@ wwwwwwwww
 wwwwwwwww
 wwwwwwwww
 END
-LEVEL_29
+LEVEL_29_C5_D2
 wwwwwwwww
 wwwwwwwww
 wwww----e
@@ -317,7 +317,7 @@ wwww-w---
 wwww-w-w-
 wwww---ws
 END
-LEVEL_30
+LEVEL_30_C6_D2
 wwwwwwwww
 wwwwwwwww
 wwwwwwwww
@@ -328,7 +328,7 @@ s----w---
 wwwwwwww-
 e--------
 END
-LEVEL_31
+LEVEL_31_C5_D2
 wwwwwwwww
 wwwwwwwww
 s----wwww
@@ -339,7 +339,7 @@ wwww---ww
 wwww-wwww
 wwwwewwww
 END
-LEVEL_32
+LEVEL_32_C3_D2
 wws--wwww
 wwww-wwww
 wwww-weww
@@ -350,7 +350,7 @@ wwwwwwwww
 wwwwwwwww
 wwwwwwwww
 END
-LEVEL_33
+LEVEL_33_C2_D2
 wwwwwwsww
 wwwwww-ww
 wwewww-ww
@@ -361,7 +361,7 @@ wwwwwwwww
 wwwwwwwww
 wwwwwwwww
 END
-LEVEL_34
+LEVEL_34_C2_D2
 wwwwwwwww
 wwwwwwwww
 wwww---ww
@@ -372,7 +372,7 @@ wwww-wwww
 wwww-wwww
 wwwwewwww
 END
-LEVEL_35
+LEVEL_35_C6_D2
 wwwwwwsww
 wwwwww-ww
 wwww---ww
@@ -383,7 +383,7 @@ ew-w-wwww
 ww-w-wwww
 ww---wwww
 END
-LEVEL_36
+LEVEL_36_C4_D2
 -------ws
 -wwwww-w-
 -wwwww---
@@ -394,7 +394,7 @@ wwwwwwwww
 wwwwwwwww
 wwwwwwwww
 END
-LEVEL_37
+LEVEL_37_C2_D2
 wwwwwwwww
 wwwwwwwww
 wwwwwwwww
@@ -405,7 +405,7 @@ wwwwww-ww
 -wwwwwwww
 ewwwwwwww
 END
-LEVEL_38
+LEVEL_38_C8_D2
 ew---wwww
 -w-w-wwww
 ---w-w---
@@ -416,7 +416,7 @@ wwwwwwwww
 wwwwwwwww
 wwwwwwwww
 END
-LEVEL_39
+LEVEL_39_C5_D2
 wwwwwwwwe
 wwwwwwww-
 wwwwww---
@@ -427,7 +427,7 @@ ww--swwww
 wwwwwwwww
 wwwwwwwww
 END
-LEVEL_40
+LEVEL_40_C4_D2
 wwwwwwwww
 wwwwwwwww
 wwwwwwwww
@@ -438,7 +438,7 @@ wwww-wwww
 -wwwwwwww
 --------s
 END
-LEVEL_41
+LEVEL_41_C5_D2
 ewwwwwwww
 -wwwwwwww
 ---wwwwww
@@ -449,7 +449,7 @@ wwww-wwww
 wwww-wwww
 s----wwww
 END
-LEVEL_42
+LEVEL_42_C2_D2
 wwwwwwwww
 wwwwwwwww
 wwwwwwwww
@@ -460,7 +460,7 @@ wwwwwwwww
 -wwwwwwww
 swwwwwwww
 END
-LEVEL_43
+LEVEL_43_C2_D2
 wwwwwwwww
 wwwwwwwww
 wwwwwwwww
@@ -471,7 +471,7 @@ swwwewwww
 wwwwwwwww
 wwwwwwwww
 END
-LEVEL_44
+LEVEL_44_C2_D2
 ww------s
 ww-wwwwww
 ww----eww
@@ -482,7 +482,7 @@ wwwwwwwww
 wwwwwwwww
 wwwwwwwww
 END
-LEVEL_45
+LEVEL_45_C6_D2
 -------we
 -wwwww-w-
 -wwwww---
@@ -493,7 +493,7 @@ wwswwwwww
 wwwwwwwww
 wwwwwwwww
 END
-LEVEL_46
+LEVEL_46_C2_D2
 wwwwwwwww
 wwwwwwwww
 wwwwwwwww
@@ -504,7 +504,7 @@ ww-wwwwww
 ww-wwwwww
 ww--ewwww
 END
-LEVEL_47
+LEVEL_47_C5_D2
 wwww----s
 wwww-wwww
 wwww---ww
@@ -515,7 +515,7 @@ wwwwww---
 wwwwwwww-
 wwwwwwwwe
 END
-LEVEL_48
+LEVEL_48_C5_D2
 wwwwwwwww
 wwwwwwwww
 wwwwwwwww
@@ -526,7 +526,7 @@ wwww-w---
 wwww-wwww
 wwww----e
 END
-LEVEL_49
+LEVEL_49_C5_D2
 ww---wwww
 ww-w-wwww
 ww-wewwww
@@ -537,7 +537,7 @@ ww-----ww
 wwwwwwwww
 wwwwwwwww
 END
-LEVEL_50
+LEVEL_50_C3_D2
 wwwwwwwws
 wwwwwwww-
 wwwwww---
@@ -548,7 +548,7 @@ wwwwwwwww
 wwwwwwwww
 wwwwwwwww
 END
-LEVEL_51
+LEVEL_51_C4_D2
 wwwwswwww
 wwww-wwww
 ww---wwww
@@ -559,7 +559,7 @@ wwwwwweww
 wwwwwwwww
 wwwwwwwww
 END
-LEVEL_52
+LEVEL_52_C7_D2
 wwwwwwwwe
 wwwwwwww-
 ---------
@@ -570,7 +570,7 @@ wwww---ww
 wwwwww-ww
 wwwws--ww
 END
-LEVEL_53
+LEVEL_53_C3_D2
 --------e
 -wwwwwwww
 -wwwwwwww
@@ -581,7 +581,7 @@ LEVEL_53
 -w-wwwwww
 ---wwwwww
 END
-LEVEL_54
+LEVEL_54_C6_D2
 ewwwwwwww
 -wwwwwwww
 -wwwwwwww
@@ -592,7 +592,7 @@ ww---wsww
 wwww-w-ww
 wwww---ww
 END
-LEVEL_55
+LEVEL_55_C3_D2
 wwwwwwwww
 wwwwwwwww
 wwwwwwwww
@@ -603,7 +603,7 @@ swww-wwww
 wwww-wwww
 e----wwww
 END
-LEVEL_56
+LEVEL_56_C0_D2
 e-------s
 wwwwwwwww
 wwwwwwwww
@@ -614,7 +614,7 @@ wwwwwwwww
 wwwwwwwww
 wwwwwwwww
 END
-LEVEL_57
+LEVEL_57_C11_D2
 --swwwwww
 -wwwwwwww
 ---wwwwww
@@ -625,7 +625,7 @@ ww-wwwwww
 wwww-w-ww
 wwww---ww
 END
-LEVEL_58
+LEVEL_58_C6_D2
 wwe--wwww
 wwww-wwww
 wwww-wwww
@@ -636,7 +636,7 @@ wwww-wwww
 wwwwww-ww
 wwwwww--s
 END
-LEVEL_59
+LEVEL_59_C7_D2
 --ew---ww
 -www-w-ww
 -----w-ww
@@ -647,7 +647,7 @@ wwww---ww
 wwwwwwwww
 wwwwwwwww
 END
-LEVEL_60
+LEVEL_60_C4_D2
 wwwwwwwww
 wwwwwwwww
 wwwwwwwww
@@ -658,7 +658,7 @@ ww-w-wwww
 -www-wwww
 ewwwswwww
 END
-LEVEL_61
+LEVEL_61_C6_D4
 --------s
 wwwwww-ww
 ewww-w---
@@ -669,7 +669,7 @@ ewww-w---
 wwwwwwwww
 wwwwwwwww
 END
-LEVEL_62
+LEVEL_62_C10_D3
 -www--sww
 -www-wwww
 ---w---ww
@@ -680,7 +680,7 @@ ew-----ww
 -w-wwwwww
 ---wwwwww
 END
-LEVEL_63
+LEVEL_63_C7_D3
 -----weww
 -www-w-ww
 -www---ww
@@ -691,7 +691,7 @@ LEVEL_63
 wwwwwwww-
 wwwwwws--
 END
-LEVEL_64
+LEVEL_64_C6_D4
 ewwwww---
 -wwwww-w-
 -wwwww-w-
@@ -702,7 +702,7 @@ sw-----ww
 -w-wwwwww
 -------ww
 END
-LEVEL_65
+LEVEL_65_C8_D4
 e--www---
 ww-www-w-
 sw---w-w-
@@ -713,7 +713,7 @@ ww-wwwwww
 ww-wwwwww
 ww---wwww
 END
-LEVEL_66
+LEVEL_66_C9_D4
 ww-----ww
 ww-www-ww
 ww-w-w---
@@ -724,7 +724,7 @@ ww-w-www-
 -w-wwwww-
 ---wwwww-
 END
-LEVEL_67
+LEVEL_67_C7_D4
 wwww-----
 wwww-www-
 wwww-w---
@@ -735,7 +735,7 @@ ww-----ww
 ww-www-ww
 ww--sweww
 END
-LEVEL_68
+LEVEL_68_C8_D3
 e--wwwwww
 ww-wwwwww
 ww---wwww
@@ -746,7 +746,7 @@ wwwwww-ww
 -wwwwwww-
 -----wwws
 END
-LEVEL_69
+LEVEL_69_C5_D4
 wwwwww---
 wwwwww-ww
 s--------
@@ -757,7 +757,7 @@ wwwwe--ww
 wwwwww-ww
 ww-----ww
 END
-LEVEL_70
+LEVEL_70_C2_D3
 wwwwww-ww
 wwwwww-ww
 wwwwww---
@@ -768,7 +768,7 @@ wwwwww--s
 wwwwwwwww
 wwwwwwwww
 END
-LEVEL_71
+LEVEL_71_C6_D3
 ---wwwwwe
 ww-wwwww-
 ww---www-
@@ -779,7 +779,7 @@ wwww-----
 wwwwwwwww
 wwwwwwwww
 END
-LEVEL_72
+LEVEL_72_C8_D4
 wwwwwwwww
 wwwwwwwww
 ---w---ws
@@ -790,7 +790,7 @@ wwwwwwwww
 -wwwww-ww
 -------ww
 END
-LEVEL_73
+LEVEL_73_C8_D4
 ---------
 -wwwwwww-
 -----www-
@@ -801,7 +801,7 @@ ww-w-w-ww
 -www-w-ww
 ewwwsw-ww
 END
-LEVEL_74
+LEVEL_74_C5_D3
 -ws----ww
 -wwwww-ww
 -wwwww-ww
@@ -812,7 +812,7 @@ LEVEL_74
 -wwwwwwww
 ewwwwwwww
 END
-LEVEL_75
+LEVEL_75_C6_D3
 wwwwwwwww
 wwwwwwwww
 wwww-----
@@ -823,7 +823,7 @@ wwww-www-
 -wwwwwww-
 -----wwwe
 END
-LEVEL_76
+LEVEL_76_C9_D3
 e--wwwwws
 ww-wwwww-
 ww---www-
@@ -834,7 +834,7 @@ wwww-www-
 -wwwww-ww
 -------ww
 END
-LEVEL_77
+LEVEL_77_C3_D3
 wwwwwwwww
 wwwwwwwww
 wwwwwwwww
@@ -845,7 +845,7 @@ wwwwwwwww
 -www-www-
 --swewww-
 END
-LEVEL_78
+LEVEL_78_C4_D3
 wwwwww---
 wwwwww-ww
 wwww---ww
@@ -856,7 +856,7 @@ wws--wwww
 wwwwwwwww
 wwwwwwwww
 END
-LEVEL_79
+LEVEL_79_C5_D3
 -----w--s
 -www-w-ww
 -www---ww
@@ -867,7 +867,7 @@ wwwwwwwww
 wwwwwwwww
 wwwwwwwww
 END
-LEVEL_80
+LEVEL_80_C1_D4
 wwwwwwwww
 wwwwwwwww
 ewww-wsww
@@ -878,7 +878,7 @@ wwwwww-ww
 wwwwww-ww
 wwwwww-ww
 END
-LEVEL_81
+LEVEL_81_C7_D3
 wwwwwwwwe
 wwwwwwww-
 swwwwwww-
@@ -889,7 +889,7 @@ ww-----ww
 wwwwww-ww
 wwwwww---
 END
-LEVEL_82
+LEVEL_82_C7_D3
 wwwwwwwws
 wwwwwwww-
 wwwwwwww-
@@ -900,7 +900,7 @@ ww---w-w-
 wwwwww-w-
 wwwwww---
 END
-LEVEL_83
+LEVEL_83_C6_D4
 ---wwwwww
 -w-wwwwww
 sw-----ww
@@ -911,7 +911,7 @@ e------ww
 ww-wwwwww
 ---wwwwww
 END
-LEVEL_84
+LEVEL_84_C8_D4
 -------ww
 ww-www-ww
 ww-www-ww
@@ -922,7 +922,7 @@ swww-----
 wwww-www-
 wwww---we
 END
-LEVEL_85
+LEVEL_85_C7_D3
 wwwwwwwww
 wwwwwwwww
 ww-----ww
@@ -933,7 +933,7 @@ ww-w---ww
 ww-w-w-ww
 -----weww
 END
-LEVEL_86
+LEVEL_86_C7_D4
 wwwwwwwww
 wwwwwwwww
 -----wwww
@@ -944,7 +944,7 @@ wwwwwwwww
 ww-w-www-
 s----wwwe
 END
-LEVEL_87
+LEVEL_87_C5_D4
 ---wwwwww
 ww-wwwwww
 ---wwwwww
@@ -955,7 +955,7 @@ ww-wwwwww
 -wwwwwwww
 ------sww
 END
-LEVEL_88
+LEVEL_88_C7_D3
 wwwwwwwws
 wwwwwwww-
 ww-------
@@ -966,7 +966,7 @@ ewwwwwww-
 wwwwwwww-
 ---------
 END
-LEVEL_89
+LEVEL_89_C8_D3
 --sw---ww
 -www-w-ww
 -www-w---
@@ -977,7 +977,7 @@ ww-------
 wwwwwwwww
 wwwwwwwww
 END
-LEVEL_90
+LEVEL_90_C3_D4
 s----wwww
 wwww-wwww
 ew---wwww
@@ -988,7 +988,7 @@ ew---wwww
 -wwwwwwww
 -wwwwwwww
 END
-LEVEL_91
+LEVEL_91_C8_D4
 wwwwe----
 wwwwwwww-
 swww-----
@@ -999,7 +999,7 @@ swww-----
 -w-www-ww
 ---www---
 END
-LEVEL_92
+LEVEL_92_C7_D4
 --------e
 wwwwww-ww
 wwww-----
@@ -1010,7 +1010,7 @@ wwwwwwww-
 ww-wwwwww
 ww--swwww
 END
-LEVEL_93
+LEVEL_93_C4_D4
 wwwwwwwww
 wwwwwwwww
 wwwwwwwww
@@ -1021,7 +1021,7 @@ wwwwwwwww
 -w-wwwww-
 -w--ew---
 END
-LEVEL_94
+LEVEL_94_C5_D3
 wwwwwwwww
 wwwwwwwww
 wwww-----
@@ -1032,7 +1032,7 @@ wwww-----
 wwww-wwww
 wwww----s
 END
-LEVEL_95
+LEVEL_95_C9_D3
 -wsw-----
 -w-w-www-
 ---w---we
@@ -1043,7 +1043,7 @@ ww---wwww
 wwwwwwwww
 wwwwwwwww
 END
-LEVEL_96
+LEVEL_96_C5_D4
 wwww----s
 wwww-wwww
 wwe------
@@ -1054,7 +1054,7 @@ wwww-w-ww
 wwww-w-ww
 wwww---ww
 END
-LEVEL_97
+LEVEL_97_C7_D3
 ---wew--s
 -w-w-w-ww
 -w-w---ww
@@ -1065,7 +1065,7 @@ wwwwwwwww
 wwwwwwwww
 wwwwwwwww
 END
-LEVEL_98
+LEVEL_98_C4_D2
 wwwwww--s
 wwwwww-ww
 wwww---ww
@@ -1076,7 +1076,7 @@ wwww-wwww
 wwww-wwww
 wwww--eww
 END
-LEVEL_99
+LEVEL_99_C11_D4
 ---------
 -w-wwwww-
 ew---w---
@@ -1087,7 +1087,7 @@ wwww---ws
 wwww-www-
 wwww-----
 END
-LEVEL_100
+LEVEL_100_C3_D2
 wwwwwwwww
 wwwwwwwww
 wwwwwwwww
@@ -1098,7 +1098,7 @@ wwwwwwwww
 -www-wwww
 ews--wwww
 END
-LEVEL_101
+LEVEL_101_C12_D8
 -----ws--
 wwww-www-
 -----w---
@@ -1109,7 +1109,7 @@ ww-w-wwww
 -w-www-w-
 ---w---we
 END
-LEVEL_102
+LEVEL_102_C10_D8
 -w-------
 -w-w-wwww
 -w-w----s
@@ -1120,7 +1120,7 @@ LEVEL_102
 -www-www-
 -we--w---
 END
-LEVEL_103
+LEVEL_103_C9_D9
 ---------
 wwww-www-
 -----w---
@@ -1131,7 +1131,7 @@ wwww-www-
 -www-w-w-
 -w-------
 END
-LEVEL_104
+LEVEL_104_C8_D8
 -w---w-ws
 -w-www-w-
 -w-w-w-w-
@@ -1142,7 +1142,7 @@ LEVEL_104
 -wwwww-ww
 ----ew---
 END
-LEVEL_105
+LEVEL_105_C7_D9
 -w---w---
 -w-www-ww
 --------e
@@ -1153,7 +1153,7 @@ LEVEL_105
 -w-w-wwww
 ---------
 END
-LEVEL_106
+LEVEL_106_C8_D9
 s--w-w-w-
 ww-w-w-w-
 -w---w---
@@ -1164,7 +1164,7 @@ wwww-w-ww
 wwwwww-w-
 e--------
 END
-LEVEL_107
+LEVEL_107_C10_D5
 ---------
 -www-w-w-
 sw---w-w-
@@ -1175,7 +1175,7 @@ ww-wwwww-
 -www-w-w-
 ---w-w---
 END
-LEVEL_108
+LEVEL_108_C7_D9
 ------swe
 ww-wwwww-
 -w-------
@@ -1186,7 +1186,7 @@ ww-wwwww-
 -www-w-w-
 -----w-w-
 END
-LEVEL_109
+LEVEL_109_C10_D7
 -w---w---
 -w-w-w-ww
 ---w---w-
@@ -1197,7 +1197,7 @@ LEVEL_109
 -www-w-w-
 --sw---w-
 END
-LEVEL_110
+LEVEL_110_C8_D6
 ---------
 wwwwww-w-
 -------w-
@@ -1208,7 +1208,7 @@ wwwwwwww-
 -w-wwwww-
 ------ews
 END
-LEVEL_111
+LEVEL_111_C11_D8
 ---w--sw-
 -w-w-www-
 ew---w---
@@ -1219,7 +1219,7 @@ ww-www-ww
 -w-w-w-ww
 -w-w-w---
 END
-LEVEL_112
+LEVEL_112_C8_D7
 ---w-w---
 -www-w-w-
 -------w-
@@ -1230,7 +1230,7 @@ LEVEL_112
 -w-wwwwww
 -w-------
 END
-LEVEL_113
+LEVEL_113_C9_D8
 -w-------
 -w-wwwwww
 -------we
@@ -1241,7 +1241,7 @@ ww-www-w-
 ww-www-ww
 ---w-----
 END
-LEVEL_114
+LEVEL_114_C9_D8
 -------w-
 wwww-www-
 ------ew-
@@ -1252,7 +1252,7 @@ wwww-www-
 ww-www-w-
 ---ws--w-
 END
-LEVEL_115
+LEVEL_115_C14_D6
 ew---w---
 -www-w-ww
 -----w---
@@ -1263,7 +1263,7 @@ ww-wwwww-
 -w-w-w-w-
 ---wsw---
 END
-LEVEL_116
+LEVEL_116_C9_D7
 -------ws
 ww-wwwww-
 e--w-----
@@ -1274,7 +1274,7 @@ ww-www-ww
 -wwwwwww-
 ---------
 END
-LEVEL_117
+LEVEL_117_C8_D9
 -w-w---w-
 -w-w-www-
 -w---w-w-
@@ -1285,7 +1285,7 @@ LEVEL_117
 ww-wwwww-
 e------w-
 END
-LEVEL_118
+LEVEL_118_C10_D8
 ---------
 ww-www-w-
 ---w---ws
@@ -1296,7 +1296,7 @@ wwww-w-w-
 ww-www-w-
 -------we
 END
-LEVEL_119
+LEVEL_119_C12_D6
 ---w---we
 ww-w-www-
 -w-w-----
@@ -1307,7 +1307,7 @@ wwww-www-
 -w-w-w-ww
 -w---w--s
 END
-LEVEL_120
+LEVEL_120_C8_D9
 -w-----w-
 -www-www-
 -wew-----
@@ -1318,7 +1318,7 @@ LEVEL_120
 -wwwww-w-
 ---w---ws
 END
-LEVEL_121
+LEVEL_121_C10_D9
 -wsw-w-w-
 -w-w-w-w-
 ---------
@@ -1329,7 +1329,7 @@ wwww-w-w-
 -w-w-www-
 -w---w---
 END
-LEVEL_122
+LEVEL_122_C10_D9
 ----sw-w-
 ww-www-w-
 -----w---
@@ -1340,7 +1340,7 @@ ww-wwwww-
 -w-w-www-
 ---w--ew-
 END
-LEVEL_123
+LEVEL_123_C6_D11
 sw-w-w---
 -w-w-w-ww
 -----w---
@@ -1351,7 +1351,7 @@ ww-w-w-w-
 ww-www-w-
 ---w---we
 END
-LEVEL_124
+LEVEL_124_C10_D9
 ---w-----
 -w-www-ww
 sw-----w-
@@ -1362,7 +1362,7 @@ ew-------
 ww-www-w-
 -------w-
 END
-LEVEL_125
+LEVEL_125_C11_D9
 -ws------
 -www-w-w-
 -----w-w-
@@ -1373,7 +1373,7 @@ ww-www-w-
 -www-www-
 ---w---we
 END
-LEVEL_126
+LEVEL_126_C7_D7
 ew-w-----
 -w-w-w-w-
 -w---w-w-
@@ -1384,7 +1384,7 @@ ew-w-----
 ww-w-w-w-
 ---w-wsw-
 END
-LEVEL_127
+LEVEL_127_C12_D8
 e----w---
 ww-w-w-ww
 ---w---w-
@@ -1395,7 +1395,7 @@ ww-wwwwww
 -wwwww-w-
 ---ws----
 END
-LEVEL_128
+LEVEL_128_C9_D7
 ew-w-----
 -w-w-w-w-
 ---w-w-ws
@@ -1406,7 +1406,7 @@ ww-w-w-ww
 -wwwww-ww
 ---------
 END
-LEVEL_129
+LEVEL_129_C7_D10
 ---w-w-ws
 -www-w-w-
 ---------
@@ -1417,7 +1417,7 @@ wwwwww-w-
 ww-www-w-
 ---we--w-
 END
-LEVEL_130
+LEVEL_130_C10_D8
 -w-w-----
 -w-w-w-ww
 -----w-w-
@@ -1428,7 +1428,7 @@ wwww-www-
 -w-w-w-ww
 sw---w---
 END
-LEVEL_131
+LEVEL_131_C8_D9
 -w-------
 -w-www-ww
 -----w-w-
@@ -1439,7 +1439,7 @@ wwwwww-w-
 -wwwww-ww
 -w-------
 END
-LEVEL_132
+LEVEL_132_C9_D7
 ---w-----
 ww-w-www-
 -w---w---
@@ -1450,7 +1450,7 @@ ww-w-www-
 wwwwww-w-
 ---------
 END
-LEVEL_133
+LEVEL_133_C6_D10
 -w-w---w-
 -w-w-www-
 -------w-
@@ -1461,7 +1461,7 @@ ww-w-www-
 -www-wwww
 --ew-----
 END
-LEVEL_134
+LEVEL_134_C7_D10
 -w-------
 -www-wwww
 ---------
@@ -1472,7 +1472,7 @@ LEVEL_134
 wwww-w-ww
 ---------
 END
-LEVEL_135
+LEVEL_135_C11_D6
 --------s
 -wwwww-w-
 e--w---w-
@@ -1483,7 +1483,7 @@ wwww-wwww
 wwww-wwww
 ---------
 END
-LEVEL_136
+LEVEL_136_C8_D11
 -----w---
 -w-www-ww
 -ws------
@@ -1494,7 +1494,7 @@ ew-w-w-w-
 -w-www-w-
 -w---w-w-
 END
-LEVEL_137
+LEVEL_137_C10_D8
 -w-------
 -www-w-ww
 ---w-w-we
@@ -1505,7 +1505,7 @@ ww-www-w-
 -w-w-w-ww
 sw---w---
 END
-LEVEL_138
+LEVEL_138_C6_D8
 -----w---
 wwww-w-ww
 ---------
@@ -1516,7 +1516,7 @@ ww-www-ww
 -wewwwwww
 ---------
 END
-LEVEL_139
+LEVEL_139_C7_D7
 ---------
 wwwwwwww-
 ----ew---
@@ -1527,7 +1527,7 @@ wwwwwwww-
 ww-www-ww
 ---------
 END
-LEVEL_140
+LEVEL_140_C7_D6
 -------w-
 -w-www-w-
 sw-w---w-
@@ -1538,7 +1538,7 @@ sw-w---w-
 -w-www-ww
 -w---w---
 END
-LEVEL_141
+LEVEL_141_C8_D7
 -w-w---s-
 -w-w-w-ww
 -w---w-w-
@@ -1549,7 +1549,7 @@ ww-w-www-
 ww-w-www-
 ---w-----
 END
-LEVEL_142
+LEVEL_142_C10_D8
 -----w---
 ww-wwwww-
 ---------
@@ -1560,7 +1560,7 @@ s----w-w-
 wwww-w-ww
 -----w---
 END
-LEVEL_143
+LEVEL_143_C7_D9
 ---------
 -w-www-ww
 -w-w-----
@@ -1571,7 +1571,7 @@ LEVEL_143
 ww-w-w-ww
 ---wsw---
 END
-LEVEL_144
+LEVEL_144_C9_D8
 -w-------
 -w-www-w-
 ---w---w-
@@ -1582,7 +1582,7 @@ swwwww-ww
 ww-www-we
 -----w---
 END
-LEVEL_145
+LEVEL_145_C11_D10
 -w-w-s-w-
 -w-w-www-
 ---------
@@ -1593,7 +1593,7 @@ wwww-w-ww
 -w-wwwww-
 -------w-
 END
-LEVEL_146
+LEVEL_146_C8_D8
 -------w-
 -w-www-w-
 -w---w-w-
@@ -1604,7 +1604,7 @@ e--w-----
 wwww-w-w-
 -----s-w-
 END
-LEVEL_147
+LEVEL_147_C11_D8
 -w-------
 -www-w-w-
 ---w-w-w-
@@ -1615,7 +1615,7 @@ wwewww-ww
 ww-w-www-
 ---------
 END
-LEVEL_148
+LEVEL_148_C10_D9
 --sw---w-
 ww-w-w-w-
 -----w-w-
@@ -1626,7 +1626,7 @@ ww-w-w-w-
 -w-wwwww-
 --e----w-
 END
-LEVEL_149
+LEVEL_149_C7_D9
 -w-------
 -w-www-ww
 -w---w-w-
@@ -1637,7 +1637,7 @@ LEVEL_149
 -w-w-w-w-
 -w-w---w-
 END
-LEVEL_150
+LEVEL_150_C7_D10
 -w---w---
 -www-www-
 ------e--
