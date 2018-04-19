@@ -216,6 +216,10 @@ public class BoardManager : MonoBehaviour
     public static Vector3 startPos;
     public static Vector3 startDir;
 
+    static Vector2 start_idx = new Vector2();
+    static Vector2 exit_idx = new Vector2();
+    static Vector2 player_idx = new Vector2();
+
     public static int numCornersAndDeadends = 0;
 
     //audios
@@ -229,10 +233,14 @@ public class BoardManager : MonoBehaviour
     bool resest_audio = true;
     bool skip_clip = false;
 
+    public static bool left_start_pt = false;
+
     // Intercept the game
     bool hasIntercepted = false;
 
     eventHandler eh;
+
+    string debugPlayerInfo = "";    
 
     public static bool hasTappedAtCorner = false;
 
@@ -410,24 +418,50 @@ public class BoardManager : MonoBehaviour
     /// <summary>
     /// A function to signal the fact that the player has moved at least once.
     /// </summary>
-    public static bool left_start_pt = false;
-    public static void set_left_start_pt(bool newf)
+    public static void set_left_start_pt(bool hasLeftStart)
     {
-        left_start_pt = newf;
+        left_start_pt = hasLeftStart;
     }
-    
+
     /// <summary>
     /// At every frame, the player's position and game state is used to determine if certain sounds should be played.
     /// </summary>
-    void Update ()
-	{
+    void Update()
+    {
         tutorial1Finished = finishedTutorialLevel1;
         tutorial3Finished = finishedTutorialLevel3;
 
-		float threshold = 0.001f;
-		Vector2 idx_pos = get_idx_from_pos (player_ref.transform.position);    
+        // float threshold = 0.001f;
+        player_idx = get_idx_from_pos(player_ref.transform.position);
 
-		// Intercept the game on specific levels    
+        if ((player_idx.x == start_idx.x) && (player_idx.y == start_idx.y) && (left_start_pt == true))
+        {                   
+            gotBackToStart = true;
+            
+            // if (level_voices.clip_return < level_voices.clip_when_return.Count)
+            //    level_voices.clip_return = play_audio(level_voices.clip_when_return, level_voices.clip_return, true, true);
+        }
+
+        else if ((player_idx.x > start_idx.x) || (player_idx.x < start_idx.x) || (player_idx.y > start_idx.y) || (player_idx.y < start_idx.y))
+        {
+            left_start_pt = true;
+            gotBackToStart = false;
+        }
+
+        if ((player_idx.x == exit_idx.x) && (player_idx.y == exit_idx.y))
+        {
+            reachedExit = true;
+
+            // if (level_voices.clip_exit < level_voices.clip_at_exit.Count)
+            //	level_voices.clip_exit = play_audio (level_voices.clip_at_exit, level_voices.clip_exit);            
+        }
+
+        else if ((player_idx.x != exit_idx.x) && (player_idx.y != exit_idx.y))
+        {
+            reachedExit = false;
+        }          
+
+		// Intercept the game on specific levels  
 		// Level 1
 		// If the player has not done the gesture tutorial for level 1 yet, intercept.
 		if ((hasIntercepted == false) && (tutorial1Finished == false) && (cur_level == 1))
@@ -438,7 +472,7 @@ public class BoardManager : MonoBehaviour
          
 		// If the player has reached the right turn in level 3 and has not started the gesture tutorial for this level, intercept.
 		Vector2 level3_corner = new Vector2(9, 9);        
-		if ((hasIntercepted == false) && (tutorial3Finished == false) && (cur_level == 3) && (idx_pos.x == level3_corner.x) && (idx_pos.y == level3_corner.y))
+		if ((hasIntercepted == false) && (tutorial3Finished == false) && (cur_level == 3) && (player_idx.x == level3_corner.x) && (player_idx.y == level3_corner.y))
         {
 			player_script.Intercept(3); // Intercept.
 			hasIntercepted = true;
@@ -448,42 +482,16 @@ public class BoardManager : MonoBehaviour
 		if ((hasIntercepted == true) && (player_script.intercepted == true))
         {
 			return;
-		}
+		}       
 
-		bool ingame_playing = false;
-        //play sounds according to positions		
+        // bool ingame_playing = false;
+        //play sounds according to positions		        
 
-        if ((idx_pos - get_idx_from_pos(exitPos)).magnitude <= threshold)
-        {
-            reachedExit = true;
-             
-            if (level_voices.clip_exit < level_voices.clip_at_exit.Count)
-				level_voices.clip_exit = play_audio (level_voices.clip_at_exit, level_voices.clip_exit);            
-		}
-
-        else if ((idx_pos - get_idx_from_pos(exitPos)).magnitude > threshold)
-        {
-            reachedExit = false;
-        }
-
-        else if (((idx_pos - get_idx_from_pos(startPos)).magnitude <= threshold) && left_start_pt && (player_script.get_player_dir("BACK") == startDir))
-        {
-            gotBackToStart = true;
-
-            if (level_voices.clip_return < level_voices.clip_when_return.Count)
-                level_voices.clip_return = play_audio(level_voices.clip_when_return, level_voices.clip_return, true, true);
-        }
-
-        else if (((idx_pos - get_idx_from_pos(startPos)).magnitude > threshold) && left_start_pt)
-        {
-            gotBackToStart = false;
-        }
-
-        else
+        /*else
         {
             for (int i = 0; i < level_voices.ingame.Count; ++i)
             {//find out that if player is in specific position and dir
-                if (((idx_pos - level_voices.ingame[i].pos).magnitude <= threshold) && ((get_player_dir_world() == level_voices.ingame[i].dir) || (level_voices.ingame[i].dir == Direction.OTHER)))
+                if (((player_pos - level_voices.ingame[i].pos).magnitude <= threshold) && ((get_player_dir_world() == level_voices.ingame[i].dir) || (level_voices.ingame[i].dir == Direction.OTHER)))
                 {
                     //if player tapped(played echo)
                     if ((level_voices.ingame[i].tap) && (player_script.tapped_at_this_block()))
@@ -507,14 +515,14 @@ public class BoardManager : MonoBehaviour
                     }
                 }
             }
-        }
+        }*/
 
         //play voices that should be played from beginning
-        if (!ingame_playing)
+        /*if (!ingame_playing)
         {
             if (level_voices.clip_begin < level_voices.clip_at_begin.Count)
                 level_voices.clip_begin = play_audio(level_voices.clip_at_begin, level_voices.clip_begin);
-        }
+        }*/
     }
     /// <summary>
     /// Gets the player's direction in the grid space.
@@ -646,10 +654,13 @@ public class BoardManager : MonoBehaviour
         load_level_from_file("GameData/levels", level);
         int randomDelta = Random.Range(0, playerPositions.Count);
         if (randomDelta == playerPositions.Count)
+        {
             randomDelta = playerPositions.Count - 1;
+        }
 
         player.transform.position = playerPositions[randomDelta];
-        Vector2 start_idx = get_idx_from_pos(player.transform.position);
+        start_idx = get_idx_from_pos(player.transform.position);
+        print("Player start position: X = " + start_idx.x.ToString() + ", Y = " + start_idx.y.ToString());
         startPos = player.transform.position;
 
         left_start_pt = false;
@@ -674,32 +685,50 @@ public class BoardManager : MonoBehaviour
             new_wall.transform.SetParent(wall_parent.transform);
         }
         GameObject new_exit = Instantiate(exit, exitPos, Quaternion.identity) as GameObject;
+        exit_idx = get_idx_from_pos(exitPos);
+        print("Exit position: X = " + exit_idx.x.ToString() + ", Y = " + exit_idx.y.ToString());
         new_exit.transform.SetParent(wall_parent.transform);
 
         //now let the player face the right dir
         mazeSolution = "";
         searched = new bool[(columns + 1) * (rows + 1)];
         for (int i = 0; i < searched.Length; ++i)
+        {
             searched[i] = false;
+        }
 
         searched_temp = new bool[(columns + 1) * (rows + 1)];
         for (int i = 0; i < searched_temp.Length; ++i)
+        {
             searched_temp[i] = false;
+        }
 
         solveMaze(start_idx, "s");
         player.transform.rotation = Quaternion.identity;
         if (mazeSolution.Length >= 2)
         {
             if (mazeSolution[mazeSolution.Length - 2] == 'u')
+            {
                 player_script.rotateplayer_no_update(StringToDir("FRONT"));
+                print("Player start direction set to Front.");
+            }
             if (mazeSolution[mazeSolution.Length - 2] == 'd')
+            {
                 player_script.rotateplayer_no_update(StringToDir("BACK"));
+                print("Player start direction set to Back.");
+            }
             if (mazeSolution[mazeSolution.Length - 2] == 'l')
+            {
                 player_script.rotateplayer_no_update(StringToDir("LEFT"));
+                print("Player start direction set to Left.");
+            }
             if (mazeSolution[mazeSolution.Length - 2] == 'r')
+            {
                 player_script.rotateplayer_no_update(StringToDir("RIGHT"));
+                print("Player start direction set to Right.");
+            }
         }
-        startDir = player_script.get_player_dir("FRONT");
+        startDir = player_script.get_player_dir("FRONT");        
     }
 
     //private help function to replace list.contain()
@@ -1013,7 +1042,7 @@ public class BoardManager : MonoBehaviour
         //latest_clips = new List<AudioClip>();
         //latest_clips.Clear();
         latest_clip_idx = 0;
-        skip_clip = false;
+        skip_clip = false;        
     }
    
     public static bool StringToBool(string convertString)

@@ -150,6 +150,8 @@ public class GameManager : MonoBehaviour
 
         if (Player.changingLevel == false)
         {
+            Player.loadingScene = true;
+
             if (GM_main_pre.skippingTutorial == 0)
             {
                 GameMode.Game_Mode current = GameMode.instance.get_mode();
@@ -190,7 +192,7 @@ public class GameManager : MonoBehaviour
             }
         }
         levelText.text = "Loading level " + level.ToString();
-        boardScript.SetupScene(level, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.instance.gamemode);
+        boardScript.SetupScene(level, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.instance.gamemode);       
     }
 
     //Hides black image used between levels
@@ -203,7 +205,8 @@ public class GameManager : MonoBehaviour
             UnHideLevelImage();
         //Set doingSetup to false allowing player to move again.
         doingSetup = false;
-        playersTurn = true;        
+        playersTurn = true;
+        Player.loadingScene = false;    
     }
 
     /// <summary>
@@ -214,7 +217,7 @@ public class GameManager : MonoBehaviour
         levelText.text = "level " + level.ToString() + "\n";
         levelText.text += "Game In Progress" + "\n";
         levelText.text += "Hold two fingers" + "\n";
-        levelText.text += "to open menu";
+        levelText.text += "to open menu";        
         levelImage.SetActive(true);
         levelImageActive = true;
     }

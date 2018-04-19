@@ -23,6 +23,11 @@ public class SoundManager : MonoBehaviour
     public bool finishedClip = true; // Determines if we have finished the clip we wanted to play.
     public bool finishedAllClips = true; // Determines if we have gone through all the clips in our list.
 
+    public static List<AudioClip> clipsCurrentlyPlaying;
+    public static float[] currentBalances;
+    public static Action currentCallback;
+    public static int currentCallbackIndex;
+
     void Awake()
     {
         if (instance == null)
@@ -213,12 +218,36 @@ public class SoundManager : MonoBehaviour
             finishedAllClips = false; // We have not finished all our clips yet.
         }
 
+        clipsCurrentlyPlaying = new List<AudioClip>() {};
+        clipsCurrentlyPlaying.Clear();
+        currentBalances = new float[clips.Count];
+        int i = 0;        
+        for (int j = current; j < clips.Count; j++)
+        {
+            clipsCurrentlyPlaying.Add(clips[j]);
+            if (balances != null)
+            {
+                currentBalances[i] = balances[j];
+            }
+            else
+            {
+                currentBalances = balances;
+            }            
+            i++;
+        }
+
+        currentCallback = callback;
+        if (callback_index != 0)
+        {
+            currentCallbackIndex = callback_index - current;
+        }
+
         if (current == callback_index && callback != null)
         {
             callback();
         }
         AudioClip clip = clips[current];
-        float clipLength = clip.length;
+        float clipLength = clip.length;            
 
         if (balances == null)
         {

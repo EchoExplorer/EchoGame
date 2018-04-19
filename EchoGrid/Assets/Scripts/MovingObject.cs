@@ -95,8 +95,7 @@ public abstract class MovingObject : MonoBehaviour
 
             //Return and loop until sqrRemainingDistance is close enough to zero to end the function
             yield return null;
-        }
-        BoardManager.set_left_start_pt(true);
+        }        
     }
 
 
