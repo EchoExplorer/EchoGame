@@ -136,6 +136,9 @@ public class Player : MovingObject
 
     string surveyCode = "";
 
+	//if switch_click_toogle is false, then play the odeon click,which is option 1 in database.
+	bool switch_click_toogle=false;
+
     void Awake()
     {
         if (instance == null)
@@ -263,6 +266,13 @@ public class Player : MovingObject
     /// </summary>
 	private void PlayEcho(bool real = true)
     {
+		AudioClip echoaround = Database.instance.attenuatedaround_odeon;
+		AudioClip echofront = Database.instance.attenuatedClickfront_odeon;
+		if (switch_click_toogle){
+			echoaround = Database.instance.attenuatedaround;
+			echofront = Database.instance.attenuatedaround;
+		}
+
         Vector3 dir = transform.right;
         int dir_x = (int)Math.Round(dir.x);
         int dir_y = (int)Math.Round(dir.y);
@@ -304,23 +314,25 @@ public class Player : MovingObject
         playerGAS.clip = Database.instance.attenuatedClick;
         // Front wall echo preparation
         GvrAudioSource frontGAS = frontWall.GetComponent<GvrAudioSource>();
-        frontGAS.clip = Database.instance.attenuatedClickfront;
+        frontGAS.clip = echofront;
         float blocksToFrontWall = Vector3.Distance(transform.position, frontWall.transform.position) - 1;
         // Four-wall echoes preparation
         GvrAudioSource leftGAS = null, rightGAS = null, leftFrontGAS = null, rightFrontGAS = null;
-        float fourblockdb = -5;
+        
+		float fourblockdb = 1;
         float frontwalldb = 10;
+
         if (leftWall != null)
         {
             leftGAS = leftWall.GetComponent<GvrAudioSource>();
-            leftGAS.clip = Database.instance.attenuatedaround;
+			leftGAS.clip = echoaround;
             leftGAS.gainDb = fourblockdb;
 
         }
         if (rightWall != null)
         {
             rightGAS = rightWall.GetComponent<GvrAudioSource>();
-            rightGAS.clip = Database.instance.attenuatedaround;
+			rightGAS.clip = echoaround;
             rightGAS.gainDb = fourblockdb;
         }
         if (blocksToFrontWall > 0 && leftFrontWall != null)
@@ -328,7 +340,7 @@ public class Player : MovingObject
             if (((int)blocksToFrontWall) != 0 || leftWall == null)
             {
                 leftFrontGAS = leftFrontWall.GetComponent<GvrAudioSource>();
-                leftFrontGAS.clip = Database.instance.attenuatedaround;
+				leftFrontGAS.clip =echoaround;
                 leftFrontGAS.gainDb = fourblockdb;
             }
         }
@@ -337,7 +349,7 @@ public class Player : MovingObject
             if (((int)blocksToFrontWall) != 0 || rightWall == null)
             {
                 rightFrontGAS = rightFrontWall.GetComponent<GvrAudioSource>();
-                rightFrontGAS.clip = Database.instance.attenuatedaround;
+				rightFrontGAS.clip = echoaround;
                 rightFrontGAS.gainDb = fourblockdb;
             }
         }
@@ -399,40 +411,52 @@ public class Player : MovingObject
 
         // Logging.Log(data.all_jun_to_string(), Logging.LogLevel.NORMAL);
         String prefix = "C00-21"; // change this prefix when you change the echo files
-        if (GameManager.instance.level < 26)
+        if (GameManager.instance.level < 22)
         {
-            prefix = "C00 - 21";
+			fourblockdb = 1;
+			frontwalldb = 10;
         }
-        else if ((GameManager.instance.level >= 26) && (GameManager.instance.level < 41))
+        else if ((GameManager.instance.level >= 22) && (GameManager.instance.level < 32))
         {
-            prefix = "19 dB/C00-19";
+			fourblockdb = 1;
+			frontwalldb = 9;
         }
-        else if ((GameManager.instance.level >= 41) && (GameManager.instance.level < 56))
+        else if ((GameManager.instance.level >= 32) && (GameManager.instance.level < 42))
         {
-            prefix = "17 dB/C00-17";
+			fourblockdb = 1;
+			frontwalldb = 8;
         }
-        else // if ((GameManager.instance.level >= 56) && (GameManager.instance.level < 71))
+        else  if ((GameManager.instance.level >= 42) && (GameManager.instance.level < 52))
         {
-            prefix = "15 dB/C00-15";
+			fourblockdb = 1;
+			frontwalldb = 7;
         }
-        /*
-		else if ((GameManager.instance.level >= 71) && (GameManager.instance.level < 86))
+		else if ((GameManager.instance.level >= 52) && (GameManager.instance.level < 62))
         {
-			prefix = "13 dB/C00-13";
+			fourblockdb =1;
+			frontwalldb = 6;
 		}
-        else if ((GameManager.instance.level >= 86) && (GameManager.instance.level < 101))
+        else if ((GameManager.instance.level >= 62) && (GameManager.instance.level < 72))
 		{
-            prefix = "11 dB/C00-11";
+			fourblockdb = 1;
+			frontwalldb = 5;
 		}
-        else if ((GameManager.instance.level >= 101) && (GameManager.instance.level < 116))
+        else if ((GameManager.instance.level >= 72) && (GameManager.instance.level < 82))
 		{
-            prefix = "9 dB/C00-9";
+			fourblockdb = 1;
+			frontwalldb = 4;
 		}
-        else if (GameManager.instance.level >= 116)
+		else if ((GameManager.instance.level >= 82) && (GameManager.instance.level < 92))
 		{
-            prefix = "7 dB/C00-7";
-        }
-		*/
+			fourblockdb = 1;
+			frontwalldb = 3;
+		}
+		else if ((GameManager.instance.level >= 92))
+		{
+			fourblockdb = 1;
+			frontwalldb = 2;
+		}
+
 
         String filename;
         float wallDist = 0.8f, shortDist = 3.8f, midDist = 6.8f, longDist = 12.8f;

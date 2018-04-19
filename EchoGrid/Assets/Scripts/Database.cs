@@ -27,6 +27,10 @@ public class Database : MonoBehaviour
 	public AudioClip attenuatedaround;
 	public AudioClip attenuatedClickfront;
 
+	public AudioClip attenuatedClick_odeon;
+	public AudioClip attenuatedaround_odeon;
+	public AudioClip attenuatedClickfront_odeon;
+
     // Game environment settings clips
     [HideInInspector]
     public static AudioClip[] settingsClips = new AudioClip[10];
@@ -71,20 +75,16 @@ public class Database : MonoBehaviour
 
     void LoadData()
     {
+
 		//Option1:
-		attenuatedClickfront = Resources.Load("fx/attenuatedClickFront_NoBlank") as AudioClip;
+		attenuatedClickfront_odeon = Resources.Load("fx/00-0_F-6.75-D_B-w-D_L-w-D_R-w-D_fadeout") as AudioClip;
+		attenuatedClick_odeon = Resources.Load("fx/attenuatedClick") as AudioClip;
+		attenuatedaround_odeon = Resources.Load("fx/00-0_F-0.75-D_B-w-D_L-w-D_R-w-D_fadeout") as AudioClip;
+
+		//Option1:
+		attenuatedClickfront = Resources.Load("fx/attenuatedClick") as AudioClip;
 		attenuatedClick = Resources.Load("fx/attenuatedClick") as AudioClip;
-		attenuatedaround = Resources.Load("fx/attenuatedaround_NoBlank") as AudioClip;
-
-		//Option2:
-		//attenuatedClickfront = Resources.Load("fx/attenuatedClick_45ms") as AudioClip;
-		//attenuatedClick = Resources.Load("fx/attenuatedClick_45ms") as AudioClip;
-		//attenuatedaround = Resources.Load("fx/attenuatedClick_45ms") as AudioClip;
-
-		//Option2:
-		//attenuatedClickfront = Resources.Load("fx/attenuatedClick_45ms") as AudioClip;
-		//attenuatedClick = Resources.Load("fx/attenuatedClick_45ms") as AudioClip;
-		//attenuatedaround = Resources.Load("fx/attenuatedClick_45ms") as AudioClip;
+		attenuatedaround = Resources.Load("fx/attenuatedClick") as AudioClip;
 
         // Game environment setting clips
         settingsClips[0] = Resources.Load("instructions/listen_to_instructions") as AudioClip;
