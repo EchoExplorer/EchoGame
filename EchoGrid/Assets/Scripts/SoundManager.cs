@@ -15,6 +15,7 @@ public class SoundManager : MonoBehaviour
     public AudioSource clipSource;
     public AudioSource echoSource;
     public AudioSource crashSource;
+    public AudioSource singleSource;
     public static SoundManager instance = null;     // Allows other scripts to call functions from SoundManager.				
     int max_sfx_playing = 5;
     bool voice_adjusted = false;
@@ -106,6 +107,9 @@ public class SoundManager : MonoBehaviour
     /// </summary>
 	public void PlaySingle(AudioClip clip)
     {
+        singleSource.clip = clip;
+        singleSource.Play();
+        return;
         // Set the clip of our efxSource audio source to the clip passed in as a parameter.
         for (int i = 0; i < max_sfx_playing; ++i)
         {

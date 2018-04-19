@@ -8,9 +8,7 @@
 If you haven't installed any version of Unity3D, download version 5.6.5:
 https://unity3d.com/get-unity/download/archive
 
-
 Using higher version or MacOS High Sierra may cause problem. Please Unistall the original version and install the 5.6.5 version.
-
 
 If this step encounters a black screen problem, check this steps to fix:
 

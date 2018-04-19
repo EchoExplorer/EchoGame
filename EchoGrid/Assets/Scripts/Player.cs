@@ -260,8 +260,8 @@ public class Player : MovingObject
 	private void PlayEcho(bool real = true)
     {
         Vector3 dir = transform.right;
-        int dir_x = (int)dir.x;
-        int dir_y = (int)dir.y;
+        int dir_x = (int)Math.Round(dir.x);
+        int dir_y = (int)Math.Round(dir.y);
         int x = (int)transform.position.x;
         int y = (int)transform.position.y;
         //print("Position: " + transform.position);/////
@@ -355,7 +355,7 @@ public class Player : MovingObject
         }
         else
         {
-            //SoundManager.instance.PlaySingle(Database.instance.attenuatedClick);
+            SoundManager.instance.PlaySingle(Database.instance.attenuatedClick);
             if (frontGAS != null)
             {
                 frontGAS.volume = 1;
