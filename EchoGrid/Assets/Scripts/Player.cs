@@ -319,8 +319,11 @@ public class Player : MovingObject
         // Four-wall echoes preparation
         GvrAudioSource leftGAS = null, rightGAS = null, leftFrontGAS = null, rightFrontGAS = null;
         
-		float fourblockdb = 2;
-        float frontwalldb = 10;
+		float fourblockdb = 2.3f;
+        float frontwalldb = 10.3f;
+
+		//float fourblockdb =-12.7f;
+		//float frontwalldb = -5.7f;
 
         if (leftWall != null)
         {
@@ -388,19 +391,19 @@ public class Player : MovingObject
         }
         if (leftGAS != null)
         {
-            leftGAS.PlayDelayed(1.5f / 340);
+            //leftGAS.PlayDelayed(1.5f / 340);
         }
         if (rightGAS != null)
         {
-            rightGAS.PlayDelayed(1.5f / 340);
+            //rightGAS.PlayDelayed(1.5f / 340);
         }
         if (blocksToFrontWall > 0 && leftFrontGAS != null)
         {
-            leftFrontGAS.PlayDelayed(2.12132f / 340);
+            //leftFrontGAS.PlayDelayed(2.12132f / 340);
         }
         if (blocksToFrontWall > 0 && rightFrontGAS != null)
         {
-            rightFrontGAS.PlayDelayed(2.12132f / 340);
+            //rightFrontGAS.PlayDelayed(2.12132f / 340);
         }
         frontGAS.PlayDelayed((1.5f * blocksToFrontWall + 0.75f) * 2 / 340);
 
@@ -411,50 +414,85 @@ public class Player : MovingObject
 
         // Logging.Log(data.all_jun_to_string(), Logging.LogLevel.NORMAL);
         String prefix = "C00-21"; // change this prefix when you change the echo files
-        if (GameManager.instance.level < 22)
+		if ((GameManager.instance.level>=17)&& (GameManager.instance.level < 22) )
         {
-			fourblockdb = 2;
-			frontwalldb = 10;
+			fourblockdb = 1.3f;
+			frontwalldb = 9.3f;
         }
-        else if ((GameManager.instance.level >= 22) && (GameManager.instance.level < 32))
+        else if ((GameManager.instance.level >= 22) && (GameManager.instance.level < 27))
         {
-			fourblockdb = 1;
-			frontwalldb = 9;
+			fourblockdb = 0.3f;
+			frontwalldb = 8.3f;
         }
-        else if ((GameManager.instance.level >= 32) && (GameManager.instance.level < 42))
-        {
-			fourblockdb = 0;
-			frontwalldb = 8;
-        }
-        else  if ((GameManager.instance.level >= 42) && (GameManager.instance.level < 52))
-        {
-			fourblockdb = -1;
-			frontwalldb = 7;
-        }
-		else if ((GameManager.instance.level >= 52) && (GameManager.instance.level < 62))
-        {
-			fourblockdb =-2;
-			frontwalldb = 6;
-		}
-        else if ((GameManager.instance.level >= 62) && (GameManager.instance.level < 72))
+		else if ((GameManager.instance.level >= 27) && (GameManager.instance.level < 32))
 		{
-			fourblockdb = -3;
-			frontwalldb = 5;
+			fourblockdb = -0.7f;
+			frontwalldb = 7.3f;
 		}
-        else if ((GameManager.instance.level >= 72) && (GameManager.instance.level < 82))
-		{
-			fourblockdb = -4;
-			frontwalldb = 4;
+        else if ((GameManager.instance.level >= 32) && (GameManager.instance.level < 37))
+        {
+			fourblockdb = -1.7f;
+			frontwalldb = 6.3f;
 		}
-		else if ((GameManager.instance.level >= 82) && (GameManager.instance.level < 92))
+		else if ((GameManager.instance.level >= 37) && (GameManager.instance.level < 42))
 		{
-			fourblockdb = -5;
-			frontwalldb = 3;
+			fourblockdb = -2.7f;
+			frontwalldb = 5.3f;
+		}
+        else  if ((GameManager.instance.level >= 42) && (GameManager.instance.level < 47))
+        {
+			fourblockdb = -3.7f;
+			frontwalldb = 4.3f;
+        }
+		else if ((GameManager.instance.level >= 47) && (GameManager.instance.level < 52))
+		{
+			fourblockdb = -4.7f;
+			frontwalldb = 3.3f;
+		}
+		else if ((GameManager.instance.level >= 52) && (GameManager.instance.level < 57))
+        {
+			fourblockdb =-5.7f;
+			frontwalldb = 2.3f;
+		}
+		else if ((GameManager.instance.level >= 57) && (GameManager.instance.level < 62))
+		{
+			fourblockdb = -6.7f;
+			frontwalldb = 1.3f;
+		}
+        else if ((GameManager.instance.level >= 62) && (GameManager.instance.level < 67))
+		{
+			fourblockdb = -7.7f;
+			frontwalldb = 0.3f;
+		}
+		else if ((GameManager.instance.level >= 67) && (GameManager.instance.level < 72))
+		{
+			fourblockdb = -8.7f;
+			frontwalldb = -0.7f;
+		}
+        else if ((GameManager.instance.level >= 72) && (GameManager.instance.level < 77))
+		{
+			fourblockdb = -9.7f;
+			frontwalldb = -1.7f;
+		}
+		else if ((GameManager.instance.level >= 77) && (GameManager.instance.level < 82))
+		{
+			fourblockdb = -10.7f;
+			frontwalldb = -2.7f;
+		}
+		else if ((GameManager.instance.level >= 82) && (GameManager.instance.level < 87))
+		{
+			fourblockdb = -11.7f;
+			frontwalldb = -3.7f;
+		}
+		else if ((GameManager.instance.level >= 87) && (GameManager.instance.level < 92))
+		{
+			fourblockdb = -12.7f;
+			frontwalldb = -4.7f;
 		}
 		else if ((GameManager.instance.level >= 92))
 		{
-			fourblockdb = -6;
-			frontwalldb = 2;
+			fourblockdb = -13.7f;
+			frontwalldb = -5.7f;
 		}
 
 
