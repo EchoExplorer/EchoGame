@@ -36,7 +36,7 @@ public class GM_main_pre : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        init();    
+        init();
     }
 
     void OnLevelWasLoaded(int index)
@@ -186,7 +186,22 @@ public class GM_main_pre : MonoBehaviour
         else if ((madeUnrecognizedGesture == true) && (SoundManager.instance.finishedClip == true))
         {
             madeUnrecognizedGesture = false;
-            SoundManager.instance.PlayClips(SoundManager.clipsCurrentlyPlaying, SoundManager.currentBalances, 0, SoundManager.currentCallback, SoundManager.currentCallbackIndex, true);
+            int i = 0;
+            bool canPlayInterruptedClip = true;
+            print("Interrupted clips:");
+            foreach (AudioClip clip in SoundManager.clipsCurrentlyPlaying)
+            {
+                print("Clip " + i + ": " + clip.name);
+                if ((i == 0) && (clip.name == "inputSFX"))
+                {
+                    canPlayInterruptedClip = false;
+                }
+                i++;
+            }
+            if (canPlayInterruptedClip == true)
+            {
+                SoundManager.instance.PlayClips(SoundManager.clipsCurrentlyPlaying, SoundManager.currentBalances, 0, SoundManager.currentCallback, SoundManager.currentCallbackIndex, true);
+            }
         }
     }
 
@@ -199,12 +214,12 @@ public class GM_main_pre : MonoBehaviour
 
         SelectMode selectMode = SelectMode.NONE;
 
-// Check if we are running either in the Unity editor or in a standalone build.
+        // Check if we are running either in the Unity editor or in a standalone build.
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
-		// Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
+        // Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
         if (eh.isActivate())
         {
-			InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
+            InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
 
             // Do something based on this event info.
             // If a tap was registered.
@@ -256,14 +271,14 @@ public class GM_main_pre : MonoBehaviour
                 {
                     debugPlayerInfo = "RIght rotation registered. This gesture does nothing in this menu.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                }                
+                }
             }
             // If a hold was registered.
             else if (ie.isHold == true)
             {
                 debugPlayerInfo = "Hold registered. This gesture does nothing in this menu.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-            }         
+            }
 
             // If an unrecognized gesture was registered.
             else if (ie.isUnrecognized == true)
@@ -390,7 +405,7 @@ public class GM_main_pre : MonoBehaviour
                     SoundManager.instance.PlayVoice(Database.errorClips[13], true); // Tell the player they had more than three fingers on the screen.
                 }
             }
-        }       
+        }
 
         /*
 		//Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
@@ -430,25 +445,25 @@ public class GM_main_pre : MonoBehaviour
 #if UNITY_IOS || UNITY_ANDROID
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
-		if (eh.isActivate())
-		{
-			InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
+        if (eh.isActivate())
+        {
+            InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
 
-			// If a swipe was recognized.
-			if (ie.isSwipe == true)
-			{
-				// If the swipe was right.
-				if (ie.isRight == true)
-				{
+            // If a swipe was recognized.
+            if (ie.isSwipe == true)
+            {
+                // If the swipe was right.
+                if (ie.isRight == true)
+                {
                     canRepeat = true;
                     selectMode = SelectMode.CONTINUE; // If we have swiped right, set mode to Continue.
-				} 
-				// If the swipe was left.
-				else if (ie.isLeft == true)
-				{
+                }
+                // If the swipe was left.
+                else if (ie.isLeft == true)
+                {
                     canRepeat = true;
                     selectMode = SelectMode.NEW; // If we have swiped left, set mode to New.
-				}
+                }
                 // If the swipe was down.
                 else if (ie.isDown == true)
                 {
@@ -460,17 +475,17 @@ public class GM_main_pre : MonoBehaviour
                 {
                     selectMode = SelectMode.SKIP; // If we have swiped up, set mode to Skip.
                 }
-			}
-			
+            }
+
             // If a tap was registered and we are able to start a new game, set mode to Confirm.
-			else if ((ie.isTap == true) && TriggerStartNewGame.CDfinish())
-			{
+            else if ((ie.isTap == true) && TriggerStartNewGame.CDfinish())
+            {
                 if (at_confirm)
                 {
                     canRepeat = true;
                     selectMode = SelectMode.CONFIRM; // We have tapped to confirm we want to start a new game, so set mode to Confirm.
                 }
-			}                     
+            }
 
             // If a hold or rotation was registered.
             else if ((ie.isHold == true) || (ie.isRotate == true))
@@ -504,7 +519,7 @@ public class GM_main_pre : MonoBehaviour
                     debugPlayerInfo = "Nothing happened due to error with rotation on tap.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     SoundManager.instance.PlayVoice(Database.errorClips[2], true); // Play the appropriate clip.
-                }               
+                }
                 // If this error was registered.
                 else if (ie.isSwipeLeftHorizontalError == true)
                 {
@@ -603,14 +618,14 @@ public class GM_main_pre : MonoBehaviour
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     SoundManager.instance.PlayVoice(Database.errorClips[13], true); // Tell the player they had more than three fingers on the screen.
                 }
-            }           
-        }        
+            }
+        }
 
 #endif // End of mobile platform dependendent compilation section started above with #elif
 
         switch (selectMode)
         {
-        	// If mode is set to Continue, we have swiped right, so continue from where we left off.
+            // If mode is set to Continue, we have swiped right, so continue from where we left off.
             case SelectMode.CONTINUE:
                 debugPlayerInfo = "Swiped right. Continuing from where you left off.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
@@ -631,10 +646,10 @@ public class GM_main_pre : MonoBehaviour
                 debugPlayerInfo = "Swiped left. Going to confirm we want to start a new game.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.                
                 at_confirm = true;
-                canRepeat = true;                
+                canRepeat = true;
                 break;
             // If mode is set to Confirm, we have tapped to confirm we want to start a new game, so let the player swipe left to start.
-			case SelectMode.CONFIRM:
+            case SelectMode.CONFIRM:
                 debugPlayerInfo = "Tap registered. Confirmed we want to start a new game.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.                               
                 if (GameMode.instance.gamemode == GameMode.Game_Mode.TUTORIAL)
@@ -647,7 +662,7 @@ public class GM_main_pre : MonoBehaviour
                 }
                 // Utilities.write_save(0); ???
                 if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
-                {                   
+                {
                     canRepeat = false;
                     firstConfirm = true;
                     //BoardManager.write_save(1, BoardManager.finishedTutorialLevel1, BoardManager.finishedTutorialLevel3);
@@ -667,7 +682,7 @@ public class GM_main_pre : MonoBehaviour
                     canRepeat = false;
                     firstConfirm = true;
                     SceneManager.LoadScene("Title_Screen"); // Move back to the main menu.
-                }                
+                }
 
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
 #endif

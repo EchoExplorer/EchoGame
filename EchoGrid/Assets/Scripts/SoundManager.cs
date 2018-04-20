@@ -120,9 +120,9 @@ public class SoundManager : MonoBehaviour
         {
             if (!efxSource[i].isPlaying)
             {
-                efxSource[i].clip = clip;               
+                efxSource[i].clip = clip;
                 // Play the clip.
-                efxSource[i].Play();               
+                efxSource[i].Play();
             }
         }
     }
@@ -170,9 +170,9 @@ public class SoundManager : MonoBehaviour
         {
             finishedClip = false;
             voiceSource.clip = clip;
-			// Set balance (-1 to 1 from left to right, default 0)
-			voiceSource.panStereo = balance;
-            float clipLength = voiceSource.clip.length;            
+            // Set balance (-1 to 1 from left to right, default 0)
+            voiceSource.panStereo = balance;
+            float clipLength = voiceSource.clip.length;
             // Play the clip.
             voiceSource.PlayDelayed(delay);
             StartCoroutine(WaitForVoice(clipLength, clip));
@@ -186,7 +186,7 @@ public class SoundManager : MonoBehaviour
     {
         yield return new WaitForSeconds(clipLength + 0.3f);
         if ((voiceSource.time == clipLength) || (voiceSource.time == 0.0f))
-        {      
+        {
             finishedClip = true;
         }
     }
@@ -218,10 +218,10 @@ public class SoundManager : MonoBehaviour
             finishedAllClips = false; // We have not finished all our clips yet.
         }
 
-        clipsCurrentlyPlaying = new List<AudioClip>() {};
+        clipsCurrentlyPlaying = new List<AudioClip>() { };
         clipsCurrentlyPlaying.Clear();
         currentBalances = new float[clips.Count];
-        int i = 0;        
+        int i = 0;
         for (int j = current; j < clips.Count; j++)
         {
             clipsCurrentlyPlaying.Add(clips[j]);
@@ -232,7 +232,7 @@ public class SoundManager : MonoBehaviour
             else
             {
                 currentBalances = balances;
-            }            
+            }
             i++;
         }
 
@@ -247,7 +247,7 @@ public class SoundManager : MonoBehaviour
             callback();
         }
         AudioClip clip = clips[current];
-        float clipLength = clip.length;            
+        float clipLength = clip.length;
 
         if (balances == null)
         {
@@ -257,12 +257,12 @@ public class SoundManager : MonoBehaviour
         {
             PlayClip(clip, true, balances[current]);
         }
-              
-        StartCoroutine(WaitForLength(clipLength, clips, balances, current, callback, callback_index));                   
+
+        StartCoroutine(WaitForLength(clipLength, clips, balances, current, callback, callback_index));
     }
 
     private IEnumerator WaitForLength(float clipLength, List<AudioClip> clips, float[] balances, int current, Action callback, int callback_index)
-    {        
+    {
         yield return new WaitForSeconds(clipLength + 0.3f);
         // Check if this clip is the last clip in the list and make sure this clip has finished playing.
         if (((current + 1) == clips.Count) && (!clipSource.isPlaying))

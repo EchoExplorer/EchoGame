@@ -81,8 +81,8 @@ public class Player : MovingObject
     bool localRecordWritten = false;
     // int score;
     eventHandler eh;
-   
-	string debugPlayerInfo; // String for debugging the effects of the player's actions (Tells you they rotated, swiped, etc.).
+
+    string debugPlayerInfo; // String for debugging the effects of the player's actions (Tells you they rotated, swiped, etc.).
 
     public bool intercepted = false;
 
@@ -110,7 +110,7 @@ public class Player : MovingObject
     bool rotatedLeft;
     bool rotatedRight;
 
-    public static bool[,] canPlayClip = new bool[12,7];
+    public static bool[,] canPlayClip = new bool[12, 7];
     public static bool playedExitClip;
     public static bool canGoToNextLevel;
 
@@ -129,15 +129,17 @@ public class Player : MovingObject
     bool haveSwipedThreeTimes = false;
 
     public int level1_remaining_taps = -1; // Gesture tutorial level 1 remaining taps. Initially set to -1 as there are checks for if they are greater or equal to 0, and we don't want hints playing at the wrong time.
-	public int level1_remaining_ups = -1; // Gesture tutorial level 1 remaining swipes up. Initially set to -1 as there are checks for if they are greater or equal to 0, and we don't want hints playing at the wrong time.
-	public int level1_remaining_menus = -1; // Gesture tutorial level 1 remaining holds for pause menu. Initially set to -1 as there are checks for if they are greater or equal to 0, and we don't want hints playing at the wrong time.
-	public int level3_remaining_turns = -1; // Gesture tutorial level 3 remaining turns/rotations. Initially set to -1 as there are checks for if they are greater or equal to 0, and we don't want hints playing at the wrong time.
-    enum InterceptAction {NONE, UP, DOWN, LEFT, RIGHT, TAP, DOUBLE_TAP, TRIPLE_TAP, MENU};
+    public int level1_remaining_ups = -1; // Gesture tutorial level 1 remaining swipes up. Initially set to -1 as there are checks for if they are greater or equal to 0, and we don't want hints playing at the wrong time.
+    public int level1_remaining_menus = -1; // Gesture tutorial level 1 remaining holds for pause menu. Initially set to -1 as there are checks for if they are greater or equal to 0, and we don't want hints playing at the wrong time.
+    public int level3_remaining_turns = -1; // Gesture tutorial level 3 remaining turns/rotations. Initially set to -1 as there are checks for if they are greater or equal to 0, and we don't want hints playing at the wrong time.
+    enum InterceptAction { NONE, UP, DOWN, LEFT, RIGHT, TAP, DOUBLE_TAP, TRIPLE_TAP, MENU };
 
     string surveyCode = "";
 
-	//if switch_click_toogle is false, then play the odeon click,which is option 1 in database.
-	bool switch_click_toogle=false;
+    AudioClip echoaround = Database.attenuatedaround_odeon;
+    AudioClip echofront = Database.attenuatedClickfront_odeon;
+
+    // bool switch_click_toggle = false; // If switch_click_toggle is false, then play the odeon click, which is option 1 in database.
 
     void Awake()
     {
@@ -190,14 +192,14 @@ public class Player : MovingObject
         canGoToNextLevel = false;
 
         wantLevelRestart = false;
-        wantMainMenu = false;        
+        wantMainMenu = false;
 
         for (int i = 0; i < 12; i++)
         {
             for (int j = 0; j < 7; j++)
             {
                 canPlayClip[i, j] = true;
-            }           
+            }
         }
 
         // score = 1000;
@@ -260,18 +262,23 @@ public class Player : MovingObject
     string[] frontDistS = { "2.25", "3.75" };
     string[] frontDistM = { "5.25", "6.75" };
     string[] frontDistL = { "8.25", "9.75", "11.25", "12.75" };
-    
+
     /// <summary>
     /// A function that determines which echo file to play based on the surrounding environment.
     /// </summary>
-	private void PlayEcho(bool real = true)
+    private void PlayEcho(bool real = true)
     {
-		AudioClip echoaround = Database.instance.attenuatedaround_odeon;
-		AudioClip echofront = Database.instance.attenuatedClickfront_odeon;
-		if (switch_click_toogle){
-			echoaround = Database.instance.attenuatedaround;
-			echofront = Database.instance.attenuatedaround;
-		}
+        if (GM_title.switch_click_toggle == false)
+        {
+            echoaround = Database.attenuatedaround_odeon;
+            echofront = Database.attenuatedClickfront_odeon;
+        }
+
+        if (GM_title.switch_click_toggle == true)
+        {
+            echoaround = Database.attenuatedaround;
+            echofront = Database.attenuatedaround;
+        }
 
         Vector3 dir = transform.right;
         int dir_x = (int)Math.Round(dir.x);
@@ -311,28 +318,28 @@ public class Player : MovingObject
         while (frontWall == null);
         // Player echo preparation
         GvrAudioSource playerGAS = this.GetComponent<GvrAudioSource>();
-        playerGAS.clip = Database.instance.attenuatedClick;
+        playerGAS.clip = Database.attenuatedClick;
         // Front wall echo preparation
         GvrAudioSource frontGAS = frontWall.GetComponent<GvrAudioSource>();
         frontGAS.clip = echofront;
         float blocksToFrontWall = Vector3.Distance(transform.position, frontWall.transform.position) - 1;
         // Four-wall echoes preparation
         GvrAudioSource leftGAS = null, rightGAS = null, leftFrontGAS = null, rightFrontGAS = null;
-        
-		float fourblockdb = 2;
+
+        float fourblockdb = 2;
         float frontwalldb = 10;
 
         if (leftWall != null)
         {
             leftGAS = leftWall.GetComponent<GvrAudioSource>();
-			leftGAS.clip = echoaround;
+            leftGAS.clip = echoaround;
             leftGAS.gainDb = fourblockdb;
 
         }
         if (rightWall != null)
         {
             rightGAS = rightWall.GetComponent<GvrAudioSource>();
-			rightGAS.clip = echoaround;
+            rightGAS.clip = echoaround;
             rightGAS.gainDb = fourblockdb;
         }
         if (blocksToFrontWall > 0 && leftFrontWall != null)
@@ -340,7 +347,7 @@ public class Player : MovingObject
             if (((int)blocksToFrontWall) != 0 || leftWall == null)
             {
                 leftFrontGAS = leftFrontWall.GetComponent<GvrAudioSource>();
-				leftFrontGAS.clip =echoaround;
+                leftFrontGAS.clip = echoaround;
                 leftFrontGAS.gainDb = fourblockdb;
             }
         }
@@ -349,7 +356,7 @@ public class Player : MovingObject
             if (((int)blocksToFrontWall) != 0 || rightWall == null)
             {
                 rightFrontGAS = rightFrontWall.GetComponent<GvrAudioSource>();
-				rightFrontGAS.clip = echoaround;
+                rightFrontGAS.clip = echoaround;
                 rightFrontGAS.gainDb = fourblockdb;
             }
         }
@@ -371,7 +378,7 @@ public class Player : MovingObject
         }
         else
         {
-            SoundManager.instance.PlaySingle(Database.instance.attenuatedClick);
+            SoundManager.instance.PlaySingle(Database.attenuatedClick);
             if (frontGAS != null)
             {
                 frontGAS.volume = 1;
@@ -413,49 +420,49 @@ public class Player : MovingObject
         String prefix = "C00-21"; // change this prefix when you change the echo files
         if (GameManager.instance.level < 22)
         {
-			fourblockdb = 2;
-			frontwalldb = 10;
+            fourblockdb = 2;
+            frontwalldb = 10;
         }
         else if ((GameManager.instance.level >= 22) && (GameManager.instance.level < 32))
         {
-			fourblockdb = 1;
-			frontwalldb = 9;
+            fourblockdb = 1;
+            frontwalldb = 9;
         }
         else if ((GameManager.instance.level >= 32) && (GameManager.instance.level < 42))
         {
-			fourblockdb = 0;
-			frontwalldb = 8;
+            fourblockdb = 0;
+            frontwalldb = 8;
         }
-        else  if ((GameManager.instance.level >= 42) && (GameManager.instance.level < 52))
+        else if ((GameManager.instance.level >= 42) && (GameManager.instance.level < 52))
         {
-			fourblockdb = -1;
-			frontwalldb = 7;
+            fourblockdb = -1;
+            frontwalldb = 7;
         }
-		else if ((GameManager.instance.level >= 52) && (GameManager.instance.level < 62))
+        else if ((GameManager.instance.level >= 52) && (GameManager.instance.level < 62))
         {
-			fourblockdb =-2;
-			frontwalldb = 6;
-		}
+            fourblockdb = -2;
+            frontwalldb = 6;
+        }
         else if ((GameManager.instance.level >= 62) && (GameManager.instance.level < 72))
-		{
-			fourblockdb = -3;
-			frontwalldb = 5;
-		}
+        {
+            fourblockdb = -3;
+            frontwalldb = 5;
+        }
         else if ((GameManager.instance.level >= 72) && (GameManager.instance.level < 82))
-		{
-			fourblockdb = -4;
-			frontwalldb = 4;
-		}
-		else if ((GameManager.instance.level >= 82) && (GameManager.instance.level < 92))
-		{
-			fourblockdb = -5;
-			frontwalldb = 3;
-		}
-		else if ((GameManager.instance.level >= 92))
-		{
-			fourblockdb = -6;
-			frontwalldb = 2;
-		}
+        {
+            fourblockdb = -4;
+            frontwalldb = 4;
+        }
+        else if ((GameManager.instance.level >= 82) && (GameManager.instance.level < 92))
+        {
+            fourblockdb = -5;
+            frontwalldb = 3;
+        }
+        else if ((GameManager.instance.level >= 92))
+        {
+            fourblockdb = -6;
+            frontwalldb = 2;
+        }
 
 
         String filename;
@@ -1343,7 +1350,6 @@ public class Player : MovingObject
         {
             if (AttemptMove<Wall>((int)dir.x, (int)dir.y))
             {
-                hasMoved = true;
                 tapped = false;
                 if (dir == get_player_dir("FRONT"))
                 {
@@ -1353,10 +1359,6 @@ public class Player : MovingObject
                 {
                     GameManager.instance.boardScript.gamerecord += "b";
                 }
-            }
-            else
-            {
-                hasMoved = false;               
             }
         }
 
@@ -1377,7 +1379,7 @@ public class Player : MovingObject
                 remaining_steps -= 2;
             }
             int total_step = GameManager.instance.boardScript.mazeSolution.Length - 1;
-            ratio = ((float)remaining_steps) / total_step;                   
+            ratio = ((float)remaining_steps) / total_step;
 
             //if ((!reachQuarter) && (ratio <= 0.75f) && (ratio > 0.67f))
             //{
@@ -1417,9 +1419,16 @@ public class Player : MovingObject
         // Call the AttemptMove method of the base class, passing in the component T (in this case Wall) and x and y direction to move.
         bool canMove = base.AttemptMove<T>(xDir, yDir);
         numSteps += 1;
+        if (canMove == true)
+        {
+            hasMoved = true;
+        }
+
         // If player could not move to that location, play the crash sound
         if (!canMove)
         {
+            hasMoved = false;
+
             GameManager.instance.boardScript.gamerecord += "C";
             // if(!SoundManager.instance.isBusy())
 
@@ -1429,35 +1438,31 @@ public class Player : MovingObject
             // If the player is at the exit and moves forward.
             if (curLevel <= 11)
             {
-                if ((canPlayClip[(curLevel - 1), 2] == false) && (BoardManager.reachedExit == true))
+                // If they swipe up here and they are facing the wall, tell them they have crashed into the wall and that they have to rotate right to progress further in the level.
+                if ((curLevel == 3) && (playerPos.x == 9) && (playerPos.y == 9) && (GameManager.instance.boardScript.get_player_dir_world() == BoardManager.Direction.RIGHT))
                 {
-                    // If we are on top of the exit and still in the tutorial.                                               
+                    clips = new List<AudioClip>() { Database.soundEffectClips[8], Database.soundEffectClips[0], Database.mainGameClips[37] };
+                    SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                }
+                // If they swipe up here and they are facing the wall, tell them they have crashed into the wall and that they have to rotate left to progress further in the level.
+                else if ((curLevel == 5) && (playerPos.x == 1) && (playerPos.y == 9) && (GameManager.instance.boardScript.get_player_dir_world() == BoardManager.Direction.LEFT))
+                {
+                    clips = new List<AudioClip>() { Database.soundEffectClips[8], Database.soundEffectClips[0], Database.mainGameClips[38] };
+                    SoundManager.instance.PlayClips(clips); // Play the appropriate clips.                            
+                }
+                else if ((canPlayClip[(curLevel - 1), 2] == false) && (BoardManager.reachedExit == true))
+                {
+                    // If we are on top of the exit and still in the tutorial.       
                     clips = new List<AudioClip>() { Database.soundEffectClips[8], Database.soundEffectClips[0], Database.mainGameClips[36] };
                     SoundManager.instance.PlayClips(clips); // Play the appropriate clips.                        
+                }
+                else
+                {
+                    clips = new List<AudioClip>() { Database.soundEffectClips[8] };
+                    SoundManager.instance.PlayClips(clips); // Play the appropriate clip.
                 }
             }
             else if (curLevel >= 12)
-            {
-                if ((canPlayClip[11, 2] == false) && (BoardManager.reachedExit == true))
-                {
-                    // If we are on top of the exit and still in the tutorial.                                               
-                    clips = new List<AudioClip>() { Database.soundEffectClips[8], Database.soundEffectClips[0], Database.mainGameClips[36] };
-                    SoundManager.instance.PlayClips(clips); // Play the appropriate clips.                        
-                }
-            }            
-            // If they swipe up here and they are facing the wall, tell them they have crashed into the wall and that they have to rotate right to progress further in the level.
-            if ((curLevel == 3) && (playerPos.x == 9) && (playerPos.y == 9) && (GameManager.instance.boardScript.get_player_dir_world() == BoardManager.Direction.RIGHT))
-            {
-                clips = new List<AudioClip>() { Database.soundEffectClips[8], Database.soundEffectClips[0], Database.mainGameClips[37] };
-                SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
-            }
-            // If they swipe up here and they are facing the wall, tell them they have crashed into the wall and that they have to rotate left to progress further in the level.
-            else if ((curLevel == 5) && (playerPos.x == 1) && (playerPos.y == 9) && (GameManager.instance.boardScript.get_player_dir_world() == BoardManager.Direction.LEFT))
-            {
-                clips = new List<AudioClip>() { Database.soundEffectClips[8], Database.soundEffectClips[0], Database.mainGameClips[38] };
-                SoundManager.instance.PlayClips(clips); // Play the appropriate clips.                            
-            }
-            else
             {
                 clips = new List<AudioClip>() { Database.soundEffectClips[8] };
                 SoundManager.instance.PlayClips(clips); // Play the appropriate clip.
@@ -1507,7 +1512,7 @@ public class Player : MovingObject
     /// Sends data over the internet when the player crashes into a wall.
     /// </summary>
 	private void reportOnCrash()
-    {    
+    {
         string crashEndpoint = "http://echolock.andrew.cmu.edu/cgi-bin/acceptCrashData.py";
 
         Vector2 idx_pos = GameManager.instance.boardScript.get_idx_from_pos(transform.position);
@@ -1545,7 +1550,7 @@ public class Player : MovingObject
         // {
         //     Logging.Log("Not exit, in Wrong Dead end!", Logging.LogLevel.LOW_PRIORITY);
         // }
-       
+
         if (BoardManager.reachedExit == true)
         {
             reachedExit = true;
@@ -1665,7 +1670,7 @@ public class Player : MovingObject
         GameMode.finishedLevel1Tutorial = BoardManager.finishedTutorialLevel1;
         GameMode.finishedLevel3Tutorial = BoardManager.finishedTutorialLevel3;
         GameMode.write_save_mode(GameManager.instance.level, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.instance.gamemode);
-        GameManager.instance.playersTurn = false;       
+        GameManager.instance.playersTurn = false;
 
         // AudioSource.PlayClipAtPoint (winSound, transform.localPosition, 1.0f);
 
@@ -1709,7 +1714,22 @@ public class Player : MovingObject
         if ((madeUnrecognizedGesture == true) && (SoundManager.instance.finishedClip == true))
         {
             madeUnrecognizedGesture = false;
-            SoundManager.instance.PlayClips(SoundManager.clipsCurrentlyPlaying, SoundManager.currentBalances, 0, SoundManager.currentCallback, SoundManager.currentCallbackIndex, true);
+            int i = 0;
+            bool canPlayInterruptedClip = true;
+            print("Interrupted clips:");
+            foreach (AudioClip clip in SoundManager.clipsCurrentlyPlaying)
+            {
+                print("Clip " + i + ": " + clip.name);
+                if ((i == 0) && ((clip.name == "swipe-ahead") || (clip.name == "swipe-left") || (clip.name == "swipe-right") || (clip.name == "level_start") || (clip.name == "pause_menu_closed")))
+                {
+                    canPlayInterruptedClip = false;
+                }
+                i++;
+            }
+            if (canPlayInterruptedClip == true)
+            {
+                SoundManager.instance.PlayClips(SoundManager.clipsCurrentlyPlaying, SoundManager.currentBalances, 0, SoundManager.currentCallback, SoundManager.currentCallbackIndex, true);
+            }
         }
 
         Vector2 playerPos = GameManager.instance.boardScript.get_idx_from_pos(transform.position);
@@ -1718,7 +1738,7 @@ public class Player : MovingObject
         Vector2 distFromExit = transform.position - exitSign.transform.position;
 
         if (swipedUp == true)
-        {           
+        {
             if (curLevel <= 11)
             {
                 if (hasMoved == true)
@@ -1742,7 +1762,7 @@ public class Player : MovingObject
                         // If the player returns to their start position.
                         else if ((canPlayClip[0, 3] == true) && (intercepted == false) && (BoardManager.finishedTutorialLevel1 == true) && (playerPos.x == startPos.x) && (playerPos.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
                         {
-                            
+
                         }
                         // Otherwise play a normal swipe up.
                         else
@@ -1770,7 +1790,7 @@ public class Player : MovingObject
                         // If the player returns to their start position.
                         else if ((canPlayClip[1, 3] == true) && (BoardManager.finishedTutorialLevel1 == true) && (playerPos.x == startPos.x) && (playerPos.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
                         {
-                 
+
                         }
                         // Otherwise play a normal swipe up.
                         else
@@ -1820,7 +1840,7 @@ public class Player : MovingObject
                         // If the player returns to their start position.
                         else if ((canPlayClip[2, 3] == true) && (intercepted == false) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x == startPos.x) && (playerPos.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
                         {
-               
+
                         }
                         else
                         {
@@ -1875,7 +1895,7 @@ public class Player : MovingObject
                         // If the player returns to their start position.
                         else if ((canPlayClip[4, 3] == true) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x == startPos.x) && (playerPos.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
                         {
-           
+
                         }
                         else
                         {
@@ -1931,7 +1951,7 @@ public class Player : MovingObject
                             canPlayClip[10, 4] = false;
                             clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[33], Database.soundEffectClips[0], Database.mainGameClips[28] };
                             SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
-                        }                       
+                        }
                         else if ((canPlayClip[10, 4] == true) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x >= 2) && (playerPos.y <= 6))
                         {
                             clips = new List<AudioClip>() { Database.soundEffectClips[4] };
@@ -1961,7 +1981,7 @@ public class Player : MovingObject
                         // If the player returns to their start position.
                         else if ((canPlayClip[10, 3] == true) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x == startPos.x) && (playerPos.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
                         {
-                                  
+
                         }
                     }
                     // If we are in another tutorial level
@@ -1983,7 +2003,7 @@ public class Player : MovingObject
                         // If the player returns to their start position.
                         else if ((canPlayClip[(curLevel - 1), 3] == true) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x == startPos.x) && (playerPos.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
                         {
-           
+
                         }
                         // Otherwise play a normal swipe up.
                         else
@@ -2012,26 +2032,38 @@ public class Player : MovingObject
                     {
                         canPlayClip[11, 1] = false;
                         // Logging.Log("50%", Logging.LogLevel.NORMAL);
+                        canPlayClip[10, 2] = true;
+                        canPlayClip[10, 3] = true;
+                        clips = new List<AudioClip>() { Database.soundEffectClips[4] };
+                        SoundManager.instance.PlayClips(clips); // Play the appropriate clip.
                     }
                     // If the player has reached the exit.
-                    if ((canPlayClip[11, 2] == true) && (BoardManager.finishedTutorialLevel3 == true) && (Vector2.SqrMagnitude(distFromExit) < 0.25))
+                    else if ((canPlayClip[11, 2] == true) && (BoardManager.finishedTutorialLevel3 == true) && (Vector2.SqrMagnitude(distFromExit) < 0.25))
                     {
                         // Keep this check in, but do nothing.
+                        canPlayClip[10, 1] = true;
+                        canPlayClip[10, 3] = true;
+                        clips = new List<AudioClip>() { Database.soundEffectClips[4] };
+                        SoundManager.instance.PlayClips(clips); // Play the appropriate clip.
                     }
                     // If the player returns to their start position.
-                    if ((canPlayClip[11, 3] == true) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x == startPos.x) && (playerPos.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
+                    else if ((canPlayClip[11, 3] == true) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x == startPos.x) && (playerPos.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
                     {
                         canPlayClip[11, 3] = false;
+                        canPlayClip[10, 1] = true;
+                        canPlayClip[10, 2] = true;
                     }
-
-                    canPlayClip[10, 1] = true;
-                    canPlayClip[10, 2] = true;
-                    canPlayClip[10, 3] = true;
+                    else
+                    {
+                        canPlayClip[10, 1] = true;
+                        canPlayClip[10, 2] = true;
+                        canPlayClip[10, 3] = true;
+                        clips = new List<AudioClip>() { Database.soundEffectClips[4] };
+                        SoundManager.instance.PlayClips(clips); // Play the appropriate clip.
+                    }
                     canPlayClip[10, 4] = true;
                     canPlayClip[10, 5] = true;
                     canPlayClip[10, 6] = true;
-                    clips = new List<AudioClip>() { Database.soundEffectClips[4] };
-                    SoundManager.instance.PlayClips(clips); // Play the appropriate clip.
                 }
             }
             swipedUp = false;
@@ -2067,8 +2099,8 @@ public class Player : MovingObject
                     SoundManager.instance.PlayClips(clips); // Play the appropriate clips.      
                     rotatedLeft = false;
                 }
-            }    
-            
+            }
+
             else
             {
                 rotatedLeft = false;
@@ -2105,8 +2137,8 @@ public class Player : MovingObject
                     SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
                     rotatedRight = false;
                 }
-            }    
-            
+            }
+
             else
             {
                 rotatedRight = false;
@@ -2238,7 +2270,7 @@ public class Player : MovingObject
                     GameManager.instance.boardScript.gamerecord += "X"; // Record the attempt.
                     attemptExitFromLevel(); // Attempt to exit the level.
                 }
-            }            
+            }
         }
         else if (curLevel == 6)
         {
@@ -2369,7 +2401,7 @@ public class Player : MovingObject
                 {
                     canPlayClip[10, 0] = false;
                     debugPlayerInfo = "Playing level 11 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
-                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);                    
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                     clips = new List<AudioClip>() { Database.mainGameClips[0], Database.soundEffectClips[2], Database.mainGameClips[25], Database.soundEffectClips[0], Database.mainGameClips[26], Database.soundEffectClips[0], Database.mainGameClips[27], Database.soundEffectClips[0], Database.mainGameClips[10] };
                     SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
                 }
@@ -2382,13 +2414,13 @@ public class Player : MovingObject
                     GameManager.instance.boardScript.gamerecord += "X"; // Record the attempt.
                     attemptExitFromLevel(); // Attempt to exit the level.
                 }
-            }              
-        }    
+            }
+        }
         else if (curLevel >= 12)
         {
             // Play level 11 beginning clips.
             if (canPlayClip[11, 0] == true)
-            {     
+            {
                 canPlayClip[11, 0] = false;
                 debugPlayerInfo = "Playing level " + curLevel + " beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
@@ -2408,7 +2440,7 @@ public class Player : MovingObject
     }
 
     //control
-    bool echoLock = false;   
+    bool echoLock = false;
     CDTimer TriggerechoTimer;
     CDTimer TriggermenuTimer;
     CDTimer TriggerrotateTimer;
@@ -2477,9 +2509,9 @@ public class Player : MovingObject
             }
             else if ((curLevel >= 12) && (canPlayClip[11, 3] == true))
             {
-                // canPlayClip[11, 3] = false;
-                // clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[30] };
-                // SoundManager.instance.PlayClips(clips); // Play the appropriate clips.      
+                canPlayClip[11, 3] = false;
+                clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[30] };
+                SoundManager.instance.PlayClips(clips); // Play the appropriate clips.      
             }
         }
 
@@ -2506,7 +2538,7 @@ public class Player : MovingObject
                 if ((curLevel <= 11) && (canPlayClip[(curLevel - 1), 2] == true))
                 {
                     if (curLevel == 1)
-                    { 
+                    {
                         canPlayClip[0, 2] = false;
                         debugPlayerInfo = "Playing found level 1 exit clip.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
@@ -2537,7 +2569,7 @@ public class Player : MovingObject
                         clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[29] };
                         SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
                     }
-                    else 
+                    else
                     {
                         canPlayClip[(curLevel - 1), 2] = false;
                         clips = new List<AudioClip>() { Database.soundEffectClips[4] };
@@ -2575,10 +2607,10 @@ public class Player : MovingObject
             {
                 playedExitClip = false;
                 canGoToNextLevel = false;
-                debugPlayerInfo = "Swiped down. Exiting level.";                
+                debugPlayerInfo = "Swiped down. Exiting level.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 GameManager.instance.boardScript.gamerecord += "X"; // Record the attempt.
-                changingLevel = true;                
+                changingLevel = true;
                 attemptExitFromLevel(); // Attempt to exit the level.                  
             }
         }
@@ -2595,8 +2627,8 @@ public class Player : MovingObject
             }
         }
 
-        play_audio();       
-        
+        play_audio();
+
         // UnityEngine.Debug.DrawLine (transform.position, transform.position+get_player_dir("FRONT"), Color.green);
         // UnityEngine.Debug.DrawLine (transform.position, transform.position+get_player_dir("LEFT"), Color.yellow);
         // If it's not the player's turn, exit the function.
@@ -2653,7 +2685,7 @@ public class Player : MovingObject
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 waitingForOpenMenuInstruction = false;
                 finishedMenuInstruction = true;
-            }    
+            }
             // Make sure all the clips have finished playing before allowing the player to swipe down.
             if ((finishedExitingInstruction == false) && (level1_remaining_menus == 0) && (SoundManager.instance.finishedAllClips == true))
             {
@@ -2688,7 +2720,7 @@ public class Player : MovingObject
         {
             InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
 
-			// Do something based on this event info.
+            // Do something based on this event info.
             // If a tap was registered.
             if (ie.isTap == true)
             {
@@ -2702,7 +2734,7 @@ public class Player : MovingObject
                     else
                     {
                         debugPlayerInfo = "Tap registered. Played echo.";
-                    }                    
+                    }
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     GameManager.instance.boardScript.gamerecord += "E{"; // Record the echo.
                     PlayEcho(); // Play the echo.
@@ -2722,7 +2754,7 @@ public class Player : MovingObject
                         GameMode.finishedLevel1Tutorial = BoardManager.finishedTutorialLevel1;
                         GameMode.finishedLevel3Tutorial = BoardManager.finishedTutorialLevel3;
                         GameMode.write_save_mode(curLevel, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.instance.gamemode);
-                        restartLevel = true;                                         
+                        restartLevel = true;
                     }
                     // If the player has told us they want to return to the main menu, then return to the main menu.
                     else if (wantMainMenu == true)
@@ -2735,7 +2767,7 @@ public class Player : MovingObject
                         GameMode.finishedLevel1Tutorial = BoardManager.finishedTutorialLevel1;
                         GameMode.finishedLevel3Tutorial = BoardManager.finishedTutorialLevel3;
                         GameMode.write_save_mode(curLevel, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.instance.gamemode);
-                        goBackToMain = true;                     
+                        goBackToMain = true;
                     }
                 }
             }
@@ -2789,17 +2821,17 @@ public class Player : MovingObject
                 {
                     // If the player is not in the pause menu, move them forward.
                     if ((want_exit == false) && (loadingScene == false))
-                    {                    
+                    {
                         Vector2 playerPos = GameManager.instance.boardScript.get_idx_from_pos(transform.position);
-                        if ((intercepted == false) && (BoardManager.finishedTutorialLevel3 == false)  && (curLevel == 3) && (playerPos.x == 9) && (playerPos.y == 9))
+                        if ((intercepted == false) && (BoardManager.finishedTutorialLevel3 == false) && (curLevel == 3) && (playerPos.x == 9) && (playerPos.y == 9))
                         {
                             debugPlayerInfo = "Cannot swipe up at this time.";
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         }
                         else
-                        {                                                        
+                        {
                             dir = transform.right; // Move the player forward.                        
-                            swipedUp = true;  
+                            swipedUp = true;
                             PlayEcho(false);
                         }
                     }
@@ -2836,7 +2868,7 @@ public class Player : MovingObject
                             GameManager.instance.UnHideLevelImage(); // Turn on the map.
                             GameManager.instance.boardScript.gamerecord += "S_ON"; // Record the switch.
                         }
-                    }                    
+                    }
                 }
             }
             // If a rotation was registered.
@@ -2864,7 +2896,7 @@ public class Player : MovingObject
                                 rotatedLeft = true;
                             }
                             PlayEcho(false);
-                        }                        
+                        }
                     }
                 }
                 // If the right arrow key has been pressed.
@@ -2889,7 +2921,7 @@ public class Player : MovingObject
                                 rotatedRight = true;
                             }
                             PlayEcho(false);
-                        }                        
+                        }
                     }
                 }
             }
@@ -2948,7 +2980,7 @@ public class Player : MovingObject
             // If there was an unrecognized gesture made.
             if ((ie.isUnrecognized == true) && (loadingScene == false))
             {
-                madeUnrecognizedGesture = true; 
+                madeUnrecognizedGesture = true;
 
                 // If this error was registered.
                 if (ie.isTapHorizontalError == true)
@@ -3121,21 +3153,21 @@ public class Player : MovingObject
 #if UNITY_IOS || UNITY_ANDROID
         // process input
         if (eh.isActivate())
-		{
-			InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
+        {
+            InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
 
-			// If a tap is registered.
-			if (ie.isTap == true)
-			{
-				// If the player is not in the pause menu, play an echo if possible.
-				if ((at_pause_menu == false) && (loadingScene == false))
-				{
+            // If a tap is registered.
+            if (ie.isTap == true)
+            {
+                // If the player is not in the pause menu, play an echo if possible.
+                if ((at_pause_menu == false) && (loadingScene == false))
+                {
                     if ((finishedCornerInstruction == true) && (hasTappedAtCorner == false))
                     {
 
                     }
                     else
-                    { 
+                    {
                         if (!echoLock)
                         {
                             debugPlayerInfo = "Tap registered. Played echo.";
@@ -3147,7 +3179,7 @@ public class Player : MovingObject
                             flipEchoLock(true);
                         }
                     }
-				}
+                }
                 // If the player is at the pause menu.
                 else if ((at_pause_menu == true) && (loadingScene == false))
                 {
@@ -3178,22 +3210,22 @@ public class Player : MovingObject
                         goBackToMain = true;
                     }
                 }
-			}
-			// If a hold is registered.
-			else if (ie.isHold == true)
-			{
-				flipEchoLock(true);
-				// If the player is not in the pause menu, open the pause menu.
-				if ((at_pause_menu == false) && (loadingScene == false))
-				{
+            }
+            // If a hold is registered.
+            else if (ie.isHold == true)
+            {
+                flipEchoLock(true);
+                // If the player is not in the pause menu, open the pause menu.
+                if ((at_pause_menu == false) && (loadingScene == false))
+                {
                     debugPlayerInfo = "Hold registered. Opened pause menu.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     at_pause_menu = true; // The player is now in the pause menu.
-					if (SoundManager.instance.voiceSource.isPlaying)
+                    if (SoundManager.instance.voiceSource.isPlaying)
                     {
                         GameManager.instance.boardScript.restore_audio = true;
                         GameManager.instance.boardScript.latest_clip = SoundManager.instance.voiceSource.clip;
-					}
+                    }
                     // If the player is using Talkback.
                     if (GM_title.isUsingTalkback == true)
                     {
@@ -3207,26 +3239,26 @@ public class Player : MovingObject
                         SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
                     }
                 }
-				// If the player is in the pause menu, close the pause menu.
-				else if ((at_pause_menu == true) && (loadingScene == false))
-				{
+                // If the player is in the pause menu, close the pause menu.
+                else if ((at_pause_menu == true) && (loadingScene == false))
+                {
                     debugPlayerInfo = "Hold registered. Closed pause menu.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     at_pause_menu = false; // The player is no longer in the pause menu.
                     clips = new List<AudioClip>() { Database.pauseMenuClips[11] };
                     SoundManager.instance.PlayClips(clips);
-				}
-			}
-			// If a swipe is registered.
-			else if (ie.isSwipe == true)
-			{
-				flipEchoLock(true);
-				// If the player is not in the pause menu.
-				if ((at_pause_menu == false) && (loadingScene == false))
-				{
-					// If the swipe was up, move the player forward.
-					if (ie.isUp == true)
-					{
+                }
+            }
+            // If a swipe is registered.
+            else if (ie.isSwipe == true)
+            {
+                flipEchoLock(true);
+                // If the player is not in the pause menu.
+                if ((at_pause_menu == false) && (loadingScene == false))
+                {
+                    // If the swipe was up, move the player forward.
+                    if (ie.isUp == true)
+                    {
                         Vector2 playerPos = GameManager.instance.boardScript.get_idx_from_pos(transform.position);
                         if ((BoardManager.finishedTutorialLevel3 == false) && (curLevel == 3) && (playerPos.x == 9) && (playerPos.y == 9))
                         {
@@ -3239,39 +3271,39 @@ public class Player : MovingObject
                             swipedUp = true;
                             PlayEcho(false);
                         }
-					}         
+                    }
                     // If the swipe was down.
                     if (ie.isDown == true)
-                    {                                 
-                        endingLevel = true;                        
+                    {
+                        endingLevel = true;
                     }
-                } 
-				// If the player is in the pause menu.
-				else if ((at_pause_menu == true) && (loadingScene == false))
-				{
-					// If the swipe was down, turn on/off the visual map for debugging.
-					if (ie.isDown == true)
-					{
-						// If the visual map for debugging is on, turn it off.
-						if (GameManager.levelImageActive)
-						{
+                }
+                // If the player is in the pause menu.
+                else if ((at_pause_menu == true) && (loadingScene == false))
+                {
+                    // If the swipe was down, turn on/off the visual map for debugging.
+                    if (ie.isDown == true)
+                    {
+                        // If the visual map for debugging is on, turn it off.
+                        if (GameManager.levelImageActive)
+                        {
                             debugPlayerInfo = "Swiped down. Turning off visual map for debugging.";
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                             GameManager.instance.HideLevelImage(); // Turn off the map.
                             GameManager.instance.boardScript.gamerecord += "S_OFF"; // Record the switch off.
-						}
-						// If the visual map for debugging is off, turn it on.
-						else
-						{
+                        }
+                        // If the visual map for debugging is off, turn it on.
+                        else
+                        {
                             debugPlayerInfo = "Swiped down. Turning on visual map for debugging.";
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                             GameManager.instance.UnHideLevelImage(); // Turn on the map.
                             GameManager.instance.boardScript.gamerecord += "S_ON"; // Record the switch.
-						}
-					}
+                        }
+                    }
                     // If the swipe was left, the player has told us they want to restart the level.
                     else if (ie.isLeft == true)
-					{
+                    {
                         debugPlayerInfo = "Swiped left. We want to restart the level.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         if (GM_title.isUsingTalkback == true)
@@ -3288,7 +3320,7 @@ public class Player : MovingObject
                     }
                     // If the swipe was right, the player has told us they want to go back to the main menu.
                     else if (ie.isRight == true)
-					{
+                    {
                         debugPlayerInfo = "Swiped right. We want to return to the main menu.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.                        
                         if (GM_title.isUsingTalkback == true)
@@ -3303,25 +3335,25 @@ public class Player : MovingObject
                         }
                         wantMainMenu = true;
                     }
-					// If the swipe was up, give the player a hint.
-					else if (ie.isUp == true)
-					{
+                    // If the swipe was up, give the player a hint.
+                    else if (ie.isUp == true)
+                    {
                         debugPlayerInfo = "Swiped up. Gave player hint.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         getHint(); // Give the player a hint.
-					}					
-				}
-			} 
-			// If a rotation was registered.
-			else if (ie.isRotate == true)
-			{
-				flipEchoLock(true);
-				// If the player is not in the pause menu.
-				if ((at_pause_menu == false) && (loadingScene == false))
-				{
-					// If the rotation was left, rotate the player left 90 degrees.
-					if (ie.isLeft == true)
-					{
+                    }
+                }
+            }
+            // If a rotation was registered.
+            else if (ie.isRotate == true)
+            {
+                flipEchoLock(true);
+                // If the player is not in the pause menu.
+                if ((at_pause_menu == false) && (loadingScene == false))
+                {
+                    // If the rotation was left, rotate the player left 90 degrees.
+                    if (ie.isLeft == true)
+                    {
                         Vector2 playerPos = GameManager.instance.boardScript.get_idx_from_pos(transform.position);
                         if ((BoardManager.finishedTutorialLevel3 == false) && (curLevel == 3) && (playerPos.x <= 9) && (playerPos.y == 9))
                         {
@@ -3339,10 +3371,10 @@ public class Player : MovingObject
                             }
                             PlayEcho(false);
                         }
-					}
-					// If the rotation was right, rotate the player right 90 degrees.
-					else if (ie.isRight == true)
-					{
+                    }
+                    // If the rotation was right, rotate the player right 90 degrees.
+                    else if (ie.isRight == true)
+                    {
                         Vector2 playerPos = GameManager.instance.boardScript.get_idx_from_pos(transform.position);
                         if ((BoardManager.finishedTutorialLevel3 == false) && (curLevel == 3) && (playerPos.x <= 9) && (playerPos.y == 9))
                         {
@@ -3360,9 +3392,9 @@ public class Player : MovingObject
                             }
                             PlayEcho(false);
                         }
-					}
-				}
-			}
+                    }
+                }
+            }
 
             // If there was an unrecognized gesture made.
             if ((ie.isUnrecognized == true) && (loadingScene == false))
@@ -3491,7 +3523,7 @@ public class Player : MovingObject
             }
 
             flipEchoLock(false);
-		}
+        }
 #endif // End of mobile platform dependendent compilation section started above with #elif
         calculateMove(dir);
     }
@@ -3687,20 +3719,20 @@ public class Player : MovingObject
     {
         // Load the last scene loaded, in this case Main, the only scene in the game.
         SceneManager.LoadScene("Main");
-        restarted = false;        
+        restarted = false;
     }
 
     protected override void OnMove()
     {
 
     }
-    
+
     public void Intercept(int level)
     {
-    	// If the current level is not the level we are trying to intercept.
-        if (curLevel != level) 
+        // If the current level is not the level we are trying to intercept.
+        if (curLevel != level)
         {
-        	return;
+            return;
         }
         intercepted = true; // Otherwise we are intercepting a level to give hints/a tutorial.
         switch (level)
@@ -3721,14 +3753,14 @@ public class Player : MovingObject
                 finishedExitingInstruction = false; // Reset if the player is going through this tutorial level again.   
                 if (GM_title.isUsingTalkback == true)
                 {
-                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.tutorialClips[0], Database.tutorialClips[2], Database.soundEffectClips[1],  Database.tutorialClips[3], Database.tutorialClips[4] };
+                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.tutorialClips[0], Database.tutorialClips[2], Database.soundEffectClips[1], Database.tutorialClips[3], Database.tutorialClips[4] };
                     SoundManager.instance.PlayClips(clips, null, 0, () => PlayEcho(), 3); // If they are using Talkback, play the correct instructions.  
                 }
                 else if (GM_title.isUsingTalkback == false)
                 {
                     clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.tutorialClips[0], Database.tutorialClips[1], Database.soundEffectClips[1], Database.tutorialClips[3], Database.tutorialClips[4] };
                     SoundManager.instance.PlayClips(clips, null, 0, () => PlayEcho(), 3); // If they are not using Talkback, play the correct instructions.  
-                }               
+                }
                 level1_remaining_taps = 3; // Set the remaining taps for the tutorial to 3.
                 level1_remaining_ups = 3; // Set the remaining swipes up for the tutorial to 3.
                 level1_remaining_menus = 2; // Set the remaining holds for the tutorial to 2.               
@@ -3807,20 +3839,20 @@ public class Player : MovingObject
         }
 #endif
 #if UNITY_IOS || UNITY_ANDROID
-		// If a tap was registered, set this as the action.
-		if (ie.isTap == true)
-		{
-			action = InterceptAction.TAP;
-		}
-		// If a hold was registered, set this as the action.
-		else if (ie.isHold == true)
-		{
-			action = InterceptAction.MENU;
-		} 
-		// If a swipe was registered.
-		else if (ie.isSwipe == true)
-		{
-			// If the swipe was up, set this as the action.
+        // If a tap was registered, set this as the action.
+        if (ie.isTap == true)
+        {
+            action = InterceptAction.TAP;
+        }
+        // If a hold was registered, set this as the action.
+        else if (ie.isHold == true)
+        {
+            action = InterceptAction.MENU;
+        }
+        // If a swipe was registered.
+        else if (ie.isSwipe == true)
+        {
+            // If the swipe was up, set this as the action.
             if (ie.isUp == true)
             {
                 action = InterceptAction.UP;
@@ -3830,29 +3862,29 @@ public class Player : MovingObject
             {
                 action = InterceptAction.DOWN;
             }
-		} 
-		// If a rotation was registered. 
-		else if (ie.isRotate == true)
-		{
-			// If the rotation was left, set this as the action.
-			if (ie.isLeft == true)
-			{
-				action = InterceptAction.LEFT;
-			}
-			// If the rotation was right, set this as the action.
-			else if (ie.isRight == true)
-			{
-				action = InterceptAction.RIGHT;
-			}
-		}
+        }
+        // If a rotation was registered. 
+        else if (ie.isRotate == true)
+        {
+            // If the rotation was left, set this as the action.
+            if (ie.isLeft == true)
+            {
+                action = InterceptAction.LEFT;
+            }
+            // If the rotation was right, set this as the action.
+            else if (ie.isRight == true)
+            {
+                action = InterceptAction.RIGHT;
+            }
+        }
 #endif
-        
+
         // Based on the action, play the appropriate sound.
         switch (action)
         {
             case InterceptAction.TAP:
                 if ((finishedTappingInstruction == true) && (level1_remaining_taps > 0))
-                {					
+                {
                     PlayEcho(); // If the tapping instructions have played and the player has more taps left to do, play an echo.
                 }
                 break;
@@ -3978,7 +4010,7 @@ public class Player : MovingObject
                             }
                             else if (level1_remaining_ups == 1)
                             {
-								clips = new List<AudioClip> { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.tutorialClips[12] };
+                                clips = new List<AudioClip> { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.tutorialClips[12] };
                                 SoundManager.instance.PlayClips(clips); // This swipe was correct. Please swipe X more times.
                             }
                             // If the player has finished the swiping section of the tutorial.
@@ -3991,12 +4023,12 @@ public class Player : MovingObject
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                                 if (GM_title.isUsingTalkback == true)
                                 {
-									clips = new List<AudioClip> { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.tutorialClips[13], Database.tutorialClips[15] };
+                                    clips = new List<AudioClip> { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.tutorialClips[13], Database.tutorialClips[15] };
                                     SoundManager.instance.PlayClips(clips); // If they are using Talkback, play the correct instructions.  
                                 }
                                 else if (GM_title.isUsingTalkback == false)
                                 {
-									clips = new List<AudioClip> { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.tutorialClips[13], Database.tutorialClips[14] };
+                                    clips = new List<AudioClip> { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.tutorialClips[13], Database.tutorialClips[14] };
                                     SoundManager.instance.PlayClips(clips); // If they are not using Talkback, play the correct instructions.  
                                 }
                             }
@@ -4101,7 +4133,7 @@ public class Player : MovingObject
                             }
                             // If the action was not a hold.
                             else if (((action == InterceptAction.TAP) || (action == InterceptAction.LEFT) || (action == InterceptAction.RIGHT) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || ((ie.isSwipe == true) && (ie.isLeft == true)) || ((ie.isSwipe == true) && (ie.isRight == true)) || (ie.isUnrecognized == true)) && (finishedMenuInstruction == true))
-                            {                      
+                            {
                                 // If this error was registered.
                                 if ((ie.isUnrecognized == true) && (ie.isHoldHorizontalError == true))
                                 {
@@ -4170,21 +4202,21 @@ public class Player : MovingObject
                             }
                             // If the action was not a swipe down.
                             else if (((action == InterceptAction.TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.LEFT) || (action == InterceptAction.RIGHT) || (action == InterceptAction.UP) || ((ie.isSwipe == true) && (ie.isLeft == true)) || ((ie.isSwipe == true) && (ie.isRight == true)) || (ie.isUnrecognized == true)) && (finishedExitingInstruction == true))
-                            {                                                      
+                            {
                                 // If this error was registered.
                                 if ((ie.isUnrecognized == true) && (ie.isSwipeDownVerticalError == true))
                                 {
                                     debugPlayerInfo = "Nothing happened due to error with vertical distance on swipe down.";
                                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                                     SoundManager.instance.PlayVoice(Database.errorClips[6], true); // Play the appropriate clip.  
-                                }      
+                                }
                                 // If this error was registered.
                                 else if ((ie.isUnrecognized == true) && (ie.isSwipeDownRotationError == true))
                                 {
                                     debugPlayerInfo = "Nothing happened due to error with rotation on swipe down.";
                                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                                     SoundManager.instance.PlayVoice(Database.errorClips[7], true); // Play the appropriate clip.  
-                                }                             
+                                }
                                 // If this error was registered.
                                 else if ((ie.isUnrecognized == true) && (ie.isLessThanThreeError == true))
                                 {
@@ -4293,44 +4325,44 @@ public class Player : MovingObject
                     }
                     // If the action was a left or right rotation.
                     else if (((action == InterceptAction.LEFT) || (action == InterceptAction.RIGHT)) && (hasTappedAtCorner == true) && (finishedTurningInstruction == true))
-                	{
+                    {
                         debugPlayerInfo = "Rotated for gesture tutorial. Turned player 90 degrees.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         level3_remaining_turns--; // Decrease the number of turns left to do.
-                 		if (level3_remaining_turns == 3) 
-                 		{
-                 			if (action == InterceptAction.LEFT)
-                 			{
-								clips = new List<AudioClip> { Database.soundEffectClips[5], Database.soundEffectClips[0], Database.tutorialClips[26] };
-                 			}
-							else if (action == InterceptAction.RIGHT)
-							{
-								clips = new List<AudioClip> { Database.soundEffectClips[6], Database.soundEffectClips[0], Database.tutorialClips[26] };
-							}
+                        if (level3_remaining_turns == 3)
+                        {
+                            if (action == InterceptAction.LEFT)
+                            {
+                                clips = new List<AudioClip> { Database.soundEffectClips[5], Database.soundEffectClips[0], Database.tutorialClips[26] };
+                            }
+                            else if (action == InterceptAction.RIGHT)
+                            {
+                                clips = new List<AudioClip> { Database.soundEffectClips[6], Database.soundEffectClips[0], Database.tutorialClips[26] };
+                            }
                             SoundManager.instance.PlayClips(clips); // This rotation was correct. Please rotate X more times.
-                 		}
+                        }
                         else if (level3_remaining_turns == 2)
                         {
-							if (action == InterceptAction.LEFT)
-                 			{
-								clips = new List<AudioClip> { Database.soundEffectClips[5], Database.soundEffectClips[0], Database.tutorialClips[27] };
-                 			}
-							else if (action == InterceptAction.RIGHT)
-							{
-								clips = new List<AudioClip> { Database.soundEffectClips[6], Database.soundEffectClips[0], Database.tutorialClips[27] };
-							}
+                            if (action == InterceptAction.LEFT)
+                            {
+                                clips = new List<AudioClip> { Database.soundEffectClips[5], Database.soundEffectClips[0], Database.tutorialClips[27] };
+                            }
+                            else if (action == InterceptAction.RIGHT)
+                            {
+                                clips = new List<AudioClip> { Database.soundEffectClips[6], Database.soundEffectClips[0], Database.tutorialClips[27] };
+                            }
                             SoundManager.instance.PlayClips(clips); // This rotation was correct. Please rotate X more times.
                         }
                         else if (level3_remaining_turns == 1)
                         {
-							if (action == InterceptAction.LEFT)
-                 			{
-								clips = new List<AudioClip> { Database.soundEffectClips[5], Database.soundEffectClips[0], Database.tutorialClips[28] };
-                 			}
-							else if (action == InterceptAction.RIGHT)
-							{
-								clips = new List<AudioClip> { Database.soundEffectClips[6], Database.soundEffectClips[0], Database.tutorialClips[28] };
-							}
+                            if (action == InterceptAction.LEFT)
+                            {
+                                clips = new List<AudioClip> { Database.soundEffectClips[5], Database.soundEffectClips[0], Database.tutorialClips[28] };
+                            }
+                            else if (action == InterceptAction.RIGHT)
+                            {
+                                clips = new List<AudioClip> { Database.soundEffectClips[6], Database.soundEffectClips[0], Database.tutorialClips[28] };
+                            }
                             SoundManager.instance.PlayClips(clips); // This rotation was correct. Please rotate X more times.
                         }
                         // If the player has finished the rotation section of the tutorial.
@@ -4344,19 +4376,19 @@ public class Player : MovingObject
                             GameMode.write_save_mode(curLevel, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.instance.gamemode);
                             // Good job! now we will move back to the game. Try and get around the corner!
                             if (action == InterceptAction.LEFT)
-                 			{
-								clips = new List<AudioClip> { Database.soundEffectClips[5], Database.soundEffectClips[0], Database.tutorialClips[29] };
-                 			}
-							else if (action == InterceptAction.RIGHT)
-							{
-								clips = new List<AudioClip> { Database.soundEffectClips[6], Database.soundEffectClips[0], Database.tutorialClips[29] };
-							}
+                            {
+                                clips = new List<AudioClip> { Database.soundEffectClips[5], Database.soundEffectClips[0], Database.tutorialClips[29] };
+                            }
+                            else if (action == InterceptAction.RIGHT)
+                            {
+                                clips = new List<AudioClip> { Database.soundEffectClips[6], Database.soundEffectClips[0], Database.tutorialClips[29] };
+                            }
                             SoundManager.instance.PlayClips(clips, null, 0, () => quitInterception(), 3);
                         }
                     }
                     // If the action was not a right or left rotation.
                     else if (((action == InterceptAction.TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || (ie.isUnrecognized == true)) && (hasTappedAtCorner == true) && (finishedTurningInstruction == true))
-                	{
+                    {
                         // If this error was registered.
                         if ((ie.isUnrecognized == true) && (ie.isRotationAngleError == true))
                         {
@@ -4384,7 +4416,7 @@ public class Player : MovingObject
                             debugPlayerInfo = "Incorrect gesture made. You should make a left or right rotation.";
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                             SoundManager.instance.PlayVoice(Database.errorClips[18], true); // Play the appropriate clip.  
-                        }          
+                        }
                     }
                     // If the turning instruction has not finished yet.
                     else if (((action == InterceptAction.TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.LEFT) || (action == InterceptAction.RIGHT) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || (ie.isUnrecognized == true)) && (hasTappedAtCorner == true) && (finishedTurningInstruction == false))
@@ -4392,7 +4424,7 @@ public class Player : MovingObject
                         debugPlayerInfo = "Please wait for the instructions to finish.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.                      
                     }
-                }                
+                }
                 break;
             default:
                 break;
