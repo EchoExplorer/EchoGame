@@ -319,7 +319,7 @@ public class Player : MovingObject
         // Four-wall echoes preparation
         GvrAudioSource leftGAS = null, rightGAS = null, leftFrontGAS = null, rightFrontGAS = null;
         
-		float fourblockdb = 1;
+		float fourblockdb = 2;
         float frontwalldb = 10;
 
         if (leftWall != null)
@@ -413,7 +413,7 @@ public class Player : MovingObject
         String prefix = "C00-21"; // change this prefix when you change the echo files
         if (GameManager.instance.level < 22)
         {
-			fourblockdb = 1;
+			fourblockdb = 2;
 			frontwalldb = 10;
         }
         else if ((GameManager.instance.level >= 22) && (GameManager.instance.level < 32))
@@ -423,37 +423,37 @@ public class Player : MovingObject
         }
         else if ((GameManager.instance.level >= 32) && (GameManager.instance.level < 42))
         {
-			fourblockdb = 1;
+			fourblockdb = 0;
 			frontwalldb = 8;
         }
         else  if ((GameManager.instance.level >= 42) && (GameManager.instance.level < 52))
         {
-			fourblockdb = 1;
+			fourblockdb = -1;
 			frontwalldb = 7;
         }
 		else if ((GameManager.instance.level >= 52) && (GameManager.instance.level < 62))
         {
-			fourblockdb =1;
+			fourblockdb =-2;
 			frontwalldb = 6;
 		}
         else if ((GameManager.instance.level >= 62) && (GameManager.instance.level < 72))
 		{
-			fourblockdb = 1;
+			fourblockdb = -3;
 			frontwalldb = 5;
 		}
         else if ((GameManager.instance.level >= 72) && (GameManager.instance.level < 82))
 		{
-			fourblockdb = 1;
+			fourblockdb = -4;
 			frontwalldb = 4;
 		}
 		else if ((GameManager.instance.level >= 82) && (GameManager.instance.level < 92))
 		{
-			fourblockdb = 1;
+			fourblockdb = -5;
 			frontwalldb = 3;
 		}
 		else if ((GameManager.instance.level >= 92))
 		{
-			fourblockdb = 1;
+			fourblockdb = -6;
 			frontwalldb = 2;
 		}
 
