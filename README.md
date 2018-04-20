@@ -28,3 +28,6 @@ Set up the Android SDK for Unity. Follow the instructions from http://docs.unity
 
 ### Project
 Clone the repository, and open the EchoGrid/ project in Unity
+
+### Google VR Unity sdk
+https://github.com/googlevr/gvr-unity-sdk/blob/master/Assets/GoogleVR/Legacy/Scripts/Audio/GvrAudioSource.cs

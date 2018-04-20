@@ -23,25 +23,25 @@ public class Database : MonoBehaviour
     // audios
     // Single click echo
     [HideInInspector]
-    public AudioClip attenuatedClick;
-	public AudioClip attenuatedaround;
-	public AudioClip attenuatedClickfront;
+    public static AudioClip attenuatedClick;
+    public static AudioClip attenuatedaround;
+    public static AudioClip attenuatedClickfront;
 
-	public AudioClip attenuatedaround_odeon;
-	public AudioClip attenuatedClickfront_odeon;
+    public static AudioClip attenuatedaround_odeon;
+    public static AudioClip attenuatedClickfront_odeon;
 
     // Game environment settings clips
     [HideInInspector]
     public static AudioClip[] settingsClips = new AudioClip[10];
-    
+
     // Main menu clips
     [HideInInspector]
     public static AudioClip[] mainMenuClips = new AudioClip[17];
-    
+
     // Pregame menu clips
     [HideInInspector]
     public static AudioClip[] preGameMenuClips = new AudioClip[13];
-    
+
     // Gesture tutorial clips
     [HideInInspector]
     public static AudioClip[] tutorialClips = new AudioClip[30];
@@ -53,11 +53,11 @@ public class Database : MonoBehaviour
     public static AudioClip[] pauseMenuClips = new AudioClip[12];
     [HideInInspector]
     public static AudioClip[] hintClips = new AudioClip[4];
-    
+
     // Error clips
     [HideInInspector]
     public static AudioClip[] errorClips = new AudioClip[20];
-    
+
     // Sound effect clips
     [HideInInspector]
     public static AudioClip[] soundEffectClips = new AudioClip[10];
@@ -75,14 +75,14 @@ public class Database : MonoBehaviour
     void LoadData()
     {
 
-		//Option1:
-		attenuatedClickfront_odeon = Resources.Load("fx/00-0_F-6.75-D_B-w-D_L-w-D_R-w-D_fadeout") as AudioClip;
-		attenuatedClick = Resources.Load("fx/attenuatedClick") as AudioClip;
-		attenuatedaround_odeon = Resources.Load("fx/00-0_F-0.75-D_B-w-D_L-w-D_R-w-D_fadeout") as AudioClip;
+        //Option1:
+        attenuatedClickfront_odeon = Resources.Load("fx/00-0_F-6.75-D_B-w-D_L-w-D_R-w-D_fadeout") as AudioClip;
+        attenuatedClick = Resources.Load("fx/attenuatedClick") as AudioClip;
+        attenuatedaround_odeon = Resources.Load("fx/00-0_F-0.75-D_B-w-D_L-w-D_R-w-D_fadeout") as AudioClip;
 
-		//Option1:
-		attenuatedClickfront = Resources.Load("fx/attenuatedClick") as AudioClip;
-		attenuatedaround = Resources.Load("fx/attenuatedClick") as AudioClip;
+        //Option1:
+        attenuatedClickfront = Resources.Load("fx/attenuatedClick") as AudioClip;
+        attenuatedaround = Resources.Load("fx/attenuatedClick") as AudioClip;
 
         // Game environment setting clips
         settingsClips[0] = Resources.Load("instructions/listen_to_instructions") as AudioClip;
@@ -192,7 +192,7 @@ public class Database : MonoBehaviour
         mainGameClips[26] = Resources.Load("instructions/stairs_in_one_of_two_arms_of_T") as AudioClip;
         mainGameClips[27] = Resources.Load("instructions/turn_around_in_wrong_arm") as AudioClip;
         mainGameClips[28] = Resources.Load("instructions/in_T_fork") as AudioClip;
-        mainGameClips[29] = Resources.Load("instructions/completed_all_of_tutorial") as AudioClip;    
+        mainGameClips[29] = Resources.Load("instructions/completed_all_of_tutorial") as AudioClip;
         mainGameClips[30] = Resources.Load("instructions/back_at_entrance_turn_around") as AudioClip;
         mainGameClips[31] = Resources.Load("instructions/good") as AudioClip;
         mainGameClips[32] = Resources.Load("instructions/good_progress") as AudioClip;
@@ -201,7 +201,7 @@ public class Database : MonoBehaviour
         mainGameClips[35] = Resources.Load("instructions/not_the_exit") as AudioClip;
         mainGameClips[36] = Resources.Load("instructions/crashed_at_exit") as AudioClip;
         mainGameClips[37] = Resources.Load("instructions/crashed_right_corner") as AudioClip;
-        mainGameClips[38] = Resources.Load("instructions/crashed_left_corner") as AudioClip;       
+        mainGameClips[38] = Resources.Load("instructions/crashed_left_corner") as AudioClip;
 
         pauseMenuClips[0] = Resources.Load("instructions/pause_menu_opened") as AudioClip;
         pauseMenuClips[1] = Resources.Load("instructions/pause_menu_swipe_up_normal") as AudioClip;
@@ -230,7 +230,7 @@ public class Database : MonoBehaviour
         errorClips[5] = Resources.Load("instructions/swipe_up_vertical_error") as AudioClip;
         errorClips[6] = Resources.Load("instructions/swipe_down_vertical_error") as AudioClip;
         errorClips[7] = Resources.Load("instructions/swipe_rotation_error") as AudioClip;
-        errorClips[8] = Resources.Load("instructions/rotation_angle_error") as AudioClip;        
+        errorClips[8] = Resources.Load("instructions/rotation_angle_error") as AudioClip;
         errorClips[9] = Resources.Load("instructions/hold_horizontal_error") as AudioClip;
         errorClips[10] = Resources.Load("instructions/hold_vertical_error") as AudioClip;
         errorClips[11] = Resources.Load("instructions/hold_rotation_error") as AudioClip;
@@ -253,6 +253,6 @@ public class Database : MonoBehaviour
         soundEffectClips[6] = Resources.Load("fx/swipe-right") as AudioClip;
         soundEffectClips[7] = Resources.Load("fx/inputSFX") as AudioClip;
         soundEffectClips[8] = Resources.Load("fx/wall_hitting") as AudioClip;
-        soundEffectClips[9] = Resources.Load("fx/winSound") as AudioClip;        
+        soundEffectClips[9] = Resources.Load("fx/winSound") as AudioClip;
     }
 }
