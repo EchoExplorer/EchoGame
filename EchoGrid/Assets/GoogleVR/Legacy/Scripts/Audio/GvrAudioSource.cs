@@ -463,7 +463,7 @@ public class GvrAudioSource : MonoBehaviour {
   }
 
   // Initializes the source.
-  private bool InitializeSource () {
+  public bool InitializeSource () {
     if (id < 0) {
       id = GvrAudio.CreateAudioSource(hrtfEnabled);
       if (id >= 0) {

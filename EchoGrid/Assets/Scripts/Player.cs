@@ -370,15 +370,16 @@ public class Player : MovingObject
         if (!real)
         {
             if (frontGAS != null)
-                frontGAS.volume = 0;
+                frontGAS.InitializeSource();
             if (leftGAS != null)
-                leftGAS.volume = 0;
+                leftGAS.InitializeSource();
             if (rightGAS != null)
-                rightGAS.volume = 0;
+                rightGAS.InitializeSource();
             if (leftFrontGAS != null)
-                leftFrontGAS.volume = 0;
+                leftFrontGAS.InitializeSource();
             if (rightFrontGAS != null)
-                rightFrontGAS.volume = 0;
+                rightFrontGAS.InitializeSource();
+            return;
         }
         else
         {
@@ -2486,6 +2487,7 @@ public class Player : MovingObject
 
     void Update()
     {
+        PlayEcho(false);
         if ((restartLevel == true) && (SoundManager.instance.finishedAllClips == true))
         {
             if (curLevel <= 11)
@@ -2871,7 +2873,6 @@ public class Player : MovingObject
                         {
                             dir = transform.right; // Move the player forward.                        
                             swipedUp = true;
-                            PlayEcho(false);
                         }
                     }
                     // If the player is in the pause menu, give them a hint.
@@ -2934,7 +2935,6 @@ public class Player : MovingObject
                                 SoundManager.instance.PlayClips(clips);
                                 rotatedLeft = true;
                             }
-                            PlayEcho(false);
                         }
                     }
                 }
@@ -2959,7 +2959,6 @@ public class Player : MovingObject
                                 SoundManager.instance.PlayClips(clips);
                                 rotatedRight = true;
                             }
-                            PlayEcho(false);
                         }
                     }
                 }
@@ -3308,7 +3307,6 @@ public class Player : MovingObject
                         {
                             dir = get_player_dir("FRONT"); // Move the player forward.
                             swipedUp = true;
-                            PlayEcho(false);
                         }
                     }
                     // If the swipe was down.
@@ -3408,7 +3406,6 @@ public class Player : MovingObject
                                 SoundManager.instance.PlayClips(clips);
                                 rotatedLeft = true;
                             }
-                            PlayEcho(false);
                         }
                     }
                     // If the rotation was right, rotate the player right 90 degrees.
@@ -3429,7 +3426,6 @@ public class Player : MovingObject
                                 SoundManager.instance.PlayClips(clips);
                                 rotatedRight = true;
                             }
-                            PlayEcho(false);
                         }
                     }
                 }
