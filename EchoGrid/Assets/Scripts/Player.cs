@@ -369,16 +369,11 @@ public class Player : MovingObject
         //playerGAS.Play(); 
         if (!real)
         {
-            if (frontGAS != null)
-                frontGAS.InitializeSource();
-            if (leftGAS != null)
-                leftGAS.InitializeSource();
-            if (rightGAS != null)
-                rightGAS.InitializeSource();
-            if (leftFrontGAS != null)
-                leftFrontGAS.InitializeSource();
-            if (rightFrontGAS != null)
-                rightFrontGAS.InitializeSource();
+            if (frontGAS != null) frontGAS.DummyInit();
+            if (leftGAS != null) leftGAS.DummyInit();
+            if (rightGAS != null) rightGAS.DummyInit();
+            if (leftFrontGAS != null) leftFrontGAS.DummyInit();
+            if (rightFrontGAS != null) rightFrontGAS.DummyInit();
             return;
         }
         else
@@ -386,33 +381,24 @@ public class Player : MovingObject
             SoundManager.instance.PlaySingle(Database.attenuatedClick);
             if (frontGAS != null)
             {
-                frontGAS.volume = 1;
                 frontGAS.gainDb = frontwalldb;
             }
-            if (leftGAS != null)
-                leftGAS.volume = 1;
-            if (rightGAS != null)
-                rightGAS.volume = 1;
-            if (leftFrontGAS != null)
-                leftFrontGAS.volume = 1;
-            if (rightFrontGAS != null)
-                rightFrontGAS.volume = 1;
         }
         if (leftGAS != null)
         {
-            //leftGAS.PlayDelayed(1.5f / 340);
+            leftGAS.PlayDelayed(1.5f / 340);
         }
         if (rightGAS != null)
         {
-            //rightGAS.PlayDelayed(1.5f / 340);
+            rightGAS.PlayDelayed(1.5f / 340);
         }
         if (blocksToFrontWall > 0 && leftFrontGAS != null)
         {
-            //leftFrontGAS.PlayDelayed(2.12132f / 340);
+            leftFrontGAS.PlayDelayed(2.12132f / 340);
         }
         if (blocksToFrontWall > 0 && rightFrontGAS != null)
         {
-            //rightFrontGAS.PlayDelayed(2.12132f / 340);
+            rightFrontGAS.PlayDelayed(2.12132f / 340);
         }
         frontGAS.PlayDelayed((1.5f * blocksToFrontWall + 0.75f) * 2 / 340);
 
