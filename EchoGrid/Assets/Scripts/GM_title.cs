@@ -25,7 +25,7 @@ public class GM_title : MonoBehaviour
 
     bool repeatSetupClip = false;
 
-    public static bool isUsingTalkback = false; // Tells us if the player has told us that they are using Talkback or not.
+    public static bool isUsingTalkback = true; // Tells us if the player has told us that they are using Talkback or not.
 
     bool inOptionsMenu = false;
     public static bool switch_click_toggle = false; // If switch_click_toggle is false, then play the odeon click, which is option 1 in database.
@@ -50,7 +50,7 @@ public class GM_title : MonoBehaviour
 #endif
     }
 
-    bool determined_talkback = false;
+    public static bool determined_talkback = false;
     bool plugin_earphone = false;
     bool environment_setup = false;
     bool orientation_correct = false;
@@ -619,18 +619,6 @@ public class GM_title : MonoBehaviour
                     debugPlayerInfo = "Nothing happened due to error with rotation on hold.";
                     SoundManager.instance.PlayVoice(Database.errorClips[11], true); // Play the appropriate clip.
                 }
-                // If this error was registered.
-                else if (ie.isLessThanThreeError == true)
-                {
-                    debugPlayerInfo = "Nothing happened due to error with less than three fingers on the screen.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[12], true); // Tell the player they had less than three fingers on the screen.
-                }
-                // If this error was registered.
-                else if (ie.isMoreThanThreeError == true)
-                {
-                    debugPlayerInfo = "Nothing happened due to error with more than three fingers on the screen.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[13], true); // Tell the player they had more than three fingers on the screen.
-                }
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
             }
         }
@@ -732,18 +720,6 @@ public class GM_title : MonoBehaviour
                         debugPlayerInfo = "Nothing happened due to error with rotation on swipe right.";
                         SoundManager.instance.PlayVoice(Database.errorClips[7], true); // Play the appropriate clip.
                     }
-                    // If this error was registered.
-                    else if (ie.isLessThanThreeError == true)
-                    {
-                        debugPlayerInfo = "Nothing happened due to error with less than three fingers on the screen. You should tap to register that you are ready to continue.";
-                        SoundManager.instance.PlayVoice(Database.errorClips[12], true); // Play the appropriate clip.
-                    }
-                    // If this error was registered.
-                    else if (ie.isMoreThanThreeError == true)
-                    {
-                        debugPlayerInfo = "Nothing happened due to error with more than three fingers on the screen. You should tap to register that you are ready to continue.";
-                        SoundManager.instance.PlayVoice(Database.errorClips[13], true); // Play the appropriate clip.
-                    }
                     else
                     {
                         debugPlayerInfo = "Incorrect gesture made. You should swipe left for Talkback or right for no Talkback.";
@@ -831,18 +807,6 @@ public class GM_title : MonoBehaviour
                     {
                         debugPlayerInfo = "Nothing happened due to error with rotation on tap.";
                         SoundManager.instance.PlayVoice(Database.errorClips[2], true); // Play the appropriate clip.
-                    }
-                    // If this error was registered.
-                    else if (ie.isLessThanThreeError == true)
-                    {
-                        debugPlayerInfo = "Nothing happened due to error with less than three fingers on the screen. You should tap to register that you are ready to continue.";
-                        SoundManager.instance.PlayVoice(Database.errorClips[12], true); // Play the appropriate clip.
-                    }
-                    // If this error was registered.
-                    else if (ie.isMoreThanThreeError == true)
-                    {
-                        debugPlayerInfo = "Nothing happened due to error with more than three fingers on the screen. You should tap to register that you are ready to continue.";
-                        SoundManager.instance.PlayVoice(Database.errorClips[13], true); // Play the appropriate clip.
                     }
                     else
                     {
@@ -933,18 +897,6 @@ public class GM_title : MonoBehaviour
                     {
                         debugPlayerInfo = "Nothing happened due to error with rotation on tap.";
                         SoundManager.instance.PlayVoice(Database.errorClips[2], true); // Play the appropriate clip.
-                    }
-                    // If this error was registered.
-                    else if (ie.isLessThanThreeError == true)
-                    {
-                        debugPlayerInfo = "Nothing happened due to error with less than three fingers on the screen. You should tap to register that you are ready to continue.";
-                        SoundManager.instance.PlayVoice(Database.errorClips[12], true); // Play the appropriate clip.
-                    }
-                    // If this error was registered.
-                    else if (ie.isMoreThanThreeError == true)
-                    {
-                        debugPlayerInfo = "Nothing happened due to error with more than three fingers on the screen. You should tap to register that you are ready to continue.";
-                        SoundManager.instance.PlayVoice(Database.errorClips[13], true); // Play the appropriate clip.
                     }
                     else
                     {
@@ -1100,18 +1052,6 @@ public class GM_title : MonoBehaviour
                     {
                         debugPlayerInfo = "Nothing happened due to error with rotation on hold.";
                         SoundManager.instance.PlayVoice(Database.errorClips[11], true); // Play the appropriate clip.
-                    }
-                    // If this error was registered.
-                    else if (ie.isLessThanThreeError == true)
-                    {
-                        debugPlayerInfo = "Nothing happened due to error with less than three fingers on the screen.";
-                        SoundManager.instance.PlayVoice(Database.errorClips[12], true); // Tell the player they had less than three fingers on the screen.
-                    }
-                    // If this error was registered.
-                    else if (ie.isMoreThanThreeError == true)
-                    {
-                        debugPlayerInfo = "Nothing happened due to error with more than three fingers on the screen.";
-                        SoundManager.instance.PlayVoice(Database.errorClips[13], true); // Tell the player they had more than three fingers on the screen.
                     }
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 }

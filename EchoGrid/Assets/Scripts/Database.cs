@@ -50,6 +50,8 @@ public class Database : MonoBehaviour
     [HideInInspector]
     public static AudioClip[] mainGameClips = new AudioClip[39];
     [HideInInspector]
+    public static AudioClip[] levelStartClips = new AudioClip[150];
+    [HideInInspector]
     public static AudioClip[] pauseMenuClips = new AudioClip[12];
     [HideInInspector]
     public static AudioClip[] hintClips = new AudioClip[4];
@@ -74,7 +76,6 @@ public class Database : MonoBehaviour
 
     void LoadData()
     {
-
         //Option1:
         attenuatedClickfront_odeon = Resources.Load("fx/00-0_F-6.75-D_B-w-D_L-w-D_R-w-D_fadeout") as AudioClip;
         attenuatedClick = Resources.Load("fx/attenuatedClick") as AudioClip;
@@ -202,6 +203,11 @@ public class Database : MonoBehaviour
         mainGameClips[36] = Resources.Load("instructions/crashed_at_exit") as AudioClip;
         mainGameClips[37] = Resources.Load("instructions/crashed_right_corner") as AudioClip;
         mainGameClips[38] = Resources.Load("instructions/crashed_left_corner") as AudioClip;
+
+        for (int i = 1; i <= 150; i++)
+        {
+            levelStartClips[i - 1] = Resources.Load("instructions/" + i) as AudioClip;
+        }       
 
         pauseMenuClips[0] = Resources.Load("instructions/pause_menu_opened") as AudioClip;
         pauseMenuClips[1] = Resources.Load("instructions/pause_menu_swipe_up_normal") as AudioClip;

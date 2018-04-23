@@ -2188,7 +2188,7 @@ public class Player : MovingObject
                     canPlayClip[0, 0] = false;
                     debugPlayerInfo = "Playing level 1 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                    clips = new List<AudioClip>() { Database.mainGameClips[0], Database.soundEffectClips[2], Database.mainGameClips[1], Database.soundEffectClips[0], Database.mainGameClips[2], Database.soundEffectClips[0], Database.mainGameClips[3], Database.soundEffectClips[0], Database.mainGameClips[4], Database.soundEffectClips[0], Database.mainGameClips[5], Database.soundEffectClips[0], Database.mainGameClips[6], Database.soundEffectClips[0], Database.mainGameClips[7], Database.soundEffectClips[0], Database.mainGameClips[8], Database.soundEffectClips[0], Database.mainGameClips[9], Database.soundEffectClips[0], Database.mainGameClips[10] };
+                    clips = new List<AudioClip>() { Database.levelStartClips[0], Database.soundEffectClips[2], Database.mainGameClips[1], Database.soundEffectClips[0], Database.mainGameClips[2], Database.soundEffectClips[0], Database.mainGameClips[3], Database.soundEffectClips[0], Database.mainGameClips[4], Database.soundEffectClips[0], Database.mainGameClips[5], Database.soundEffectClips[0], Database.mainGameClips[6], Database.soundEffectClips[0], Database.mainGameClips[7], Database.soundEffectClips[0], Database.mainGameClips[8], Database.soundEffectClips[0], Database.mainGameClips[9], Database.soundEffectClips[0], Database.mainGameClips[10] };
                     SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
                 }
                 // If the player is not at the exit and swiped down.
@@ -2212,7 +2212,7 @@ public class Player : MovingObject
                     canPlayClip[1, 0] = false;
                     debugPlayerInfo = "Playing level 2 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                    clips = new List<AudioClip>() { Database.mainGameClips[0], Database.soundEffectClips[2], Database.mainGameClips[12], Database.soundEffectClips[0], Database.mainGameClips[9], Database.soundEffectClips[0], Database.mainGameClips[10] };
+                    clips = new List<AudioClip>() { Database.levelStartClips[1], Database.soundEffectClips[2], Database.mainGameClips[12], Database.soundEffectClips[0], Database.mainGameClips[9], Database.soundEffectClips[0], Database.mainGameClips[10] };
                     SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
                 }
                 // If the player is not at the exit and swiped down.
@@ -2236,7 +2236,7 @@ public class Player : MovingObject
                     canPlayClip[2, 0] = false;
                     debugPlayerInfo = "Playing level 3 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                    clips = new List<AudioClip>() { Database.mainGameClips[0], Database.soundEffectClips[2], Database.mainGameClips[14], Database.soundEffectClips[0], Database.mainGameClips[15], Database.soundEffectClips[0], Database.mainGameClips[10] };
+                    clips = new List<AudioClip>() { Database.levelStartClips[2], Database.soundEffectClips[2], Database.mainGameClips[14], Database.soundEffectClips[0], Database.mainGameClips[15], Database.soundEffectClips[0], Database.mainGameClips[10] };
                     SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
                 }
                 // If the player is not at the exit and swiped down.
@@ -2260,7 +2260,7 @@ public class Player : MovingObject
                     canPlayClip[3, 0] = false;
                     debugPlayerInfo = "Playing level 4 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                    clips = new List<AudioClip>() { Database.mainGameClips[0], Database.soundEffectClips[2], Database.mainGameClips[19], Database.soundEffectClips[0], Database.mainGameClips[10] };
+                    clips = new List<AudioClip>() { Database.levelStartClips[3], Database.soundEffectClips[2], Database.mainGameClips[19], Database.soundEffectClips[0], Database.mainGameClips[10] };
                     SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
                 }
                 // If the player is not at the exit and swiped down.
@@ -2284,7 +2284,7 @@ public class Player : MovingObject
                     canPlayClip[4, 0] = false;
                     debugPlayerInfo = "Playing level 5 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                    clips = new List<AudioClip>() { Database.mainGameClips[0], Database.soundEffectClips[2], Database.mainGameClips[20], Database.soundEffectClips[0], Database.mainGameClips[10] };
+                    clips = new List<AudioClip>() { Database.levelStartClips[4], Database.soundEffectClips[2], Database.mainGameClips[20], Database.soundEffectClips[0], Database.mainGameClips[10] };
                     SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
                 }
                 // If the player is not at the exit and swiped down.
@@ -2308,7 +2308,7 @@ public class Player : MovingObject
                     canPlayClip[5, 0] = false;
                     debugPlayerInfo = "Playing level 6 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                    clips = new List<AudioClip>() { Database.mainGameClips[0], Database.soundEffectClips[2], Database.mainGameClips[10] };
+                    clips = new List<AudioClip>() { Database.levelStartClips[5], Database.soundEffectClips[2], Database.mainGameClips[10] };
                     SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
                 }
                 // If the player is not at the exit and swiped down.
@@ -2332,7 +2332,7 @@ public class Player : MovingObject
                     canPlayClip[6, 0] = false;
                     debugPlayerInfo = "Playing level 7 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                    clips = new List<AudioClip>() { Database.mainGameClips[0], Database.soundEffectClips[2], Database.mainGameClips[23], Database.soundEffectClips[0], Database.mainGameClips[24], Database.soundEffectClips[0], Database.mainGameClips[10] };
+                    clips = new List<AudioClip>() { Database.levelStartClips[6], Database.soundEffectClips[2], Database.mainGameClips[23], Database.soundEffectClips[0], Database.mainGameClips[24], Database.soundEffectClips[0], Database.mainGameClips[10] };
                     SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
                 }
                 // If the player is not at the exit and swiped down.
@@ -2356,7 +2356,7 @@ public class Player : MovingObject
                     canPlayClip[7, 0] = false;
                     debugPlayerInfo = "Playing level 8 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                    clips = new List<AudioClip>() { Database.mainGameClips[0], Database.soundEffectClips[2], Database.mainGameClips[10] };
+                    clips = new List<AudioClip>() { Database.levelStartClips[7], Database.soundEffectClips[2], Database.mainGameClips[10] };
                     SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
                 }
                 // If the player is not at the exit and swiped down.
@@ -2380,7 +2380,7 @@ public class Player : MovingObject
                     canPlayClip[8, 0] = false;
                     debugPlayerInfo = "Playing level 9 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                    clips = new List<AudioClip>() { Database.mainGameClips[0], Database.soundEffectClips[2], Database.mainGameClips[10] };
+                    clips = new List<AudioClip>() { Database.levelStartClips[8], Database.soundEffectClips[2], Database.mainGameClips[10] };
                     SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
                 }
                 // If the player is not at the exit and swiped down.
@@ -2404,7 +2404,7 @@ public class Player : MovingObject
                     canPlayClip[9, 0] = false;
                     debugPlayerInfo = "Playing level 10 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                    clips = new List<AudioClip>() { Database.mainGameClips[0], Database.soundEffectClips[2], Database.mainGameClips[10] };
+                    clips = new List<AudioClip>() { Database.levelStartClips[9], Database.soundEffectClips[2], Database.mainGameClips[10] };
                     SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
                 }
                 // If the player is not at the exit and swiped down.
@@ -2428,7 +2428,7 @@ public class Player : MovingObject
                     canPlayClip[10, 0] = false;
                     debugPlayerInfo = "Playing level 11 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                    clips = new List<AudioClip>() { Database.mainGameClips[0], Database.soundEffectClips[2], Database.mainGameClips[25], Database.soundEffectClips[0], Database.mainGameClips[26], Database.soundEffectClips[0], Database.mainGameClips[27], Database.soundEffectClips[0], Database.mainGameClips[10] };
+                    clips = new List<AudioClip>() { Database.levelStartClips[10], Database.soundEffectClips[2], Database.mainGameClips[25], Database.soundEffectClips[0], Database.mainGameClips[26], Database.soundEffectClips[0], Database.mainGameClips[27], Database.soundEffectClips[0], Database.mainGameClips[10] };
                     SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
                 }
                 // If the player is not at the exit and swiped down.
@@ -2450,7 +2450,7 @@ public class Player : MovingObject
                 canPlayClip[11, 0] = false;
                 debugPlayerInfo = "Playing level " + curLevel + " beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                clips = new List<AudioClip>() { Database.mainGameClips[0] };
+                clips = new List<AudioClip>() { Database.levelStartClips[curLevel - 1] };
                 SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
             }
             // If the player is not at the exit and swiped down.
@@ -3111,20 +3111,6 @@ public class Player : MovingObject
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     SoundManager.instance.PlayVoice(Database.errorClips[11], true); // Play the appropriate clip.
                 }
-                // If this error was registered.
-                else if (ie.isLessThanThreeError == true)
-                {
-                    debugPlayerInfo = "Nothing happened due to error with less than three fingers on the screen.";
-                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[12], true); // Tell the player they had less than three fingers on the screen.
-                }
-                // If this error was registered.
-                else if (ie.isMoreThanThreeError == true)
-                {
-                    debugPlayerInfo = "Nothing happened due to error with more than three fingers on the screen.";
-                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[13], true); // Tell the player they had more than three fingers on the screen.
-                }
             }
         }
 #endif
@@ -3526,20 +3512,6 @@ public class Player : MovingObject
                     debugPlayerInfo = "Nothing happened due to error with rotation on hold.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     SoundManager.instance.PlayVoice(Database.errorClips[11], true); // Play the appropriate clip.
-                }
-                // If this error was registered.
-                else if (ie.isLessThanThreeError == true)
-                {
-                    debugPlayerInfo = "Nothing happened due to error with less than three fingers on the screen.";
-                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[12], true); // Tell the player they had less than three fingers on the screen.
-                }
-                // If this error was registered.
-                else if (ie.isMoreThanThreeError == true)
-                {
-                    debugPlayerInfo = "Nothing happened due to error with more than three fingers on the screen.";
-                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[13], true); // Tell the player they had more than three fingers on the screen.
                 }
             }
 
@@ -3982,21 +3954,7 @@ public class Player : MovingObject
                             debugPlayerInfo = "Nothing happened due to error with rotation on tap.";
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                             SoundManager.instance.PlayVoice(Database.errorClips[2], true); // Play the appropriate clip.  
-                        }
-                        // If this error was registered.
-                        else if ((ie.isUnrecognized == true) && (ie.isLessThanThreeError == true))
-                        {
-                            debugPlayerInfo = "Nothing happened due to error with less than three fingers on the screen.";
-                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                            SoundManager.instance.PlayVoice(Database.errorClips[12], true); // Play the appropriate clip.  
-                        }
-                        // If this error was registered.
-                        else if ((ie.isUnrecognized == true) && (ie.isMoreThanThreeError == true))
-                        {
-                            debugPlayerInfo = "Nothing happened due to error with more than three fingers on the screen.";
-                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                            SoundManager.instance.PlayVoice(Database.errorClips[13], true); // Play the appropriate clip.  
-                        }
+                        }          
                         // If the gesture was not a tap.
                         else
                         {
@@ -4070,20 +4028,6 @@ public class Player : MovingObject
                                 debugPlayerInfo = "Nothing happened due to error with rotation on swipe up.";
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                                 SoundManager.instance.PlayVoice(Database.errorClips[7], true); // Play the appropriate clip.  
-                            }
-                            // If this error was registered.
-                            else if ((ie.isUnrecognized == true) && (ie.isLessThanThreeError == true))
-                            {
-                                debugPlayerInfo = "Nothing happened due to error with less than three fingers on the screen.";
-                                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                                SoundManager.instance.PlayVoice(Database.errorClips[12], true); // Play the appropriate clip.  
-                            }
-                            // If this error was registered.
-                            else if ((ie.isUnrecognized == true) && (ie.isMoreThanThreeError == true))
-                            {
-                                debugPlayerInfo = "Nothing happened due to error with more than three fingers on the screen.";
-                                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                                SoundManager.instance.PlayVoice(Database.errorClips[13], true); // Play the appropriate clip.  
                             }
                             // If the gesture was not a swipe up.
                             else
@@ -4176,20 +4120,6 @@ public class Player : MovingObject
                                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                                     SoundManager.instance.PlayVoice(Database.errorClips[11], true); // Play the appropriate clip.  
                                 }
-                                // If this error was registered.
-                                else if ((ie.isUnrecognized == true) && (ie.isLessThanThreeError == true))
-                                {
-                                    debugPlayerInfo = "Nothing happened due to error with less than three fingers on the screen.";
-                                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                                    SoundManager.instance.PlayVoice(Database.errorClips[12], true); // Play the appropriate clip.  
-                                }
-                                // If this error was registered.
-                                else if ((ie.isUnrecognized == true) && (ie.isMoreThanThreeError == true))
-                                {
-                                    debugPlayerInfo = "Nothing happened due to error with more than three fingers on the screen.";
-                                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                                    SoundManager.instance.PlayVoice(Database.errorClips[13], true); // Play the appropriate clip.  
-                                }
                                 // If the gesture was not a hold.
                                 else
                                 {
@@ -4237,20 +4167,6 @@ public class Player : MovingObject
                                     debugPlayerInfo = "Nothing happened due to error with rotation on swipe down.";
                                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                                     SoundManager.instance.PlayVoice(Database.errorClips[7], true); // Play the appropriate clip.  
-                                }
-                                // If this error was registered.
-                                else if ((ie.isUnrecognized == true) && (ie.isLessThanThreeError == true))
-                                {
-                                    debugPlayerInfo = "Nothing happened due to error with less than three fingers on the screen.";
-                                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                                    SoundManager.instance.PlayVoice(Database.errorClips[12], true); // Play the appropriate clip.  
-                                }
-                                // If this error was registered.
-                                else if ((ie.isUnrecognized == true) && (ie.isMoreThanThreeError == true))
-                                {
-                                    debugPlayerInfo = "Nothing happened due to error with more than three fingers on the screen.";
-                                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                                    SoundManager.instance.PlayVoice(Database.errorClips[13], true); // Play the appropriate clip.  
                                 }
                                 // If the gesture was not a swipe down.
                                 else
@@ -4315,20 +4231,6 @@ public class Player : MovingObject
                             debugPlayerInfo = "Nothing happened due to error with rotation on tap.";
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                             SoundManager.instance.PlayVoice(Database.errorClips[2], true); // Play the appropriate clip.  
-                        }
-                        // If this error was registered.
-                        else if ((ie.isUnrecognized == true) && (ie.isLessThanThreeError == true))
-                        {
-                            debugPlayerInfo = "Nothing happened due to error with less than three fingers on the screen.";
-                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                            SoundManager.instance.PlayVoice(Database.errorClips[12], true); // Play the appropriate clip.  
-                        }
-                        // If this error was registered.
-                        else if ((ie.isUnrecognized == true) && (ie.isMoreThanThreeError == true))
-                        {
-                            debugPlayerInfo = "Nothing happened due to error with more than three fingers on the screen.";
-                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                            SoundManager.instance.PlayVoice(Database.errorClips[13], true); // Play the appropriate clip.  
                         }
                         // If a tap was not registered.
                         else
@@ -4416,20 +4318,6 @@ public class Player : MovingObject
                             debugPlayerInfo = "Nothing happened due to error with angle of rotation.";
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                             SoundManager.instance.PlayVoice(Database.errorClips[8], true); // Play the appropriate clip.  
-                        }
-                        // If this error was registered.
-                        else if ((ie.isUnrecognized == true) && (ie.isLessThanThreeError == true))
-                        {
-                            debugPlayerInfo = "Nothing happened due to error with less than three fingers on the screen.";
-                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                            SoundManager.instance.PlayVoice(Database.errorClips[12], true); // Play the appropriate clip.  
-                        }
-                        // If this error was registered.
-                        else if ((ie.isUnrecognized == true) && (ie.isMoreThanThreeError == true))
-                        {
-                            debugPlayerInfo = "Nothing happened due to error with more than three fingers on the screen.";
-                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                            SoundManager.instance.PlayVoice(Database.errorClips[13], true); // Play the appropriate clip.  
                         }
                         // If the gesture was not a rotation
                         else

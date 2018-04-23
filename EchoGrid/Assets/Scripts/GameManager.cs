@@ -214,10 +214,19 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void UnHideLevelImage()
     {
-        levelText.text = "level " + level.ToString() + "\n";
-        levelText.text += "Game In Progress" + "\n";
-        levelText.text += "Hold two fingers" + "\n";
-        levelText.text += "to open menu";        
+        levelText.fontSize = 18;
+        levelText.text = "Level " + level.ToString() + "\n \n";
+        levelText.text += "Game In Progress. \n \n";
+        if (GM_title.isUsingTalkback == true)
+        {
+            levelText.text += "Hold three fingers down for three \n";
+            levelText.text += "seconds to open the pause menu.";
+        }
+        else if (GM_title.isUsingTalkback == false)
+        {
+            levelText.text += "Hold two/three fingers down for \n";
+            levelText.text += "one second to open the pause menu.";
+        }              
         levelImage.SetActive(true);
         levelImageActive = true;
     }
