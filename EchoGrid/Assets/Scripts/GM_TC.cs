@@ -197,9 +197,9 @@ public class GM_TC : MonoBehaviour
 #endif
         play_audio();
 
-// Check if we are running either in the Unity editor or in a standalone build.
+        // Check if we are running either in the Unity editor or in a standalone build.
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
-		if (eh.isActivate())
+        if (eh.isActivate())
         {
 			InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
 

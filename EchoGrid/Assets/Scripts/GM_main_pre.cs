@@ -128,12 +128,12 @@ public class GM_main_pre : MonoBehaviour
                             if (repeatPregameClip == true)
                             {
                                 clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.preGameMenuClips[1], Database.preGameMenuClips[3], Database.preGameMenuClips[7] };
-                                SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                             }
                             else if (repeatPregameClip == false)
                             {
                                 clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[1], Database.preGameMenuClips[3], Database.preGameMenuClips[7] };
-                                SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                                 repeatPregameClip = true;
                             }
                         }
@@ -144,12 +144,12 @@ public class GM_main_pre : MonoBehaviour
                             if (repeatPregameClip == true)
                             {
                                 clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.preGameMenuClips[0], Database.preGameMenuClips[2], Database.preGameMenuClips[6] };
-                                SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                             }
                             else if (repeatPregameClip == false)
                             {
                                 clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[0], Database.preGameMenuClips[2], Database.preGameMenuClips[6] };
-                                SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                                 repeatPregameClip = true;
                             }
                         }
@@ -166,12 +166,12 @@ public class GM_main_pre : MonoBehaviour
                             if (repeatPregameClip == true)
                             {
                                 clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.preGameMenuClips[1], Database.preGameMenuClips[5], Database.preGameMenuClips[7] };
-                                SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                             }
                             else if (repeatPregameClip == false)
                             {
                                 clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[1], Database.preGameMenuClips[5], Database.preGameMenuClips[7] };
-                                SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                                 repeatPregameClip = true;
                             }
                         }
@@ -182,12 +182,12 @@ public class GM_main_pre : MonoBehaviour
                             if (repeatPregameClip == true)
                             {
                                 clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.preGameMenuClips[0], Database.preGameMenuClips[4], Database.preGameMenuClips[6] };
-                                SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                             }
                             else if (repeatPregameClip == false)
                             {
                                 clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[0], Database.preGameMenuClips[4], Database.preGameMenuClips[6] };
-                                SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                                 repeatPregameClip = true;
                             }
                         }
@@ -206,13 +206,13 @@ public class GM_main_pre : MonoBehaviour
                             firstConfirm = false;
                             canRepeat = false;
                             clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[8], Database.preGameMenuClips[10] };
-                            SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                         }
                         else
                         {
                             canRepeat = false;
                             clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.preGameMenuClips[8], Database.preGameMenuClips[10] };
-                            SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                         }
                     }
                     // If the player is not using Talkback.
@@ -223,13 +223,13 @@ public class GM_main_pre : MonoBehaviour
                             firstConfirm = false;
                             canRepeat = false;
                             clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[8], Database.preGameMenuClips[9] };
-                            SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                         }
                         else
                         {
                             canRepeat = false;
                             clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.preGameMenuClips[8], Database.preGameMenuClips[9] };
-                            SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                         }
                     }
                 }
@@ -253,7 +253,7 @@ public class GM_main_pre : MonoBehaviour
             }
             if (canPlayInterruptedClip == true)
             {
-                SoundManager.instance.PlayClips(SoundManager.clipsCurrentlyPlaying, SoundManager.currentBalances, 0, SoundManager.currentCallback, SoundManager.currentCallbackIndex, true);
+                SoundManager.instance.PlayClips(SoundManager.clipsCurrentlyPlaying, SoundManager.currentBalances, 0, SoundManager.currentCallback, SoundManager.currentCallbackIndex, 0.5f, true);
             }
         }
     }
@@ -634,7 +634,7 @@ public class GM_main_pre : MonoBehaviour
                     skippingTutorial = 1;
                     clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[12] };
                     balances = new float[] { 0, 0, 0 };
-                    SoundManager.instance.PlayClips(clips, balances, 0, () => SceneManager.LoadScene("Main"), 3); // Play the appropriate clips.
+                    SoundManager.instance.PlayClips(clips, balances, 0, () => SceneManager.LoadScene("Main"), 3, 0.5f); // Play the appropriate clips.
                 }
                 break;
             // If mode is set to New, we have confirmed and swiped left, so start a new game from either the tutorial or the first non-tutorial level.
@@ -666,7 +666,7 @@ public class GM_main_pre : MonoBehaviour
                     skippingTutorial = 0;
                     clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[11] };
                     balances = new float[] { 0, 0, 0 };
-                    SoundManager.instance.PlayClips(clips, balances, 0, () => SceneManager.LoadScene("Main"), 3); // Play the appropriate clips.                  
+                    SoundManager.instance.PlayClips(clips, balances, 0, () => SceneManager.LoadScene("Main"), 3, 0.5f); // Play the appropriate clips.                  
                 }
                 break;
             // If mode is set to Back, go back to the main menu.
@@ -701,7 +701,7 @@ public class GM_main_pre : MonoBehaviour
                 //gameManager.write_save_mode(1, GameMode.instance.gamemode);
                 clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0] };
                 balances = new float[] { 0, 0 };
-                SoundManager.instance.PlayClips(clips, balances, 0, () => SceneManager.LoadScene("Main"), 2); // Play the appropriate clips.
+                SoundManager.instance.PlayClips(clips, balances, 0, () => SceneManager.LoadScene("Main"), 2, 0.5f); // Play the appropriate clips.
                 break;
             default:
                 break;

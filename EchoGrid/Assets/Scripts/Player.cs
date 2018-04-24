@@ -330,7 +330,7 @@ public class Player : MovingObject
 		float fourblockdb = 2.3f;
         float frontwalldb = 10.3f;
 
-		//float fourblockdb =-12.7f;
+		//float fourblockdb =-13.7f;
 		//float frontwalldb = -5.7f;
 
         if (leftWall != null)
@@ -1468,30 +1468,30 @@ public class Player : MovingObject
                 if ((curLevel == 3) && (playerPos.x == 9) && (playerPos.y == 9) && (GameManager.instance.boardScript.get_player_dir_world() == BoardManager.Direction.RIGHT))
                 {
                     clips = new List<AudioClip>() { Database.soundEffectClips[8], Database.soundEffectClips[0], Database.mainGameClips[37] };
-                    SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                 }
                 // If they swipe up here and they are facing the wall, tell them they have crashed into the wall and that they have to rotate left to progress further in the level.
                 else if ((curLevel == 5) && (playerPos.x == 1) && (playerPos.y == 9) && (GameManager.instance.boardScript.get_player_dir_world() == BoardManager.Direction.LEFT))
                 {
                     clips = new List<AudioClip>() { Database.soundEffectClips[8], Database.soundEffectClips[0], Database.mainGameClips[38] };
-                    SoundManager.instance.PlayClips(clips); // Play the appropriate clips.                            
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.                            
                 }
                 else if ((canPlayClip[(curLevel - 1), 2] == false) && (BoardManager.reachedExit == true))
                 {
                     // If we are on top of the exit and still in the tutorial.       
                     clips = new List<AudioClip>() { Database.soundEffectClips[8], Database.soundEffectClips[0], Database.mainGameClips[36] };
-                    SoundManager.instance.PlayClips(clips); // Play the appropriate clips.                        
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.                        
                 }
                 else
                 {
                     clips = new List<AudioClip>() { Database.soundEffectClips[8] };
-                    SoundManager.instance.PlayClips(clips); // Play the appropriate clip.
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clip.
                 }
             }
             else if (curLevel >= 12)
             {
                 clips = new List<AudioClip>() { Database.soundEffectClips[8] };
-                SoundManager.instance.PlayClips(clips); // Play the appropriate clip.
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clip.
             }
             // SoundManager.instance.playcrash(Database.mainGameClips[5]);
             // Increment the crash count
@@ -1754,7 +1754,7 @@ public class Player : MovingObject
             }
             if (canPlayInterruptedClip == true)
             {
-                SoundManager.instance.PlayClips(SoundManager.clipsCurrentlyPlaying, SoundManager.currentBalances, 0, SoundManager.currentCallback, SoundManager.currentCallbackIndex, true);
+                SoundManager.instance.PlayClips(SoundManager.clipsCurrentlyPlaying, SoundManager.currentBalances, 0, SoundManager.currentCallback, SoundManager.currentCallbackIndex, 0.5f, true);
             }
         }
 
@@ -1777,7 +1777,7 @@ public class Player : MovingObject
                         {
                             canPlayClip[0, 1] = false;
                             clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[33] };
-                            SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                             // Logging.Log("50%", Logging.LogLevel.NORMAL);
                         }
                         // If the player has reached the exit at level 1.
@@ -1794,7 +1794,7 @@ public class Player : MovingObject
                         else
                         {
                             clips = new List<AudioClip>() { Database.soundEffectClips[4] };
-                            SoundManager.instance.PlayClips(clips); // Play the appropriate clip.                            
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clip.                            
                         }
                     }
                     // If we are in level 2.
@@ -1805,7 +1805,7 @@ public class Player : MovingObject
                         {
                             canPlayClip[1, 1] = false;
                             clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[33] };
-                            SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                             // Logging.Log("50%", Logging.LogLevel.NORMAL);
                         }
                         // If the player has reached the exit at level 2.
@@ -1822,7 +1822,7 @@ public class Player : MovingObject
                         else
                         {
                             clips = new List<AudioClip>() { Database.soundEffectClips[4] };
-                            SoundManager.instance.PlayClips(clips); // Play the appropriate clip.                            
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clip.                            
                         }
                     }
                     // If we are in level 3.
@@ -1831,19 +1831,19 @@ public class Player : MovingObject
                         if ((canPlayClip[2, 4] == false) && (intercepted == false) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x == 6) && (playerPos.y == 9))
                         {
                             clips = new List<AudioClip>() { Database.soundEffectClips[4] };
-                            SoundManager.instance.PlayClips(clips); // Play the appropriate clip.
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clip.
                         }
                         // Play clip for when they approach the corner in level 3.
                         else if ((canPlayClip[2, 4] == true) && (intercepted == false) && (playerPos.x == 6) && (playerPos.y == 9))
                         {
                             canPlayClip[2, 4] = false;
                             clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[16] };
-                            SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                         }
                         else if ((canPlayClip[2, 5] == false) && (canPlayClip[2, 6] == false) && (intercepted == false) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x == 9) && (playerPos.y == 9))
                         {
                             clips = new List<AudioClip>() { Database.soundEffectClips[4] };
-                            SoundManager.instance.PlayClips(clips); // Play the appropriate clip.
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clip.
                         }
                         // Allow the player to tap once to see what the echo at a right turn sounds like before starting the gesture tutorial.
                         else if ((canPlayClip[2, 5] == true) && (intercepted == false) && (BoardManager.finishedTutorialLevel3 == false) && (playerPos.x == 9) && (playerPos.y == 9))
@@ -1855,7 +1855,7 @@ public class Player : MovingObject
                         {
                             canPlayClip[2, 1] = false;
                             clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[33] };
-                            SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                             // Logging.Log("50%", Logging.LogLevel.NORMAL);
                         }
                         // If the player has reached the exit at level 3.
@@ -1871,7 +1871,7 @@ public class Player : MovingObject
                         else
                         {
                             clips = new List<AudioClip>() { Database.soundEffectClips[4] };
-                            SoundManager.instance.PlayClips(clips); // Play the appropriate clip.
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clip.
 
                             if ((ratio > 0.5f) || (ratio < 0.4665f))
                             {
@@ -1889,28 +1889,28 @@ public class Player : MovingObject
                         if ((canPlayClip[4, 4] == false) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x <= 4) && (playerPos.x > 2) && (playerPos.y == 9))
                         {
                             clips = new List<AudioClip>() { Database.soundEffectClips[4] };
-                            SoundManager.instance.PlayClips(clips); // Play the appropriate clip.
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clip.
                         }
                         // Play clip for when they approach the corner in level 5.
                         else if ((canPlayClip[4, 4] == true) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x == 4) && (playerPos.y == 9))
                         {
                             canPlayClip[4, 4] = false;
                             clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[16] };
-                            SoundManager.instance.PlayClips(clips); // Play the appropriate clips.                                
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.                                
                         }
                         // If the player has reached the corner in level 5.
                         else if ((canPlayClip[4, 5] == true) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x == 1) && (playerPos.y == 9) && (GameManager.instance.boardScript.get_player_dir_world() == BoardManager.Direction.LEFT))
                         {
                             canPlayClip[4, 5] = false;
                             clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[21] };
-                            SoundManager.instance.PlayClips(clips); // Play the appropriate clips.                                                                           
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.                                                                           
                         }
                         // If the player has reached halfway.
                         else if ((canPlayClip[4, 1] == true) && (BoardManager.finishedTutorialLevel3 == true) && (ratio <= 0.5f) && (ratio >= 0.4465f))
                         {
                             canPlayClip[4, 1] = false;
                             clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[33] };
-                            SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                             // Logging.Log("50%", Logging.LogLevel.NORMAL);
                         }
                         // If the player has reached the exit at level 5.
@@ -1926,7 +1926,7 @@ public class Player : MovingObject
                         else
                         {
                             clips = new List<AudioClip>() { Database.soundEffectClips[4] };
-                            SoundManager.instance.PlayClips(clips); // Play the appropriate clip.
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clip.
 
                             if ((ratio > 0.5f) || (ratio < 0.4665f))
                             {
@@ -1944,12 +1944,12 @@ public class Player : MovingObject
                         if ((canPlayClip[10, 4] == false) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x == 5) && (playerPos.y == 6) && (GameManager.instance.boardScript.get_player_dir_world() == BoardManager.Direction.FRONT))
                         {
                             clips = new List<AudioClip>() { Database.soundEffectClips[4] };
-                            SoundManager.instance.PlayClips(clips); // Play the appropriate clip.
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clip.
                         }
                         else if ((canPlayClip[10, 4] == false) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x >= 2) && (playerPos.y <= 6))
                         {
                             clips = new List<AudioClip>() { Database.soundEffectClips[4] };
-                            SoundManager.instance.PlayClips(clips); // Play the appropriate clip.
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clip.
 
                             if ((ratio > 0.5f) || (ratio < 0.4665f))
                             {
@@ -1964,7 +1964,7 @@ public class Player : MovingObject
                         else if ((canPlayClip[10, 1] == false) && (BoardManager.finishedTutorialLevel3 == true) && (ratio <= 0.5f) && (ratio >= 0.4665f) && (GameManager.instance.boardScript.get_player_dir_world() == BoardManager.Direction.FRONT))
                         {
                             clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[33] };
-                            SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                             // Logging.Log("50%", Logging.LogLevel.NORMAL);
                         }
                         // Play clips for when player hits the T intersection in level 11.
@@ -1976,12 +1976,12 @@ public class Player : MovingObject
                             }
                             canPlayClip[10, 4] = false;
                             clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[33], Database.soundEffectClips[0], Database.mainGameClips[28] };
-                            SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                         }
                         else if ((canPlayClip[10, 4] == true) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x >= 2) && (playerPos.y <= 6))
                         {
                             clips = new List<AudioClip>() { Database.soundEffectClips[4] };
-                            SoundManager.instance.PlayClips(clips); // Play the appropriate clip.
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clip.
 
                             if ((ratio > 0.5f) || (ratio < 0.4665f))
                             {
@@ -1996,7 +1996,7 @@ public class Player : MovingObject
                         else if ((canPlayClip[10, 1] == false) && (BoardManager.finishedTutorialLevel3 == true) && (ratio <= 0.5f) && (ratio >= 0.4665f) && (GameManager.instance.boardScript.get_player_dir_world() != BoardManager.Direction.FRONT))
                         {
                             clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[33] };
-                            SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                             // Logging.Log("50%", Logging.LogLevel.NORMAL);
                         }
                         // If the player has reached the exit at level 11.
@@ -2018,7 +2018,7 @@ public class Player : MovingObject
                         {
                             canPlayClip[(curLevel - 1), 1] = false;
                             clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[33] };
-                            SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                             // Logging.Log("50%", Logging.LogLevel.NORMAL);
                         }
                         // If the player has reached the exit on another level.
@@ -2035,7 +2035,7 @@ public class Player : MovingObject
                         else
                         {
                             clips = new List<AudioClip>() { Database.soundEffectClips[4] };
-                            SoundManager.instance.PlayClips(clips); // Play the appropriate clip.                            
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clip.                            
 
                             if ((ratio > 0.5f) || (ratio < 0.4665f))
                             {
@@ -2061,7 +2061,7 @@ public class Player : MovingObject
                         canPlayClip[10, 2] = true;
                         canPlayClip[10, 3] = true;
                         clips = new List<AudioClip>() { Database.soundEffectClips[4] };
-                        SoundManager.instance.PlayClips(clips); // Play the appropriate clip.
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clip.
                     }
                     // If the player has reached the exit.
                     else if ((canPlayClip[11, 2] == true) && (BoardManager.finishedTutorialLevel3 == true) && (Vector2.SqrMagnitude(distFromExit) < 0.25))
@@ -2070,7 +2070,7 @@ public class Player : MovingObject
                         canPlayClip[10, 1] = true;
                         canPlayClip[10, 3] = true;
                         clips = new List<AudioClip>() { Database.soundEffectClips[4] };
-                        SoundManager.instance.PlayClips(clips); // Play the appropriate clip.
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clip.
                     }
                     // If the player returns to their start position.
                     else if ((canPlayClip[11, 3] == true) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x == startPos.x) && (playerPos.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
@@ -2085,7 +2085,7 @@ public class Player : MovingObject
                         canPlayClip[10, 2] = true;
                         canPlayClip[10, 3] = true;
                         clips = new List<AudioClip>() { Database.soundEffectClips[4] };
-                        SoundManager.instance.PlayClips(clips); // Play the appropriate clip.
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clip.
                     }
                     canPlayClip[10, 4] = true;
                     canPlayClip[10, 5] = true;
@@ -2110,7 +2110,7 @@ public class Player : MovingObject
                 {
                     canPlayClip[2, 6] = false;
                     clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.mainGameClips[18], Database.soundEffectClips[0], Database.mainGameClips[17] };
-                    SoundManager.instance.PlayClips(clips); // Play the appropriate clips.                              
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.                              
                     rotatedLeft = false;
                 }
             }
@@ -2122,7 +2122,7 @@ public class Player : MovingObject
                 {
                     canPlayClip[4, 6] = false;
                     clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.mainGameClips[18], Database.soundEffectClips[0], Database.mainGameClips[17] };
-                    SoundManager.instance.PlayClips(clips); // Play the appropriate clips.      
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.      
                     rotatedLeft = false;
                 }
             }
@@ -2160,7 +2160,7 @@ public class Player : MovingObject
                 {
                     canPlayClip[4, 6] = false;
                     clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.mainGameClips[18], Database.soundEffectClips[0], Database.mainGameClips[17] };
-                    SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                     rotatedRight = false;
                 }
             }
@@ -2189,7 +2189,7 @@ public class Player : MovingObject
                     debugPlayerInfo = "Playing level 1 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                     clips = new List<AudioClip>() { Database.levelStartClips[0], Database.soundEffectClips[2], Database.mainGameClips[1], Database.soundEffectClips[0], Database.mainGameClips[2], Database.soundEffectClips[0], Database.mainGameClips[3], Database.soundEffectClips[0], Database.mainGameClips[4], Database.soundEffectClips[0], Database.mainGameClips[5], Database.soundEffectClips[0], Database.mainGameClips[6], Database.soundEffectClips[0], Database.mainGameClips[7], Database.soundEffectClips[0], Database.mainGameClips[8], Database.soundEffectClips[0], Database.mainGameClips[9], Database.soundEffectClips[0], Database.mainGameClips[10] };
-                    SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                 }
                 // If the player is not at the exit and swiped down.
                 if ((canPlayClip[0, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
@@ -2213,7 +2213,7 @@ public class Player : MovingObject
                     debugPlayerInfo = "Playing level 2 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                     clips = new List<AudioClip>() { Database.levelStartClips[1], Database.soundEffectClips[2], Database.mainGameClips[12], Database.soundEffectClips[0], Database.mainGameClips[9], Database.soundEffectClips[0], Database.mainGameClips[10] };
-                    SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                 }
                 // If the player is not at the exit and swiped down.
                 if ((canPlayClip[1, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
@@ -2237,7 +2237,7 @@ public class Player : MovingObject
                     debugPlayerInfo = "Playing level 3 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                     clips = new List<AudioClip>() { Database.levelStartClips[2], Database.soundEffectClips[2], Database.mainGameClips[14], Database.soundEffectClips[0], Database.mainGameClips[15], Database.soundEffectClips[0], Database.mainGameClips[10] };
-                    SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                 }
                 // If the player is not at the exit and swiped down.
                 if ((canPlayClip[2, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
@@ -2261,7 +2261,7 @@ public class Player : MovingObject
                     debugPlayerInfo = "Playing level 4 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                     clips = new List<AudioClip>() { Database.levelStartClips[3], Database.soundEffectClips[2], Database.mainGameClips[19], Database.soundEffectClips[0], Database.mainGameClips[10] };
-                    SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                 }
                 // If the player is not at the exit and swiped down.
                 if ((canPlayClip[3, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
@@ -2285,7 +2285,7 @@ public class Player : MovingObject
                     debugPlayerInfo = "Playing level 5 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                     clips = new List<AudioClip>() { Database.levelStartClips[4], Database.soundEffectClips[2], Database.mainGameClips[20], Database.soundEffectClips[0], Database.mainGameClips[10] };
-                    SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                 }
                 // If the player is not at the exit and swiped down.
                 if ((canPlayClip[4, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
@@ -2309,7 +2309,7 @@ public class Player : MovingObject
                     debugPlayerInfo = "Playing level 6 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                     clips = new List<AudioClip>() { Database.levelStartClips[5], Database.soundEffectClips[2], Database.mainGameClips[10] };
-                    SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                 }
                 // If the player is not at the exit and swiped down.
                 if ((canPlayClip[5, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
@@ -2333,7 +2333,7 @@ public class Player : MovingObject
                     debugPlayerInfo = "Playing level 7 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                     clips = new List<AudioClip>() { Database.levelStartClips[6], Database.soundEffectClips[2], Database.mainGameClips[23], Database.soundEffectClips[0], Database.mainGameClips[24], Database.soundEffectClips[0], Database.mainGameClips[10] };
-                    SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                 }
                 // If the player is not at the exit and swiped down.
                 if ((canPlayClip[6, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
@@ -2357,7 +2357,7 @@ public class Player : MovingObject
                     debugPlayerInfo = "Playing level 8 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                     clips = new List<AudioClip>() { Database.levelStartClips[7], Database.soundEffectClips[2], Database.mainGameClips[10] };
-                    SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                 }
                 // If the player is not at the exit and swiped down.
                 if ((canPlayClip[7, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
@@ -2381,7 +2381,7 @@ public class Player : MovingObject
                     debugPlayerInfo = "Playing level 9 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                     clips = new List<AudioClip>() { Database.levelStartClips[8], Database.soundEffectClips[2], Database.mainGameClips[10] };
-                    SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                 }
                 // If the player is not at the exit and swiped down.
                 if ((canPlayClip[8, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
@@ -2405,7 +2405,7 @@ public class Player : MovingObject
                     debugPlayerInfo = "Playing level 10 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                     clips = new List<AudioClip>() { Database.levelStartClips[9], Database.soundEffectClips[2], Database.mainGameClips[10] };
-                    SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                 }
                 // If the player is not at the exit and swiped down.
                 if ((canPlayClip[9, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
@@ -2429,7 +2429,7 @@ public class Player : MovingObject
                     debugPlayerInfo = "Playing level 11 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                     clips = new List<AudioClip>() { Database.levelStartClips[10], Database.soundEffectClips[2], Database.mainGameClips[25], Database.soundEffectClips[0], Database.mainGameClips[26], Database.soundEffectClips[0], Database.mainGameClips[27], Database.soundEffectClips[0], Database.mainGameClips[10] };
-                    SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                 }
                 // If the player is not at the exit and swiped down.
                 if ((canPlayClip[10, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
@@ -2451,7 +2451,7 @@ public class Player : MovingObject
                 debugPlayerInfo = "Playing level " + curLevel + " beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                 clips = new List<AudioClip>() { Database.levelStartClips[curLevel - 1] };
-                SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
             }
             // If the player is not at the exit and swiped down.
             if ((canPlayClip[11, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
@@ -2532,13 +2532,13 @@ public class Player : MovingObject
                 }
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[30] };
-                SoundManager.instance.PlayClips(clips); // Play the appropriate clips.      
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.      
             }
             else if ((curLevel >= 12) && (canPlayClip[11, 3] == true))
             {
                 canPlayClip[11, 3] = false;
                 clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[30] };
-                SoundManager.instance.PlayClips(clips); // Play the appropriate clips.      
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.      
             }
         }
 
@@ -2570,7 +2570,7 @@ public class Player : MovingObject
                         debugPlayerInfo = "Playing found level 1 exit clip.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                         clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[11] };
-                        SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                     }
                     else if (curLevel == 2)
                     {
@@ -2578,7 +2578,7 @@ public class Player : MovingObject
                         debugPlayerInfo = "Playing found level 2 exit clip.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                         clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[13] };
-                        SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                     }
                     else if (curLevel == 3)
                     {
@@ -2586,7 +2586,7 @@ public class Player : MovingObject
                         debugPlayerInfo = "Playing found level 3 exit clip.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                         clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[18] };
-                        SoundManager.instance.PlayClips(clips); // Play the appropriate clip.
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clip.
                     }
                     else if (curLevel == 11)
                     {
@@ -2594,13 +2594,13 @@ public class Player : MovingObject
                         debugPlayerInfo = "Playing found level 11 exit clip.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                         clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[29] };
-                        SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                     }
                     else
                     {
                         canPlayClip[(curLevel - 1), 2] = false;
                         clips = new List<AudioClip>() { Database.soundEffectClips[4] };
-                        SoundManager.instance.PlayClips(clips); // Play the appropriate clip.
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clip.
                     }
                 }
                 else if ((curLevel >= 12) && (canPlayClip[11, 2] == true))
@@ -2777,7 +2777,7 @@ public class Player : MovingObject
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.                          
                         GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
                         clips = new List<AudioClip>() { Database.pauseMenuClips[11] };
-                        SoundManager.instance.PlayClips(clips); // should have another set of sound effect
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // should have another set of sound effect
                         GameMode.finishedLevel1Tutorial = BoardManager.finishedTutorialLevel1;
                         GameMode.finishedLevel3Tutorial = BoardManager.finishedTutorialLevel3;
                         GameMode.write_save_mode(curLevel, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.instance.gamemode);
@@ -2790,7 +2790,7 @@ public class Player : MovingObject
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.                        
                         // SceneManager.UnloadScene("Main");
                         clips = new List<AudioClip>() { Database.pauseMenuClips[11] };
-                        SoundManager.instance.PlayClips(clips); // should have another set of sound effect
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // should have another set of sound effect
                         GameMode.finishedLevel1Tutorial = BoardManager.finishedTutorialLevel1;
                         GameMode.finishedLevel3Tutorial = BoardManager.finishedTutorialLevel3;
                         GameMode.write_save_mode(curLevel, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.instance.gamemode);
@@ -2812,12 +2812,12 @@ public class Player : MovingObject
                         if (GM_title.isUsingTalkback == true)
                         {
                             clips = new List<AudioClip>() { Database.pauseMenuClips[6] };
-                            SoundManager.instance.PlayClips(clips);
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
                         }
                         else if (GM_title.isUsingTalkback == false)
                         {
                             clips = new List<AudioClip>() { Database.pauseMenuClips[5] };
-                            SoundManager.instance.PlayClips(clips);
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
                         }
                         wantLevelRestart = true;
                     }
@@ -2833,12 +2833,12 @@ public class Player : MovingObject
                         if (GM_title.isUsingTalkback == true)
                         {
                             clips = new List<AudioClip>() { Database.pauseMenuClips[10] };
-                            SoundManager.instance.PlayClips(clips);
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
                         }
                         else if (GM_title.isUsingTalkback == false)
                         {
                             clips = new List<AudioClip>() { Database.pauseMenuClips[9] };
-                            SoundManager.instance.PlayClips(clips);
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
                         }
                         wantMainMenu = true;
                     }
@@ -2918,7 +2918,7 @@ public class Player : MovingObject
                             if (!GameManager.instance.boardScript.turning_lock)
                             {
                                 clips = new List<AudioClip>() { Database.soundEffectClips[5] };
-                                SoundManager.instance.PlayClips(clips);
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
                                 rotatedLeft = true;
                             }
                         }
@@ -2942,7 +2942,7 @@ public class Player : MovingObject
                             if (!GameManager.instance.boardScript.turning_lock)
                             {
                                 clips = new List<AudioClip>() { Database.soundEffectClips[6] };
-                                SoundManager.instance.PlayClips(clips);
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
                                 rotatedRight = true;
                             }
                         }
@@ -2966,13 +2966,13 @@ public class Player : MovingObject
                     if (GM_title.isUsingTalkback == true)
                     {
                         clips = new List<AudioClip>() { Database.pauseMenuClips[0], Database.pauseMenuClips[2], Database.pauseMenuClips[4], Database.pauseMenuClips[8] };
-                        SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                     }
                     // If the player is not using Talkback.
                     else if (GM_title.isUsingTalkback == false)
                     {
                         clips = new List<AudioClip>() { Database.pauseMenuClips[0], Database.pauseMenuClips[1], Database.pauseMenuClips[3], Database.pauseMenuClips[7] };
-                        SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                     }
                     want_exit = true; // Open the pause menu.
                     reset_audio = false;
@@ -2983,7 +2983,7 @@ public class Player : MovingObject
                     debugPlayerInfo = "Hold registered. Closed pause menu.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     clips = new List<AudioClip>() { Database.pauseMenuClips[11] };
-                    SoundManager.instance.PlayClips(clips);
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
                     want_exit = false; // Close the pause menu.
                     reset_audio = true;
                 }
@@ -2994,7 +2994,7 @@ public class Player : MovingObject
                 debugPlayerInfo = "P key pressed. Moving to main menu.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                SoundManager.instance.PlayClips(clips);
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
                 // SceneManager.UnloadScene("Main");
                 loadingScene = true;
                 Destroy(GameObject.Find("GameManager"));
@@ -3200,7 +3200,7 @@ public class Player : MovingObject
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.                        
                         GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
                         clips = new List<AudioClip>() { Database.pauseMenuClips[11] };
-                        SoundManager.instance.PlayClips(clips); // should have another set of sound effect
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // should have another set of sound effect
                         GameMode.finishedLevel1Tutorial = BoardManager.finishedTutorialLevel1;
                         GameMode.finishedLevel3Tutorial = BoardManager.finishedTutorialLevel3;
                         GameMode.write_save_mode(curLevel, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.instance.gamemode);
@@ -3213,7 +3213,7 @@ public class Player : MovingObject
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.                        
                         // SceneManager.UnloadScene("Main");
                         clips = new List<AudioClip>() { Database.pauseMenuClips[11] };
-                        SoundManager.instance.PlayClips(clips); // should have another set of sound effect
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // should have another set of sound effect
                         GameMode.finishedLevel1Tutorial = BoardManager.finishedTutorialLevel1;
                         GameMode.finishedLevel3Tutorial = BoardManager.finishedTutorialLevel3;
                         GameMode.write_save_mode(curLevel, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.instance.gamemode);
@@ -3240,13 +3240,13 @@ public class Player : MovingObject
                     if (GM_title.isUsingTalkback == true)
                     {
                         clips = new List<AudioClip>() { Database.pauseMenuClips[0], Database.pauseMenuClips[2], Database.pauseMenuClips[4], Database.pauseMenuClips[8] };
-                        SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                     }
                     // If the player is not using Talkback.
                     else if (GM_title.isUsingTalkback == false)
                     {
                         clips = new List<AudioClip>() { Database.pauseMenuClips[0], Database.pauseMenuClips[1], Database.pauseMenuClips[3], Database.pauseMenuClips[7] };
-                        SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                     }
                 }
                 // If the player is in the pause menu, close the pause menu.
@@ -3256,7 +3256,7 @@ public class Player : MovingObject
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     at_pause_menu = false; // The player is no longer in the pause menu.
                     clips = new List<AudioClip>() { Database.pauseMenuClips[11] };
-                    SoundManager.instance.PlayClips(clips);
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
                 }
             }
             // If a swipe is registered.
@@ -3318,12 +3318,12 @@ public class Player : MovingObject
                         if (GM_title.isUsingTalkback == true)
                         {
                             clips = new List<AudioClip>() { Database.pauseMenuClips[6] };
-                            SoundManager.instance.PlayClips(clips);
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
                         }
                         else if (GM_title.isUsingTalkback == false)
                         {
                             clips = new List<AudioClip>() { Database.pauseMenuClips[5] };
-                            SoundManager.instance.PlayClips(clips);
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
                         }
                         wantLevelRestart = true;
                     }
@@ -3335,12 +3335,12 @@ public class Player : MovingObject
                         if (GM_title.isUsingTalkback == true)
                         {
                             clips = new List<AudioClip>() { Database.pauseMenuClips[10] };
-                            SoundManager.instance.PlayClips(clips);
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
                         }
                         else if (GM_title.isUsingTalkback == false)
                         {
                             clips = new List<AudioClip>() { Database.pauseMenuClips[9] };
-                            SoundManager.instance.PlayClips(clips);
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
                         }
                         wantMainMenu = true;
                     }
@@ -3375,7 +3375,7 @@ public class Player : MovingObject
                             if (!GameManager.instance.boardScript.turning_lock)
                             {
                                 clips = new List<AudioClip>() { Database.soundEffectClips[5] };
-                                SoundManager.instance.PlayClips(clips);
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
                                 rotatedLeft = true;
                             }
                         }
@@ -3395,7 +3395,7 @@ public class Player : MovingObject
                             if (!GameManager.instance.boardScript.turning_lock)
                             {
                                 clips = new List<AudioClip>() { Database.soundEffectClips[6] };
-                                SoundManager.instance.PlayClips(clips);
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
                                 rotatedRight = true;
                             }
                         }
@@ -3747,12 +3747,12 @@ public class Player : MovingObject
                 if (GM_title.isUsingTalkback == true)
                 {
                     clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.tutorialClips[0], Database.tutorialClips[2], Database.soundEffectClips[1], Database.tutorialClips[3], Database.tutorialClips[4] };
-                    SoundManager.instance.PlayClips(clips, null, 0, () => PlayEcho(), 3); // If they are using Talkback, play the correct instructions.  
+                    SoundManager.instance.PlayClips(clips, null, 0, () => PlayEcho(), 3, 0.5f); // If they are using Talkback, play the correct instructions.  
                 }
                 else if (GM_title.isUsingTalkback == false)
                 {
                     clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.tutorialClips[0], Database.tutorialClips[1], Database.soundEffectClips[1], Database.tutorialClips[3], Database.tutorialClips[4] };
-                    SoundManager.instance.PlayClips(clips, null, 0, () => PlayEcho(), 3); // If they are not using Talkback, play the correct instructions.  
+                    SoundManager.instance.PlayClips(clips, null, 0, () => PlayEcho(), 3, 0.5f); // If they are not using Talkback, play the correct instructions.  
                 }
                 level1_remaining_taps = 3; // Set the remaining taps for the tutorial to 3.
                 level1_remaining_ups = 3; // Set the remaining swipes up for the tutorial to 3.
@@ -3770,7 +3770,7 @@ public class Player : MovingObject
                 finishedCornerInstruction = false; // Reset if the player is going through this tutorial level again.
                 finishedTurningInstruction = false; // Reset if the player is going through this tutorial level again.
                 clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.tutorialClips[21] };
-                SoundManager.instance.PlayClips(clips); // Play the appropriate clip.                
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clip.                
                 level3_remaining_turns = 4; // Set the remaining rotations for the tutorial to 4.
                 break;
             default:
@@ -3902,12 +3902,12 @@ public class Player : MovingObject
                         if (level1_remaining_taps == 2)
                         {
                             clips = new List<AudioClip> { Database.soundEffectClips[1], Database.tutorialClips[5] };
-                            SoundManager.instance.PlayClips(clips); // This tap was correct. Please tap X more times.
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // This tap was correct. Please tap X more times.
                         }
                         else if (level1_remaining_taps == 1)
                         {
                             clips = new List<AudioClip> { Database.soundEffectClips[1], Database.tutorialClips[6] };
-                            SoundManager.instance.PlayClips(clips); // This tap was correct. Please tap X more times.
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // This tap was correct. Please tap X more times.
                         }
                         // If the player has finished the tapping section.
                         else if (level1_remaining_taps == 0)
@@ -3922,12 +3922,12 @@ public class Player : MovingObject
                             if (GM_title.isUsingTalkback == true)
                             {
                                 clips = new List<AudioClip> { Database.soundEffectClips[1], Database.tutorialClips[7], Database.tutorialClips[9], Database.soundEffectClips[0], Database.soundEffectClips[4], Database.soundEffectClips[0], Database.tutorialClips[10] };
-                                SoundManager.instance.PlayClips(clips); // If they are using Talkback, play the correct instructions.  
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // If they are using Talkback, play the correct instructions.  
                             }
                             else if (GM_title.isUsingTalkback == false)
                             {
                                 clips = new List<AudioClip> { Database.soundEffectClips[1], Database.tutorialClips[7], Database.tutorialClips[8], Database.soundEffectClips[0], Database.soundEffectClips[4], Database.soundEffectClips[0], Database.tutorialClips[10] };
-                                SoundManager.instance.PlayClips(clips); // If they are not using Talkback, play the correct instructions.  
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // If they are not using Talkback, play the correct instructions.  
                             }
                         }
                     }
@@ -3985,12 +3985,12 @@ public class Player : MovingObject
                             if (level1_remaining_ups == 2)
                             {
                                 clips = new List<AudioClip> { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.tutorialClips[11] };
-                                SoundManager.instance.PlayClips(clips); // This swipe was correct. Please swipe X more times.
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // This swipe was correct. Please swipe X more times.
                             }
                             else if (level1_remaining_ups == 1)
                             {
                                 clips = new List<AudioClip> { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.tutorialClips[12] };
-                                SoundManager.instance.PlayClips(clips); // This swipe was correct. Please swipe X more times.
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // This swipe was correct. Please swipe X more times.
                             }
                             // If the player has finished the swiping section of the tutorial.
                             else if (level1_remaining_ups == 0)
@@ -4003,12 +4003,12 @@ public class Player : MovingObject
                                 if (GM_title.isUsingTalkback == true)
                                 {
                                     clips = new List<AudioClip> { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.tutorialClips[13], Database.tutorialClips[15] };
-                                    SoundManager.instance.PlayClips(clips); // If they are using Talkback, play the correct instructions.  
+                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // If they are using Talkback, play the correct instructions.  
                                 }
                                 else if (GM_title.isUsingTalkback == false)
                                 {
                                     clips = new List<AudioClip> { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.tutorialClips[13], Database.tutorialClips[14] };
-                                    SoundManager.instance.PlayClips(clips); // If they are not using Talkback, play the correct instructions.  
+                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // If they are not using Talkback, play the correct instructions.  
                                 }
                             }
                         }
@@ -4065,13 +4065,13 @@ public class Player : MovingObject
                                     if (GM_title.isUsingTalkback == true)
                                     {
                                         clips = new List<AudioClip> { Database.tutorialClips[17] };
-                                        SoundManager.instance.PlayClips(clips); // If they are using Talkback, play the correct instructions.
+                                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // If they are using Talkback, play the correct instructions.
                                         // SoundManager.instance.PlayVoice(Database.tutorialClips[17], true); // If they are using Talkback, play the correct instruction.                                   
                                     }
                                     else if (GM_title.isUsingTalkback == false)
                                     {
                                         clips = new List<AudioClip> { Database.tutorialClips[16] };
-                                        SoundManager.instance.PlayClips(clips); // If they are using Talkback, play the correct instructions.
+                                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // If they are using Talkback, play the correct instructions.
                                         // SoundManager.instance.PlayVoice(Database.tutorialClips[16], true); // If they are not using Talkback, play the correct instruction.  
                                     }
                                 }
@@ -4087,12 +4087,12 @@ public class Player : MovingObject
                                     if (GM_title.isUsingTalkback == true)
                                     {
                                         clips = new List<AudioClip> { Database.soundEffectClips[0], Database.tutorialClips[19], Database.soundEffectClips[9], Database.soundEffectClips[0], Database.tutorialClips[20] };
-                                        SoundManager.instance.PlayClips(clips); // If they are using Talkback, play the correct instructions.  
+                                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // If they are using Talkback, play the correct instructions.  
                                     }
                                     else if (GM_title.isUsingTalkback == false)
                                     {
                                         clips = new List<AudioClip> { Database.soundEffectClips[0], Database.tutorialClips[18], Database.soundEffectClips[9], Database.soundEffectClips[0], Database.tutorialClips[20] };
-                                        SoundManager.instance.PlayClips(clips); // If they are not using Talkback, play the correct instructions.  
+                                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // If they are not using Talkback, play the correct instructions.  
                                     }
                                 }
                             }
@@ -4149,7 +4149,7 @@ public class Player : MovingObject
                                 GameMode.finishedLevel1Tutorial = BoardManager.finishedTutorialLevel1;
                                 GameMode.finishedLevel3Tutorial = BoardManager.finishedTutorialLevel3;
                                 GameMode.write_save_mode(curLevel, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.instance.gamemode);
-                                SoundManager.instance.PlayClips(clips, null, 0, () => quitInterception(), 1);
+                                SoundManager.instance.PlayClips(clips, null, 0, () => quitInterception(), 1, 0.5f);
                             }
                             // If the action was not a swipe down.
                             else if (((action == InterceptAction.TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.LEFT) || (action == InterceptAction.RIGHT) || (action == InterceptAction.UP) || ((ie.isSwipe == true) && (ie.isLeft == true)) || ((ie.isSwipe == true) && (ie.isRight == true)) || (ie.isUnrecognized == true)) && (finishedExitingInstruction == true))
@@ -4200,12 +4200,12 @@ public class Player : MovingObject
                         if (GM_title.isUsingTalkback == true)
                         {
                             clips = new List<AudioClip>() { Database.soundEffectClips[1], Database.tutorialClips[23], Database.soundEffectClips[0], Database.soundEffectClips[6], Database.soundEffectClips[0], Database.tutorialClips[24], Database.tutorialClips[25] };
-                            SoundManager.instance.PlayClips(clips, null, 0, () => PlayEcho(), 0, true); // If they are using Talkback, play the correct instructions.  
+                            SoundManager.instance.PlayClips(clips, null, 0, () => PlayEcho(), 0, 0.5f, true); // If they are using Talkback, play the correct instructions.  
                         }
                         else if (GM_title.isUsingTalkback == false)
                         {
                             clips = new List<AudioClip>() { Database.soundEffectClips[1], Database.tutorialClips[22], Database.soundEffectClips[0], Database.soundEffectClips[6], Database.soundEffectClips[0], Database.tutorialClips[24], Database.tutorialClips[25] };
-                            SoundManager.instance.PlayClips(clips, null, 0, () => PlayEcho(), 0, true); // If they are not using Talkback, play the correct instructions. 
+                            SoundManager.instance.PlayClips(clips, null, 0, () => PlayEcho(), 0, 0.5f, true); // If they are not using Talkback, play the correct instructions. 
                         }
                     }
                     // If the player has not tapped at the corner yet and the gesture was not a tap.
@@ -4262,7 +4262,7 @@ public class Player : MovingObject
                             {
                                 clips = new List<AudioClip> { Database.soundEffectClips[6], Database.soundEffectClips[0], Database.tutorialClips[26] };
                             }
-                            SoundManager.instance.PlayClips(clips); // This rotation was correct. Please rotate X more times.
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // This rotation was correct. Please rotate X more times.
                         }
                         else if (level3_remaining_turns == 2)
                         {
@@ -4274,7 +4274,7 @@ public class Player : MovingObject
                             {
                                 clips = new List<AudioClip> { Database.soundEffectClips[6], Database.soundEffectClips[0], Database.tutorialClips[27] };
                             }
-                            SoundManager.instance.PlayClips(clips); // This rotation was correct. Please rotate X more times.
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // This rotation was correct. Please rotate X more times.
                         }
                         else if (level3_remaining_turns == 1)
                         {
@@ -4286,7 +4286,7 @@ public class Player : MovingObject
                             {
                                 clips = new List<AudioClip> { Database.soundEffectClips[6], Database.soundEffectClips[0], Database.tutorialClips[28] };
                             }
-                            SoundManager.instance.PlayClips(clips); // This rotation was correct. Please rotate X more times.
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // This rotation was correct. Please rotate X more times.
                         }
                         // If the player has finished the rotation section of the tutorial.
                         else if (level3_remaining_turns == 0)
@@ -4306,7 +4306,7 @@ public class Player : MovingObject
                             {
                                 clips = new List<AudioClip> { Database.soundEffectClips[6], Database.soundEffectClips[0], Database.tutorialClips[29] };
                             }
-                            SoundManager.instance.PlayClips(clips, null, 0, () => quitInterception(), 3);
+                            SoundManager.instance.PlayClips(clips, null, 0, () => quitInterception(), 3, 0.5f);
                         }
                     }
                     // If the action was not a right or left rotation.
