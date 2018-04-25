@@ -78,12 +78,12 @@ public class GM_title : MonoBehaviour
                         canRepeat = false;
                         if (repeatSetupClip == true)
                         {
-                            clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.settingsClips[7] };
+                            clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.settingsClips[0] };
                             SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                         }
                         else if (repeatSetupClip == false)
                         {
-                            clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.settingsClips[7] };
+                            clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.settingsClips[0] };
                             SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                             repeatSetupClip = true;
                         }
@@ -107,12 +107,12 @@ public class GM_title : MonoBehaviour
                     canRepeat = false;
                     if (repeatSetupClip == true)
                     {
-                        clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.settingsClips[0], Database.settingsClips[1] };
+                        clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.settingsClips[1], Database.settingsClips[2] };
                         SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                     }
                     else if (repeatSetupClip == false)
                     {
-                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.settingsClips[0], Database.settingsClips[1] };
+                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.settingsClips[1], Database.settingsClips[2] };
                         SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                         repeatSetupClip = true;
                     }
@@ -129,16 +129,16 @@ public class GM_title : MonoBehaviour
                     if (isUsingTalkback == true)
                     {
                         canRepeat = false;
-                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.settingsClips[6] };
-                        List<AudioClip> clips2 = new List<AudioClip>() { Database.soundEffectClips[0], Database.settingsClips[6] };
+                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.settingsClips[3], Database.settingsClips[5], Database.settingsClips[7] };
+                        List<AudioClip> clips2 = new List<AudioClip>() { Database.soundEffectClips[0], Database.settingsClips[3], Database.settingsClips[5], Database.settingsClips[7] };
                         if (repeatSetupClip == true)
                         {
-                            balances = new float[] { 1, 1 };
+                            balances = new float[] { 0, 0, 0, 1 };
                             SoundManager.instance.PlayClips(clips2, balances, 1, null, 0, 0.5f, true); // Play the appropriate clips.
                         }
                         else if (repeatSetupClip == false)
                         {
-                            balances = new float[] { 0, 1, 1 };
+                            balances = new float[] { 0, 0, 0, 0, 1 };
                             SoundManager.instance.PlayClips(clips, balances, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                             repeatSetupClip = true;
                         }
@@ -147,16 +147,16 @@ public class GM_title : MonoBehaviour
                     else if (isUsingTalkback == false)
                     {
                         canRepeat = false;
-                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.settingsClips[5] };
-                        List<AudioClip> clips2 = new List<AudioClip>() { Database.soundEffectClips[0], Database.settingsClips[5] };
+                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.settingsClips[4], Database.settingsClips[6] };
+                        List<AudioClip> clips2 = new List<AudioClip>() { Database.soundEffectClips[0], Database.settingsClips[4], Database.settingsClips[6] };
                         if (repeatSetupClip == true)
                         {
-                            balances = new float[] { 1, 1 };
+                            balances = new float[] { 0, 0, 1 };
                             SoundManager.instance.PlayClips(clips2, balances, 1, null, 0, 0.5f, true); // Play the appropriate clips.
                         }
                         else if (repeatSetupClip == false)
                         {
-                            balances = new float[] { 0, 1, 1 };
+                            balances = new float[] { 0, 0, 0, 1 };
                             SoundManager.instance.PlayClips(clips, balances, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                             repeatSetupClip = true;
                         }
@@ -255,14 +255,14 @@ public class GM_title : MonoBehaviour
                     if (isUsingTalkback == true)
                     {
                         canRepeat = false;
-                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.mainMenuClips[12], Database.mainMenuClips[14], Database.mainMenuClips[16], Database.mainMenuClips[18], Database.mainMenuClips[20] };
+                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.mainMenuClips[15], Database.mainMenuClips[17], Database.mainMenuClips[19], Database.mainMenuClips[21], Database.mainMenuClips[23] };
                         SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                     }
                     // If the player is not using Talkback.
                     else if (isUsingTalkback == false)
                     {
                         canRepeat = false;
-                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.mainMenuClips[11], Database.mainMenuClips[13], Database.mainMenuClips[15], Database.mainMenuClips[17], Database.mainMenuClips[19] };
+                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.mainMenuClips[14], Database.mainMenuClips[16], Database.mainMenuClips[18], Database.mainMenuClips[20], Database.mainMenuClips[22] };
                         SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                     }
                 }
@@ -1071,7 +1071,7 @@ public class GM_title : MonoBehaviour
                     switch_click_toggle = false;
                     debugPlayerInfo = "Swiped left. Switched to using Odeon echoes.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    clips = new List<AudioClip>() { Database.mainMenuClips[10] };
+                    clips = new List<AudioClip>() { Database.mainMenuClips[13] };
                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
                 }
                 else if (inOptionsMenu == false)
@@ -1090,7 +1090,7 @@ public class GM_title : MonoBehaviour
                     switch_click_toggle = true;
                     debugPlayerInfo = "Swiped left. Switched to using HRTF echoes.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    clips = new List<AudioClip>() { Database.mainMenuClips[9] };
+                    clips = new List<AudioClip>() { Database.mainMenuClips[12] };
                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
                 }
                 else if (inOptionsMenu == false)
@@ -1110,6 +1110,8 @@ public class GM_title : MonoBehaviour
                     inOptionsMenu = false;
                     debugPlayerInfo = "Swiped up. Closing options menu.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    clips = new List<AudioClip>() { Database.mainMenuClips[11] };
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
                 }
                 else if (inOptionsMenu == false)
                 {
@@ -1135,6 +1137,15 @@ public class GM_title : MonoBehaviour
                     inOptionsMenu = true;
                     debugPlayerInfo = "Swiped down. Opening options menu.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    if (isUsingTalkback == true)
+                    {
+                        clips = new List<AudioClip>() { Database.mainMenuClips[10] };
+                    }
+                    else if (isUsingTalkback == false)
+                    {
+                        clips = new List<AudioClip>() { Database.mainMenuClips[9] };
+                    }
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
                 }
                 break;
             default:
