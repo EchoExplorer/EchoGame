@@ -62,7 +62,10 @@ public abstract class MovingObject : MonoBehaviour
             // The position of the moving object is not thread safe. When one movement is still on processing, 
             // an immediate second command of movement will calculate its "end position" based on
             // the current temporary position, which results into an unexpected end position.
-            rb2D.MovePosition(end);
+            rb2D.MovePosition(end);            
+            BoardManager.player_idx.x += xDir;
+            BoardManager.player_idx.y += yDir;
+            print("PlayerX: " + BoardManager.player_idx.x + ", PlayerY: " + BoardManager.player_idx.y);
 
             //Return true to say that Move was successful
             return true;

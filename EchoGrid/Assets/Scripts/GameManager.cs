@@ -58,7 +58,7 @@ public class GameManager : MonoBehaviour
             filename = Application.persistentDataPath + "echosaved";
         }
         // load specific save for tutorial
-        else
+        else if ((current == GameMode.Game_Mode.TUTORIAL_RESTART) || (current == GameMode.Game_Mode.TUTORIAL))
         {
             filename = Application.persistentDataPath + "echosaved_tutorial";
         }
@@ -108,7 +108,7 @@ public class GameManager : MonoBehaviour
                 GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
                 GameMode.write_save_mode(level, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.Game_Mode.CONTINUE);
             }
-            else
+            else if ((current == GameMode.Game_Mode.TUTORIAL_RESTART) || (current == GameMode.Game_Mode.TUTORIAL))
             {
                 level = 1;
                 GameMode.finishedLevel1Tutorial = false;
@@ -165,8 +165,16 @@ public class GameManager : MonoBehaviour
                     GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
                     level = 1;
                 }
-                GameMode.finishedLevel1Tutorial = false;
-                GameMode.finishedLevel3Tutorial = false;
+                if (level == 1)
+                {
+                    GameMode.finishedLevel1Tutorial = false;
+                    GameMode.finishedLevel3Tutorial = false;
+                }
+                else if (level == (MAX_TUTORIAL_LEVEL + 1))
+                {
+                    GameMode.finishedLevel1Tutorial = true;
+                    GameMode.finishedLevel3Tutorial = true;
+                }
                 GameMode.write_save_mode(level, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, current);
             }
             else if (GM_main_pre.skippingTutorial == 1)

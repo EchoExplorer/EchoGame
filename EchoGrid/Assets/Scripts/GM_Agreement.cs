@@ -86,7 +86,7 @@ public class GM_Agreement : MonoBehaviour
     {
         if (!isLandscape)
         {//not landscape!
-            if (SoundManager.instance.PlayVoice(orit[orti_clip], reset_audio))
+            if (SoundManager.instance.PlayVoice(orit[orti_clip], reset_audio, 0.0f, 0.0f, 0.5f))
             {
                 reset_audio = false;
                 orti_clip += 1;
@@ -135,7 +135,7 @@ public class GM_Agreement : MonoBehaviour
                     debugPlayerInfo = "Swiped left. Moving to next agreement.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     gotoNextAgreement();
-                    SoundManager.instance.PlayVoice(Database.soundEffectClips[7], true);
+                    SoundManager.instance.PlayVoice(Database.soundEffectClips[7], true, 0.0f, 0.0f, 0.5f);
                 }
                 // If the swipe was right.
                 else if (ie.isRight == true)
@@ -224,7 +224,7 @@ public class GM_Agreement : MonoBehaviour
 					debugPlayerInfo = "Swiped left. Moving to next agreement.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     gotoNextAgreement();
-                    SoundManager.instance.PlayVoice(Database.soundEffectClips[7], true);
+                    SoundManager.instance.PlayVoice(Database.soundEffectClips[7], true, 0.0f, 0.0f, 0.5f);
         		}
         		// If the swipe was up.
         		else if (ie.isUp == true)

@@ -165,12 +165,13 @@ public class SoundManager : MonoBehaviour
     /// <summary>
     /// Plays an instruction voice.
     /// </summary>
-	public bool PlayVoice(AudioClip clip, bool reset = false, float balance = 0, float delay = 0.0f)
+	public bool PlayVoice(AudioClip clip, bool reset = false, float balance = 0.0f, float delay = 0.0f, float voiceVolume = 1.0f)
     {
         if ((voiceSource.isPlaying == false) || reset)
         {
             finishedClip = false;
             voiceSource.clip = clip;
+            voiceSource.volume = voiceVolume;
             // Set balance (-1 to 1 from left to right, default 0)
             voiceSource.panStereo = balance;
             float clipLength = voiceSource.clip.length;
@@ -195,12 +196,12 @@ public class SoundManager : MonoBehaviour
     /// <summary>
     /// Plays an instruction voice.
     /// </summary>
-	public bool PlayClip(AudioClip clip, bool reset = false, float balance = 0, float volume = 1.0f)
+	public bool PlayClip(AudioClip clip, bool reset = false, float balance = 0, float clipVolume = 1.0f)
     {
         if ((clipSource.isPlaying == false) || reset)
         {
             clipSource.clip = clip;
-            clipSource.volume = volume;
+            clipSource.volume = clipVolume;
             // Set balance (-1 to 1 from left to right, default 0)
             clipSource.panStereo = balance;
             // Play the clip.
@@ -212,7 +213,7 @@ public class SoundManager : MonoBehaviour
     }
 
     // Play a list of clips in their order with 0.5 seconds pausing. Callback function and its index allowed.
-    public void PlayClips(List<AudioClip> clips, float[] balances = null, int current = 0, Action callback = null, int callback_index = 0, float volume = 1.0f, bool isFirstClip = true)
+    public void PlayClips(List<AudioClip> clips, float[] balances = null, int current = 0, Action callback = null, int callback_index = 0, float clipVolume = 1.0f, bool isFirstClip = true)
     {
         // If this clip is the first clip in our list.
         if (isFirstClip == true)
@@ -238,7 +239,7 @@ public class SoundManager : MonoBehaviour
             i++;
         }
 
-        currentVolume = volume;
+        currentVolume = clipVolume;
         currentCallback = callback;
         if (callback_index != 0)
         {
@@ -255,17 +256,17 @@ public class SoundManager : MonoBehaviour
 
         if (balances == null)
         {
-            PlayClip(clip, true, 0, volume);
+            PlayClip(clip, true, 0.0f, clipVolume);
         }
         else
         {
-            PlayClip(clip, true, balances[current], volume);
+            PlayClip(clip, true, balances[current], clipVolume);
         }
 
-        StartCoroutine(WaitForLength(clipLength, clips, balances, current, callback, callback_index, volume));
+        StartCoroutine(WaitForLength(clipLength, clips, balances, current, callback, callback_index, clipVolume));
     }
 
-    private IEnumerator WaitForLength(float clipLength, List<AudioClip> clips, float[] balances, int current, Action callback, int callback_index, float volume)
+    private IEnumerator WaitForLength(float clipLength, List<AudioClip> clips, float[] balances, int current, Action callback, int callback_index, float clipVolume)
     {
         yield return new WaitForSeconds(clipLength + 0.3f);
         // Check if this clip is the last clip in the list and make sure this clip has finished playing.
@@ -275,7 +276,7 @@ public class SoundManager : MonoBehaviour
         }
         else if (current + 1 < clips.Count && !clipSource.isPlaying && clipSource.clip == clips[current])
         {
-            PlayClips(clips, balances, current + 1, callback, callback_index, volume, false);
+            PlayClips(clips, balances, current + 1, callback, callback_index, clipVolume, false);
         }
         if (callback_index >= clips.Count && current >= clips.Count - 1 && callback != null)
         {

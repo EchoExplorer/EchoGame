@@ -209,16 +209,16 @@ public class BoardManager : MonoBehaviour
     private List<Vector3> gridPositions = new List<Vector3>();
     private List<int> wallIdxes = new List<int>();
     public List<Vector3> wallPositions = new List<Vector3>();
-    private List<Vector3> playerPositions = new List<Vector3>();
+    private List<Vector3> startPositions = new List<Vector3>();
     public string mazeSolution = "";
     level_voice_list level_voices = new level_voice_list();
     public static Vector3 exitPos;
     public static Vector3 startPos;
     public static Vector3 startDir;
 
-    static Vector2 start_idx = new Vector2();
-    static Vector2 exit_idx = new Vector2();
-    static Vector2 player_idx = new Vector2();
+    public static Vector2 start_idx = new Vector2();
+    public static Vector2 exit_idx = new Vector2();
+    public static Vector2 player_idx = new Vector2();
 
     public static int numCornersAndDeadends = 0;
 
@@ -432,7 +432,6 @@ public class BoardManager : MonoBehaviour
         tutorial3Finished = finishedTutorialLevel3;
 
         // float threshold = 0.001f;
-        player_idx = get_idx_from_pos(player_ref.transform.position);
 
         if ((player_idx.x == start_idx.x) && (player_idx.y == start_idx.y) && (left_start_pt == true))
         {                   
@@ -583,18 +582,17 @@ public class BoardManager : MonoBehaviour
                 GameObject toInstantiate = floorTiles[Random.Range(0, floorTiles.Length)];
 
                 //Check if we current position is at board edge, if so choose a random outer wall prefab from our array of outer wall tiles.
-                if (x == 0 || x == columns + 1 || y == 0 || y == rows + 1)
+                if ((x == 0) || (x == (columns + 1)) || (y == 0) || (y == (rows + 1)))
                 {
                     toInstantiate = wallTiles[0];// outerWallTiles[Random.Range(0, outerWallTiles.Length)];
                 }
 
                 //Instantiate the GameObject instance using the prefab chosen for toInstantiate at the Vector3 corresponding to current grid position in loop, cast it to GameObject.
-                GameObject instance =
-                    Instantiate(toInstantiate, gridPositions[y * (rows + 2) + x], Quaternion.identity) as GameObject;
+                GameObject instance = Instantiate(toInstantiate, gridPositions[(y * (rows + 2)) + x], Quaternion.identity) as GameObject;
                 //Instantiate (toInstantiate, new Vector3 (x*scale, y*scale, 0f), Quaternion.identity) as GameObject;
-                if (x == 0 || x == columns + 1 || y == 0 || y == rows + 1)
+                if ((x == 0) || (x == (columns + 1)) || (y == 0) || (y == (rows + 1)))
                 {
-                    instance.name = "Wall_" + gridPositions[y * (rows + 2) + x].x + "_" + gridPositions[y * (rows + 2) + x].y;
+                    instance.name = "Wall_" + (gridPositions[(y * (rows + 2)) + x].x + 2) + "_" + (gridPositions[(y * (rows + 2)) + x].y + 2);
                 }
 
                 //Set the parent of our newly instantiated object instance to boardHolder, this is just organizational to avoid cluttering hierarchy.
@@ -620,7 +618,7 @@ public class BoardManager : MonoBehaviour
         //Clear our list gridPositions.
         wallPositions.Clear();
         wallIdxes.Clear();
-        playerPositions.Clear();
+        startPositions.Clear();
 
         if (level <= 2)
             turning_lock = true;
@@ -652,14 +650,15 @@ public class BoardManager : MonoBehaviour
 
         //build level
         load_level_from_file("GameData/levels", level);
-        int randomDelta = Random.Range(0, playerPositions.Count);
-        if (randomDelta == playerPositions.Count)
+        int randomDelta = Random.Range(0, startPositions.Count);
+        if (randomDelta == startPositions.Count)
         {
-            randomDelta = playerPositions.Count - 1;
+            randomDelta = startPositions.Count - 1;
         }
 
-        player.transform.position = playerPositions[randomDelta];
+        player.transform.position = startPositions[randomDelta];
         start_idx = get_idx_from_pos(player.transform.position);
+        player_idx = start_idx;
         print("Player start position: X = " + start_idx.x.ToString() + ", Y = " + start_idx.y.ToString());
         startPos = player.transform.position;
 
@@ -792,7 +791,7 @@ public class BoardManager : MonoBehaviour
         {
             for (int j = 1; j < (columns + 1); ++j)
             {
-                if ((gridPositions[i * (columns + 2) + j] - pos).magnitude <= threshhold)
+                if ((gridPositions[(i * (columns + 2)) + j] - pos).magnitude <= threshhold)
                 {
                     y_idx = i; x_idx = j;
                     break;
@@ -1328,7 +1327,7 @@ public class BoardManager : MonoBehaviour
                         }
                         else if (line[i] == 's') // start positions
                         {
-                            playerPositions.Add(gridPositions[(cur_y + 1) * (columns + 2) + (i + 1)]);
+                            startPositions.Add(gridPositions[(cur_y + 1) * (columns + 2) + (i + 1)]);
                         }
                     }
                     cur_y -= 1;

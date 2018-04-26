@@ -1166,7 +1166,7 @@ public class Player : MovingObject
         if (correct_post_act.Length <= 0)
         {
             clip = Database.hintClips[3];
-            SoundManager.instance.PlayVoice(clip, true);
+            SoundManager.instance.PlayVoice(clip, true, 0.0f, 0.0f, 0.5f);
             return;
         }
         Vector3 forward = old_dir;
@@ -1209,7 +1209,7 @@ public class Player : MovingObject
             }
         }
 
-        SoundManager.instance.PlayVoice(clip, true);
+        SoundManager.instance.PlayVoice(clip, true, 0.0f, 0.0f, 0.5f);
     }
 
     // For legacy compatibility reasons, the transform direction does not match
@@ -1457,21 +1457,20 @@ public class Player : MovingObject
 
             GameManager.instance.boardScript.gamerecord += "C";
             // if(!SoundManager.instance.isBusy())
-
-            Vector2 playerPos = GameManager.instance.boardScript.get_idx_from_pos(transform.position);
+       
             Vector2 startPos = BoardManager.startPos;
 
             // If the player is at the exit and moves forward.
             if (curLevel <= 11)
             {
                 // If they swipe up here and they are facing the wall, tell them they have crashed into the wall and that they have to rotate right to progress further in the level.
-                if ((curLevel == 3) && (playerPos.x == 9) && (playerPos.y == 9) && (GameManager.instance.boardScript.get_player_dir_world() == BoardManager.Direction.RIGHT))
+                if ((curLevel == 3) && (BoardManager.player_idx.x == 9) && (BoardManager.player_idx.y == 9) && (GameManager.instance.boardScript.get_player_dir_world() == BoardManager.Direction.RIGHT))
                 {
                     clips = new List<AudioClip>() { Database.soundEffectClips[8], Database.soundEffectClips[0], Database.mainGameClips[37] };
                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                 }
                 // If they swipe up here and they are facing the wall, tell them they have crashed into the wall and that they have to rotate left to progress further in the level.
-                else if ((curLevel == 5) && (playerPos.x == 1) && (playerPos.y == 9) && (GameManager.instance.boardScript.get_player_dir_world() == BoardManager.Direction.LEFT))
+                else if ((curLevel == 5) && (BoardManager.player_idx.x == 1) && (BoardManager.player_idx.y == 9) && (GameManager.instance.boardScript.get_player_dir_world() == BoardManager.Direction.LEFT))
                 {
                     clips = new List<AudioClip>() { Database.soundEffectClips[8], Database.soundEffectClips[0], Database.mainGameClips[38] };
                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.                            
@@ -1493,7 +1492,7 @@ public class Player : MovingObject
                 clips = new List<AudioClip>() { Database.soundEffectClips[8] };
                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clip.
             }
-            // SoundManager.instance.playcrash(Database.mainGameClips[5]);
+            // SoundManager.instance.playcrash(Database.soundEffectClips[8]);
             // Increment the crash count
             numCrashes++;
             // Decrement the step count (as no successful step was made)
@@ -1585,7 +1584,7 @@ public class Player : MovingObject
         }
         else
         {
-            SoundManager.instance.PlayVoice(Database.mainGameClips[35], true); // Tell the player that they are not currently at the exit.
+            SoundManager.instance.PlayVoice(Database.mainGameClips[35], true, 0.0f, 0.0f, 0.5f); // Tell the player that they are not currently at the exit.
         }
 
         if (reportSent)
@@ -1757,8 +1756,7 @@ public class Player : MovingObject
                 SoundManager.instance.PlayClips(SoundManager.clipsCurrentlyPlaying, SoundManager.currentBalances, 0, SoundManager.currentCallback, SoundManager.currentCallbackIndex, 0.5f, true);
             }
         }
-
-        Vector2 playerPos = GameManager.instance.boardScript.get_idx_from_pos(transform.position);
+     
         Vector2 startPos = BoardManager.startPos;
         GameObject exitSign = GameObject.FindGameObjectWithTag("Exit");
         Vector2 distFromExit = transform.position - exitSign.transform.position;
@@ -1786,7 +1784,7 @@ public class Player : MovingObject
                             // Keep this check in, but do nothing.
                         }
                         // If the player returns to their start position.
-                        else if ((canPlayClip[0, 3] == true) && (intercepted == false) && (BoardManager.finishedTutorialLevel1 == true) && (playerPos.x == startPos.x) && (playerPos.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
+                        else if ((canPlayClip[0, 3] == true) && (intercepted == false) && (BoardManager.finishedTutorialLevel1 == true) && (BoardManager.player_idx.x == startPos.x) && (BoardManager.player_idx.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
                         {
 
                         }
@@ -1814,7 +1812,7 @@ public class Player : MovingObject
                             // Keep this check in, but do nothing
                         }
                         // If the player returns to their start position.
-                        else if ((canPlayClip[1, 3] == true) && (BoardManager.finishedTutorialLevel1 == true) && (playerPos.x == startPos.x) && (playerPos.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
+                        else if ((canPlayClip[1, 3] == true) && (BoardManager.finishedTutorialLevel1 == true) && (BoardManager.player_idx.x == startPos.x) && (BoardManager.player_idx.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
                         {
 
                         }
@@ -1828,25 +1826,34 @@ public class Player : MovingObject
                     // If we are in level 3.
                     else if (curLevel == 3)
                     {
-                        if ((canPlayClip[2, 4] == false) && (intercepted == false) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x == 6) && (playerPos.y == 9))
+                        Vector2 approachLevel3Corner = new Vector2(6, 9);
+                        Vector2 level3Corner = new Vector2(9, 9);
+                        if ((canPlayClip[2, 4] == false) && (intercepted == false) && (BoardManager.finishedTutorialLevel3 == true) && ((BoardManager.player_idx - approachLevel3Corner).magnitude < 0.1f))
                         {
                             clips = new List<AudioClip>() { Database.soundEffectClips[4] };
                             SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clip.
                         }
                         // Play clip for when they approach the corner in level 3.
-                        else if ((canPlayClip[2, 4] == true) && (intercepted == false) && (playerPos.x == 6) && (playerPos.y == 9))
+                        else if ((canPlayClip[2, 4] == true) && (intercepted == false) && ((BoardManager.player_idx - approachLevel3Corner).magnitude < 0.1f))
                         {
                             canPlayClip[2, 4] = false;
-                            clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[16] };
+                            clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[14] };
                             SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                         }
-                        else if ((canPlayClip[2, 5] == false) && (canPlayClip[2, 6] == false) && (intercepted == false) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x == 9) && (playerPos.y == 9))
+                        else if ((canPlayClip[2, 5] == false) && (canPlayClip[2, 6] == false) && (intercepted == false) && (BoardManager.finishedTutorialLevel3 == true) && ((BoardManager.player_idx - level3Corner).magnitude < 0.1f))
                         {
                             clips = new List<AudioClip>() { Database.soundEffectClips[4] };
                             SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clip.
                         }
                         // Allow the player to tap once to see what the echo at a right turn sounds like before starting the gesture tutorial.
-                        else if ((canPlayClip[2, 5] == true) && (intercepted == false) && (BoardManager.finishedTutorialLevel3 == false) && (playerPos.x == 9) && (playerPos.y == 9))
+                        else if ((canPlayClip[2, 5] == true) && (canPlayClip[2, 6] == true) && (intercepted == false) && (BoardManager.finishedTutorialLevel3 == true) && ((BoardManager.player_idx - level3Corner).magnitude < 0.1f))
+                        {
+                            canPlayClip[2, 5] = false;
+                            clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[15], Database.mainGameClips[16] };
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clip.
+                        }
+                        // Allow the player to tap once to see what the echo at a right turn sounds like before starting the gesture tutorial.
+                        else if ((canPlayClip[2, 5] == true) && (intercepted == false) && (BoardManager.finishedTutorialLevel3 == false) && ((BoardManager.player_idx - level3Corner).magnitude < 0.1f))
                         {
                             canPlayClip[2, 5] = false;
                         }
@@ -1864,7 +1871,7 @@ public class Player : MovingObject
                             // Keep this check in, but do nothing.
                         }
                         // If the player returns to their start position.
-                        else if ((canPlayClip[2, 3] == true) && (intercepted == false) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x == startPos.x) && (playerPos.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
+                        else if ((canPlayClip[2, 3] == true) && (intercepted == false) && (BoardManager.finishedTutorialLevel3 == true) && (BoardManager.player_idx.x == startPos.x) && (BoardManager.player_idx.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
                         {
 
                         }
@@ -1877,7 +1884,7 @@ public class Player : MovingObject
                             {
                                 canPlayClip[2, 1] = true;
                             }
-                            if ((playerPos.x != startPos.x) && (playerPos.y != startPos.y) && (BoardManager.left_start_pt == true))
+                            if ((BoardManager.player_idx.x != startPos.x) && (BoardManager.player_idx.y != startPos.y) && (BoardManager.left_start_pt == true))
                             {
                                 canPlayClip[2, 3] = true;
                             }
@@ -1886,20 +1893,23 @@ public class Player : MovingObject
                     // If we are in level 5.
                     else if (curLevel == 5)
                     {
-                        if ((canPlayClip[4, 4] == false) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x <= 4) && (playerPos.x > 2) && (playerPos.y == 9))
+                        Vector2 approachLevel5Corner = new Vector2(6, 9);
+                        Vector2 level5Corner = new Vector2(9, 9);
+
+                        if ((canPlayClip[4, 4] == false) && (BoardManager.finishedTutorialLevel3 == true) && (BoardManager.player_idx.x <= 4) && (BoardManager.player_idx.x > 2) && (BoardManager.player_idx.y == 9))
                         {
                             clips = new List<AudioClip>() { Database.soundEffectClips[4] };
                             SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clip.
                         }
                         // Play clip for when they approach the corner in level 5.
-                        else if ((canPlayClip[4, 4] == true) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x == 4) && (playerPos.y == 9))
+                        else if ((canPlayClip[4, 4] == true) && (BoardManager.finishedTutorialLevel3 == true) && ((BoardManager.player_idx - approachLevel5Corner).magnitude < 0.1f))
                         {
                             canPlayClip[4, 4] = false;
-                            clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[16] };
+                            clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[14] };
                             SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.                                
                         }
                         // If the player has reached the corner in level 5.
-                        else if ((canPlayClip[4, 5] == true) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x == 1) && (playerPos.y == 9) && (GameManager.instance.boardScript.get_player_dir_world() == BoardManager.Direction.LEFT))
+                        else if ((canPlayClip[4, 5] == true) && (BoardManager.finishedTutorialLevel3 == true) && ((BoardManager.player_idx - level5Corner).magnitude < 0.1f) && (GameManager.instance.boardScript.get_player_dir_world() == BoardManager.Direction.LEFT))
                         {
                             canPlayClip[4, 5] = false;
                             clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[21] };
@@ -1919,7 +1929,7 @@ public class Player : MovingObject
                             // Keep this check in, but do nothing.
                         }
                         // If the player returns to their start position.
-                        else if ((canPlayClip[4, 3] == true) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x == startPos.x) && (playerPos.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
+                        else if ((canPlayClip[4, 3] == true) && (BoardManager.finishedTutorialLevel3 == true) && (BoardManager.player_idx.x == startPos.x) && (BoardManager.player_idx.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
                         {
 
                         }
@@ -1932,7 +1942,7 @@ public class Player : MovingObject
                             {
                                 canPlayClip[4, 1] = true;
                             }
-                            if ((playerPos.x != startPos.x) && (playerPos.y != startPos.y) && (BoardManager.left_start_pt == true))
+                            if ((BoardManager.player_idx.x != startPos.x) && (BoardManager.player_idx.y != startPos.y) && (BoardManager.left_start_pt == true))
                             {
                                 canPlayClip[4, 3] = true;
                             }
@@ -1941,12 +1951,12 @@ public class Player : MovingObject
                     // If we are in level 11.
                     else if (curLevel == 11)
                     {
-                        if ((canPlayClip[10, 4] == false) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x == 5) && (playerPos.y == 6) && (GameManager.instance.boardScript.get_player_dir_world() == BoardManager.Direction.FRONT))
+                        if ((canPlayClip[10, 4] == false) && (BoardManager.finishedTutorialLevel3 == true) && (BoardManager.player_idx.x == 5) && (BoardManager.player_idx.y == 6) && (GameManager.instance.boardScript.get_player_dir_world() == BoardManager.Direction.FRONT))
                         {
                             clips = new List<AudioClip>() { Database.soundEffectClips[4] };
                             SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clip.
                         }
-                        else if ((canPlayClip[10, 4] == false) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x >= 2) && (playerPos.y <= 6))
+                        else if ((canPlayClip[10, 4] == false) && (BoardManager.finishedTutorialLevel3 == true) && (BoardManager.player_idx.x >= 2) && (BoardManager.player_idx.y <= 6))
                         {
                             clips = new List<AudioClip>() { Database.soundEffectClips[4] };
                             SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clip.
@@ -1955,7 +1965,7 @@ public class Player : MovingObject
                             {
                                 canPlayClip[10, 1] = true;
                             }
-                            if ((playerPos.x != startPos.x) && (playerPos.y != startPos.y) && (BoardManager.left_start_pt == true))
+                            if ((BoardManager.player_idx.x != startPos.x) && (BoardManager.player_idx.y != startPos.y) && (BoardManager.left_start_pt == true))
                             {
                                 canPlayClip[10, 3] = true;
                             }
@@ -1968,7 +1978,7 @@ public class Player : MovingObject
                             // Logging.Log("50%", Logging.LogLevel.NORMAL);
                         }
                         // Play clips for when player hits the T intersection in level 11.
-                        else if ((canPlayClip[10, 4] == true) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x == 5) && (playerPos.y == 6) && (GameManager.instance.boardScript.get_player_dir_world() == BoardManager.Direction.FRONT))
+                        else if ((canPlayClip[10, 4] == true) && (BoardManager.finishedTutorialLevel3 == true) && (BoardManager.player_idx.x == 5) && (BoardManager.player_idx.y == 6) && (GameManager.instance.boardScript.get_player_dir_world() == BoardManager.Direction.FRONT))
                         {
                             if (canPlayClip[10, 1] == true)
                             {
@@ -1978,7 +1988,7 @@ public class Player : MovingObject
                             clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[33], Database.soundEffectClips[0], Database.mainGameClips[28] };
                             SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                         }
-                        else if ((canPlayClip[10, 4] == true) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x >= 2) && (playerPos.y <= 6))
+                        else if ((canPlayClip[10, 4] == true) && (BoardManager.finishedTutorialLevel3 == true) && (BoardManager.player_idx.x >= 2) && (BoardManager.player_idx.y <= 6))
                         {
                             clips = new List<AudioClip>() { Database.soundEffectClips[4] };
                             SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clip.
@@ -1987,7 +1997,7 @@ public class Player : MovingObject
                             {
                                 canPlayClip[10, 1] = true;
                             }
-                            if ((playerPos.x != startPos.x) && (playerPos.y != startPos.y) && (BoardManager.left_start_pt == true))
+                            if ((BoardManager.player_idx.x != startPos.x) && (BoardManager.player_idx.y != startPos.y) && (BoardManager.left_start_pt == true))
                             {
                                 canPlayClip[10, 3] = true;
                             }
@@ -2005,7 +2015,7 @@ public class Player : MovingObject
                             // Keep this check in, but do nothing.                                
                         }
                         // If the player returns to their start position.
-                        else if ((canPlayClip[10, 3] == true) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x == startPos.x) && (playerPos.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
+                        else if ((canPlayClip[10, 3] == true) && (BoardManager.finishedTutorialLevel3 == true) && (BoardManager.player_idx.x == startPos.x) && (BoardManager.player_idx.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
                         {
 
                         }
@@ -2027,7 +2037,7 @@ public class Player : MovingObject
                             // Keep this check in, but do nothing.
                         }
                         // If the player returns to their start position.
-                        else if ((canPlayClip[(curLevel - 1), 3] == true) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x == startPos.x) && (playerPos.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
+                        else if ((canPlayClip[(curLevel - 1), 3] == true) && (BoardManager.finishedTutorialLevel3 == true) && (BoardManager.player_idx.x == startPos.x) && (BoardManager.player_idx.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
                         {
 
                         }
@@ -2041,7 +2051,7 @@ public class Player : MovingObject
                             {
                                 canPlayClip[(curLevel - 1), 1] = true;
                             }
-                            if ((playerPos.x != startPos.x) && (playerPos.y != startPos.y) && (BoardManager.left_start_pt == true))
+                            if ((BoardManager.player_idx.x != startPos.x) && (BoardManager.player_idx.y != startPos.y) && (BoardManager.left_start_pt == true))
                             {
                                 canPlayClip[(curLevel - 1), 3] = true;
                             }
@@ -2073,7 +2083,7 @@ public class Player : MovingObject
                         SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clip.
                     }
                     // If the player returns to their start position.
-                    else if ((canPlayClip[11, 3] == true) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x == startPos.x) && (playerPos.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
+                    else if ((canPlayClip[11, 3] == true) && (BoardManager.finishedTutorialLevel3 == true) && (BoardManager.player_idx.x == startPos.x) && (BoardManager.player_idx.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
                     {
                         canPlayClip[11, 3] = false;
                         canPlayClip[10, 1] = true;
@@ -2096,32 +2106,34 @@ public class Player : MovingObject
 
             if (BoardManager.gotBackToStart == false)
             {
-                debugPlayerInfo = "Swiped up. Moved player forward. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                debugPlayerInfo = "Swiped up. Moved player forward. XPos = " + BoardManager.player_idx.x.ToString() + ", YPos = " + BoardManager.player_idx.y.ToString();
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
             }
         }
 
         if (rotatedLeft == true)
         {
+            Vector2 level3Corner = new Vector2(9, 9);
+            Vector2 level5Corner = new Vector2(1, 9);
             // Play clips for when the player has finished the gesture tutorial at level 3 and has rotated around the corner to move towards the exit.
-            if ((curLevel == 3) && (canPlayClip[2, 6] == true) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x == 9) && (playerPos.y == 9) && (GameManager.instance.boardScript.get_player_dir_world() == BoardManager.Direction.BACK) && (SoundManager.instance.finishedAllClips == true))
+            if ((curLevel == 3) && (canPlayClip[2, 6] == true) && (BoardManager.finishedTutorialLevel3 == true) && ((BoardManager.player_idx - level3Corner).magnitude < 0.1f) && (GameManager.instance.boardScript.get_player_dir_world() == BoardManager.Direction.BACK))
             {
                 if (hasMoved == true)
                 {
                     canPlayClip[2, 6] = false;
-                    clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.mainGameClips[18], Database.soundEffectClips[0], Database.mainGameClips[17] };
+                    clips = new List<AudioClip>() { Database.soundEffectClips[5], Database.soundEffectClips[0], Database.mainGameClips[17], Database.soundEffectClips[0], Database.mainGameClips[18] };
                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.                              
                     rotatedLeft = false;
                 }
             }
 
             // Play clips for when the player has rotated around the corner in level 5 to move towards the exit.
-            else if ((curLevel == 5) && (canPlayClip[4, 6] == true) && (playerPos.x <= 2) && (playerPos.y == 9) && (GameManager.instance.boardScript.get_player_dir_world() == BoardManager.Direction.BACK) && (SoundManager.instance.finishedAllClips == true))
+            else if ((curLevel == 5) && (canPlayClip[4, 6] == true) && ((BoardManager.player_idx - level5Corner).magnitude < 0.1f) && (GameManager.instance.boardScript.get_player_dir_world() == BoardManager.Direction.BACK))
             {
                 if (hasMoved == true)
                 {
                     canPlayClip[4, 6] = false;
-                    clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.mainGameClips[18], Database.soundEffectClips[0], Database.mainGameClips[17] };
+                    clips = new List<AudioClip>() { Database.soundEffectClips[5], Database.soundEffectClips[0], Database.mainGameClips[17], Database.soundEffectClips[0], Database.mainGameClips[18] };
                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.      
                     rotatedLeft = false;
                 }
@@ -2129,37 +2141,42 @@ public class Player : MovingObject
 
             else
             {
+                clips = new List<AudioClip>() { Database.soundEffectClips[5] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
                 rotatedLeft = false;
             }
 
             if (BoardManager.gotBackToStart == false)
             {
-                debugPlayerInfo = "Rotated left. Rotated player left 90 degrees. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                debugPlayerInfo = "Rotated left. Rotated player left 90 degrees. XPos = " + BoardManager.player_idx.x.ToString() + ", YPos = " + BoardManager.player_idx.y.ToString();
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
             }
         }
 
         if (rotatedRight == true)
         {
+            Vector2 level3Corner = new Vector2(9, 9);
+            Vector2 level5Corner = new Vector2(1, 9);
+
             // Play clips for when the player has finished the gesture tutorial at level 3 and has rotated around the corner to move towards the exit.
-            if ((curLevel == 3) && (canPlayClip[2, 6] == true) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x == 9) && (playerPos.y == 9) && (GameManager.instance.boardScript.get_player_dir_world() == BoardManager.Direction.BACK) && (SoundManager.instance.finishedAllClips == true))
+            if ((curLevel == 3) && (canPlayClip[2, 6] == true) && (BoardManager.finishedTutorialLevel3 == true) && ((BoardManager.player_idx - level3Corner).magnitude < 0.1f) && (GameManager.instance.boardScript.get_player_dir_world() == BoardManager.Direction.BACK))
             {
                 if (hasMoved == true)
                 {
-                    clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.mainGameClips[18], Database.soundEffectClips[0], Database.mainGameClips[17] };
-                    SoundManager.instance.PlayClips(clips); // Play the appropriate clips.
+                    clips = new List<AudioClip>() { Database.soundEffectClips[6], Database.soundEffectClips[0], Database.mainGameClips[17], Database.soundEffectClips[0], Database.mainGameClips[18] };
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                     canPlayClip[2, 6] = false;
                     rotatedRight = false;
                 }
             }
 
             // Play clips for when the player has rotated around the corner in level 5 to move towards the exit.
-            else if ((curLevel == 5) && (canPlayClip[4, 6] == true) && (playerPos.x <= 2) && (playerPos.y == 9) && (GameManager.instance.boardScript.get_player_dir_world() == BoardManager.Direction.BACK) && (SoundManager.instance.finishedAllClips == true))
+            else if ((curLevel == 5) && (canPlayClip[4, 6] == true) && ((BoardManager.player_idx - level5Corner).magnitude < 0.1f) && (GameManager.instance.boardScript.get_player_dir_world() == BoardManager.Direction.BACK))
             {
                 if (hasMoved == true)
                 {
                     canPlayClip[4, 6] = false;
-                    clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.mainGameClips[18], Database.soundEffectClips[0], Database.mainGameClips[17] };
+                    clips = new List<AudioClip>() { Database.soundEffectClips[6], Database.soundEffectClips[0], Database.mainGameClips[17], Database.soundEffectClips[0], Database.mainGameClips[18] };
                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                     rotatedRight = false;
                 }
@@ -2167,12 +2184,14 @@ public class Player : MovingObject
 
             else
             {
+                clips = new List<AudioClip>() { Database.soundEffectClips[6] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
                 rotatedRight = false;
             }
 
             if (BoardManager.gotBackToStart == false)
             {
-                debugPlayerInfo = "Rotated right. Rotated player right 90 degrees. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                debugPlayerInfo = "Rotated right. Rotated player right 90 degrees. XPos = " + BoardManager.player_idx.x.ToString() + ", YPos = " + BoardManager.player_idx.y.ToString();
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
             }
         }
@@ -2186,13 +2205,13 @@ public class Player : MovingObject
                 if ((canPlayClip[0, 0] == true) && (intercepted == false) && (BoardManager.finishedTutorialLevel1 == true))
                 {
                     canPlayClip[0, 0] = false;
-                    debugPlayerInfo = "Playing level 1 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                    debugPlayerInfo = "Playing level 1 beginning clips. XPos = " + BoardManager.player_idx.x.ToString() + ", YPos = " + BoardManager.player_idx.y.ToString();
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                    clips = new List<AudioClip>() { Database.levelStartClips[0], Database.soundEffectClips[2], Database.mainGameClips[1], Database.soundEffectClips[0], Database.mainGameClips[2], Database.soundEffectClips[0], Database.mainGameClips[3], Database.soundEffectClips[0], Database.mainGameClips[4], Database.soundEffectClips[0], Database.mainGameClips[5], Database.soundEffectClips[0], Database.mainGameClips[6], Database.soundEffectClips[0], Database.mainGameClips[7], Database.soundEffectClips[0], Database.mainGameClips[8], Database.soundEffectClips[0], Database.mainGameClips[9], Database.soundEffectClips[0], Database.mainGameClips[10] };
+                    clips = new List<AudioClip>() { Database.levelStartClips[1], Database.levelStartClips[0], Database.soundEffectClips[2], Database.mainGameClips[0], Database.soundEffectClips[0], Database.mainGameClips[1], Database.soundEffectClips[0], Database.mainGameClips[2], Database.soundEffectClips[0], Database.mainGameClips[3], Database.soundEffectClips[0], Database.soundEffectClips[8], Database.soundEffectClips[0], Database.mainGameClips[4], Database.soundEffectClips[0], Database.mainGameClips[5], Database.soundEffectClips[0], Database.mainGameClips[6], Database.soundEffectClips[0], Database.mainGameClips[7], Database.soundEffectClips[0], Database.mainGameClips[8] };
                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                 }
                 // If the player is not at the exit and swiped down.
-                if ((canPlayClip[0, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
+                if ((canPlayClip[0, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((BoardManager.player_idx.x == startPos.x) && (BoardManager.player_idx.y == startPos.y))))
                 {
                     endingLevel = false;
                     debugPlayerInfo = "Swiped down. Attempting to exit level.";
@@ -2210,13 +2229,13 @@ public class Player : MovingObject
                 if (canPlayClip[1, 0] == true)
                 {
                     canPlayClip[1, 0] = false;
-                    debugPlayerInfo = "Playing level 2 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                    debugPlayerInfo = "Playing level 2 beginning clips. XPos = " + BoardManager.player_idx.x.ToString() + ", YPos = " + BoardManager.player_idx.y.ToString();
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                    clips = new List<AudioClip>() { Database.levelStartClips[1], Database.soundEffectClips[2], Database.mainGameClips[12], Database.soundEffectClips[0], Database.mainGameClips[9], Database.soundEffectClips[0], Database.mainGameClips[10] };
+                    clips = new List<AudioClip>() { Database.levelStartClips[2], Database.levelStartClips[0], Database.soundEffectClips[2], Database.mainGameClips[10], Database.soundEffectClips[0], Database.mainGameClips[7], Database.soundEffectClips[0], Database.mainGameClips[8] };
                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                 }
                 // If the player is not at the exit and swiped down.
-                if ((canPlayClip[1, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
+                if ((canPlayClip[1, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((BoardManager.player_idx.x == startPos.x) && (BoardManager.player_idx.y == startPos.y))))
                 {
                     endingLevel = false;
                     debugPlayerInfo = "Swiped down. Attempting to exit level.";
@@ -2234,13 +2253,13 @@ public class Player : MovingObject
                 if ((canPlayClip[2, 0] == true) && (intercepted == false))
                 {
                     canPlayClip[2, 0] = false;
-                    debugPlayerInfo = "Playing level 3 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                    debugPlayerInfo = "Playing level 3 beginning clips. XPos = " + BoardManager.player_idx.x.ToString() + ", YPos = " + BoardManager.player_idx.y.ToString();
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                    clips = new List<AudioClip>() { Database.levelStartClips[2], Database.soundEffectClips[2], Database.mainGameClips[14], Database.soundEffectClips[0], Database.mainGameClips[15], Database.soundEffectClips[0], Database.mainGameClips[10] };
+                    clips = new List<AudioClip>() { Database.levelStartClips[3], Database.levelStartClips[0], Database.soundEffectClips[2], Database.mainGameClips[12], Database.soundEffectClips[0], Database.mainGameClips[13], Database.soundEffectClips[0], Database.mainGameClips[8] };
                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                 }
                 // If the player is not at the exit and swiped down.
-                if ((canPlayClip[2, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
+                if ((canPlayClip[2, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((BoardManager.player_idx.x == startPos.x) && (BoardManager.player_idx.y == startPos.y))))
                 {
                     endingLevel = false;
                     debugPlayerInfo = "Swiped down. Attempting to exit level.";
@@ -2258,13 +2277,13 @@ public class Player : MovingObject
                 if (canPlayClip[3, 0] == true)
                 {
                     canPlayClip[3, 0] = false;
-                    debugPlayerInfo = "Playing level 4 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                    debugPlayerInfo = "Playing level 4 beginning clips. XPos = " + BoardManager.player_idx.x.ToString() + ", YPos = " + BoardManager.player_idx.y.ToString();
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                    clips = new List<AudioClip>() { Database.levelStartClips[3], Database.soundEffectClips[2], Database.mainGameClips[19], Database.soundEffectClips[0], Database.mainGameClips[10] };
+                    clips = new List<AudioClip>() { Database.levelStartClips[4], Database.levelStartClips[0], Database.soundEffectClips[2], Database.mainGameClips[19], Database.soundEffectClips[0], Database.mainGameClips[8] };
                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                 }
                 // If the player is not at the exit and swiped down.
-                if ((canPlayClip[3, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
+                if ((canPlayClip[3, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((BoardManager.player_idx.x == startPos.x) && (BoardManager.player_idx.y == startPos.y))))
                 {
                     endingLevel = false;
                     debugPlayerInfo = "Swiped down. Attempting to exit level.";
@@ -2282,13 +2301,13 @@ public class Player : MovingObject
                 if (canPlayClip[4, 0] == true)
                 {
                     canPlayClip[4, 0] = false;
-                    debugPlayerInfo = "Playing level 5 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                    debugPlayerInfo = "Playing level 5 beginning clips. XPos = " + BoardManager.player_idx.x.ToString() + ", YPos = " + BoardManager.player_idx.y.ToString();
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                    clips = new List<AudioClip>() { Database.levelStartClips[4], Database.soundEffectClips[2], Database.mainGameClips[20], Database.soundEffectClips[0], Database.mainGameClips[10] };
+                    clips = new List<AudioClip>() { Database.levelStartClips[5], Database.levelStartClips[0], Database.soundEffectClips[2], Database.mainGameClips[20], Database.soundEffectClips[0], Database.mainGameClips[8] };
                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                 }
                 // If the player is not at the exit and swiped down.
-                if ((canPlayClip[4, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
+                if ((canPlayClip[4, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((BoardManager.player_idx.x == startPos.x) && (BoardManager.player_idx.y == startPos.y))))
                 {
                     endingLevel = false;
                     debugPlayerInfo = "Swiped down. Attempting to exit level.";
@@ -2306,13 +2325,13 @@ public class Player : MovingObject
                 if (canPlayClip[5, 0] == true)
                 {
                     canPlayClip[5, 0] = false;
-                    debugPlayerInfo = "Playing level 6 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                    debugPlayerInfo = "Playing level 6 beginning clips. XPos = " + BoardManager.player_idx.x.ToString() + ", YPos = " + BoardManager.player_idx.y.ToString();
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                    clips = new List<AudioClip>() { Database.levelStartClips[5], Database.soundEffectClips[2], Database.mainGameClips[10] };
+                    clips = new List<AudioClip>() { Database.levelStartClips[6], Database.levelStartClips[0], Database.soundEffectClips[2], Database.mainGameClips[8] };
                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                 }
                 // If the player is not at the exit and swiped down.
-                if ((canPlayClip[5, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
+                if ((canPlayClip[5, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((BoardManager.player_idx.x == startPos.x) && (BoardManager.player_idx.y == startPos.y))))
                 {
                     endingLevel = false;
                     debugPlayerInfo = "Swiped down. Attempting to exit level.";
@@ -2330,13 +2349,13 @@ public class Player : MovingObject
                 if (canPlayClip[6, 0] == true)
                 {
                     canPlayClip[6, 0] = false;
-                    debugPlayerInfo = "Playing level 7 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                    debugPlayerInfo = "Playing level 7 beginning clips. XPos = " + BoardManager.player_idx.x.ToString() + ", YPos = " + BoardManager.player_idx.y.ToString();
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                    clips = new List<AudioClip>() { Database.levelStartClips[6], Database.soundEffectClips[2], Database.mainGameClips[23], Database.soundEffectClips[0], Database.mainGameClips[24], Database.soundEffectClips[0], Database.mainGameClips[10] };
+                    clips = new List<AudioClip>() { Database.levelStartClips[7], Database.levelStartClips[0], Database.soundEffectClips[2], Database.mainGameClips[23], Database.soundEffectClips[0], Database.mainGameClips[24], Database.soundEffectClips[0], Database.mainGameClips[8] };
                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                 }
                 // If the player is not at the exit and swiped down.
-                if ((canPlayClip[6, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
+                if ((canPlayClip[6, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((BoardManager.player_idx.x == startPos.x) && (BoardManager.player_idx.y == startPos.y))))
                 {
                     endingLevel = false;
                     debugPlayerInfo = "Swiped down. Attempting to exit level.";
@@ -2354,13 +2373,13 @@ public class Player : MovingObject
                 if (canPlayClip[7, 0] == true)
                 {
                     canPlayClip[7, 0] = false;
-                    debugPlayerInfo = "Playing level 8 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                    debugPlayerInfo = "Playing level 8 beginning clips. XPos = " + BoardManager.player_idx.x.ToString() + ", YPos = " + BoardManager.player_idx.y.ToString();
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                    clips = new List<AudioClip>() { Database.levelStartClips[7], Database.soundEffectClips[2], Database.mainGameClips[10] };
+                    clips = new List<AudioClip>() { Database.levelStartClips[8], Database.levelStartClips[0], Database.soundEffectClips[2], Database.mainGameClips[8] };
                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                 }
                 // If the player is not at the exit and swiped down.
-                if ((canPlayClip[7, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
+                if ((canPlayClip[7, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((BoardManager.player_idx.x == startPos.x) && (BoardManager.player_idx.y == startPos.y))))
                 {
                     endingLevel = false;
                     debugPlayerInfo = "Swiped down. Attempting to exit level.";
@@ -2378,13 +2397,13 @@ public class Player : MovingObject
                 if (canPlayClip[8, 0] == true)
                 {
                     canPlayClip[8, 0] = false;
-                    debugPlayerInfo = "Playing level 9 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                    debugPlayerInfo = "Playing level 9 beginning clips. XPos = " + BoardManager.player_idx.x.ToString() + ", YPos = " + BoardManager.player_idx.y.ToString();
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                    clips = new List<AudioClip>() { Database.levelStartClips[8], Database.soundEffectClips[2], Database.mainGameClips[10] };
+                    clips = new List<AudioClip>() { Database.levelStartClips[9], Database.levelStartClips[0], Database.soundEffectClips[2], Database.mainGameClips[8] };
                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                 }
                 // If the player is not at the exit and swiped down.
-                if ((canPlayClip[8, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
+                if ((canPlayClip[8, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((BoardManager.player_idx.x == startPos.x) && (BoardManager.player_idx.y == startPos.y))))
                 {
                     endingLevel = false;
                     debugPlayerInfo = "Swiped down. Attempting to exit level.";
@@ -2402,13 +2421,13 @@ public class Player : MovingObject
                 if (canPlayClip[9, 0] == true)
                 {
                     canPlayClip[9, 0] = false;
-                    debugPlayerInfo = "Playing level 10 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                    debugPlayerInfo = "Playing level 10 beginning clips. XPos = " + BoardManager.player_idx.x.ToString() + ", YPos = " + BoardManager.player_idx.y.ToString();
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                    clips = new List<AudioClip>() { Database.levelStartClips[9], Database.soundEffectClips[2], Database.mainGameClips[10] };
+                    clips = new List<AudioClip>() { Database.levelStartClips[10], Database.levelStartClips[0], Database.soundEffectClips[2], Database.mainGameClips[8] };
                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                 }
                 // If the player is not at the exit and swiped down.
-                if ((canPlayClip[9, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
+                if ((canPlayClip[9, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((BoardManager.player_idx.x == startPos.x) && (BoardManager.player_idx.y == startPos.y))))
                 {
                     endingLevel = false;
                     debugPlayerInfo = "Swiped down. Attempting to exit level.";
@@ -2426,13 +2445,13 @@ public class Player : MovingObject
                 if (canPlayClip[10, 0] == true)
                 {
                     canPlayClip[10, 0] = false;
-                    debugPlayerInfo = "Playing level 11 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                    debugPlayerInfo = "Playing level 11 beginning clips. XPos = " + BoardManager.player_idx.x.ToString() + ", YPos = " + BoardManager.player_idx.y.ToString();
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                    clips = new List<AudioClip>() { Database.levelStartClips[10], Database.soundEffectClips[2], Database.mainGameClips[25], Database.soundEffectClips[0], Database.mainGameClips[26], Database.soundEffectClips[0], Database.mainGameClips[27], Database.soundEffectClips[0], Database.mainGameClips[10] };
+                    clips = new List<AudioClip>() { Database.levelStartClips[11], Database.levelStartClips[0], Database.soundEffectClips[2], Database.mainGameClips[25], Database.soundEffectClips[0], Database.mainGameClips[26], Database.soundEffectClips[0], Database.mainGameClips[27], Database.soundEffectClips[0], Database.mainGameClips[8] };
                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                 }
                 // If the player is not at the exit and swiped down.
-                if ((canPlayClip[10, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
+                if ((canPlayClip[10, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((BoardManager.player_idx.x == startPos.x) && (BoardManager.player_idx.y == startPos.y))))
                 {
                     endingLevel = false;
                     debugPlayerInfo = "Swiped down. Attempting to exit level.";
@@ -2448,13 +2467,13 @@ public class Player : MovingObject
             if (canPlayClip[11, 0] == true)
             {
                 canPlayClip[11, 0] = false;
-                debugPlayerInfo = "Playing level " + curLevel + " beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                debugPlayerInfo = "Playing level " + curLevel + " beginning clips. XPos = " + BoardManager.player_idx.x.ToString() + ", YPos = " + BoardManager.player_idx.y.ToString();
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                clips = new List<AudioClip>() { Database.levelStartClips[curLevel - 1] };
+                clips = new List<AudioClip>() { Database.levelStartClips[curLevel], Database.levelStartClips[0] };
                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
             }
             // If the player is not at the exit and swiped down.
-            if ((canPlayClip[11, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
+            if ((canPlayClip[11, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((BoardManager.player_idx.x == startPos.x) && (BoardManager.player_idx.y == startPos.y))))
             {
                 endingLevel = false;
                 debugPlayerInfo = "Swiped down. Attempting to exit level.";
@@ -2569,7 +2588,7 @@ public class Player : MovingObject
                         canPlayClip[0, 2] = false;
                         debugPlayerInfo = "Playing found level 1 exit clip.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                        clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[11] };
+                        clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[9] };
                         SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                     }
                     else if (curLevel == 2)
@@ -2577,7 +2596,7 @@ public class Player : MovingObject
                         canPlayClip[1, 2] = false;
                         debugPlayerInfo = "Playing found level 2 exit clip.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                        clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[13] };
+                        clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[9] };
                         SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                     }
                     else if (curLevel == 3)
@@ -2585,7 +2604,7 @@ public class Player : MovingObject
                         canPlayClip[2, 2] = false;
                         debugPlayerInfo = "Playing found level 3 exit clip.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                        clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[18] };
+                        clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[11] };
                         SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clip.
                     }
                     else if (curLevel == 11)
@@ -2618,7 +2637,7 @@ public class Player : MovingObject
                 debugPlayerInfo = "Playing exiting level clip.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                 clips = new List<AudioClip>() { Database.soundEffectClips[9] };
-                SoundManager.instance.PlayClips(clips); // Play the appropriate clip. 
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clip. 
             }
 
             // If the exit level sound has finished playing.
@@ -2917,8 +2936,6 @@ public class Player : MovingObject
                             dir = get_player_dir("LEFT"); // Rotate the player left 90 degrees.
                             if (!GameManager.instance.boardScript.turning_lock)
                             {
-                                clips = new List<AudioClip>() { Database.soundEffectClips[5] };
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
                                 rotatedLeft = true;
                             }
                         }
@@ -2941,8 +2958,6 @@ public class Player : MovingObject
                             dir = -transform.up; // Rotate the player right 90 degrees.
                             if (!GameManager.instance.boardScript.turning_lock)
                             {
-                                clips = new List<AudioClip>() { Database.soundEffectClips[6] };
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
                                 rotatedRight = true;
                             }
                         }
@@ -3011,105 +3026,105 @@ public class Player : MovingObject
                 {
                     debugPlayerInfo = "Nothing happened due to error with horizontal distance on tap.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[0], true); // Play the appropriate clip.                    
+                    SoundManager.instance.PlayVoice(Database.errorClips[0], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.                    
                 }
                 // If this error was registered.
                 else if (ie.isTapVerticalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with vertical distance on tap.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[1], true); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[1], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isTapRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on tap.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[2], true); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[2], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeLeftHorizontalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with horizontal distance on swipe left.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[3], true); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[3], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeRightHorizontalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with horizontal distance on swipe right.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[4], true); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[4], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeUpVerticalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with vertical distance on swipe up.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[5], true); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[5], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeDownVerticalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with vertical distance on swipe down.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[6], true); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[6], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeLeftRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on swipe left.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[7], true); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[7], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeRightRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on swipe right.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[7], true); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[7], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeUpRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on swipe up.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[7], true); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[7], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeDownRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on swipe down.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[7], true); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[7], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isRotationAngleError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with angle on rotation.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[8], true); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isHoldHorizontalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with horizontal distance on hold.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[9], true); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[9], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isHoldVerticalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with vertical distance on hold.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[10], true); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[10], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isHoldRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on hold.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[11], true); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[11], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
             }
         }
@@ -3373,9 +3388,7 @@ public class Player : MovingObject
                         {
                             dir = get_player_dir("LEFT"); // Rotate the player left 90 degrees.
                             if (!GameManager.instance.boardScript.turning_lock)
-                            {
-                                clips = new List<AudioClip>() { Database.soundEffectClips[5] };
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                            {                                
                                 rotatedLeft = true;
                             }
                         }
@@ -3393,9 +3406,7 @@ public class Player : MovingObject
                         {
                             dir = get_player_dir("RIGHT"); // Rotate the player right 90 degrees.
                             if (!GameManager.instance.boardScript.turning_lock)
-                            {
-                                clips = new List<AudioClip>() { Database.soundEffectClips[6] };
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                            {                                
                                 rotatedRight = true;
                             }
                         }
@@ -3413,105 +3424,105 @@ public class Player : MovingObject
                 {
                     debugPlayerInfo = "Nothing happened due to error with horizontal distance on tap.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[0], true); // Play the appropriate clip.                    
+                    SoundManager.instance.PlayVoice(Database.errorClips[0], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.                    
                 }
                 // If this error was registered.
                 else if (ie.isTapVerticalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with vertical distance on tap.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[1], true); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[1], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isTapRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on tap.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[2], true); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[2], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeLeftHorizontalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with horizontal distance on swipe left.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[3], true); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[3], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeRightHorizontalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with horizontal distance on swipe right.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[4], true); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[4], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeUpVerticalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with vertical distance on swipe up.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[5], true); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[5], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeDownVerticalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with vertical distance on swipe down.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[6], true); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[6], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeLeftRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on swipe left.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[7], true); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[7], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeRightRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on swipe right.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[7], true); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[7], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeUpRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on swipe up.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[7], true); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[7], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeDownRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on swipe down.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[7], true); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[7], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isRotationAngleError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with angle on rotation.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[8], true); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isHoldHorizontalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with horizontal distance on hold.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[9], true); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[9], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isHoldVerticalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with vertical distance on hold.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[10], true); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[10], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isHoldRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on hold.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[11], true); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[11], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
             }
 
@@ -3697,7 +3708,7 @@ public class Player : MovingObject
         // Set hitWall to equal the component passed in as a parameter.
         Wall hitWall = component as Wall;
         // if (!SoundManager.instance.isBusy())
-        //SoundManager.instance.PlayVoice(Database.soundEffectClips[8], true);        
+        //SoundManager.instance.PlayVoice(Database.soundEffectClips[8], true, 0.0f, 0.0f, 0.5f);        
     }
 
     private void OnDisable()
@@ -3939,28 +3950,28 @@ public class Player : MovingObject
                         {
                             debugPlayerInfo = "Nothing happened due to error with horizontal distance on tap.";
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                            SoundManager.instance.PlayVoice(Database.errorClips[0], true); // Play the appropriate clip.  
+                            SoundManager.instance.PlayVoice(Database.errorClips[0], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.  
                         }
                         // If this error was registered.
                         else if ((ie.isUnrecognized == true) && (ie.isTapVerticalError == true))
                         {
                             debugPlayerInfo = "Nothing happened due to error with vertical distance on tap.";
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                            SoundManager.instance.PlayVoice(Database.errorClips[1], true); // Play the appropriate clip.  
+                            SoundManager.instance.PlayVoice(Database.errorClips[1], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.  
                         }
                         // If this error was registered.
                         else if ((ie.isUnrecognized == true) && (ie.isTapRotationError == true))
                         {
                             debugPlayerInfo = "Nothing happened due to error with rotation on tap.";
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                            SoundManager.instance.PlayVoice(Database.errorClips[2], true); // Play the appropriate clip.  
+                            SoundManager.instance.PlayVoice(Database.errorClips[2], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.  
                         }          
                         // If the gesture was not a tap.
                         else
                         {
                             debugPlayerInfo = "Incorrect gesture made. You should tap.";
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                            SoundManager.instance.PlayVoice(Database.errorClips[14], true); // Play the appropriate clip.  
+                            SoundManager.instance.PlayVoice(Database.errorClips[12], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.  
                         }
                     }
                     // If the tapping instruction has not finished yet.
@@ -4020,21 +4031,21 @@ public class Player : MovingObject
                             {
                                 debugPlayerInfo = "Nothing happened due to error with vertical distance on swipe up.";
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                                SoundManager.instance.PlayVoice(Database.errorClips[5], true); // Play the appropriate clip.  
+                                SoundManager.instance.PlayVoice(Database.errorClips[5], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.  
                             }
                             // If this error was registered.
                             else if ((ie.isUnrecognized == true) && (ie.isSwipeUpRotationError == true))
                             {
                                 debugPlayerInfo = "Nothing happened due to error with rotation on swipe up.";
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                                SoundManager.instance.PlayVoice(Database.errorClips[7], true); // Play the appropriate clip.  
+                                SoundManager.instance.PlayVoice(Database.errorClips[7], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.  
                             }
                             // If the gesture was not a swipe up.
                             else
                             {
                                 debugPlayerInfo = "Incorrect gesture made. You should swipe up.";
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                                SoundManager.instance.PlayVoice(Database.errorClips[15], true); // Play the appropriate clip.  
+                                SoundManager.instance.PlayVoice(Database.errorClips[13], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.  
                             }
                         }
                         // If the swiping instruction has not finished yet.
@@ -4065,14 +4076,12 @@ public class Player : MovingObject
                                     if (GM_title.isUsingTalkback == true)
                                     {
                                         clips = new List<AudioClip> { Database.tutorialClips[17] };
-                                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // If they are using Talkback, play the correct instructions.
-                                        // SoundManager.instance.PlayVoice(Database.tutorialClips[17], true); // If they are using Talkback, play the correct instruction.                                   
+                                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // If they are using Talkback, play the correct instructions.                                                                
                                     }
                                     else if (GM_title.isUsingTalkback == false)
                                     {
                                         clips = new List<AudioClip> { Database.tutorialClips[16] };
                                         SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // If they are using Talkback, play the correct instructions.
-                                        // SoundManager.instance.PlayVoice(Database.tutorialClips[16], true); // If they are not using Talkback, play the correct instruction.  
                                     }
                                 }
                                 // If the pause menu has not been closed.
@@ -4104,28 +4113,28 @@ public class Player : MovingObject
                                 {
                                     debugPlayerInfo = "Nothing happened due to error with horizontal distance on hold.";
                                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                                    SoundManager.instance.PlayVoice(Database.errorClips[9], true); // Play the appropriate clip.  
+                                    SoundManager.instance.PlayVoice(Database.errorClips[9], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.  
                                 }
                                 // If this error was registered.
                                 else if ((ie.isUnrecognized == true) && (ie.isHoldVerticalError == true))
                                 {
                                     debugPlayerInfo = "Nothing happened due to error with vertical distance on hold.";
                                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                                    SoundManager.instance.PlayVoice(Database.errorClips[10], true); // Play the appropriate clip.  
+                                    SoundManager.instance.PlayVoice(Database.errorClips[10], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.  
                                 }
                                 // If this error was registered.
                                 else if ((ie.isUnrecognized == true) && (ie.isHoldRotationError == true))
                                 {
                                     debugPlayerInfo = "Nothing happened due to error with rotation on hold.";
                                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                                    SoundManager.instance.PlayVoice(Database.errorClips[11], true); // Play the appropriate clip.  
+                                    SoundManager.instance.PlayVoice(Database.errorClips[11], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.  
                                 }
                                 // If the gesture was not a hold.
                                 else
                                 {
                                     debugPlayerInfo = "Incorrect gesture made. You should make a hold.";
                                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                                    SoundManager.instance.PlayVoice(Database.errorClips[16], true); // Play the appropriate clip.  
+                                    SoundManager.instance.PlayVoice(Database.errorClips[14], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.  
                                 }
                             }
                             // If the pause menu instruction has not finished yet.
@@ -4159,21 +4168,21 @@ public class Player : MovingObject
                                 {
                                     debugPlayerInfo = "Nothing happened due to error with vertical distance on swipe down.";
                                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                                    SoundManager.instance.PlayVoice(Database.errorClips[6], true); // Play the appropriate clip.  
+                                    SoundManager.instance.PlayVoice(Database.errorClips[6], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.  
                                 }
                                 // If this error was registered.
                                 else if ((ie.isUnrecognized == true) && (ie.isSwipeDownRotationError == true))
                                 {
                                     debugPlayerInfo = "Nothing happened due to error with rotation on swipe down.";
                                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                                    SoundManager.instance.PlayVoice(Database.errorClips[7], true); // Play the appropriate clip.  
+                                    SoundManager.instance.PlayVoice(Database.errorClips[7], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.  
                                 }
                                 // If the gesture was not a swipe down.
                                 else
                                 {
                                     debugPlayerInfo = "Incorrect gesture made. You should swipe down.";
                                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                                    SoundManager.instance.PlayVoice(Database.errorClips[17], true); // Play the appropriate clip.  
+                                    SoundManager.instance.PlayVoice(Database.errorClips[15], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.  
                                 }
                             }
                             // If the exit instruction has not finished yet.
@@ -4216,28 +4225,28 @@ public class Player : MovingObject
                         {
                             debugPlayerInfo = "Nothing happened due to error with horizontal distance on tap.";
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                            SoundManager.instance.PlayVoice(Database.errorClips[0], true); // Play the appropriate clip.  
+                            SoundManager.instance.PlayVoice(Database.errorClips[0], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.  
                         }
                         // If this error was registered.
                         else if ((ie.isUnrecognized == true) && (ie.isTapVerticalError == true))
                         {
                             debugPlayerInfo = "Nothing happened due to error with vertical distance on tap.";
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                            SoundManager.instance.PlayVoice(Database.errorClips[1], true); // Play the appropriate clip.  
+                            SoundManager.instance.PlayVoice(Database.errorClips[1], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.  
                         }
                         // If this error was registered.
                         else if ((ie.isUnrecognized == true) && (ie.isTapRotationError == true))
                         {
                             debugPlayerInfo = "Nothing happened due to error with rotation on tap.";
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                            SoundManager.instance.PlayVoice(Database.errorClips[2], true); // Play the appropriate clip.  
+                            SoundManager.instance.PlayVoice(Database.errorClips[2], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.  
                         }
                         // If a tap was not registered.
                         else
                         {
                             debugPlayerInfo = "Incorrect gesture made. You should tap.";
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                            SoundManager.instance.PlayVoice(Database.errorClips[14], true); // Play the appropriate clip.  
+                            SoundManager.instance.PlayVoice(Database.errorClips[12], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.  
                         }
                     }
                     // If the tap at corner instruction has not finished yet.
@@ -4317,14 +4326,14 @@ public class Player : MovingObject
                         {
                             debugPlayerInfo = "Nothing happened due to error with angle of rotation.";
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                            SoundManager.instance.PlayVoice(Database.errorClips[8], true); // Play the appropriate clip.  
+                            SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.  
                         }
                         // If the gesture was not a rotation
                         else
                         {
                             debugPlayerInfo = "Incorrect gesture made. You should make a left or right rotation.";
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                            SoundManager.instance.PlayVoice(Database.errorClips[18], true); // Play the appropriate clip.  
+                            SoundManager.instance.PlayVoice(Database.errorClips[16], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.  
                         }
                     }
                     // If the turning instruction has not finished yet.
