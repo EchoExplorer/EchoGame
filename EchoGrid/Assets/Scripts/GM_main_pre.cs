@@ -14,7 +14,7 @@ public class GM_main_pre : MonoBehaviour
     bool at_confirm = false;
     bool reset_audio = false;
 
-    enum SelectMode { NONE, CONTINUE, NEW, CONFIRM, BACK, SKIP }
+    enum SelectMode { NONE, CONTINUE, NEW, CONFIRM, BACK, SPECIFIC }
 
     eventHandler eh;
     CDTimer TriggerStartNewGame;
@@ -30,11 +30,18 @@ public class GM_main_pre : MonoBehaviour
     List<AudioClip> clips;
     float[] balances;
 
+    SelectMode selectMode;
+
     bool canRepeat = true;
     bool repeatPregameClip = false;
     static bool firstConfirm = true;
 
-    int levelToStart; 
+    int levelToStart;
+    public static int tempLevelToStart;
+    public static bool level1TutorialFinished = false;
+    public static bool level3TutorialFinished = false;
+
+    bool pickedSpecificLevel = false;
 
     GameObject levelImage;
     Text levelText;
@@ -62,18 +69,25 @@ public class GM_main_pre : MonoBehaviour
             svdata_split = System.IO.File.ReadAllLines(filename);
             //read existing data
             levelToStart = Int32.Parse(svdata_split[0]);
+            tempLevelToStart = Int32.Parse(svdata_split[0]);
+            level1TutorialFinished = BoardManager.StringToBool(svdata_split[1]);
+            level3TutorialFinished = BoardManager.StringToBool(svdata_split[2]);
         }
         else
         {
             if ((current == GameMode.Game_Mode.RESTART) || (current == GameMode.Game_Mode.CONTINUE))
             {
-                levelToStart = 12;                
+                levelToStart = 12;
+                tempLevelToStart = 12;
             }
             else if ((current == GameMode.Game_Mode.TUTORIAL_RESTART) || (current == GameMode.Game_Mode.TUTORIAL))
             {
-                levelToStart = 1;              
+                levelToStart = 1;
+                tempLevelToStart = 1;
             }
         }
+
+        selectMode = SelectMode.NONE;
 
         init();
     }
@@ -153,7 +167,7 @@ public class GM_main_pre : MonoBehaviour
         {
             if (at_confirm == false)
             {
-                if ((GameMode.instance.gamemode == GameMode.Game_Mode.TUTORIAL) || (GameMode.instance.gamemode == GameMode.Game_Mode.TUTORIAL_RESTART))
+                if (((GameMode.instance.gamemode == GameMode.Game_Mode.TUTORIAL) || (GameMode.instance.gamemode == GameMode.Game_Mode.TUTORIAL_RESTART)) && (selectMode != SelectMode.SPECIFIC))
                 {
                     if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
                     {
@@ -191,7 +205,7 @@ public class GM_main_pre : MonoBehaviour
                         }
                     }
                 }
-                else if ((GameMode.instance.gamemode == GameMode.Game_Mode.CONTINUE) || (GameMode.instance.gamemode == GameMode.Game_Mode.RESTART))
+                else if (((GameMode.instance.gamemode == GameMode.Game_Mode.CONTINUE) || (GameMode.instance.gamemode == GameMode.Game_Mode.RESTART)) && (selectMode != SelectMode.SPECIFIC))
                 {
                     if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
                     {
@@ -228,6 +242,10 @@ public class GM_main_pre : MonoBehaviour
                             }
                         }
                     }
+                }
+                else if (selectMode == SelectMode.SPECIFIC)
+                {
+
                 }
             }
             else if (at_confirm == true)
@@ -298,10 +316,8 @@ public class GM_main_pre : MonoBehaviour
     /// Checks user input with raw touch data and transitions to the next scene according to the input.
     /// </summary>
     void Update()
-    {
+    {       
         play_audio();
-
-        SelectMode selectMode = SelectMode.NONE;
 
         // Check if we are running either in the Unity editor or in a standalone build.
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
@@ -320,6 +336,13 @@ public class GM_main_pre : MonoBehaviour
                     canRepeat = true;
                     selectMode = SelectMode.CONFIRM; // We have tapped to confirm we want to start a new game, so set mode to Confirm.
                 }
+
+                if (selectMode == SelectMode.SPECIFIC)
+                {
+                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0] };
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f); // Play the appropriate clips.
+                    selectMode = SelectMode.NONE;
+                }
             }
             // If a swipe was registered.
             else if (ie.isSwipe == true)
@@ -327,25 +350,101 @@ public class GM_main_pre : MonoBehaviour
                 // If the swipe was left.
                 if (ie.isLeft == true)
                 {
-                    canRepeat = true;
-                    selectMode = SelectMode.NEW; // If we have swiped left, set mode to New.
+                    if (selectMode != SelectMode.SPECIFIC)
+                    {
+                        canRepeat = true;
+                        selectMode = SelectMode.NEW; // If we have swiped left, set mode to New.
+                    }
                 }
                 // If the swipe was right.
                 if (ie.isRight == true)
                 {
-                    canRepeat = true;
-                    selectMode = SelectMode.CONTINUE; // If we have swiped right, set mode to Continue.
+                    if (selectMode != SelectMode.SPECIFIC)
+                    {
+                        canRepeat = true;
+                        selectMode = SelectMode.CONTINUE; // If we have swiped right, set mode to Continue.
+                    }
                 }
                 // If the swipe was up.
                 if (ie.isUp == true)
                 {
-                    selectMode = SelectMode.SKIP; // If we have swiped up, set mode to Skip.
+                    if (selectMode != SelectMode.SPECIFIC)
+                    {
+                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f); // Play the appropriate clips.
+                        selectMode = SelectMode.SPECIFIC; // If we have swiped up, set mode to Specific.
+                    }
+                    else if (selectMode == SelectMode.SPECIFIC)
+                    {
+                        if ((GameMode.instance.gamemode == GameMode.Game_Mode.TUTORIAL) || (GameMode.instance.gamemode == GameMode.Game_Mode.TUTORIAL_RESTART))
+                        {
+                            if ((tempLevelToStart >= 1) && (tempLevelToStart < 11))
+                            {
+                                tempLevelToStart += 1;
+                                debugPlayerInfo = "Increased level to start from. Would start at level " + tempLevelToStart.ToString();
+                                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                            }
+                            else if (tempLevelToStart == 11)
+                            {
+                                debugPlayerInfo = "At maximum level for tutorial levels. Cannot pick a higher level to play.";
+                                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                            }
+                        }
+                        else if ((GameMode.instance.gamemode == GameMode.Game_Mode.CONTINUE) || (GameMode.instance.gamemode == GameMode.Game_Mode.RESTART))
+                        {
+                            if ((tempLevelToStart >= 12) && (tempLevelToStart < 150))
+                            {
+                                tempLevelToStart += 1;
+                                debugPlayerInfo = "Increased level to start from. Would start at level " + tempLevelToStart.ToString();
+                                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                            }
+                            else if (tempLevelToStart == 150)
+                            {
+                                debugPlayerInfo = "At maximum level for post-tutorial levels. Cannot pick a higher level to play.";
+                                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                            }
+                        }
+                    }
                 }
                 // If the swipe was down.
                 if (ie.isDown == true)
                 {
-                    canRepeat = true;
-                    selectMode = SelectMode.BACK; // If we have swiped down, set mode to Back.   
+                    if (selectMode != SelectMode.SPECIFIC)
+                    {
+                        canRepeat = true;
+                        selectMode = SelectMode.BACK; // If we have swiped down, set mode to Back.  
+                    }
+                    else if (selectMode == SelectMode.SPECIFIC)
+                    {
+                        if ((GameMode.instance.gamemode == GameMode.Game_Mode.TUTORIAL) || (GameMode.instance.gamemode == GameMode.Game_Mode.TUTORIAL_RESTART))
+                        {
+                            if ((tempLevelToStart > 1) && (tempLevelToStart < 12))
+                            {
+                                tempLevelToStart -= 1;
+                                debugPlayerInfo = "Decreased level to start from. Would start at level " + tempLevelToStart.ToString();
+                                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                            }
+                            else if (tempLevelToStart == 1)
+                            {
+                                debugPlayerInfo = "At minimum level for tutorial levels. Cannot pick a lower level to play.";
+                                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                            }                            
+                        }
+                        else if ((GameMode.instance.gamemode == GameMode.Game_Mode.CONTINUE) || (GameMode.instance.gamemode == GameMode.Game_Mode.RESTART))
+                        {
+                            if ((tempLevelToStart > 12) && (tempLevelToStart < 151))
+                            {
+                                tempLevelToStart -= 1;
+                                debugPlayerInfo = "Decreased level to start from. Would start at level " + tempLevelToStart.ToString();
+                                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                            }
+                            else if (tempLevelToStart == 12)
+                            {
+                                debugPlayerInfo = "At minimum level for post-tutorial levels. Cannot pick a lower level to play.";
+                                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                            }
+                        }                        
+                    }
                 }
             }
             // If a rotation was registered.
@@ -364,8 +463,15 @@ public class GM_main_pre : MonoBehaviour
             // If a hold was registered.
             else if (ie.isHold == true)
             {
-                debugPlayerInfo = "Hold registered. This gesture does nothing in this menu.";
-                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                if (selectMode == SelectMode.SPECIFIC)
+                {
+                    pickedSpecificLevel = true;
+                }
+                else
+                {
+                    debugPlayerInfo = "Hold registered. This gesture does nothing in this menu.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                }
             }
 
             // If an unrecognized gesture was registered.
@@ -388,7 +494,7 @@ public class GM_main_pre : MonoBehaviour
                 // If this error was registered.
                 else if (ie.isTapRotationError == true)
                 {
-                    debugPlayerInfo = "Nothing happened due to error with rotation on tap.";             
+                    debugPlayerInfo = "Nothing happened due to error with rotation on tap.";
                     SoundManager.instance.PlayVoice(Database.errorClips[2], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
@@ -512,46 +618,149 @@ public class GM_main_pre : MonoBehaviour
             // If a swipe was recognized.
             if (ie.isSwipe == true)
             {
-                // If the swipe was right.
-                if (ie.isRight == true)
+                 // If the swipe was left.
+                if (ie.isLeft == true)
                 {
-                    canRepeat = true;
-                    selectMode = SelectMode.CONTINUE; // If we have swiped right, set mode to Continue.
+                    if (selectMode != SelectMode.SPECIFIC)
+                    {
+                        canRepeat = true;
+                        selectMode = SelectMode.NEW; // If we have swiped left, set mode to New.
+                    }
                 }
-                // If the swipe was left.
-                else if (ie.isLeft == true)
+                // If the swipe was right.
+                else if (ie.isRight == true)
                 {
-                    canRepeat = true;
-                    selectMode = SelectMode.NEW; // If we have swiped left, set mode to New.
+                    if (selectMode != SelectMode.SPECIFIC)
+                    {
+                        canRepeat = true;
+                        selectMode = SelectMode.CONTINUE; // If we have swiped right, set mode to Continue.
+                    }
+                }               
+                // If the swipe was up.
+                else if (ie.isUp == true)
+                {
+                    if (selectMode != SelectMode.SPECIFIC)
+                    {
+                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f); // Play the appropriate clips.
+                        selectMode = SelectMode.SPECIFIC; // If we have swiped up, set mode to Specific.
+                    }
+                    else if (selectMode == SelectMode.SPECIFIC)
+                    {
+                        if ((GameMode.instance.gamemode == GameMode.Game_Mode.TUTORIAL) || (GameMode.instance.gamemode == GameMode.Game_Mode.TUTORIAL_RESTART))
+                        {
+                            if ((tempLevelToStart >= 1) && (tempLevelToStart < 11))
+                            {
+                                tempLevelToStart += 1;
+                                debugPlayerInfo = "Increased level to start from. Would start at level " + tempLevelToStart.ToString();
+                                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                            }
+                            else if (tempLevelToStart == 11)
+                            {
+                                debugPlayerInfo = "At maximum level for tutorial levels. Cannot pick a higher level to play.";
+                                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                            }
+                        }
+                        else if ((GameMode.instance.gamemode == GameMode.Game_Mode.CONTINUE) || (GameMode.instance.gamemode == GameMode.Game_Mode.RESTART))
+                        {
+                            if ((tempLevelToStart >= 12) && (tempLevelToStart < 150))
+                            {
+                                tempLevelToStart += 1;
+                                debugPlayerInfo = "Increased level to start from. Would start at level " + tempLevelToStart.ToString();
+                                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                            }
+                            else if (tempLevelToStart == 150)
+                            {
+                                debugPlayerInfo = "At maximum level for post-tutorial levels. Cannot pick a higher level to play.";
+                                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                            }
+                        }
+                    }
                 }
                 // If the swipe was down.
                 else if (ie.isDown == true)
                 {
-                    canRepeat = true;
-                    selectMode = SelectMode.BACK; // If we have swiped down, set mode to Back.
-                }
-                // If the swipe was up.
-                else if (ie.isUp == true)
-                {
-                    selectMode = SelectMode.SKIP; // If we have swiped up, set mode to Skip.
+                    if (selectMode != SelectMode.SPECIFIC)
+                    {
+                        canRepeat = true;
+                        selectMode = SelectMode.BACK; // If we have swiped down, set mode to Back.  
+                    }
+                    else if (selectMode == SelectMode.SPECIFIC)
+                    {
+                        if ((GameMode.instance.gamemode == GameMode.Game_Mode.TUTORIAL) || (GameMode.instance.gamemode == GameMode.Game_Mode.TUTORIAL_RESTART))
+                        {
+                            if ((tempLevelToStart > 1) && (tempLevelToStart < 12))
+                            {
+                                tempLevelToStart -= 1;
+                                debugPlayerInfo = "Decreased level to start from. Would start at level " + tempLevelToStart.ToString();
+                                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                            }
+                            else if (tempLevelToStart == 1)
+                            {
+                                debugPlayerInfo = "At minimum level for tutorial levels. Cannot pick a lower level to play.";
+                                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                            }
+                        }
+                        else if ((GameMode.instance.gamemode == GameMode.Game_Mode.CONTINUE) || (GameMode.instance.gamemode == GameMode.Game_Mode.RESTART))
+                        {
+                            if ((tempLevelToStart > 12) && (tempLevelToStart < 151))
+                            {
+                                tempLevelToStart -= 1;
+                                debugPlayerInfo = "Decreased level to start from. Would start at level " + tempLevelToStart.ToString();
+                                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                            }
+                            else if (tempLevelToStart == 12)
+                            {
+                                debugPlayerInfo = "At minimum level for post-tutorial levels. Cannot pick a lower level to play.";
+                                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                            }
+                        }
+                    }
                 }
             }
 
             // If a tap was registered and we are able to start a new game, set mode to Confirm.
-            else if ((ie.isTap == true) && TriggerStartNewGame.CDfinish())
+            else if (ie.isTap == true)
             {
-                if (at_confirm)
+                // We have swiped left to start a new game and confirmed that this is the action we want, so set mode to Confirm.
+                if ((at_confirm) == true && TriggerStartNewGame.CDfinish())
                 {
                     canRepeat = true;
                     selectMode = SelectMode.CONFIRM; // We have tapped to confirm we want to start a new game, so set mode to Confirm.
                 }
+
+                if (selectMode == SelectMode.SPECIFIC)
+                {
+                    selectMode = SelectMode.NONE;
+                }
             }
 
-            // If a hold or rotation was registered.
-            else if ((ie.isHold == true) || (ie.isRotate == true))
+            // If a rotation was registered.
+            else if (ie.isRotate == true)
             {
-                debugPlayerInfo = "This gesture does nothing in this menu.";
+                if (ie.isLeft == true)
+                {
+                    debugPlayerInfo = "Left rotation registered. This gesture does nothing in this menu.";
+                }
+                else if (ie.isRight == true)
+                {
+                    debugPlayerInfo = "RIght rotation registered. This gesture does nothing in this menu.";
+                }
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+            }
+
+            // If a hold was registered.
+            else if (ie.isHold == true)
+            {
+                if (selectMode == SelectMode.SPECIFIC)
+                {
+                    pickedSpecificLevel = true;
+                }
+                else
+                {
+                    debugPlayerInfo = "Hold registered. This gesture does nothing in this menu.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                }
             }
 
             // If there was an unrecognized gesture made.
@@ -659,6 +868,7 @@ public class GM_main_pre : MonoBehaviour
         {
             // If mode is set to Continue, we have swiped right, so continue from where we left off.
             case SelectMode.CONTINUE:
+                selectMode = SelectMode.NONE;
                 debugPlayerInfo = "Swiped right. Continuing from where you left off.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
@@ -675,6 +885,7 @@ public class GM_main_pre : MonoBehaviour
                 break;
             // If mode is set to New, we have confirmed and swiped left, so start a new game from either the tutorial or the first non-tutorial level.
             case SelectMode.NEW:
+                selectMode = SelectMode.NONE;
                 debugPlayerInfo = "Swiped left. Going to confirm we want to start a new game.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.                
                 at_confirm = true;
@@ -682,6 +893,7 @@ public class GM_main_pre : MonoBehaviour
                 break;
             // If mode is set to Confirm, we have tapped to confirm we want to start a new game, so let the player swipe left to start.
             case SelectMode.CONFIRM:
+                selectMode = SelectMode.NONE;
                 debugPlayerInfo = "Tap registered. Confirmed we want to start a new game.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.                               
                 if (GameMode.instance.gamemode == GameMode.Game_Mode.TUTORIAL)
@@ -707,6 +919,7 @@ public class GM_main_pre : MonoBehaviour
                 break;
             // If mode is set to Back, go back to the main menu.
             case SelectMode.BACK:
+                selectMode = SelectMode.NONE;
                 debugPlayerInfo = "Swiped down. Going back to main menu.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.     
                 if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
@@ -722,22 +935,16 @@ public class GM_main_pre : MonoBehaviour
                 TriggerStartNewGame.reset();
 #endif
                 break;
-            // If the mode is set to Skip, skip the tutorials and load the first tutorial level or load the first main level.
-            case SelectMode.SKIP:
-                skippingTutorial = 2;
-                if (GameMode.instance.gamemode == GameMode.Game_Mode.TUTORIAL)
+            // If the mode is set to Specific, load a specific that the user selects.
+            case SelectMode.SPECIFIC:
+                if (pickedSpecificLevel == true)
                 {
-                    GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL_RESTART;
-                }
-                else if (GameMode.instance.gamemode == GameMode.Game_Mode.CONTINUE)
-                {
-                    GameMode.instance.gamemode = GameMode.Game_Mode.RESTART;
-                }
-                //BoardManager.write_save(1, BoardManager.finishedTutorialLevel1, BoardManager.finishedTutorialLevel3);
-                //gameManager.write_save_mode(1, GameMode.instance.gamemode);
-                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0] };
-                balances = new float[] { 0, 0 };
-                SoundManager.instance.PlayClips(clips, balances, 0, () => SceneManager.LoadScene("Main"), 2, 0.5f); // Play the appropriate clips.
+                    selectMode = SelectMode.NONE;
+                    skippingTutorial = 2;
+                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0] };
+                    balances = new float[] { 0, 0 };
+                    SoundManager.instance.PlayClips(clips, balances, 0, () => SceneManager.LoadScene("Main"), 2, 0.5f); // Play the appropriate clips.
+                }         
                 break;
             default:
                 break;

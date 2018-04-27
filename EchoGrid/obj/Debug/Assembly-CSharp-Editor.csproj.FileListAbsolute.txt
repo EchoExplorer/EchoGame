@@ -238,3 +238,4 @@ C:\Users\hellerlab\Desktop\3DAudio\EchoGame\EchoGrid\obj\Debug\Assembly-CSharp-E
 C:\Users\hellerlab\Desktop\3DAudio\EchoGame\EchoGrid\obj\Debug\Assembly-CSharp-Editor.csproj.CopyComplete
 C:\Users\hellerlab\Desktop\3DAudio\EchoGame\EchoGrid\obj\Debug\Assembly-CSharp-Editor.dll
 C:\Users\hellerlab\Desktop\3DAudio\EchoGame\EchoGrid\obj\Debug\Assembly-CSharp-Editor.pdb
+C:\Users\hellerlab\Desktop\Echo Adventure\EchoGame\EchoGrid\Temp\bin\Debug\Google.ProtocolBuffers.dll

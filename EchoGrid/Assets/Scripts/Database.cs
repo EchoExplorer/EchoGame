@@ -91,9 +91,9 @@ public class Database : MonoBehaviour
         settingsClips[2] = Resources.Load("instructions/settings/using_talkback") as AudioClip;
         settingsClips[3] = Resources.Load("instructions/settings/add_talkback_hold") as AudioClip;
         settingsClips[4] = Resources.Load("instructions/settings/use_two_three_fingers_normal") as AudioClip;
-        settingsClips[5] = Resources.Load("instructions/settings/use_three_fingers_talkback") as AudioClip;        
+        settingsClips[5] = Resources.Load("instructions/settings/use_three_fingers_talkback") as AudioClip;
         settingsClips[6] = Resources.Load("instructions/settings/headphones_normal") as AudioClip;
-        settingsClips[7] = Resources.Load("instructions/settings/headphones_talkback") as AudioClip;        
+        settingsClips[7] = Resources.Load("instructions/settings/headphones_talkback") as AudioClip;
         settingsClips[8] = Resources.Load("instructions/settings/environment_setup_normal") as AudioClip;
         settingsClips[9] = Resources.Load("instructions/settings/environment_setup_talkback") as AudioClip;
 

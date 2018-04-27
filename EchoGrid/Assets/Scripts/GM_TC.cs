@@ -30,7 +30,7 @@ public class GM_TC : MonoBehaviour
     string debugPlayerInfo; // String for debugging the effects of the player's actions (Tells you they rotated, swiped, etc.).
 
     List<AudioClip> clips; // For sound clip that plays when we do a gesture in this scene.
-   
+
     /// <summary>
     /// Loads the terms and conditions data.
     /// </summary>
@@ -55,7 +55,7 @@ public class GM_TC : MonoBehaviour
 
     void Start()
     {
-        eh = new eventHandler (InputModule.instance);
+        eh = new eventHandler(InputModule.instance);
 
 #if UNITY_STANDALONE            
         // The textboxes in T&C are larger when in standalone than when building on PC or mobile for Android, so they should be made smaller and moved appropriately so we can see everything.
@@ -120,11 +120,11 @@ public class GM_TC : MonoBehaviour
 
 
     //bool reset_audio = true;
-    
+
     /// <summary>
     /// Plays voice instructions concerning the terms and conditions page.
     /// </summary>
-	void play_audio()
+    void play_audio()
     {
         if (finished_reading)
         {
@@ -201,7 +201,7 @@ public class GM_TC : MonoBehaviour
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
         if (eh.isActivate())
         {
-			InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
+            InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
 
             /*clips = new List<AudioClip>() { Database.soundEffectClips[7] };
 
@@ -260,7 +260,7 @@ public class GM_TC : MonoBehaviour
             {
                 // Notify the player we are moving to the main menu with the sound, then go to the main menu.
                 SoundManager.instance.PlayClips(clips, 0, () => SceneManager.LoadScene("Title_Screen"), 1);
-            }*/           
+            }*/
         }
 
         // debugPlayerInfo = "Read Terms and Conditions. Moving to main menu.";
@@ -346,7 +346,7 @@ public class GM_TC : MonoBehaviour
                     Screen.sleepTimeout = SleepTimeout.NeverSleep;
                     Screen.orientation = ScreenOrientation.Landscape;
                 }
-            }*/          
+            }*/
         }
 
         Utilities.writefile("consentRecord", "1");

@@ -27,9 +27,9 @@ wwwwwwww-
 wwwwwwww-
 wwwwwwww-
 wwwwwwww-
+wwwwwwww-
+wwwwwwww-
 wwwwwwwwe
-wwwwwwwww
-wwwwwwwww
 END
 LEVEL_4_C1_D2
 wwwwwwwww
@@ -49,9 +49,9 @@ LEVEL_5_C1_D2
 -wwwwwwww
 -wwwwwwww
 -wwwwwwww
+-wwwwwwww
+-wwwwwwww
 ewwwwwwww
-wwwwwwwww
-wwwwwwwww
 END
 LEVEL_6_C1_D2
 wwwwwwwww
@@ -1629,9 +1629,9 @@ END
 LEVEL_149_C7_D9
 -w-------
 -w-www-ww
--w---w-w-
+-w---w-we
 -wswww-w-
------w-e-
+-----w---
 -w-wwwww-
 -w-w-w---
 -w-w-w-w-

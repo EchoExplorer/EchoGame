@@ -362,10 +362,6 @@ public class InputModule : MonoBehaviour
 					touchEnd[1] = thisTouch.position; // Update the end position of this touch.
 					vecEnd2 = thisTouch.position; // Update the end position vector of this touch.
                     // print("Touch1End: " + thisTouch.position.ToString());
-                    if (((GM_title.determined_talkback == false) || (GM_title.isUsingTalkback == false)) && (hasRegistered[2] == false))
-                    {
-                        gestureStopTime = Time.time; // Set the stop time of this gesture to now.
-                    }
                 }
 				// If the touch was canceled for some reason.
 				else if (thisTouch.phase == TouchPhase.Canceled) 
@@ -412,10 +408,6 @@ public class InputModule : MonoBehaviour
                     touchRegister += 1; // Update the number of touches that have left the screen.
 					touchEnd[2] = thisTouch.position; // Update the end position of this touch.
                     // print("Touch2End: " + thisTouch.position.ToString());
-                    if ((GM_title.determined_talkback == false) || (GM_title.isUsingTalkback == true))
-                    {
-                        gestureStopTime = Time.time; // Set the stop time of this gesture to now.
-                    }
                 }
 				// If the touch was canceled for some reason.
 				else if (thisTouch.phase == TouchPhase.Canceled) 
@@ -529,6 +521,7 @@ public class InputModule : MonoBehaviour
         {
             bool canMakeGesture = false;
             bool wentOffscreen = false;
+            gestureStopTime = Time.time; // Set the stop time of this gesture to now.
 
             if (touchRegister == 2)
             {                
@@ -544,7 +537,15 @@ public class InputModule : MonoBehaviour
                 if (canMakeGesture == true)
                 {
                     // If a finger went off the screen.
+#endif
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
                     if ((touchEnd[0].x >= 766.0f) || (touchEnd[1].x >= 766.0f) || (touchEnd[0].x <= -34.0f) || (touchEnd[1].x <= -34.0f) || (touchEnd[0].y >= 445.0f) || (touchEnd[1].y >= 445.0f) || (touchEnd[0].y <= 4.0f) || (touchEnd[1].y <= 4.0f))
+                    {
+                        wentOffscreen = true;
+                    }
+#endif
+#if UNITY_IOS || UNITY_ANDROID
+                    if ((touchEnd[0].x >= 2200.0f) || (touchEnd[1].x >= 2200.0f) || (touchEnd[0].x <= 8.0f) || (touchEnd[1].x <= 8.0f) || (touchEnd[0].y >= 1070.0f) || (touchEnd[1].y >= 1070.0f) || (touchEnd[0].y <= 4.0f) || (touchEnd[1].y <= 4.0f))
                     {
                         wentOffscreen = true;
                     }
@@ -862,8 +863,16 @@ public class InputModule : MonoBehaviour
 
             else if (touchRegister == 3)
             {
-                if ((touchEnd[0].x >= 766.0f) || (touchEnd[1].x >= 766.0f) || (touchEnd[2].x >= 766.0f) || (touchEnd[0].x <= -34.0f) || (touchEnd[1].x <= -34.0f) || (touchEnd[2].x <= -34.0f) || (touchEnd[0].y >= 445.0f) || (touchEnd[1].y >= 445.0f) || (touchEnd[2].y >= 445.0f) || (touchEnd[0].y <= 4.0f) || (touchEnd[1].y <= 4.0f) || (touchEnd[2].y <= 4.0f))
+#endif
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR         
+                if ((touchEnd[0].x >= 766.0f) || (touchEnd[1].x >= 766.0f) || (touchEnd[1].x >= 766.0f) || (touchEnd[0].x <= -34.0f) || (touchEnd[1].x <= -34.0f) || (touchEnd[2].x <= -34.0f) || (touchEnd[0].y >= 445.0f) || (touchEnd[1].y >= 445.0f) || (touchEnd[2].y >= 445.0f) || (touchEnd[0].y <= 4.0f) || (touchEnd[1].y <= 4.0f) || (touchEnd[2].y <= 4.0f))
                 {
+                    wentOffscreen = true;
+                }
+#endif
+#if UNITY_IOS || UNITY_ANDROID
+                if ((touchEnd[0].x >= 2200.0f) || (touchEnd[1].x >= 2200.0f) || (touchEnd[1].x >= 2200.0f) || (touchEnd[0].x <= 8.0f) || (touchEnd[1].x <= 8.0f) || (touchEnd[2].x <= 8.0f) || (touchEnd[0].y >= 1070.0f) || (touchEnd[1].y >= 1070.0f) || (touchEnd[2].y >= 1070.0f) || (touchEnd[0].y <= 4.0f) || (touchEnd[1].y <= 4.0f) || (touchEnd[2].y <= 4.0f))             
+                { 
                     wentOffscreen = true;
                 }
 

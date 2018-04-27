@@ -142,3 +142,4 @@ C:\Users\hellerlab\Desktop\3DAudio\EchoGame\EchoGrid\obj\Debug\Assembly-CSharp.c
 C:\Users\hellerlab\Desktop\3DAudio\EchoGame\EchoGrid\obj\Debug\Assembly-CSharp.csproj.CopyComplete
 C:\Users\hellerlab\Desktop\3DAudio\EchoGame\EchoGrid\obj\Debug\Assembly-CSharp.dll
 C:\Users\hellerlab\Desktop\3DAudio\EchoGame\EchoGrid\obj\Debug\Assembly-CSharp.pdb
+C:\Users\hellerlab\Desktop\Echo Adventure\EchoGame\EchoGrid\Temp\bin\Debug\Google.ProtocolBuffers.dll

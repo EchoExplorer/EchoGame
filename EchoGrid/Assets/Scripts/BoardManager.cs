@@ -206,14 +206,13 @@ public class BoardManager : MonoBehaviour
     public bool turning_lock = false;
 
     private Transform boardHolder;
-    private List<Vector3> gridPositions = new List<Vector3>();
+    private Vector3[] gridPositions = new Vector3[121];
     private List<int> wallIdxes = new List<int>();
     public List<Vector3> wallPositions = new List<Vector3>();
     private List<Vector3> startPositions = new List<Vector3>();
     public string mazeSolution = "";
     level_voice_list level_voices = new level_voice_list();
     public static Vector3 exitPos;
-    public static Vector3 startPos;
     public static Vector3 startDir;
 
     public static Vector2 start_idx = new Vector2();
@@ -262,18 +261,18 @@ public class BoardManager : MonoBehaviour
     void InitialiseList()
     {
         // Clear our list gridPositions.
-        gridPositions.Clear();
+        gridPositions = new Vector3[121];
 
         float scale = (float)Utilities.SCALE_REF / (float)Utilities.MAZE_SIZE;
 
         // Loop through x axis (columns).
-        for (int x = -1; x < rows + 1; x++)
+        for (int x = -1; x < (rows + 1); x++)
         {
             // Within each column, loop through y axis (rows).
-            for (int y = -1; y < columns + 1; y++)
+            for (int y = -1; y < (columns + 1); y++)
             {
                 // At each index add a new Vector3 to our list with the x and y coordinates of that position.
-                gridPositions.Add(new Vector3((float)y * scale, (float)x * scale, 0f));
+                gridPositions[((y + 1) * 11) + (x + 1)] = new Vector3((float)x * scale, (float)y * scale, 0f);
             }
         }
     }
@@ -470,8 +469,7 @@ public class BoardManager : MonoBehaviour
 		}
          
 		// If the player has reached the right turn in level 3 and has not started the gesture tutorial for this level, intercept.
-		Vector2 level3_corner = new Vector2(9, 9);        
-		if ((hasIntercepted == false) && (tutorial3Finished == false) && (cur_level == 3) && (player_idx.x == level3_corner.x) && (player_idx.y == level3_corner.y))
+		if ((hasIntercepted == false) && (tutorial3Finished == false) && (cur_level == 3) && (player_idx.x == 9) && (player_idx.y == 9))
         {
 			player_script.Intercept(3); // Intercept.
 			hasIntercepted = true;
@@ -573,10 +571,10 @@ public class BoardManager : MonoBehaviour
         float scale = (float)Utilities.SCALE_REF / (float)Utilities.MAZE_SIZE;
 
         //Loop along x axis, starting from -1 (to fill corner) with floor or outerwall edge tiles.
-        for (int x = 0; x <= columns + 1; x++)
+        for (int x = 0; x <= (columns + 1); x++)
         {
             //Loop along y axis, starting from -1 to place floor or outerwall tiles.
-            for (int y = 0; y <= rows + 1; y++)
+            for (int y = 0; y <= (rows + 1); y++)
             {
                 //Choose a random tile from our array of floor tile prefabs and prepare to instantiate it.
                 GameObject toInstantiate = floorTiles[Random.Range(0, floorTiles.Length)];
@@ -588,11 +586,11 @@ public class BoardManager : MonoBehaviour
                 }
 
                 //Instantiate the GameObject instance using the prefab chosen for toInstantiate at the Vector3 corresponding to current grid position in loop, cast it to GameObject.
-                GameObject instance = Instantiate(toInstantiate, gridPositions[(y * (rows + 2)) + x], Quaternion.identity) as GameObject;
+                GameObject instance = Instantiate(toInstantiate, gridPositions[(y * 11) + x], Quaternion.identity) as GameObject;
                 //Instantiate (toInstantiate, new Vector3 (x*scale, y*scale, 0f), Quaternion.identity) as GameObject;
                 if ((x == 0) || (x == (columns + 1)) || (y == 0) || (y == (rows + 1)))
                 {
-                    instance.name = "Wall_" + (gridPositions[(y * (rows + 2)) + x].x + 2) + "_" + (gridPositions[(y * (rows + 2)) + x].y + 2);
+                    instance.name = "Wall_" + gridPositions[(y * 11) + x].x + "_" + gridPositions[(y * 11) + x].y;
                 }
 
                 //Set the parent of our newly instantiated object instance to boardHolder, this is just organizational to avoid cluttering hierarchy.
@@ -616,9 +614,9 @@ public class BoardManager : MonoBehaviour
     void setup_level(int level, bool finishedLevel1Tutorial, bool finishedLevel3Tutorial)
     {
         //Clear our list gridPositions.
-        wallPositions.Clear();
-        wallIdxes.Clear();
-        startPositions.Clear();
+        wallPositions = new List<Vector3>();
+        wallIdxes = new List<int>();
+        startPositions = new List<Vector3>();
 
         if (level <= 2)
             turning_lock = true;
@@ -660,7 +658,6 @@ public class BoardManager : MonoBehaviour
         start_idx = get_idx_from_pos(player.transform.position);
         player_idx = start_idx;
         print("Player start position: X = " + start_idx.x.ToString() + ", Y = " + start_idx.y.ToString());
-        startPos = player.transform.position;
 
         left_start_pt = false;
         level_voices.init();
@@ -683,9 +680,9 @@ public class BoardManager : MonoBehaviour
             new_wall.transform.localScale = new_scale;
             new_wall.transform.SetParent(wall_parent.transform);
         }
-        GameObject new_exit = Instantiate(exit, exitPos, Quaternion.identity) as GameObject;
         exit_idx = get_idx_from_pos(exitPos);
         print("Exit position: X = " + exit_idx.x.ToString() + ", Y = " + exit_idx.y.ToString());
+        GameObject new_exit = Instantiate(exit, exitPos, Quaternion.identity) as GameObject;       
         new_exit.transform.SetParent(wall_parent.transform);
 
         //now let the player face the right dir
@@ -791,7 +788,7 @@ public class BoardManager : MonoBehaviour
         {
             for (int j = 1; j < (columns + 1); ++j)
             {
-                if ((gridPositions[(i * (columns + 2)) + j] - pos).magnitude <= threshhold)
+                if ((gridPositions[i * (columns + 2) + j] - pos).magnitude <= threshhold)
                 {
                     y_idx = i; x_idx = j;
                     break;
@@ -806,14 +803,13 @@ public class BoardManager : MonoBehaviour
     /// <summary>
     /// Computes the fields for the proper echo sound to play.
     /// </summary>
-    public echoDistData getEchoDistData(Vector3 playerPos, Vector3 playerFront, Vector3 playerLeft)
+    public echoDistData getEchoDistData(Vector2 playerPos, Vector3 playerFront, Vector3 playerLeft)
     {
 
         //setup the return value
         echoDistData result = new echoDistData();
-        Vector2 gridIdx = get_idx_from_pos(playerPos);
+        Vector2 gridIdx = playerPos;
         Vector2 gridTemp;
-        Vector2 exitIdx = get_idx_from_pos(exitPos);
         bool check_exit = true;
         result.exitpos = 0;
 
@@ -824,9 +820,9 @@ public class BoardManager : MonoBehaviour
         if (check_exit)
         {
             Vector2 searchIdx = gridIdx;
-            while ((searchIdx.x > 0) && (searchIdx.x < columns + 1) && (searchIdx.y > 0) && (searchIdx.y < rows + 1))
+            while ((searchIdx.x > 0) && (searchIdx.x < (columns + 1)) && (searchIdx.y > 0) && (searchIdx.y < (rows + 1)))
             {
-                if ((_idx_is_equal(searchIdx, exitIdx)) && ((int)(searchIdx - gridIdx).magnitude) <= result.front)
+                if ((_idx_is_equal(searchIdx, exit_idx)) && ((int)(searchIdx - gridIdx).magnitude) <= result.front)
                 {
                     result.exitpos = 3;
                     check_exit = false;
@@ -843,9 +839,9 @@ public class BoardManager : MonoBehaviour
         if (check_exit)
         {
             Vector2 searchIdx = gridIdx;
-            while ((searchIdx.x > 0) && (searchIdx.x < columns + 1) && (searchIdx.y > 0) && (searchIdx.y < rows + 1))
+            while ((searchIdx.x > 0) && (searchIdx.x < (columns + 1)) && (searchIdx.y > 0) && (searchIdx.y < (rows + 1)))
             {
-                if ((_idx_is_equal(searchIdx, exitIdx)) && ((int)(searchIdx - gridIdx).magnitude) <= result.back)
+                if ((_idx_is_equal(searchIdx, exit_idx)) && ((int)(searchIdx - gridIdx).magnitude) <= result.back)
                 {
                     result.exitpos = 4;
                     check_exit = false;
@@ -864,9 +860,9 @@ public class BoardManager : MonoBehaviour
         if (check_exit)
         {
             Vector2 searchIdx = gridIdx;
-            while ((searchIdx.x > 0) && (searchIdx.x < columns + 1) && (searchIdx.y > 0) && (searchIdx.y < rows + 1))
+            while ((searchIdx.x > 0) && (searchIdx.x < (columns + 1)) && (searchIdx.y > 0) && (searchIdx.y < (rows + 1)))
             {
-                if ((_idx_is_equal(searchIdx, exitIdx)) && ((int)(searchIdx - gridIdx).magnitude) <= result.left)
+                if ((_idx_is_equal(searchIdx, exit_idx)) && ((int)(searchIdx - gridIdx).magnitude) <= result.left)
                 {
                     result.exitpos = 1;
                     check_exit = false;
@@ -883,9 +879,9 @@ public class BoardManager : MonoBehaviour
         if (check_exit)
         {
             Vector2 searchIdx = gridIdx;
-            while ((searchIdx.x > 0) && (searchIdx.x < columns + 1) && (searchIdx.y > 0) && (searchIdx.y < rows + 1))
+            while ((searchIdx.x > 0) && (searchIdx.x < (columns + 1)) && (searchIdx.y > 0) && (searchIdx.y < (rows + 1)))
             {
-                if ((_idx_is_equal(searchIdx, exitIdx)) && ((int)(searchIdx - gridIdx).magnitude) <= result.right)
+                if ((_idx_is_equal(searchIdx, exit_idx)) && ((int)(searchIdx - gridIdx).magnitude) <= result.right)
                 {
                     result.exitpos = 2;
                     check_exit = false;
@@ -972,45 +968,6 @@ public class BoardManager : MonoBehaviour
         }
         // Logging.Log(toPrint, Logging.LogLevel.VERBOSE);
     }
-
-    //RandomPosition returns a random position from our list gridPositions.
-    //WARNING: get rid of the position chosen from the list, be very careful when calling it
-    Vector3 RandomPosition()
-    {
-        //Declare an integer randomIndex, set it's value to a random number between 0 and the count of items in our List gridPositions.
-        int randomIndex = Random.Range(0, gridPositions.Count);
-
-        //Declare a variable of type Vector3 called randomPosition, set it's value to the entry at randomIndex from our List gridPositions.
-        Vector3 randomPosition = gridPositions[randomIndex];
-
-        //Remove the entry at randomIndex from the list so that it can't be re-used.
-        gridPositions.RemoveAt(randomIndex);
-
-        //Return the randomly selected Vector3 position.
-        return randomPosition;
-    }
-
-
-    //LayoutObjectAtRandom accepts an array of game objects to choose from along with a minimum and maximum range for the number of objects to create.
-    void LayoutObjectAtRandom(GameObject[] tileArray, int minimum, int maximum)
-    {
-        //Choose a random number of objects to instantiate within the minimum and maximum limits
-        int objectCount = Random.Range(minimum, maximum + 1);
-
-        //Instantiate objects until the randomly chosen limit objectCount is reached
-        for (int i = 0; i < objectCount; i++)
-        {
-            //Choose a position for randomPosition by getting a random position from our list of available Vector3s stored in gridPosition
-            Vector3 randomPosition = RandomPosition();
-
-            //Choose a random tile from tileArray and assign it to tileChoice
-            GameObject tileChoice = tileArray[Random.Range(0, tileArray.Length)];
-
-            //Instantiate tileChoice at the position returned by RandomPosition with no change in rotation
-            Instantiate(tileChoice, randomPosition, Quaternion.identity);
-        }
-    }
-
 
     /// <summary>
     /// Sets up the game board (grid positions), sound clips and save data as an initialization step. 
@@ -1497,14 +1454,14 @@ public class BoardManager : MonoBehaviour
         if ((idx.x > columns) || (idx.x < 1) || (idx.y > rows) || (idx.y < 1))//just in case, so I widen the range
             return false;
 
-        if (searched[(int)((columns + 1) * idx.y + idx.x)])
+        if (searched[(int)(((columns + 1) * idx.y) + idx.x)])
             return false;
-        searched[(int)((columns + 1) * idx.y + idx.x)] = true;
+        searched[(int)(((columns + 1) * idx.y) + idx.x)] = true;
 
         if (_searchWallIdxes(idx))
             return false;
 
-        if (get_idx_from_pos(exitPos) == idx)
+        if (exit_idx == idx)
         {
             mazeSolution += dir;
             return true;
@@ -1532,14 +1489,14 @@ public class BoardManager : MonoBehaviour
         if ((idx.x > columns) || (idx.x < 1) || (idx.y > rows) || (idx.y < 1))//just in case, so I widen the range
             return false;
 
-        if (searched_temp[(int)((columns + 1) * idx.y + idx.x)])
+        if (searched_temp[(int)(((columns + 1) * idx.y) + idx.x)])
             return false;
-        searched_temp[(int)((columns + 1) * idx.y + idx.x)] = true;
+        searched_temp[(int)(((columns + 1) * idx.y) + idx.x)] = true;
 
         if (_searchWallIdxes(idx))
             return false;
 
-        if (get_idx_from_pos(exitPos) == idx)
+        if (exit_idx == idx)
         {
             sol += dir;
             return true;

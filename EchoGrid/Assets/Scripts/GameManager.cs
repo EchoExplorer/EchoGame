@@ -58,7 +58,7 @@ public class GameManager : MonoBehaviour
             filename = Application.persistentDataPath + "echosaved";
         }
         // load specific save for tutorial
-        else if ((current == GameMode.Game_Mode.TUTORIAL_RESTART) || (current == GameMode.Game_Mode.TUTORIAL))
+        else
         {
             filename = Application.persistentDataPath + "echosaved_tutorial";
         }
@@ -108,7 +108,7 @@ public class GameManager : MonoBehaviour
                 GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
                 GameMode.write_save_mode(level, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.Game_Mode.CONTINUE);
             }
-            else if ((current == GameMode.Game_Mode.TUTORIAL_RESTART) || (current == GameMode.Game_Mode.TUTORIAL))
+            else
             {
                 level = 1;
                 GameMode.finishedLevel1Tutorial = false;
@@ -165,16 +165,8 @@ public class GameManager : MonoBehaviour
                     GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
                     level = 1;
                 }
-                if (level == 1)
-                {
-                    GameMode.finishedLevel1Tutorial = false;
-                    GameMode.finishedLevel3Tutorial = false;
-                }
-                else if (level == (MAX_TUTORIAL_LEVEL + 1))
-                {
-                    GameMode.finishedLevel1Tutorial = true;
-                    GameMode.finishedLevel3Tutorial = true;
-                }
+                GameMode.finishedLevel1Tutorial = false;
+                GameMode.finishedLevel3Tutorial = false;
                 GameMode.write_save_mode(level, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, current);
             }
             else if (GM_main_pre.skippingTutorial == 1)
@@ -184,18 +176,9 @@ public class GameManager : MonoBehaviour
             else if (GM_main_pre.skippingTutorial == 2)
             {
                 GameMode.Game_Mode current = GameMode.instance.get_mode();
-                if (current == GameMode.Game_Mode.RESTART)
-                {
-                    GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
-                    level = MAX_TUTORIAL_LEVEL + 1;
-                }
-                else if (current == GameMode.Game_Mode.TUTORIAL_RESTART)
-                {
-                    GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
-                    level = 1;
-                }
-                GameMode.finishedLevel1Tutorial = true;
-                GameMode.finishedLevel3Tutorial = true;
+                level = GM_main_pre.tempLevelToStart;
+                GameMode.finishedLevel1Tutorial = GM_main_pre.level1TutorialFinished;
+                GameMode.finishedLevel3Tutorial = GM_main_pre.level3TutorialFinished;
                 GameMode.write_save_mode(level, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, current);
             }
         }

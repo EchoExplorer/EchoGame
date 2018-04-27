@@ -138,3 +138,4 @@ C:\Users\hellerlab\Desktop\3DAudio\EchoGame\EchoGrid\obj\Debug\Assembly-CSharp-f
 C:\Users\hellerlab\Desktop\3DAudio\EchoGame\EchoGrid\obj\Debug\Assembly-CSharp-firstpass.csproj.CopyComplete
 C:\Users\hellerlab\Desktop\3DAudio\EchoGame\EchoGrid\obj\Debug\Assembly-CSharp-firstpass.dll
 C:\Users\hellerlab\Desktop\3DAudio\EchoGame\EchoGrid\obj\Debug\Assembly-CSharp-firstpass.pdb
+C:\Users\hellerlab\Desktop\Echo Adventure\EchoGame\EchoGrid\Temp\bin\Debug\Google.ProtocolBuffers.dll

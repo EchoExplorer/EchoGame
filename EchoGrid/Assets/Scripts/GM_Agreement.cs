@@ -29,14 +29,14 @@ public class GM_Agreement : MonoBehaviour
 
     eventHandler eh;
 
-	string debugPlayerInfo; // String for debugging the effects of the player's actions (Tells you they rotated, swiped, etc.).
+    string debugPlayerInfo; // String for debugging the effects of the player's actions (Tells you they rotated, swiped, etc.).
 
     /// <summary>
     /// Loads all resources needed for the user agreement page.
     /// </summary>
     void Awake()
     {
-    	eh = new eventHandler(InputModule.instance);
+        eh = new eventHandler(InputModule.instance);
 
         ad = GetComponent<AndroidDialogue>();
         swipeAhead = Database.soundEffectClips[4];
@@ -177,10 +177,10 @@ public class GM_Agreement : MonoBehaviour
             {
                 debugPlayerInfo = "This gesture does nothing in this menu.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-            }		
-		}
+            }
+        }
 #endif
-// Check if we are running on iOS/Android.
+        // Check if we are running on iOS/Android.
 #if UNITY_IOS || UNITY_ANDROID
         //AndroidDialogue
         if (ad.noclicked())
@@ -204,48 +204,48 @@ public class GM_Agreement : MonoBehaviour
             isLandscape = false;
         }
 
-        if (eh.isActivate()) 
+        if (eh.isActivate())
         {
-        	InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
+            InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
 
-        	// If a swipe was recognized.
-        	if (ie.isSwipe == true)
-        	{
-        		// If the swipe was right.
-        		if (ie.isRight == true)
-        		{
-					// Right
+            // If a swipe was recognized.
+            if (ie.isSwipe == true)
+            {
+                // If the swipe was right.
+                if (ie.isRight == true)
+                {
+                    // Right
                     // SoundManager.instance.PlaySingle(swipeRight);
-        		}
-        		// If the swipe was left.
-        		else if (ie.isLeft == true)
-        		{
-					// Move to the next agreement.
-					debugPlayerInfo = "Swiped left. Moving to next agreement.";
+                }
+                // If the swipe was left.
+                else if (ie.isLeft == true)
+                {
+                    // Move to the next agreement.
+                    debugPlayerInfo = "Swiped left. Moving to next agreement.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     gotoNextAgreement();
                     SoundManager.instance.PlayVoice(Database.soundEffectClips[7], true, 0.0f, 0.0f, 0.5f);
-        		}
-        		// If the swipe was up.
-        		else if (ie.isUp == true)
-        		{
-					// Front
+                }
+                // If the swipe was up.
+                else if (ie.isUp == true)
+                {
+                    // Front
                     // SoundManager.instance.PlaySingle(swipeAhead);
-        		}
-        		// If the swipe was down.
-        		else if (ie.isDown == true)
-        		{
-					// Back
+                }
+                // If the swipe was down.
+                else if (ie.isDown == true)
+                {
+                    // Back
                     // SoundManager.instance.PlaySingle(swipeAhead);
                     // credit
-        		}
-        	}
-        	// If a tap was recognized.
-        	else if (ie.isTap == true)
-        	{
-				// GameMode.gamemode = GameMode.Game_Mode.RESTART;
+                }
+            }
+            // If a tap was recognized.
+            else if (ie.isTap == true)
+            {
+                // GameMode.gamemode = GameMode.Game_Mode.RESTART;
                 // SceneManager.LoadScene("Main");
-        	}
+            }
         }
 #endif // End of mobile platform dependendent compilation section started above with #elif
     }
