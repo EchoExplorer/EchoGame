@@ -2083,6 +2083,8 @@ public class Player : MovingObject
                         canPlayClip[11, 3] = false;
                         canPlayClip[10, 1] = true;
                         canPlayClip[10, 2] = true;
+                        clips = new List<AudioClip>() { Database.soundEffectClips[4] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clip.
                     }
                     else
                     {

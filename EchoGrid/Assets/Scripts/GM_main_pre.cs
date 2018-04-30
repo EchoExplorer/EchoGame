@@ -74,6 +74,25 @@ public class GM_main_pre : MonoBehaviour
             tempTempLevel = Int32.Parse(svdata_split[0]);
             level1TutorialFinished = BoardManager.StringToBool(svdata_split[1]);
             level3TutorialFinished = BoardManager.StringToBool(svdata_split[2]);
+
+            if ((current == GameMode.Game_Mode.RESTART) || (current == GameMode.Game_Mode.CONTINUE))
+            {
+                if ((levelToStart < 12) || (tempLevelToStart < 12) || (tempTempLevel < 12))
+                {
+                    levelToStart = 12;
+                    tempLevelToStart = 12;
+                    tempTempLevel = 12;
+                }                
+            }
+            else if ((current == GameMode.Game_Mode.TUTORIAL_RESTART) || (current == GameMode.Game_Mode.TUTORIAL))
+            {
+                if ((levelToStart > 11) || (tempLevelToStart > 11) || (tempTempLevel > 11))
+                {
+                    levelToStart = 11;
+                    tempLevelToStart = 11;
+                    tempTempLevel = 11;
+                }
+            }
         }
         else
         {

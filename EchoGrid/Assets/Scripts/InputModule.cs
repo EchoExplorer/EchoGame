@@ -13,8 +13,6 @@ public struct InputEvent
     public bool isLeft; // If a swipe or rotation registered was to the left.
     public bool isUp; // If a swipe or rotation registered was up.
     public bool isDown; // If a swipe or rotation registered was down.
-    public bool isRegular; // If a gesture was made not using Talkback.
-    public bool isTalkback; // If a gesture was made using Talkback.
     public int touchNum;
     public bool isTap; // If a tap was registered.
     public bool isHold; // If a hold was registered.
@@ -50,7 +48,6 @@ public struct InputEvent
 	public void init()
     {
         isRight = false; isLeft = false; isUp = false; isDown = false;
-        isRegular = false; isTalkback = false;
         isTap = false; isHold = false; isSwipe = false; isRotate = false; isMain = false; isUnrecognized = false; keycode = KeyCode.None;
         isTapHorizontalError = false; isTapVerticalError = false; isTapRotationError = false;
         isSwipeLeftHorizontalError = false; isSwipeLeftRotationError = false; isSwipeRightHorizontalError = false; isSwipeRightRotationError = false;
@@ -84,10 +81,10 @@ public struct InputEvent
 public class InputModule : MonoBehaviour
 {
     //consts
-    float maxTapHorizontalDist = Screen.width * 0.04f;  // The maximum horizontal distance the player can move their fingers to register a gesture as a tap.
-    float maxTapVerticalDist = Screen.height * 0.05f; // The maximum vertical distance the player can move their fingers to register a gesture as a tap.
-    float maxHoldHorizontalDist = Screen.width * 0.04f; // The maximum horizontal distance the player can move their fingers to register a gesture as a hold.
-    float maxHoldVerticalDist = Screen.height * 0.05f; // The maximum vertical distance the player can move their fingers to register a gesture as a hold.   
+    float maxTapHorizontalDist = Screen.width * 0.06f;  // The maximum horizontal distance the player can move their fingers to register a gesture as a tap.
+    float maxTapVerticalDist = Screen.height * 0.07f; // The maximum vertical distance the player can move their fingers to register a gesture as a tap.
+    float maxHoldHorizontalDist = Screen.width * 0.06f; // The maximum horizontal distance the player can move their fingers to register a gesture as a hold.
+    float maxHoldVerticalDist = Screen.height * 0.07f; // The maximum vertical distance the player can move their fingers to register a gesture as a hold.   
     float minSwipeHorizontalDist = Screen.width * 0.10f; // The minimum horizontal distance the player needs to move their fingers to register a gesture as a swipe.
     float minSwipeVerticalDist = Screen.height * 0.12f; // The minimum vertical distance the player needs to move their fingers to register a gesture as a swipe.
     float minRotateHorizontalDist = Screen.width * 0.06f; // The maximum horizontal distance the player needs to move their fingers to register a gesture as a rotation.
@@ -110,6 +107,15 @@ public class InputModule : MonoBehaviour
     Vector2 vecEnd2 = new Vector2(); // Vector for the end position of touch1.
     Vector2 VecStart = new Vector2(); // Vector for the difference between the start position vectors of touch0 and touch1.
     Vector2 VecEnd = new Vector2(); // Vector for the difference between the end position vectors of touch0 and touch1.
+    float x0;
+    float x1;
+    float x2;
+    float y0;
+    float y1;
+    float y2;
+    float angle;
+    Vector3 cross;
+    float crossPz;
 
     float gestureStartTime = 0.0f;
     float gestureStopTime = 0.0f;
@@ -151,7 +157,7 @@ public class InputModule : MonoBehaviour
     // Use for initialization.
     void Start()
     {
-       
+    
     }
 
     /// <summary>
@@ -174,7 +180,7 @@ public class InputModule : MonoBehaviour
     /// Checks for new input data every frame.
     /// </summary>
     void Update()
-    {        
+    {
         GetInput();
     }
 
@@ -440,13 +446,23 @@ public class InputModule : MonoBehaviour
                 {
                     debugTouch2Info = "XStart: " + touchStart[2].x.ToString() + "\nYStart: " + touchStart[2].y.ToString() + "\nXEnd: " + touchEnd[2].x.ToString() + "\nYEnd: " + touchEnd[2].y.ToString();
                     DebugTouch2.instance.ChangeDebugTouch2Text(debugTouch2Info); // Update the debug textbox.
+                }                
+                
+                x0 = touchEnd[0].x - touchStart[0].x;
+                y0 = touchEnd[0].y - touchStart[0].y;
+                x1 = touchEnd[1].x - touchStart[1].x;
+                y1 = touchEnd[1].y - touchStart[1].y;
+                if (Input.touchCount == 3)
+                {
+                    x2 = touchEnd[2].x - touchStart[2].x;
+                    y2 = touchEnd[2].y - touchStart[2].y;
                 }
 
                 VecStart = vecStart1 - vecStart2; // Get the vector between the start positions of touch0 and touch1.
                 VecEnd = vecEnd1 - vecEnd2; // Get the vector between the end positions of touch0 and touch1.
-                float angle = Vector3.Angle((Vector3)VecStart.normalized, (Vector3)VecEnd.normalized);
-                Vector3 cross = Vector3.Cross((Vector3)VecStart.normalized, (Vector3)VecEnd.normalized); // Get the cross product between the two vectors.
-                float crossPz = cross.z; // Get the z-component of the cross product.   
+                angle = Vector2.Angle(VecStart, VecEnd);
+                cross = Vector3.Cross((Vector3)VecStart.normalized, (Vector3)VecEnd.normalized); // Get the cross product between the two vectors.
+                crossPz = cross.z; // Get the z-component of the cross product.   
 
                 debugTouchDurationInfo = "Hold: " + touchDuration + "\nAngle: " + angle.ToString() + "\nCrossPz: " + crossPz;
                 DebugTouchDuration.instance.ChangeDebugTouchDurationText(debugTouchDurationInfo); // Update the debug textbox.
@@ -472,11 +488,22 @@ public class InputModule : MonoBehaviour
                     DebugTouch2.instance.ChangeDebugTouch2Text(debugTouch2Info); // Update the debug textbox.
                 }
 
+                x0 = touchEnd[0].x - touchStart[0].x;
+                y0 = touchEnd[0].y - touchStart[0].y;
+                x1 = touchEnd[1].x - touchStart[1].x;
+                y1 = touchEnd[1].y - touchStart[1].y;
+                if (Input.touchCount == 3)
+                {
+                    x2 = touchEnd[2].x - touchStart[2].x;
+                    y2 = touchEnd[2].y - touchStart[2].y;
+                }
+
                 VecStart = vecStart1 - vecStart2; // Get the vector between the start positions of touch0 and touch1.
                 VecEnd = vecEnd1 - vecEnd2; // Get the vector between the end positions of touch0 and touch1.
-                float angle = Vector3.Angle((Vector3)VecStart.normalized, (Vector3)VecEnd.normalized);
-                Vector3 cross = Vector3.Cross((Vector3)VecStart.normalized, (Vector3)VecEnd.normalized); // Get the cross product between the two vectors.
-                float crossPz = cross.z; // Get the z-component of the cross product.   
+                angle = Vector2.Angle(VecStart, VecEnd);
+                cross = Vector3.Cross((Vector3)VecStart.normalized, (Vector3)VecEnd.normalized); // Get the cross product between the two vectors.
+                crossPz = cross.z; // Get the z-component of the cross product.   
+
 
                 debugTouchDurationInfo = "Hold: " + touchDuration + "\nAngle: " + angle.ToString() + "\nCrossPz: " + crossPz;
                 DebugTouchDuration.instance.ChangeDebugTouchDurationText(debugTouchDurationInfo); // Update the debug textbox.
@@ -499,11 +526,18 @@ public class InputModule : MonoBehaviour
                 debugTouch2Info = "XStart: " + touchStart[2].x.ToString() + "\nYStart: " + touchStart[2].y.ToString() + "\nXEnd: " + touchEnd[2].x.ToString() + "\nYEnd: " + touchEnd[2].y.ToString();
                 DebugTouch2.instance.ChangeDebugTouch2Text(debugTouch2Info); // Update the debug textbox.
 
+                x0 = touchEnd[0].x - touchStart[0].x;
+                y0 = touchEnd[0].y - touchStart[0].y;
+                x1 = touchEnd[1].x - touchStart[1].x;
+                y1 = touchEnd[1].y - touchStart[1].y;
+                x2 = touchEnd[2].x - touchStart[2].x;
+                y2 = touchEnd[2].y - touchStart[2].y;
+
                 VecStart = vecStart1 - vecStart2; // Get the vector between the start positions of touch0 and touch1.
                 VecEnd = vecEnd1 - vecEnd2; // Get the vector between the end positions of touch0 and touch1.
-                float angle = Vector3.Angle((Vector3)VecStart.normalized, (Vector3)VecEnd.normalized);
-                Vector3 cross = Vector3.Cross((Vector3)VecStart.normalized, (Vector3)VecEnd.normalized); // Get the cross product between the two vectors.
-                float crossPz = cross.z; // Get the z-component of the cross product.   
+                angle = Vector2.Angle(VecStart, VecEnd);
+                cross = Vector3.Cross((Vector3)VecStart.normalized, (Vector3)VecEnd.normalized); // Get the cross product between the two vectors.
+                crossPz = cross.z; // Get the z-component of the cross product.   
 
                 debugTouchDurationInfo = "Hold: " + touchDuration + "\nAngle: " + angle.ToString() + "\nCrossPz: " + crossPz;
                 DebugTouchDuration.instance.ChangeDebugTouchDurationText(debugTouchDurationInfo); // Update the debug textbox.
@@ -537,35 +571,27 @@ public class InputModule : MonoBehaviour
                 if (canMakeGesture == true)
                 {
                     // If a finger went off the screen.
-#endif
-#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
-                    if ((touchEnd[0].x >= 766.0f) || (touchEnd[1].x >= 766.0f) || (touchEnd[0].x <= -34.0f) || (touchEnd[1].x <= -34.0f) || (touchEnd[0].y >= 445.0f) || (touchEnd[1].y >= 445.0f) || (touchEnd[0].y <= 4.0f) || (touchEnd[1].y <= 4.0f))
-                    {
-                        wentOffscreen = true;
-                    }
-#endif
-#if UNITY_IOS || UNITY_ANDROID
-                    if ((touchEnd[0].x >= 2200.0f) || (touchEnd[1].x >= 2200.0f) || (touchEnd[0].x <= 8.0f) || (touchEnd[1].x <= 8.0f) || (touchEnd[0].y >= 1070.0f) || (touchEnd[1].y >= 1070.0f) || (touchEnd[0].y <= 4.0f) || (touchEnd[1].y <= 4.0f))
+                    if ((touchEnd[0].x >= (Screen.width - 10.0f)) || (touchEnd[1].x >= (Screen.width - 10.0f)) || (touchEnd[0].x <= 8.0f) || (touchEnd[1].x <= 8.0f) || (touchEnd[0].y >= (Screen.height - 10.0f)) || (touchEnd[1].y >= (Screen.width - 10.0f)) || (touchEnd[0].y <= 4.0f) || (touchEnd[1].y <= 4.0f))
                     {
                         wentOffscreen = true;
                     }
 
                     // Get the distance between the start and end positions for each touch in x and y coordinates.
-                    float x0 = touchEnd[0].x - touchStart[0].x;
-                    float y0 = touchEnd[0].y - touchStart[0].y;
-                    float x1 = touchEnd[1].x - touchStart[1].x;
-                    float y1 = touchEnd[1].y - touchStart[1].y;
+                    // float x0 = touchEnd[0].x - touchStart[0].x;
+                    // float y0 = touchEnd[0].y - touchStart[0].y;
+                    // float x1 = touchEnd[1].x - touchStart[1].x;
+                    // float y1 = touchEnd[1].y - touchStart[1].y;
 
-                    debugTouch0Info = "XStart: " + touchStart[0].x.ToString() + "\nYStart: " + touchStart[0].y.ToString() + "\nXEnd: " + touchEnd[0].x.ToString() +"\nYEnd: " + touchEnd[0].y.ToString();
-                    DebugTouch0.instance.ChangeDebugTouch0Text(debugTouch0Info); // Update the debug textbox.
-                    debugTouch1Info = "XStart: " + touchStart[1].x.ToString() + "\nYStart: " + touchStart[1].y.ToString() + "\nXEnd: " + touchEnd[1].x.ToString() + "\nYEnd: " + touchEnd[1].y.ToString();
-                    DebugTouch1.instance.ChangeDebugTouch1Text(debugTouch1Info); // Update the debug textbox.
+                    // debugTouch0Info = "XStart: " + touchStart[0].x.ToString() + "\nYStart: " + touchStart[0].y.ToString() + "\nXEnd: " + touchEnd[0].x.ToString() +"\nYEnd: " + touchEnd[0].y.ToString();
+                    // DebugTouch0.instance.ChangeDebugTouch0Text(debugTouch0Info); // Update the debug textbox.
+                    // debugTouch1Info = "XStart: " + touchStart[1].x.ToString() + "\nYStart: " + touchStart[1].y.ToString() + "\nXEnd: " + touchEnd[1].x.ToString() + "\nYEnd: " + touchEnd[1].y.ToString();
+                    // DebugTouch1.instance.ChangeDebugTouch1Text(debugTouch1Info); // Update the debug textbox.
 
-                    VecStart = vecStart1 - vecStart2; // Get the vector between the start positions of touch0 and touch1.
-                    VecEnd = vecEnd1 - vecEnd2; // Get the vector between the end positions of touch0 and touch1.
-                    float angle = Vector3.Angle((Vector3)VecStart.normalized, (Vector3)VecEnd.normalized);
-                    Vector3 cross = Vector3.Cross((Vector3)VecStart.normalized, (Vector3)VecEnd.normalized); // Get the cross product between the two vectors.
-                    float crossPz = cross.z; // Get the z-component of the cross product.          
+                    // VecStart = vecStart1 - vecStart2; // Get the vector between the start positions of touch0 and touch1.
+                    // VecEnd = vecEnd1 - vecEnd2; // Get the vector between the end positions of touch0 and touch1.
+                    // float angle = Vector2.Angle(VecStart, VecEnd);
+                    // Vector3 cross = Vector3.Cross((Vector3)VecStart.normalized, (Vector3)VecEnd.normalized); // Get the cross product between the two vectors.
+                    // float crossPz = cross.z; // Get the z-component of the cross product.          
 
                     float time = gestureStopTime - gestureStartTime;
                     // print("X0: " + Mathf.Abs(x0).ToString() + ", X1: " + Mathf.Abs(x1).ToString() + ", Y0: " + Mathf.Abs(y0).ToString() + ", Y1: " + Mathf.Abs(y1).ToString());
@@ -677,7 +703,7 @@ public class InputModule : MonoBehaviour
                     }
 
                     // If the gesture was a tap with too much horizontal movement.
-                    else if (((gestureStopTime - gestureStartTime) < 1.0f) && ((Mathf.Abs(x0) > maxTapHorizontalDist) || (Mathf.Abs(x1) > maxTapHorizontalDist)) && (Mathf.Abs(x0) <= (Screen.width * 0.085f)) && (Mathf.Abs(x1) <= (Screen.width * 0.085f)) && (Mathf.Abs(y0) <= maxTapVerticalDist) && (Mathf.Abs(y1) <= maxTapVerticalDist))
+                    else if (((gestureStopTime - gestureStartTime) < 1.0f) && (((Mathf.Abs(x0) > maxTapHorizontalDist) && (Mathf.Abs(x0) <= (Screen.width * 0.08f))) || ((Mathf.Abs(x1) > maxTapHorizontalDist) && (Mathf.Abs(x1) <= (Screen.width * 0.08f)))) && (Mathf.Abs(y0) <= maxTapVerticalDist) && (Mathf.Abs(y1) <= maxTapVerticalDist))
                     {
                         ievent.isTapHorizontalError = true; // This error was registered.
                         ievent.isUnrecognized = true; // An unrecognized gesture was registered.
@@ -687,7 +713,7 @@ public class InputModule : MonoBehaviour
                     }
 
                     // If the gesture was a tap with too much vertical movement.
-                    else if (((gestureStopTime - gestureStartTime) < 1.0f) && ((Mathf.Abs(y0) > maxTapVerticalDist) || (Mathf.Abs(y1) > maxTapVerticalDist)) && (Mathf.Abs(y0) <= (Screen.height * 0.07f)) && (Mathf.Abs(y1) <= (Screen.height * 0.07f)) && (Mathf.Abs(x0) <= maxTapHorizontalDist) && (Mathf.Abs(x1) <= maxTapHorizontalDist))
+                    else if (((gestureStopTime - gestureStartTime) < 1.0f) && (((Mathf.Abs(y0) > maxTapVerticalDist) && (Mathf.Abs(y0) <= (Screen.height * 0.095f))) || ((Mathf.Abs(y1) > maxTapVerticalDist) && (Mathf.Abs(y1) <= (Screen.height * 0.095f)))) && (Mathf.Abs(x0) <= maxTapHorizontalDist) && (Mathf.Abs(x1) <= maxTapHorizontalDist))
                     {
                         ievent.isTapVerticalError = true; // This error was registered.
                         ievent.isUnrecognized = true; // An unrecognized gesture was registered.
@@ -697,7 +723,7 @@ public class InputModule : MonoBehaviour
                     }
 
                     // If the gesture was a tap with too much horizontal and vertical movement.
-                    else if (((gestureStopTime - gestureStartTime) < 1.0f) && ((Mathf.Abs(y0) > maxTapVerticalDist) || (Mathf.Abs(y1) > maxTapVerticalDist)) && (Mathf.Abs(y0) <= (Screen.height * 0.07f)) && (Mathf.Abs(y1) <= (Screen.height * 0.07f)) && ((Mathf.Abs(x0) > maxTapHorizontalDist) || (Mathf.Abs(x1) > maxTapHorizontalDist)) && (Mathf.Abs(x0) <= (Screen.width * 0.085f)) && (Mathf.Abs(x1) <= (Screen.width * 0.085f)))
+                    else if (((gestureStopTime - gestureStartTime) < 1.0f) && (((Mathf.Abs(y0) > maxTapVerticalDist) && (Mathf.Abs(y0) <= (Screen.height * 0.095f))) || ((Mathf.Abs(y1) > maxTapVerticalDist) && (Mathf.Abs(y1) <= (Screen.height * 0.095f)))) && (((Mathf.Abs(x0) > maxTapHorizontalDist) && (Mathf.Abs(x0) <= (Screen.width * 0.08f))) || ((Mathf.Abs(x1) > maxTapHorizontalDist) && (Mathf.Abs(x1) <= (Screen.width * 0.08f)))))
                     {
                         ievent.isTapVerticalError = true; // This error was registered.
                         ievent.isUnrecognized = true; // An unrecognized gesture was registered.
@@ -715,7 +741,8 @@ public class InputModule : MonoBehaviour
                             ievent.isSwipeLeftRotationError = true; // This error was registered.
                             ievent.isUnrecognized = true; // An unrecognized gesture was registered.
                             unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
-                            debugInputInfo = "Swipe left rotation error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
+                                                    // debugInputInfo = "Swipe left rotation error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
+                            debugInputInfo = "Left. x0: " + touchEnd[0].x.ToString() + ", x1: " + touchEnd[1].x.ToString() + ", y0: " + touchEnd[0].y.ToString() + ", y1: " + touchEnd[1].y.ToString() + ", Angle: " + angle.ToString();
                             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.                    
                         }
                         // Swipe right detected.
@@ -724,13 +751,14 @@ public class InputModule : MonoBehaviour
                             ievent.isSwipeRightRotationError = true; // This error was registered.
                             ievent.isUnrecognized = true; // An unrecognized gesture was registered.
                             unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
-                            debugInputInfo = "Swipe right rotation error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
+                            // debugInputInfo = "Swipe right rotation error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
+                            debugInputInfo = "Right. x0: " + touchEnd[0].x.ToString() + ", x1: " + touchEnd[1].x.ToString() + ", y0: " + touchEnd[0].y.ToString() + ", y1: " + touchEnd[1].y.ToString() + ", Angle: " + angle.ToString();
                             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
                         }
                     }
 
                     // If the gesture was a left or right swipe with not enough horizontal movement.
-                    else if (((gestureStopTime - gestureStartTime) < 1.0f) && (Mathf.Abs(x0) > Mathf.Abs(y0)) && (Mathf.Abs(x1) > Mathf.Abs(y1)) && ((Mathf.Abs(x0) < minSwipeHorizontalDist) || (Mathf.Abs(x1) < minSwipeHorizontalDist)) && (Mathf.Abs(x0) > (Screen.width * 0.085f)) && (Mathf.Abs(x1) > (Screen.width * 0.085f)))
+                    else if (((gestureStopTime - gestureStartTime) < 1.0f) && (Mathf.Abs(x0) > Mathf.Abs(y0)) && (Mathf.Abs(x1) > Mathf.Abs(y1)) && (((Mathf.Abs(x0) < minSwipeHorizontalDist) && (Mathf.Abs(x0) > (Screen.width * 0.08f))) || ((Mathf.Abs(x1) < minSwipeHorizontalDist) && (Mathf.Abs(x1) > (Screen.width * 0.08f)))))
                     {
                         // Swipe left detected.
                         if ((x0 < 0.0f) && (x1 < 0.0f))
@@ -776,7 +804,7 @@ public class InputModule : MonoBehaviour
                     }
 
                     // If the gesture was an up or down swipe with not enough vertical movement.
-                    else if (((gestureStopTime - gestureStartTime) < 1.0f) && (Mathf.Abs(y0) > Mathf.Abs(x0)) && (Mathf.Abs(y1) > Mathf.Abs(x1)) && ((Mathf.Abs(y0) < minSwipeVerticalDist) || (Mathf.Abs(y1) < minSwipeVerticalDist)) && (Mathf.Abs(y0) > (Screen.height * 0.07f)) && (Mathf.Abs(y1) > (Screen.height * 0.07f)))
+                    else if (((gestureStopTime - gestureStartTime) < 1.0f) && (Mathf.Abs(y0) > Mathf.Abs(x0)) && (Mathf.Abs(y1) > Mathf.Abs(x1)) && (((Mathf.Abs(y0) < minSwipeVerticalDist) && (Mathf.Abs(y0) > (Screen.height * 0.095f))) || ((Mathf.Abs(y1) < minSwipeVerticalDist) && (Mathf.Abs(y1) > (Screen.height * 0.095f)))))
                     {
                         // Swipe up detected.
                         if ((y0 > 0.0f) && (y1 > 0.0f))
@@ -863,39 +891,32 @@ public class InputModule : MonoBehaviour
 
             else if (touchRegister == 3)
             {
-#endif
-#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR         
-                if ((touchEnd[0].x >= 766.0f) || (touchEnd[1].x >= 766.0f) || (touchEnd[1].x >= 766.0f) || (touchEnd[0].x <= -34.0f) || (touchEnd[1].x <= -34.0f) || (touchEnd[2].x <= -34.0f) || (touchEnd[0].y >= 445.0f) || (touchEnd[1].y >= 445.0f) || (touchEnd[2].y >= 445.0f) || (touchEnd[0].y <= 4.0f) || (touchEnd[1].y <= 4.0f) || (touchEnd[2].y <= 4.0f))
+                // If a finger went off the screen.
+                if ((touchEnd[0].x >= (Screen.width - 10.0f)) || (touchEnd[1].x >= (Screen.width - 10.0f)) || (touchEnd[2].x >= (Screen.width - 10.0f)) || (touchEnd[0].x <= 8.0f) || (touchEnd[1].x <= 8.0f) || (touchEnd[2].x <= 8.0f) || (touchEnd[0].y >= (Screen.height - 10.0f)) || (touchEnd[1].y >= (Screen.width - 10.0f)) || (touchEnd[2].y >= (Screen.width - 10.0f)) || (touchEnd[0].y <= 4.0f) || (touchEnd[1].y <= 4.0f) || (touchEnd[2].y <= 4.0f))
                 {
-                    wentOffscreen = true;
-                }
-#endif
-#if UNITY_IOS || UNITY_ANDROID
-                if ((touchEnd[0].x >= 2200.0f) || (touchEnd[1].x >= 2200.0f) || (touchEnd[1].x >= 2200.0f) || (touchEnd[0].x <= 8.0f) || (touchEnd[1].x <= 8.0f) || (touchEnd[2].x <= 8.0f) || (touchEnd[0].y >= 1070.0f) || (touchEnd[1].y >= 1070.0f) || (touchEnd[2].y >= 1070.0f) || (touchEnd[0].y <= 4.0f) || (touchEnd[1].y <= 4.0f) || (touchEnd[2].y <= 4.0f))             
-                { 
                     wentOffscreen = true;
                 }
 
                 // Get the distance between the start and end positions for each touch in x and y coordinates.
-                float x0 = touchEnd[0].x - touchStart[0].x;
-                float y0 = touchEnd[0].y - touchStart[0].y;
-                float x1 = touchEnd[1].x - touchStart[1].x;
-                float y1 = touchEnd[1].y - touchStart[1].y;
-                float x2 = touchEnd[2].x - touchStart[2].x;
-                float y2 = touchEnd[2].y - touchStart[2].y;
+                // float x0 = touchEnd[0].x - touchStart[0].x;
+                // float y0 = touchEnd[0].y - touchStart[0].y;
+                // float x1 = touchEnd[1].x - touchStart[1].x;
+                // float y1 = touchEnd[1].y - touchStart[1].y;
+                // float x2 = touchEnd[2].x - touchStart[2].x;
+                // float y2 = touchEnd[2].y - touchStart[2].y;
 
-                debugTouch0Info = "XStart: " + touchStart[0].x.ToString() + "\nYStart: " + touchStart[0].y.ToString() + "\nXEnd: " + touchEnd[0].x.ToString() + "\nYEnd: " + touchEnd[0].y.ToString();
-                DebugTouch0.instance.ChangeDebugTouch0Text(debugTouch0Info); // Update the debug textbox.
-                debugTouch1Info = "XStart: " + touchStart[1].x.ToString() + "\nYStart: " + touchStart[1].y.ToString() + "\nXEnd: " + touchEnd[1].x.ToString() + "\nYEnd: " + touchEnd[1].y.ToString();
-                DebugTouch1.instance.ChangeDebugTouch1Text(debugTouch1Info); // Update the debug textbox.
-                debugTouch2Info = "XStart: " + touchStart[2].x.ToString() + "\nYStart: " + touchStart[2].y.ToString() + "\nXEnd: " + touchEnd[2].x.ToString() + "\nYEnd: " + touchEnd[2].y.ToString();
-                DebugTouch2.instance.ChangeDebugTouch2Text(debugTouch2Info); // Update the debug textbox.
+                // debugTouch0Info = "XStart: " + touchStart[0].x.ToString() + "\nYStart: " + touchStart[0].y.ToString() + "\nXEnd: " + touchEnd[0].x.ToString() + "\nYEnd: " + touchEnd[0].y.ToString();
+                // DebugTouch0.instance.ChangeDebugTouch0Text(debugTouch0Info); // Update the debug textbox.
+                // debugTouch1Info = "XStart: " + touchStart[1].x.ToString() + "\nYStart: " + touchStart[1].y.ToString() + "\nXEnd: " + touchEnd[1].x.ToString() + "\nYEnd: " + touchEnd[1].y.ToString();
+                // DebugTouch1.instance.ChangeDebugTouch1Text(debugTouch1Info); // Update the debug textbox.
+                // debugTouch2Info = "XStart: " + touchStart[2].x.ToString() + "\nYStart: " + touchStart[2].y.ToString() + "\nXEnd: " + touchEnd[2].x.ToString() + "\nYEnd: " + touchEnd[2].y.ToString();
+                // DebugTouch2.instance.ChangeDebugTouch2Text(debugTouch2Info); // Update the debug textbox.
 
-                VecStart = vecStart1 - vecStart2; // Get the vector between the start positions of touch0 and touch1.
-                VecEnd = vecEnd1 - vecEnd2; // Get the vector between the end positions of touch0 and touch1.
-                float angle = Vector3.Angle((Vector3)VecStart.normalized, (Vector3)VecEnd.normalized);
-                Vector3 cross = Vector3.Cross((Vector3)VecStart.normalized, (Vector3)VecEnd.normalized); // Get the cross product between the two vectors.
-                float crossPz = cross.z; // Get the z-component of the cross product.
+                // VecStart = vecStart1 - vecStart2; // Get the vector between the start positions of touch0 and touch1.
+                // VecEnd = vecEnd1 - vecEnd2; // Get the vector between the end positions of touch0 and touch1.
+                // float angle = Vector2.Angle(VecStart, VecEnd);
+                // Vector3 cross = Vector3.Cross((Vector3)VecStart.normalized, (Vector3)VecEnd.normalized); // Get the cross product between the two vectors.
+                // float crossPz = cross.z; // Get the z-component of the cross product.
 
                 float time = gestureStopTime - gestureStartTime;
                 // print("X0: " + Mathf.Abs(x0).ToString() + ", X1: " + Mathf.Abs(x1).ToString() + ", X2: " + Mathf.Abs(x2).ToString() + ", Y0: " + Mathf.Abs(y0).ToString() + ", Y1: " + Mathf.Abs(y1).ToString() + ", Y2: " + Mathf.Abs(y2).ToString());
@@ -1007,7 +1028,7 @@ public class InputModule : MonoBehaviour
                 }
 
                 // If the gesture was a tap with too much horizontal movement.
-                else if (((gestureStopTime - gestureStartTime) < 1.0f) && ((Mathf.Abs(x0) > maxTapHorizontalDist) || (Mathf.Abs(x1) > maxTapHorizontalDist) || (Mathf.Abs(x2) > maxTapHorizontalDist)) && (Mathf.Abs(x0) <= (Screen.width * 0.085f)) && (Mathf.Abs(x1) <= (Screen.width * 0.085f)) && (Mathf.Abs(x2) <= (Screen.width * 0.085f)) && (Mathf.Abs(y0) <= maxTapVerticalDist) && (Mathf.Abs(y1) <= maxTapVerticalDist) && (Mathf.Abs(y2) <= maxTapVerticalDist))
+                else if (((gestureStopTime - gestureStartTime) < 1.0f) && (((Mathf.Abs(x0) > maxTapHorizontalDist) && (Mathf.Abs(x0) <= (Screen.width * 0.08f))) || ((Mathf.Abs(x1) > maxTapHorizontalDist) && (Mathf.Abs(x1) <= (Screen.width * 0.08f))) || ((Mathf.Abs(x2) > maxTapHorizontalDist) && (Mathf.Abs(x2) <= (Screen.width * 0.08f)))) && (Mathf.Abs(y0) <= maxTapVerticalDist) && (Mathf.Abs(y1) <= maxTapVerticalDist) && (Mathf.Abs(y2) <= maxTapVerticalDist))
                 {
                     ievent.isTapHorizontalError = true; // This error was registered.
                     ievent.isUnrecognized = true; // An unrecognized gesture was registered.
@@ -1017,7 +1038,7 @@ public class InputModule : MonoBehaviour
                 }
 
                 // If the gesture was a tap with too much vertical movement.
-                else if (((gestureStopTime - gestureStartTime) < 1.0f) && ((Mathf.Abs(y0) > maxTapVerticalDist) || (Mathf.Abs(y1) > maxTapVerticalDist) || (Mathf.Abs(y2) > maxTapVerticalDist)) && (Mathf.Abs(y0) <= (Screen.height * 0.07f)) && (Mathf.Abs(y1) <= (Screen.height * 0.07f)) && (Mathf.Abs(y2) <= (Screen.height * 0.07f)) && (Mathf.Abs(x0) <= maxTapHorizontalDist) && (Mathf.Abs(x1) <= maxTapHorizontalDist) && (Mathf.Abs(x2) <= maxTapHorizontalDist))
+                else if (((gestureStopTime - gestureStartTime) < 1.0f) && (((Mathf.Abs(y0) > maxTapVerticalDist) && (Mathf.Abs(y0) <= (Screen.height * 0.095f))) || ((Mathf.Abs(y1) > maxTapVerticalDist) && (Mathf.Abs(y1) <= (Screen.height * 0.095f))) || ((Mathf.Abs(y2) > maxTapVerticalDist) && (Mathf.Abs(y2) <= (Screen.height * 0.095f)))) && (Mathf.Abs(x0) <= maxTapHorizontalDist) && (Mathf.Abs(x1) <= maxTapHorizontalDist) && (Mathf.Abs(x2) <= maxTapHorizontalDist))
                 {
                     ievent.isTapVerticalError = true; // This error was registered.
                     ievent.isUnrecognized = true; // An unrecognized gesture was registered.
@@ -1027,7 +1048,7 @@ public class InputModule : MonoBehaviour
                 }
 
                 // If the gesture was a tap with too much horizontal and vertical movement.
-                else if (((gestureStopTime - gestureStartTime) < 1.0f) && ((Mathf.Abs(y0) > maxTapVerticalDist) || (Mathf.Abs(y1) > maxTapVerticalDist) || (Mathf.Abs(y2) > maxTapVerticalDist)) && (Mathf.Abs(y0) <= (Screen.height * 0.07f)) && (Mathf.Abs(y1) <= (Screen.height * 0.07f)) && (Mathf.Abs(y2) <= (Screen.height * 0.07f)) && ((Mathf.Abs(x0) > maxTapHorizontalDist) || (Mathf.Abs(x1) > maxTapHorizontalDist) || (Mathf.Abs(x2) > maxTapHorizontalDist)) && (Mathf.Abs(x0) <= (Screen.width * 0.085f)) && (Mathf.Abs(x1) <= (Screen.width * 0.085f)) && (Mathf.Abs(x2) <= (Screen.width * 0.085f)))
+                else if (((gestureStopTime - gestureStartTime) < 1.0f) && (((Mathf.Abs(y0) > maxTapVerticalDist) && (Mathf.Abs(y0) <= (Screen.height * 0.095f))) || ((Mathf.Abs(y1) > maxTapVerticalDist) && (Mathf.Abs(y1) <= (Screen.height * 0.095f))) || ((Mathf.Abs(y2) > maxTapVerticalDist) && (Mathf.Abs(y2) <= (Screen.height * 0.095f)))) && (((Mathf.Abs(x0) > maxTapHorizontalDist) && (Mathf.Abs(x0) <= (Screen.width * 0.08f))) || ((Mathf.Abs(x1) > maxTapHorizontalDist) && (Mathf.Abs(x1) <= (Screen.width * 0.08f))) || ((Mathf.Abs(x2) > maxTapHorizontalDist) && (Mathf.Abs(x2) <= (Screen.width * 0.08f)))))
                 {
                     ievent.isTapVerticalError = true; // This error was registered.
                     ievent.isUnrecognized = true; // An unrecognized gesture was registered.
@@ -1045,7 +1066,8 @@ public class InputModule : MonoBehaviour
                         ievent.isSwipeLeftRotationError = true; // This error was registered.
                         ievent.isUnrecognized = true; // An unrecognized gesture was registered.
                         unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
-                        debugInputInfo = "Swipe left rotation error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
+                        // debugInputInfo = "Swipe left rotation error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
+                        debugInputInfo = "Left. x0: " + touchEnd[0].x.ToString() + ", x1: " + touchEnd[1].x.ToString() + ", x2: " + touchEnd[2].x.ToString() + ", y0: " + touchEnd[0].y.ToString() + ", y1: " + touchEnd[1].y.ToString() + ", y2: " + touchEnd[2].y.ToString() + ", Angle: " + angle.ToString();
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.                                  
                     }
                     // Swipe right detected.
@@ -1054,13 +1076,14 @@ public class InputModule : MonoBehaviour
                         ievent.isSwipeRightRotationError = true; // This error was registered.
                         ievent.isUnrecognized = true; // An unrecognized gesture was registered.
                         unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
-                        debugInputInfo = "Swipe right rotation error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
+                                                // debugInputInfo = "Swipe right rotation error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
+                        debugInputInfo = "Right. x0: " + touchEnd[0].x.ToString() + ", x1: " + touchEnd[1].x.ToString() + ", x2: " + touchEnd[2].x.ToString() + ", y0: " + touchEnd[0].y.ToString() + ", y1: " + touchEnd[1].y.ToString() + ", y2: " + touchEnd[2].y.ToString() + ", Angle: " + angle.ToString();
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
                     }
                 }
 
                 // If the gesture was a left or right swipe with not enough horizontal movement.
-                else if (((gestureStopTime - gestureStartTime) < 1.0f) && (Mathf.Abs(x0) > Mathf.Abs(y0)) && (Mathf.Abs(x1) > Mathf.Abs(y1)) && (Mathf.Abs(x2) > Mathf.Abs(y2)) && ((Mathf.Abs(x0) < minSwipeHorizontalDist) || (Mathf.Abs(x1) < minSwipeHorizontalDist) || (Mathf.Abs(x2) < minSwipeHorizontalDist)) && (Mathf.Abs(x0) > (Screen.width * 0.085f)) && (Mathf.Abs(x1) > (Screen.width * 0.085f)) && (Mathf.Abs(x2) > (Screen.width * 0.085f)))
+                else if (((gestureStopTime - gestureStartTime) < 1.0f) && (Mathf.Abs(x0) > Mathf.Abs(y0)) && (Mathf.Abs(x1) > Mathf.Abs(y1)) && (Mathf.Abs(x2) > Mathf.Abs(y2)) && (((Mathf.Abs(x0) < minSwipeHorizontalDist) && (Mathf.Abs(x0) > (Screen.width * 0.08f))) || ((Mathf.Abs(x1) < minSwipeHorizontalDist) && (Mathf.Abs(x1) > (Screen.width * 0.08f))) || ((Mathf.Abs(x2) < minSwipeHorizontalDist) && (Mathf.Abs(x2) > (Screen.width * 0.08f)))))
                 {
                     // Swipe left detected.
                     if ((x0 < 0.0f) && (x1 < 0.0f) && (x2 < 0.0f))
@@ -1106,7 +1129,7 @@ public class InputModule : MonoBehaviour
                 }
 
                 // If the gesture was an up or down swipe with not enough vertical movement.
-                else if (((gestureStopTime - gestureStartTime) < 1.0f) && (Mathf.Abs(y0) > Mathf.Abs(x0)) && (Mathf.Abs(y1) > Mathf.Abs(x1)) && (Mathf.Abs(y2) > Mathf.Abs(x2)) && ((Mathf.Abs(y0) < minSwipeVerticalDist) || (Mathf.Abs(y1) < minSwipeVerticalDist) || (Mathf.Abs(y2) < minSwipeVerticalDist)) && (Mathf.Abs(y0) > (Screen.height * 0.07f)) && (Mathf.Abs(y1) > (Screen.height * 0.07f)) && (Mathf.Abs(y2) > (Screen.height * 0.07f)))
+                else if (((gestureStopTime - gestureStartTime) < 1.0f) && (Mathf.Abs(y0) > Mathf.Abs(x0)) && (Mathf.Abs(y1) > Mathf.Abs(x1)) && (Mathf.Abs(y2) > Mathf.Abs(x2)) && (((Mathf.Abs(y0) < minSwipeVerticalDist) && (Mathf.Abs(y0) > (Screen.height * 0.095f))) || ((Mathf.Abs(y1) < minSwipeVerticalDist) && (Mathf.Abs(y1) > (Screen.height * 0.095f))) || ((Mathf.Abs(y2) < minSwipeVerticalDist) && (Mathf.Abs(y2) > (Screen.height * 0.095f)))))
                 {
                     // Swipe up detected.
                     if ((y0 > 0.0f) && (y1 > 0.0f) && (y2 > 0.0f))

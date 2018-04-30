@@ -31,6 +31,11 @@ public class GM_TC : MonoBehaviour
 
     List<AudioClip> clips; // For sound clip that plays when we do a gesture in this scene.
 
+    bool noConsent = false;
+    bool hearingConsentForm = false;
+    bool readingConsentForm = false; 
+    bool finishedConsentForm = false;
+
     /// <summary>
     /// Loads the terms and conditions data.
     /// </summary>
@@ -149,12 +154,14 @@ public class GM_TC : MonoBehaviour
             {
                 string str = Utilities.check_InternetConnection();
                 if (str.Length == 0)
-                {//we're good to go
+                { // we're good to go
                     doneTesting = true;
                     titleText.text = Database.tcText_main;
                 }
                 else
+                {
                     titleText.text = str;
+                }
             }
         }
 
@@ -275,85 +282,79 @@ public class GM_TC : MonoBehaviour
         {
             InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
 
-            /*clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-
-            if (ie.isTap == true)
+            /*             
+            if (ie.isSwipe == true)
             {
-                Utilities.writefile("consentRecord", "1");
-                // Notify the player we are moving to the main menu with the sound, then go to the main menu.
-                SoundManager.instance.PlayClips(clips, 0, () => SceneManager.LoadScene("Title_Screen"), 1);
-                Screen.sleepTimeout = SleepTimeout.NeverSleep;
-                Screen.orientation = ScreenOrientation.Landscape;
-            }
-            else if (ie.isHold == true)
-            {
-                Utilities.writefile("consentRecord", "1");
-                // Notify the player we are moving to the main menu with the sound, then go to the main menu.
-                SoundManager.instance.PlayClips(clips, 0, () => SceneManager.LoadScene("Title_Screen"), 1);
-                Screen.sleepTimeout = SleepTimeout.NeverSleep;
-                Screen.orientation = ScreenOrientation.Landscape;
-            }
-            else if (ie.isSwipe == true)
-            {
-                if (ie.isUp == true)
+                if (ie.isLeft == true)
                 {
-                    Utilities.writefile("consentRecord", "1");
-                    // Notify the player we are moving to the main menu with the sound, then go to the main menu.
-                    SoundManager.instance.PlayClips(clips, 0, () => SceneManager.LoadScene("Title_Screen"), 1);
-                    Screen.sleepTimeout = SleepTimeout.NeverSleep;
-                    Screen.orientation = ScreenOrientation.Landscape;
-                }
-                else if (ie.isDown == true)
-                {
-                    Utilities.writefile("consentRecord", "1");
-                    // Notify the player we are moving to the main menu with the sound, then go to the main menu.
-                    SoundManager.instance.PlayClips(clips, 0, () => SceneManager.LoadScene("Title_Screen"), 1);
-                    Screen.sleepTimeout = SleepTimeout.NeverSleep;
-                    Screen.orientation = ScreenOrientation.Landscape;
-                }
-                else if (ie.isLeft == true)
-                {
-                    Utilities.writefile("consentRecord", "1");
-                    // Notify the player we are moving to the main menu with the sound, then go to the main menu.
-                    SoundManager.instance.PlayClips(clips, 0, () => SceneManager.LoadScene("Title_Screen"), 1);
-                    Screen.sleepTimeout = SleepTimeout.NeverSleep;
-                    Screen.orientation = ScreenOrientation.Landscape;
+                    hearingConsentForm = true;
+                    debugPlayerInfo = "Swipe left registered. Reading consent form through audio instructions.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 }
                 else if (ie.isRight == true)
                 {
-                    Utilities.writefile("consentRecord", "1");
-                    // Notify the player we are moving to the main menu with the sound, then go to the main menu.
-                    SoundManager.instance.PlayClips(clips, 0, () => SceneManager.LoadScene("Title_Screen"), 1);
+                    readingConsentForm = true;
+                    debugPlayerInfo = "Swipe right registered. Reading consent form PDF.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                }
+                else if (ie.isUp == true)
+                {
+                    debugPlayerInfo = "Swipe up registered. Does nothing in this menu.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                } 
+                else if (ie.isDown == true)
+                {
+                    noConsent = true;
+                    debugPlayerInfo = "Swipe down registered. Does nothing in this menu.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                }
+            }
+
+            else if (ie.isTap == true)
+            {
+                if (noConsent == true)
+                {
+                    Utilities.writefile("consentRecord", "0");
+                    debugPlayerInfo = "Did not consent to having data collected. Moving to main menu.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    SceneManager.LoadScene("Title_Screen"); // Move to main menu.
                     Screen.sleepTimeout = SleepTimeout.NeverSleep;
                     Screen.orientation = ScreenOrientation.Landscape;
                 }
+                else if (readingConsentForm == true)
+                {
+
+                }
+                else if (hearingConsentForm == true)
+                {
+                    debugPlayerInfo = "Tap registered. Does nothing in this menu.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                }
+            }
+            else if (ie.isHold == true)
+            {
+                debugPlayerInfo = "Hold registered. Does nothing in this menu.";
+                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
             }
             else if (ie.isRotate == true)
             {
                 if (ie.isLeft == true)
                 {
-                    Utilities.writefile("consentRecord", "1");
-                    // Notify the player we are moving to the main menu with the sound, then go to the main menu.
-                    SoundManager.instance.PlayClips(clips, 0, () => SceneManager.LoadScene("Title_Screen"), 1);
-                    Screen.sleepTimeout = SleepTimeout.NeverSleep;
-                    Screen.orientation = ScreenOrientation.Landscape;
+                    debugPlayerInfo = "Left rotation registered. Does nothing in this menu.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 }
                 else if (ie.isRight == true)
                 {
-                    Utilities.writefile("consentRecord", "1");
-                    // Notify the player we are moving to the main menu with the sound, then go to the main menu.
-                    SoundManager.instance.PlayClips(clips, 0, () => SceneManager.LoadScene("Title_Screen"), 1);
-                    Screen.sleepTimeout = SleepTimeout.NeverSleep;
-                    Screen.orientation = ScreenOrientation.Landscape;
+                    debugPlayerInfo = "Right rotation registered. Does nothing in this menu.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 }
-            }*/
+            }
+            */
         }
-
         Utilities.writefile("consentRecord", "1");
-        // debugPlayerInfo = "Read Terms and Conditions. Moving to main menu.";
-        // DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-        // clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-        // SoundManager.instance.PlayClips(clips); // To notify that this scene loaded, but it immediately moves to the main menu.
+        debugPlayerInfo = "Screen Width: " + Screen.width.ToString() + ", Screen Height: " + Screen.height.ToString();
+        // debugPlayerInfo = "Consented to having data collected. Moving to main menu.";
+        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
         SceneManager.LoadScene("Title_Screen"); // Move to main menu.
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
         Screen.orientation = ScreenOrientation.Landscape;
