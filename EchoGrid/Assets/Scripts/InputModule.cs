@@ -151,7 +151,7 @@ public class InputModule : MonoBehaviour
     // Use for initialization.
     void Start()
     {
-
+       
     }
 
     /// <summary>
@@ -174,7 +174,7 @@ public class InputModule : MonoBehaviour
     /// Checks for new input data every frame.
     /// </summary>
     void Update()
-    {
+    {        
         GetInput();
     }
 

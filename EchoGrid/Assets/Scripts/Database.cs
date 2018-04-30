@@ -40,7 +40,7 @@ public class Database : MonoBehaviour
 
     // Pregame menu clips
     [HideInInspector]
-    public static AudioClip[] preGameMenuClips = new AudioClip[15];
+    public static AudioClip[] preGameMenuClips = new AudioClip[35];
 
     // Gesture tutorial clips
     [HideInInspector]
@@ -54,7 +54,7 @@ public class Database : MonoBehaviour
     [HideInInspector]
     public static AudioClip[] pauseMenuClips = new AudioClip[12];
     [HideInInspector]
-    public static AudioClip[] hintClips = new AudioClip[4];
+    public static AudioClip[] hintClips = new AudioClip[5];
 
     // Error clips
     [HideInInspector]
@@ -139,6 +139,26 @@ public class Database : MonoBehaviour
         preGameMenuClips[12] = Resources.Load("instructions/pregame_menu/confirm_talkback") as AudioClip;
         preGameMenuClips[13] = Resources.Load("instructions/pregame_menu/new_game_started") as AudioClip;
         preGameMenuClips[14] = Resources.Load("instructions/pregame_menu/loaded_saved_game") as AudioClip;
+        preGameMenuClips[15] = Resources.Load("instructions/pregame_menu/tutorial_swipe_up_normal") as AudioClip;
+        preGameMenuClips[16] = Resources.Load("instructions/pregame_menu/tutorial_swipe_up_talkback") as AudioClip;
+        preGameMenuClips[17] = Resources.Load("instructions/pregame_menu/maingame_swipe_up_normal") as AudioClip;
+        preGameMenuClips[18] = Resources.Load("instructions/pregame_menu/maingame_swipe_up_talkback") as AudioClip;
+        preGameMenuClips[19] = Resources.Load("instructions/pregame_menu/default_start_level") as AudioClip;
+        preGameMenuClips[20] = Resources.Load("instructions/pregame_menu/play_selected_level_normal") as AudioClip;
+        preGameMenuClips[21] = Resources.Load("instructions/pregame_menu/play_selected_level_talkback") as AudioClip;
+        preGameMenuClips[22] = Resources.Load("instructions/pregame_menu/select_higher_level_normal") as AudioClip;
+        preGameMenuClips[23] = Resources.Load("instructions/pregame_menu/select_higher_level_talkback") as AudioClip;
+        preGameMenuClips[24] = Resources.Load("instructions/pregame_menu/select_lower_level_normal") as AudioClip;
+        preGameMenuClips[25] = Resources.Load("instructions/pregame_menu/select_lower_level_talkback") as AudioClip;
+        preGameMenuClips[26] = Resources.Load("instructions/pregame_menu/tutorial_back_to_new_continue_normal") as AudioClip;
+        preGameMenuClips[27] = Resources.Load("instructions/pregame_menu/tutorial_back_to_new_continue_talkback") as AudioClip;
+        preGameMenuClips[28] = Resources.Load("instructions/pregame_menu/maingame_back_to_new_continue_normal") as AudioClip;
+        preGameMenuClips[29] = Resources.Load("instructions/pregame_menu/maingame_back_to_new_continue_talkback") as AudioClip;
+        preGameMenuClips[30] = Resources.Load("instructions/pregame_menu/playing_selected_level") as AudioClip;
+        preGameMenuClips[31] = Resources.Load("instructions/pregame_menu/tutorial_at_lowest_level") as AudioClip;
+        preGameMenuClips[32] = Resources.Load("instructions/pregame_menu/tutorial_at_highest_level") as AudioClip;
+        preGameMenuClips[33] = Resources.Load("instructions/pregame_menu/maingame_at_lowest_level") as AudioClip;
+        preGameMenuClips[34] = Resources.Load("instructions/pregame_menu/maingame_at_highest_level") as AudioClip;
 
         // Gesture tutorial clips      
         tutorialClips[0] = Resources.Load("instructions/tutorial/tutorial_reminder") as AudioClip;
@@ -385,6 +405,7 @@ public class Database : MonoBehaviour
         hintClips[1] = Resources.Load("instructions/hints/should_turn_left") as AudioClip;
         hintClips[2] = Resources.Load("instructions/hints/should_turn_right") as AudioClip;
         hintClips[3] = Resources.Load("instructions/hints/should_exit") as AudioClip;
+        hintClips[4] = Resources.Load("instructions/hints/should_turn_around") as AudioClip;
 
         // Error clips
         errorClips[0] = Resources.Load("instructions/errors/tap_horizontal_error") as AudioClip;

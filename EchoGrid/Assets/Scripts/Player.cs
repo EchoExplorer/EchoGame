@@ -1194,7 +1194,7 @@ public class Player : MovingObject
         }
         else if (forward == -sol_dir)
         {
-            clip = Resources.Load("instructions/You should turn around by turning in the same direction twice") as AudioClip;
+            clip = Database.hintClips[4];
         }
         else
         {
