@@ -303,20 +303,13 @@ public class InputModule : MonoBehaviour
 				{
 					touchEnd[0] = thisTouch.position; // Update the end position of this touch. Not necessary as it should not have changed, but just for safety.
 					vecEnd1 = thisTouch.position; // Update the end position vector of this touch. Not necessary as it should not have changed, but just for safety.
-				}
-				// If the touch has moved and has been registered.
-				else if ((thisTouch.phase == TouchPhase.Moved) && (hasRegistered[0] == true)) 
-				{
-					touchEnd[0] = thisTouch.position; // Update the end position of this touch.
-					vecEnd1 = thisTouch.position; // Update the end position vector of this touch.
-				}
+				}				
 				// If the touch ended and has been registered.
 				else if ((thisTouch.phase == TouchPhase.Ended) && (hasRegistered[0] == true)) 
 				{
 					touchRegister += 1; // Update the number of touches that have left the screen.
 					touchEnd[0] = thisTouch.position; // Update the end position of this touch.
 					vecEnd1 = thisTouch.position; // Update the end position vector of this touch.
-                    // print("Touch0End: " + thisTouch.position.ToString());
                 }
 				// If the touch was canceled for some reason.
 				else if (thisTouch.phase == TouchPhase.Canceled) 
@@ -325,7 +318,7 @@ public class InputModule : MonoBehaviour
                     DebugTouch0.instance.ChangeDebugTouch0Text(debugTouch0Info); // Update the debug textbox.
                 } 
 				// Some weird error occured.
-				else 
+				else if (thisTouch.phase != TouchPhase.Moved)
 				{
 					debugTouch0Info = "Cannot compute";
                     DebugTouch0.instance.ChangeDebugTouch0Text(debugTouch0Info); // Update the debug textbox.
@@ -354,20 +347,13 @@ public class InputModule : MonoBehaviour
 				{
 					touchEnd[1] = thisTouch.position; // Update the end position of this touch. Not necessary as it should not have changed, but just for safety.
 					vecEnd2 = thisTouch.position; // Update the end position vector of this touch. Not necessary as it should not have changed, but just for safety.
-				}
-				// If the touch has moved and has been registered.
-				else if ((thisTouch.phase == TouchPhase.Moved) && (hasRegistered[1] == true)) 
-				{
-					touchEnd[1] = thisTouch.position; // Update the end position of this touch.
-					vecEnd2 = thisTouch.position; // Update the end position vector of this touch.
-				}
+				}				
 				// If the touch ended and has been registered.
 				else if ((thisTouch.phase == TouchPhase.Ended) && (hasRegistered[1] == true)) 
 				{
                     touchRegister += 1; // Update the number of touches that have left the screen.
 					touchEnd[1] = thisTouch.position; // Update the end position of this touch.
 					vecEnd2 = thisTouch.position; // Update the end position vector of this touch.
-                    // print("Touch1End: " + thisTouch.position.ToString());
                 }
 				// If the touch was canceled for some reason.
 				else if (thisTouch.phase == TouchPhase.Canceled) 
@@ -376,7 +362,7 @@ public class InputModule : MonoBehaviour
                     DebugTouch1.instance.ChangeDebugTouch1Text(debugTouch1Info); // Update the debug textbox.
                 }
 				// Some weird error occured.
-				else 
+				else if (thisTouch.phase != TouchPhase.Moved)
 				{
 					debugTouch1Info = "Cannot compute";
                     DebugTouch1.instance.ChangeDebugTouch1Text(debugTouch1Info); // Update the debug textbox.
@@ -413,7 +399,6 @@ public class InputModule : MonoBehaviour
 				{
                     touchRegister += 1; // Update the number of touches that have left the screen.
 					touchEnd[2] = thisTouch.position; // Update the end position of this touch.
-                    // print("Touch2End: " + thisTouch.position.ToString());
                 }
 				// If the touch was canceled for some reason.
 				else if (thisTouch.phase == TouchPhase.Canceled) 
@@ -458,9 +443,29 @@ public class InputModule : MonoBehaviour
                     y2 = touchEnd[2].y - touchStart[2].y;
                 }
 
+                Touch touch0 = Input.touches[0];
+                Touch touch1 = Input.touches[1];
+                // If the touch has moved and has been registered.
+                if (((touch0.phase == TouchPhase.Moved) && (hasRegistered[0] == true)) || ((touch1.phase == TouchPhase.Moved) && (hasRegistered[1] == true)))
+                {
+                    if (touch0.phase == TouchPhase.Moved)
+                    {
+                        touchEnd[0] = touch0.position; // Update the end position of this touch.
+                        vecEnd1 = touch0.position; // Update the end position vector of this touch.
+                    }
+                    if (touch1.phase == TouchPhase.Moved)
+                    {
+                        touchEnd[1] = touch1.position; // Update the end position of this touch.
+                        vecEnd2 = touch1.position; // Update the end position vector of this touch.
+                    }
+
+                    float currentAngle = Angle(touch0.position, touch1.position);
+                    float previousAngle = Angle((touch0.position - touch0.deltaPosition), (touch1.position - touch1.deltaPosition));
+                    angle = Mathf.DeltaAngle(currentAngle, previousAngle);
+                }
+                
                 VecStart = vecStart1 - vecStart2; // Get the vector between the start positions of touch0 and touch1.
                 VecEnd = vecEnd1 - vecEnd2; // Get the vector between the end positions of touch0 and touch1.
-                angle = Vector2.Angle(VecStart, VecEnd);
                 cross = Vector3.Cross((Vector3)VecStart.normalized, (Vector3)VecEnd.normalized); // Get the cross product between the two vectors.
                 crossPz = cross.z; // Get the z-component of the cross product.   
 
@@ -498,12 +503,31 @@ public class InputModule : MonoBehaviour
                     y2 = touchEnd[2].y - touchStart[2].y;
                 }
 
+                Touch touch0 = Input.touches[0];
+                Touch touch1 = Input.touches[1];
+                // If the touch has moved and has been registered.
+                if (((touch0.phase == TouchPhase.Moved) && (hasRegistered[0] == true)) || ((touch1.phase == TouchPhase.Moved) && (hasRegistered[1] == true)))
+                {
+                    if (touch0.phase == TouchPhase.Moved)
+                    {
+                        touchEnd[0] = touch0.position; // Update the end position of this touch.
+                        vecEnd1 = touch0.position; // Update the end position vector of this touch.
+                    }
+                    if (touch1.phase == TouchPhase.Moved)
+                    {
+                        touchEnd[1] = touch1.position; // Update the end position of this touch.
+                        vecEnd2 = touch1.position; // Update the end position vector of this touch.
+                    }
+
+                    float currentAngle = Angle(touch0.position, touch1.position);
+                    float previousAngle = Angle((touch0.position - touch0.deltaPosition), (touch1.position - touch1.deltaPosition));
+                    angle = Mathf.DeltaAngle(currentAngle, previousAngle);
+                }
+
                 VecStart = vecStart1 - vecStart2; // Get the vector between the start positions of touch0 and touch1.
                 VecEnd = vecEnd1 - vecEnd2; // Get the vector between the end positions of touch0 and touch1.
-                angle = Vector2.Angle(VecStart, VecEnd);
                 cross = Vector3.Cross((Vector3)VecStart.normalized, (Vector3)VecEnd.normalized); // Get the cross product between the two vectors.
                 crossPz = cross.z; // Get the z-component of the cross product.   
-
 
                 debugTouchDurationInfo = "Hold: " + touchDuration + "\nAngle: " + angle.ToString() + "\nCrossPz: " + crossPz;
                 DebugTouchDuration.instance.ChangeDebugTouchDurationText(debugTouchDurationInfo); // Update the debug textbox.
@@ -533,9 +557,29 @@ public class InputModule : MonoBehaviour
                 x2 = touchEnd[2].x - touchStart[2].x;
                 y2 = touchEnd[2].y - touchStart[2].y;
 
+                Touch touch0 = Input.touches[0];
+                Touch touch1 = Input.touches[1];
+                // If the touch has moved and has been registered.
+                if (((touch0.phase == TouchPhase.Moved) && (hasRegistered[0] == true)) || ((touch1.phase == TouchPhase.Moved) && (hasRegistered[1] == true)))
+                {
+                    if (touch0.phase == TouchPhase.Moved)
+                    {
+                        touchEnd[0] = touch0.position; // Update the end position of this touch.
+                        vecEnd1 = touch0.position; // Update the end position vector of this touch.
+                    }
+                    if (touch1.phase == TouchPhase.Moved)
+                    {
+                        touchEnd[1] = touch1.position; // Update the end position of this touch.
+                        vecEnd2 = touch1.position; // Update the end position vector of this touch.
+                    }
+                   
+                    float currentAngle = Angle(touch0.position, touch1.position);
+                    float previousAngle = Angle((touch0.position - touch0.deltaPosition), (touch1.position - touch1.deltaPosition));
+                    angle = Mathf.DeltaAngle(currentAngle, previousAngle);
+                }
+
                 VecStart = vecStart1 - vecStart2; // Get the vector between the start positions of touch0 and touch1.
                 VecEnd = vecEnd1 - vecEnd2; // Get the vector between the end positions of touch0 and touch1.
-                angle = Vector2.Angle(VecStart, VecEnd);
                 cross = Vector3.Cross((Vector3)VecStart.normalized, (Vector3)VecEnd.normalized); // Get the cross product between the two vectors.
                 crossPz = cross.z; // Get the z-component of the cross product.   
 
@@ -1226,6 +1270,22 @@ public class InputModule : MonoBehaviour
         // if no input, code should not reach here
         PassDataToListeners(ievent);
         NotifyLlisteners();
+    }
+
+    static private float Angle(Vector2 pos1, Vector2 pos2)
+    {
+        Vector2 from = pos2 - pos1;
+        Vector2 to = new Vector2(1, 0);
+
+        float result = Vector2.Angle(from, to);
+        Vector3 cross = Vector3.Cross(from, to);
+
+        if (cross.z > 0)
+        {
+            result = 360f - result;
+        }
+
+        return result;
     }
 
     /// <summary>
