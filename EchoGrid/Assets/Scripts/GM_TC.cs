@@ -352,8 +352,7 @@ public class GM_TC : MonoBehaviour
             */
         }
         Utilities.writefile("consentRecord", "1");
-        debugPlayerInfo = "Screen Width: " + Screen.width.ToString() + ", Screen Height: " + Screen.height.ToString();
-        // debugPlayerInfo = "Consented to having data collected. Moving to main menu.";
+        debugPlayerInfo = "Consented to having data collected. Moving to main menu.";
         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
         SceneManager.LoadScene("Title_Screen"); // Move to main menu.
         Screen.sleepTimeout = SleepTimeout.NeverSleep;

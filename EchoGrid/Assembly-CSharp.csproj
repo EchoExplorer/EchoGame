@@ -167,12 +167,16 @@
      <Compile Include="Assets\Scripts\GameData.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
      <Compile Include="Assets\Scripts\GameMode.cs" />
+     <Compile Include="Assets\Scripts\GestureBoundary.cs" />
      <Compile Include="Assets\Scripts\InputModule.cs" />
      <Compile Include="Assets\Scripts\Loader.cs" />
      <Compile Include="Assets\Scripts\Logging.cs" />
      <Compile Include="Assets\Scripts\MovingObject.cs" />
      <Compile Include="Assets\Scripts\Player.cs" />
      <Compile Include="Assets\Scripts\SoundManager.cs" />
+     <Compile Include="Assets\Scripts\Touch0Point.cs" />
+     <Compile Include="Assets\Scripts\Touch1Point.cs" />
+     <Compile Include="Assets\Scripts\Touch2Point.cs" />
      <Compile Include="Assets\Scripts\UICanvas.cs" />
      <Compile Include="Assets\Scripts\Utilities.cs" />
      <Compile Include="Assets\Scripts\Wall.cs" />
