@@ -78,12 +78,12 @@ public class Database : MonoBehaviour
     {
         //Option1:
         attenuatedClickfront_odeon = Resources.Load("fx/00-0_F-6.75-D_B-w-D_L-w-D_R-w-D_fadeout") as AudioClip;
-        attenuatedClick = Resources.Load("fx/attenuatedClick") as AudioClip;
+		attenuatedClick = Resources.Load("fx/ExpertClickSingle_attenuated") as AudioClip;
         attenuatedaround_odeon = Resources.Load("fx/00-0_F-0.75-D_B-w-D_L-w-D_R-w-D_fadeout") as AudioClip;
 
         //Option1:
-        attenuatedClickfront = Resources.Load("fx/attenuatedClick") as AudioClip;
-        attenuatedaround = Resources.Load("fx/attenuatedClick") as AudioClip;
+		attenuatedClickfront = Resources.Load("fx/ExpertClickSingle_attenuated") as AudioClip;
+		attenuatedaround = Resources.Load("fx/ExpertClickSingle_attenuated") as AudioClip;
 
         // Game environment setting clips
         settingsClips[0] = Resources.Load("instructions/settings/orient_phone") as AudioClip;
