@@ -85,6 +85,7 @@ public class Database : MonoBehaviour
 		attenuatedClickfront = Resources.Load("fx/ExpertClickSingle_attenuated") as AudioClip;
 		attenuatedaround = Resources.Load("fx/ExpertClickSingle_attenuated") as AudioClip;
 
+
         // Game environment setting clips
         settingsClips[0] = Resources.Load("instructions/settings/orient_phone") as AudioClip;
         settingsClips[1] = Resources.Load("instructions/settings/listen_to_instructions") as AudioClip;

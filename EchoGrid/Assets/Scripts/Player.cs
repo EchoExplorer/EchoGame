@@ -133,7 +133,7 @@ public class Player : MovingObject
     public int level1_remaining_menus = -1; // Gesture tutorial level 1 remaining holds for pause menu. Initially set to -1 as there are checks for if they are greater or equal to 0, and we don't want hints playing at the wrong time.
     public int level3_remaining_turns = -1; // Gesture tutorial level 3 remaining turns/rotations. Initially set to -1 as there are checks for if they are greater or equal to 0, and we don't want hints playing at the wrong time.
     enum InterceptAction { NONE, UP, DOWN, LEFT, RIGHT, TAP, DOUBLE_TAP, TRIPLE_TAP, MENU };
-
+	string prefix="C00";
     string surveyCode = "";
 
     AudioClip echoaround = Database.attenuatedaround_odeon;
@@ -293,8 +293,8 @@ public class Player : MovingObject
         //print("Facing: " + dir_x + ", " + dir_y);
 
 		GameObject frontWall, leftWall, rightWall, leftFrontWall, rightFrontWall, tempWall,rightEndWall,leftEndWall,leftTwoFrontWall,rightTwoFrontWall;
-        leftWall = GameObject.Find("Wall_" + x + "_" + y);
-        rightWall = GameObject.Find("Wall_" + x + "_" + y);
+        //leftWall = GameObject.Find("Wall_" + x + "_" + y);
+        //rightWall = GameObject.Find("Wall_" + x + "_" + y);
         // assume dir.x != 0
         leftWall = GameObject.Find("Wall_" + (x + dir_y) + "_" + (y + dir_x));
         rightWall = GameObject.Find("Wall_" + (x + -dir_y) + "_" + (y + -dir_x));
@@ -388,14 +388,11 @@ public class Player : MovingObject
                 leftFrontGAS = leftFrontWall.GetComponent<GvrAudioSource>();
                 leftFrontGAS.clip = echoaround;
                 leftFrontGAS.gainDb = fourblockdb;
-				if (leftTwoFrontWall != null) {
-					//Left two and front one block
-					leftTwoFrontGAS = leftTwoFrontWall.GetComponent<GvrAudioSource> ();
-					leftTwoFrontGAS.clip = echofront;
-					leftTwoFrontGAS.gainDb = fourblockdb;
-				}
+
             }
         }
+
+
         if (blocksToFrontWall > 0 && rightFrontWall != null)
         {
             if (((int)blocksToFrontWall) != 0 || rightWall == null)
@@ -478,7 +475,6 @@ public class Player : MovingObject
         BoardManager.echoDistData data = GameManager.instance.boardScript.getEchoDistData(transform.position, get_player_dir("FRONT"), get_player_dir("LEFT"));
 
         // Logging.Log(data.all_jun_to_string(), Logging.LogLevel.NORMAL);
-        String prefix = "C00-21"; // change this prefix when you change the echo files
         if ((GameManager.instance.level >= 17) && (GameManager.instance.level < 22))
         {
             fourblockdb = 1.3f;
@@ -657,7 +653,7 @@ public class Player : MovingObject
 		}
 		*/
 
-        filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix, data.frontDist, front_type, _dist_type_to_string(b_dtype), "D", _dist_type_to_string(l_dtype), left_type, _dist_type_to_string(r_dtype), right_type);
+        //filename = String.Format("{0}_F-{1:F2}-{2}_B-{3:F2}-{4}_L-{5:F2}-{6}_R-{7:F2}-{8}", prefix, data.frontDist, front_type, _dist_type_to_string(b_dtype), "D", _dist_type_to_string(l_dtype), left_type, _dist_type_to_string(r_dtype), right_type);
 
         if (filename.Equals("C00-21_F-6.75-DS_B-s-D_L-w-D_R-w-D.wav"))
         {
