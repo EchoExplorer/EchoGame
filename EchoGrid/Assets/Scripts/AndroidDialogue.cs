@@ -22,7 +22,7 @@ public class AndroidDialogue : MonoBehaviour
     {
         NORMAL = 0,
         YESONLY = 1,
-        INPUT = 2,
+        INPUT = 2
     }
 
     const int ButtonWidth = 256;
@@ -45,9 +45,9 @@ public class AndroidDialogue : MonoBehaviour
     /// </summary>
     /// <param name="msg">The message to be displayed within the box.</param>
     /// <param name="type">The dialogue type to use.</param>
-    public void DisplayAndroidWindow(string msg, DialogueType type = DialogueType.NORMAL)
+    public void DisplayAndroidWindow(string title, string message, DialogueType type = DialogueType.NORMAL, string yes = "Yes", string no = "No")
     {
-        showDialog(msg, type);
+        showDialog(type, title, message, yes, no);
     }
 
     /// <summary>
@@ -164,7 +164,7 @@ public class AndroidDialogue : MonoBehaviour
 
 
 #endif
-    private void showDialog(string msg, DialogueType type)
+    private void showDialog(DialogueType type, string title, string message, string yesText, string noText)
     {
 
 #if UNITY_ANDROID
@@ -183,34 +183,32 @@ public class AndroidDialogue : MonoBehaviour
             AndroidJavaObject alertDialogBuilder = new AndroidJavaObject("android/app/AlertDialog$Builder", activity);
 
             // Call setTitle on the builder
-            alertDialogBuilder.Call<AndroidJavaObject>("setTitle", "Info:");
+            alertDialogBuilder.Call<AndroidJavaObject>("setTitle", title);
 
             // Call setMessage on the builder
-            alertDialogBuilder.Call<AndroidJavaObject>("setMessage", msg);
+            alertDialogBuilder.Call<AndroidJavaObject>("setMessage", message);
 
             //You must answer it before proceed
-            alertDialogBuilder.Call<AndroidJavaObject>("setCancelable", false);
-
-            // Call setPositiveButton and set the message along with the listner
-            // Listner is a proxy class
-            alertDialogBuilder.Call<AndroidJavaObject>("setPositiveButton", "Yes", new PositiveButtonListner(this));
+            alertDialogBuilder.Call<AndroidJavaObject>("setCancelable", false);    
 
             // Call setPositiveButton and set the message along with the listner
             // Listner is a proxy class
             switch (type)
             {
-                case DialogueType.INPUT:
-                    alertDialogBuilder.Call<AndroidJavaObject>("setTitle", "Enter Code:");
-                    alertDialogBuilder.Call<AndroidJavaObject>("setView", InputTextField);
-                    alertDialogBuilder.Call<AndroidJavaObject>("setPositiveButton", "Yes", new InputTextFieldListner(this, InputTextField));
-                    break;
-                case DialogueType.YESONLY:
-                    break;
                 case DialogueType.NORMAL:
-                    alertDialogBuilder.Call<AndroidJavaObject>("setNegativeButton", "No", new NegativeButtonListner(this));
+                    alertDialogBuilder.Call<AndroidJavaObject>("setPositiveButton", yesText, new PositiveButtonListner(this));
+                    alertDialogBuilder.Call<AndroidJavaObject>("setNegativeButton", noText, new NegativeButtonListner(this));
+                    break;                
+                case DialogueType.YESONLY:
+                    alertDialogBuilder.Call<AndroidJavaObject>("setPositiveButton", yesText, new PositiveButtonListner(this));
                     break;
-                default://same as normal
-                    alertDialogBuilder.Call<AndroidJavaObject>("setNegativeButton", "No", new NegativeButtonListner(this));
+                case DialogueType.INPUT:
+                    alertDialogBuilder.Call<AndroidJavaObject>("setView", InputTextField);
+                    alertDialogBuilder.Call<AndroidJavaObject>("setPositiveButton", yesText, new InputTextFieldListner(this, InputTextField));
+                    break;
+                default: // same as normal
+                    alertDialogBuilder.Call<AndroidJavaObject>("setPositiveButton", yesText, new PositiveButtonListner(this));
+                    alertDialogBuilder.Call<AndroidJavaObject>("setNegativeButton", noText, new NegativeButtonListner(this));
                     break;
             }
             // Finally get the dialog instance and show it

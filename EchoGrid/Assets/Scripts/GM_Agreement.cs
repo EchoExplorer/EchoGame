@@ -258,9 +258,9 @@ public class GM_Agreement : MonoBehaviour
         if (cur_text < total_num_agreements)
         {
             if ((cur_text == 5) || (cur_text == 6))
-                ad.DisplayAndroidWindow(questions[cur_text], AndroidDialogue.DialogueType.YESONLY);
+                ad.DisplayAndroidWindow("Info:", questions[cur_text], AndroidDialogue.DialogueType.YESONLY);
             else
-                ad.DisplayAndroidWindow(questions[cur_text]);
+                ad.DisplayAndroidWindow("Info:", questions[cur_text]);
         }
 
         if (cur_text >= total_num_agreements)
