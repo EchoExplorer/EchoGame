@@ -192,7 +192,7 @@ public class InputModule : MonoBehaviour
     /// Checks for new input data every frame.
     /// </summary>
     void Update()
-    {
+    {       
         GetInput();
     }
 
@@ -702,8 +702,16 @@ public class InputModule : MonoBehaviour
 
             if (touchRegister == 1)
             {
-                debugInputInfo = "Only one finger was registered as leaving the screen.";
-                DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
+                AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+                AndroidJavaObject activity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+                bool hasWindowFocus = activity.Call<bool>("hasWindowFocus");
+
+                if (hasWindowFocus == true)
+                {
+                    unrecognizedTimes += 1;
+                    debugInputInfo = "Only one finger was registered as leaving the screen. An unrecognized gesture has been made " + unrecognizedTimes + " times";
+                    DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
+                }
             }
 
             else if (touchRegister == 2)
@@ -729,7 +737,8 @@ public class InputModule : MonoBehaviour
                     // If a finger went off the screen.
                     if (wentOffscreen == true)
                     {
-                        
+                        List<AudioClip> clips = new List<AudioClip>() { Database.errorClips[18] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
                     }
 
                     // If the gesture was a tap.
@@ -1039,7 +1048,8 @@ public class InputModule : MonoBehaviour
                 // If a finger went off the screen.
                 if (wentOffscreen == true)
                 {
-                   
+                    List<AudioClip> clips = new List<AudioClip>() { Database.errorClips[18] };
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
                 }
 
                 // If the gesture was a tap.

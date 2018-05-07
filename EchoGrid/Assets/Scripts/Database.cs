@@ -30,6 +30,10 @@ public class Database : MonoBehaviour
     public static AudioClip attenuatedaround_odeon;
     public static AudioClip attenuatedClickfront_odeon;
 
+    // Consent menu clips
+    [HideInInspector]
+    public static AudioClip[] consentClips = new AudioClip[12];
+
     // Game environment settings clips
     [HideInInspector]
     public static AudioClip[] settingsClips = new AudioClip[10];
@@ -58,7 +62,7 @@ public class Database : MonoBehaviour
 
     // Error clips
     [HideInInspector]
-    public static AudioClip[] errorClips = new AudioClip[18];
+    public static AudioClip[] errorClips = new AudioClip[19];
 
     // Sound effect clips
     [HideInInspector]
@@ -85,6 +89,19 @@ public class Database : MonoBehaviour
 		attenuatedClickfront = Resources.Load("fx/ExpertClickSingle_attenuated") as AudioClip;
 		attenuatedaround = Resources.Load("fx/ExpertClickSingle_attenuated") as AudioClip;
 
+        // Consent menu clips
+        consentClips[0] = Resources.Load("instructions/consent/consent_intro") as AudioClip;
+        consentClips[1] = Resources.Load("instructions/consent/consent_form") as AudioClip;
+        consentClips[2] = Resources.Load("instructions/consent/eighteen_plus") as AudioClip;
+        consentClips[3] = Resources.Load("instructions/consent/read_and_understand") as AudioClip;
+        consentClips[4] = Resources.Load("instructions/consent/want_to_participate") as AudioClip;
+        consentClips[5] = Resources.Load("instructions/consent/are_you_sure_you_consent") as AudioClip;
+        consentClips[6] = Resources.Load("instructions/consent/are_you_sure_no_consent") as AudioClip;
+        consentClips[7] = Resources.Load("instructions/consent/thank_you_for_consenting") as AudioClip;
+        consentClips[8] = Resources.Load("instructions/consent/did_not_consent") as AudioClip;
+        consentClips[9] = Resources.Load("instructions/consent/not_eighteen_plus") as AudioClip;
+        consentClips[10] = Resources.Load("instructions/consent/did_not_understand_consent") as AudioClip;
+        consentClips[11] = Resources.Load("instructions/consent/does_not_want_to_participate") as AudioClip;
 
         // Game environment setting clips
         settingsClips[0] = Resources.Load("instructions/settings/orient_phone") as AudioClip;
@@ -427,6 +444,7 @@ public class Database : MonoBehaviour
         errorClips[15] = Resources.Load("instructions/errors/not_a_swipe_down") as AudioClip;
         errorClips[16] = Resources.Load("instructions/errors/not_a_rotation") as AudioClip;
         errorClips[17] = Resources.Load("instructions/errors/not_a_left_right_swipe") as AudioClip;
+        errorClips[18] = Resources.Load("instructions/errors/finger_offscreen") as AudioClip;
 
         // Sound effect clips
         soundEffectClips[0] = Resources.Load("fx/0_25_sec_silence") as AudioClip;

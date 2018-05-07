@@ -31,10 +31,43 @@ public class GM_TC : MonoBehaviour
 
     List<AudioClip> clips; // For sound clip that plays when we do a gesture in this scene.
 
+    /*
+    bool canRepeat = true;
+
     bool noConsent = false;
     bool hearingConsentForm = false;
-    bool readingConsentForm = false; 
-    bool finishedConsentForm = false;
+    bool readingConsentForm = false;
+
+    bool consentFlag = false;
+    bool readConsent = false;
+    bool proceduresFlag = false;
+    bool readProcedures = false;
+    bool requirementsFlag = false;
+    bool readRequirements = false;
+    bool risksFlag = false;
+    bool readRisks = false;
+    bool benefitsFlag = false;
+    bool readBenefits = false;
+    bool compCostFlag = false;
+    bool readCompCost = false;
+    bool confidentialityFlag = false;
+    bool readConfidentiality = false;
+    bool questionsContactFlag = false;
+    bool readQuestionsContact = false;
+    bool eighteenPlusFlag = false;
+    bool readEighteenPlus = false;
+    bool understandFlag = false;
+    bool readUnderstand = false;
+    bool participateFlag = false;
+    bool readParticipate = false;
+
+    bool question1 = false;
+    bool answeredQuestion1 = false;
+    bool question2 = false;
+    bool answeredQuestion2 = false;
+    bool question3 = false;
+    bool answeredQuestion3 = false;
+    */
 
     /// <summary>
     /// Loads the terms and conditions data.
@@ -45,13 +78,22 @@ public class GM_TC : MonoBehaviour
         android_window_displayed = false;
         ad = GetComponent<AndroidDialogue>();
 
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
+        Screen.orientation = ScreenOrientation.Landscape;
+
         string[] consentResult = Utilities.Loadfile("consentRecord");
         int[] intResult = new int[1];
         if ((consentResult[0] != null) && (consentResult != null))
         {
             intResult = Array.ConvertAll<string, int>(consentResult, int.Parse);
-            // if (intResult[0] == 1)
-            //     SceneManager.LoadScene("Title_screen");
+            if (intResult[0] == 1)
+            {
+                // debugPlayerInfo = "Previously consented to having their data collected. Moving to main menu.";
+                // DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                // SceneManager.LoadScene("Title_screen");
+                // Screen.sleepTimeout = SleepTimeout.NeverSleep;
+                // Screen.orientation = ScreenOrientation.Landscape;
+            }
         }
 
         doneTesting = false;
@@ -131,6 +173,99 @@ public class GM_TC : MonoBehaviour
     /// </summary>
     void play_audio()
     {
+        /*
+        if ((hearingConsentForm == false) && (readingConsentForm == false) && (noConsent == false) && (finished_reading == false))
+        {
+            if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
+            {
+                canRepeat = false;
+                clips = new List<AudioClip>() { Database.consentClips[0] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+            }
+        }
+
+        if ((hearingConsentForm == true) && (answeredQuestion1 == false))
+        {
+            if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
+            {
+                canRepeat = false;
+                clips = new List<AudioClip>() { Database.consentClips[0], Database.consentClips[2] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+            }
+        }
+
+        if ((hearingConsentForm == true) && (answeredQuestion2 == false))
+        {
+            if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
+            {
+                canRepeat = false;
+                clips = new List<AudioClip>() { Database.consentClips[0], Database.consentClips[3] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+            }
+        }
+
+        if ((hearingConsentForm == true) && (answeredQuestion3 == false))
+        {
+            if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
+            {
+                canRepeat = false;
+                clips = new List<AudioClip>() { Database.consentClips[0], Database.consentClips[4] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+            }
+        }
+
+        if ((answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (question1 == true) && (question2 == true) && (question3 == true))
+        {
+            if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
+            {
+                canRepeat = false;
+                clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.consentClips[5] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+            }
+        }
+
+        if (noConsent == true)
+        {
+            if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
+            {
+                canRepeat = false;
+                clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.consentClips[6] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+            }
+        }
+
+        if (((answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true)) && ((question1 == false) || (question2 == false) || (question3 == false)))
+        {
+            if (question1 == false)
+            {
+                if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
+                {
+                    canRepeat = false;
+                    clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.consentClips[9] };
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                }
+            }
+            else if (question2 == false)
+            {
+                if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
+                {
+                    canRepeat = false;
+                    clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.consentClips[10] };
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                }
+            }
+            else if (question3 == false)
+            {
+                if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
+                {
+                    canRepeat = false;
+                    clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.consentClips[11] };
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                }
+            }
+        }        
+        */
+
         if (finished_reading)
         {
             //if (SoundManager.instance.PlayVoice (clips [cur_clip])) {
@@ -156,16 +291,343 @@ public class GM_TC : MonoBehaviour
                 if (str.Length == 0)
                 { // we're good to go
                     doneTesting = true;
-                    titleText.text = Database.tcText_main;
+                    titleText.text = "Terms & Conditions\n\n" +
+                        "Swipe left with two or three fingers to\n" +
+                        "hear a consent form through audio.\n\n" +
+                        "Swipe right with two or three fingers to\n" +
+                        "read a consent form from physical text.\n\n" +
+                        "If you do not wish to consent to having\n" +
+                        "data from your game collected, swipe\n" +
+                        "down with two or three fingers.";
                 }
                 else
                 {
                     titleText.text = str;
                 }
             }
+        }        
+
+#if (UNITY_IOS || UNITY_ANDROID) && (!UNITY_STANDALONE || !UNITY_WEBPLAYER)
+        /*
+        if ((readingConsentForm == true) && (android_window_displayed == false))
+        {
+            android_window_displayed = true;
+            finished_reading = false;
         }
 
-#if UNITY_IOS || UNITY_ANDROID
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readConsent == false) && (consentFlag == false))
+        {
+            consentFlag = true;
+
+            string title = "Echolocation Consent";
+            string message = "This game is part of a research study conducted by Laurie Heller and Pulkit Grover at Carnegie Mellon " +
+                "University and is partially funded by Google. The purpose of the research is to understand how " +
+                "people can use sounds (such as echoes) to figure out aspects of their physical environment, such " +
+                "as whether or not a wall is nearby. The game will use virtual sounds and virtual walls to teach " +
+                "people how to use sound to virtually move around in the game. This current release of the app is " +
+                "designed to provide user feedback on the app itself.";
+            AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.YESONLY;
+            ad.DisplayAndroidWindow(title, message, dialogueType, "Next");
+        }
+
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readConsent == false) && (consentFlag == true) && (ad.yesclicked() == true))
+        {
+            readConsent = true;
+            ad.clearflag();
+        }
+
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readConsent == true) && (readProcedures == false) && (proceduresFlag == false))
+        {
+            proceduresFlag = true;
+
+            string title = "Procedures";
+            string message = "App users will install a free app on their phone named EchoGrid. Launching the app for the first " +
+                "time will direct users to a consent form. If the user taps the screen to indicate that they are " +
+                "providing informed consent to participate in the research supported by this app, they will be able " +
+                "to begin playing the game.Users will first go through a tutorial that will provide spoken " +
+                "instructions regarding the gestures needed to play the game, such as swiping or tapping on the " +
+                "phone’s screen. Users will need to put on headphones correctly because the game’s sounds will differ " + 
+                "between the two ears. Users will play the game for as long as they want to. The game will increase in " +
+                "difficulty as the levels increase. After a certain number of levels have been played, a survey regarding " +
+                "the user experience will appear. The user will be asked to answer up to 18 questions regarding their " +
+                "experience with the app and whether or not they have normal vision. This survey will only happen once.";
+            AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
+            ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
+        }
+
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readProcedures == false) && (proceduresFlag == true) && (ad.yesclicked() == true))
+        {
+            readProcedures = true;
+            ad.clearflag();
+        }
+
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readProcedures == false) && (proceduresFlag == true) && (ad.noclicked() == true))
+        {
+            proceduresFlag = false;
+            readConsent = false;
+            consentFlag = false;
+            ad.clearflag();
+        }
+
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readProcedures == true) && (readRequirements == false) && (requirementsFlag == false))
+        {
+            requirementsFlag = true;
+
+            string title = "Participant Requirements";
+            string message = "Participation in this study is limited to individuals age 18 and older. Participants with or without vision " +
+                "may play this game. Participants need to have normal hearing because the game relies on detecting subtle " +
+                "differences between sounds. Participants must have access to an Android smartphone to play this game.";
+            AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
+            ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
+        }
+
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRequirements == false) && (requirementsFlag == true) && (ad.yesclicked() == true))
+        {
+            readRequirements = true;
+            ad.clearflag();
+        }
+
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRequirements == false) && (requirementsFlag == true) && (ad.noclicked() == true))
+        {
+            requirementsFlag = false;
+            readProcedures = false;
+            proceduresFlag = false;
+            ad.clearflag();
+        }
+
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRequirements == true) && (readRisks == false) && (risksFlag == false))
+        {
+            risksFlag = true;
+
+            string title = "Risks";
+            string message = "The risks and discomfort associated with participation in this study are no greater than those " +
+                "ordinarily encountered in daily life or during other online activities. Participants will not provide " +
+                "confidential personal information or financial information.";
+            AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
+            ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
+        }
+
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRisks == false) && (risksFlag == true) && (ad.yesclicked() == true))
+        {
+            readRisks = true;
+            ad.clearflag();
+        }
+
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRisks == false) && (risksFlag == true) && (ad.noclicked() == true))
+        {
+            risksFlag = false;
+            readRequirements = false;
+            requirementsFlag = false;
+            ad.clearflag();
+        }
+
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRisks == true) && (readBenefits == false) && (benefitsFlag == false))
+        {
+            benefitsFlag = true;
+
+            string title = "Benefits";
+            string message = "There may be no personal benefit from your participation in the study but the knowledge received may be " +
+                "of value to humanity. In theory, it is possible that you could become better at discriminating echoes in the real world " +
+                "by playing this game, but the likelihood of this possibility is not known.";
+            AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
+            ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
+        }
+
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readBenefits == false) && (benefitsFlag == true) && (ad.yesclicked() == true))
+        {
+            readBenefits = true;
+            ad.clearflag();
+        }
+
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readBenefits == false) && (benefitsFlag == true) && (ad.noclicked() == true))
+        {
+            benefitsFlag = false;
+            readRisks = false;
+            risksFlag = false;
+            ad.clearflag();
+        }
+
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readBenefits == true) && (readCompCost == false) && (compCostFlag == false))
+        {
+            compCostFlag = true;
+
+            string title = "Compensation and Costs";
+            string message = "There is no compensation for participation in this study. There will be no cost to you if you " +
+                "participate in this study.";
+            AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
+            ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
+        }
+
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readCompCost == false) && (compCostFlag == true) && (ad.yesclicked() == true))
+        {
+            readCompCost = true;
+            ad.clearflag();
+        }
+
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readCompCost == false) && (readCompCost == true) && (ad.noclicked() == true))
+        {
+            compCostFlag = false;
+            readBenefits = false;
+            benefitsFlag = false;
+            ad.clearflag();
+        }
+
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readCompCost == true) && (readConfidentiality == false) && (confidentialityFlag == false))
+        {
+            confidentialityFlag = true;
+
+            string title = "Confidentiality";
+            string message = "The data captured for the research does not include any personally identifiable information about you. " +
+                "Your phone’s device ID will be captured, which is customary for all apps that you install on a phone. " +
+                "You will indicate whether or not you have a visual impairment, but that is not considered to be private " +
+                "health information. The moves you make while playing the game will be captured and your app satisfaction " +
+                "survey responses will be captured.\n\n" +
+                "By participating in this research, you understand and agree that Carnegie Mellon may be required to " +
+                "disclose your consent form, data and other personally identifiable information as required by law, regulation, " +
+                "subpoena or court order. Otherwise, your confidentiality will be maintained in the following manner:\n\n" +
+                "Your data and consent form will be kept separate. Your response to the consent form will be stored electronically " +
+                "in a secure location on Carnegie Mellon property and will not be disclosed to third parties. Sharing of data with " +
+                "other researchers will only be done in such a manner that you will not be identified. This research was sponsored " +
+                "by Google and the app survey data may be shared with them as part of the development process. By participating, you " +
+                "understand and agree that the data and information gathered during this study may be used by Carnegie Mellon and " +
+                "published and/or disclosed by Carnegie Mellon to others outside of Carnegie Mellon. However, your name, address, " +
+                "contact information and other direct personal identifiers will not be gathered. Note that per regulation all research " +
+                "data must be kept for a minimum of 3 years.";
+            AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
+            ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
+        }
+
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readConfidentiality == false) && (confidentialityFlag == true) && (ad.yesclicked() == true))
+        {
+            readConfidentiality = true;
+            ad.clearflag();
+        }
+
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readConfidentiality == false) && (confidentialityFlag == true) && (ad.noclicked() == true))
+        {
+            confidentialityFlag = false;
+            readCompCost = false;
+            compCostFlag = false;
+            ad.clearflag();
+        }
+
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readConfidentiality == true) && (readQuestionsContact == false) && (questionsContactFlag == false))
+        {
+            questionsContactFlag = true;
+
+            string title = "Right to Ask Questions and Contact Information";
+            string message = "If you have any questions about this study, you should feel free to ask them by contacting the " +
+                "Principal Investigator now at: Laurie Heller, Department of Psychology, Carnegie Mellon University, " +
+                "Pittsburgh, PA, 15213, 412-268-8669, auditory@andrew.cmu.edu.\n\n" +
+                "If you have questions later, desire additional information, or wish to withdraw your participation " +
+                "please contact the Principal Investigator by mail, phone or e-mail in accordance with the contact " +
+                "information listed above.\n\n" +
+                "If you have questions pertaining to your rights as a research participant, or to report concerns to " +
+                "this study, you should contact the Office of Research Integrity and Compliance at Carnegie Mellon " +
+                "University.\n" +
+                "Email: irb-review@andrew.cmu.edu.\n" +
+                "Phone: 412-268-1901 or 412-268-5460.";
+            AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
+            ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
+        }
+
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readQuestionsContact == false) && (questionsContactFlag == true) && (ad.yesclicked() == true))
+        {
+            readQuestionsContact = true;
+            ad.clearflag();
+        }
+
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readQuestionsContact == false) && (questionsContactFlag == true) && (ad.noclicked() == true))
+        {
+            questionsContactFlag = false;
+            readConfidentiality = false;
+            confidentialityFlag = false;
+            ad.clearflag();
+        }
+
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readQuestionsContact == true) && (readEighteenPlus == false) && (eighteenPlusFlag == false))
+        {
+            eighteenPlusFlag = true;
+
+            string title = "Age Limitation";
+            string message = "I am age 18 or older.";
+            AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
+            ad.DisplayAndroidWindow(title, message, dialogueType, "Yes", "No");
+        }
+
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readEighteenPlus == false) && (eighteenPlusFlag == true) && (ad.yesclicked() == true))
+        {
+            readEighteenPlus = true;
+            answeredQuestion1 = true;
+            question1 = true;
+            ad.clearflag();
+        }
+
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readEighteenPlus == false) && (eighteenPlusFlag == true) && (ad.noclicked() == true))
+        {
+            readEighteenPlus = true;
+            answeredQuestion1 = true;
+            question1 = false;
+            ad.clearflag();                 
+        }
+
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readEighteenPlus == true) && (readUnderstand == false) && (understandFlag == false))
+        {
+            understandFlag = true;
+
+            string title = "Read Information";
+            string message = "I have read and understand the information above.";
+            AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
+            ad.DisplayAndroidWindow(title, message, dialogueType, "Yes", "No");
+        }
+
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readUnderstand == false) && (understandFlag == true) && (ad.yesclicked() == true))
+        {
+            readUnderstand = true;
+            answeredQuestion2 = true;
+            question2 = true;
+            ad.clearflag();
+        }
+
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readUnderstand == false) && (understandFlag == true) && (ad.noclicked() == true))
+        {
+            readUnderstand = true;
+            answeredQuestion2 = true;
+            question2 = false;
+            ad.clearflag();
+        }
+
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readUnderstand == true) && (readParticipate == false) && (participateFlag == false))
+        {
+            participateFlag = true;
+
+            string title = "Participation";
+            string message = "I want to participate in this research and continue with the game and survey.";
+            AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
+            ad.DisplayAndroidWindow(title, message, dialogueType, "Yes", "No");
+        }
+
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readParticipate == false) && (participateFlag == true) && (ad.yesclicked() == true))
+        {
+            readParticipate = true;
+            answeredQuestion3 = true;
+            question3 = true;
+            android_window_displayed = false;
+            finished_reading = true;
+            ad.clearflag();
+        }
+
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readParticipate == false) && (participateFlag == true) && (ad.noclicked() == true))
+        {
+            readParticipate = true;
+            answeredQuestion3 = true;
+            question3 = false;
+            android_window_displayed = false;
+            finished_reading = true;
+            ad.clearflag();
+        }
+        */
+
         // Consent function temporarily disabled.
         /*
         if (!android_window_displayed)
@@ -198,9 +660,9 @@ public class GM_TC : MonoBehaviour
         }
         */
         // Assume consented
-        android_window_displayed = true;
-        URL_opened = true;
-        finished_reading = true;
+        // android_window_displayed = true;
+        // URL_opened = true;
+        // finished_reading = true;
 #endif
         play_audio();
 
@@ -210,103 +672,208 @@ public class GM_TC : MonoBehaviour
         {
             InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
 
-            /*clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-
-            // If a tap was registered.
-            if (ie.isTap == true)
-            {
-                // Notify the player we are moving to the main menu with the sound, then go to the main menu.
-                SoundManager.instance.PlayClips(clips, 0, () => SceneManager.LoadScene("Title_Screen"), 1);
-            }
-            // If a swipe was registered.
-            else if (ie.isSwipe == true)
-            {
-                // If the swipe was left.
-                if (ie.isLeft == true)
-                {
-                    // Notify the player we are moving to the main menu with the sound, then go to the main menu.
-                    SoundManager.instance.PlayClips(clips, 0, () => SceneManager.LoadScene("Title_Screen"), 1);
-                }
-                // If the swipe was right.
-                else if (ie.isRight == true)
-                {
-                    // Notify the player we are moving to the main menu with the sound, then go to the main menu.
-                    SoundManager.instance.PlayClips(clips, 0, () => SceneManager.LoadScene("Title_Screen"), 1);
-                }
-                // If the swipe was up.
-                else if (ie.isUp == true)
-                {
-                    // Notify the player we are moving to the main menu with the sound, then go to the main menu.
-                    SoundManager.instance.PlayClips(clips, 0, () => SceneManager.LoadScene("Title_Screen"), 1);
-                }
-                // If the swipe was down.
-                else if (ie.isDown == true)
-                {
-                    // Notify the player we are moving to the main menu with the sound, then go to the main menu.
-                    SoundManager.instance.PlayClips(clips, 0, () => SceneManager.LoadScene("Title_Screen"), 1);
-                }
-            }
-            // If a rotation was registered.
-            else if (ie.isRotate == true)
-            {
-                // If it was a left rotation.
-                if (ie.isLeft == true)
-                {
-                    // Notify the player we are moving to the main menu with the sound, then go to the main menu.
-                    SoundManager.instance.PlayClips(clips, 0, () => SceneManager.LoadScene("Title_Screen"), 1);
-                }
-                // If it was a right rotation.
-                else if (ie.isRight == true)
-                {
-                    // Notify the player we are moving to the main menu with the sound, then go to the main menu.
-                    SoundManager.instance.PlayClips(clips, 0, () => SceneManager.LoadScene("Title_Screen"), 1);
-                }
-            }
-            // If a hold was registered.
-            else if (ie.isHold == true)
-            {
-                // Notify the player we are moving to the main menu with the sound, then go to the main menu.
-                SoundManager.instance.PlayClips(clips, 0, () => SceneManager.LoadScene("Title_Screen"), 1);
-            }*/
-        }
-
-        // debugPlayerInfo = "Read Terms and Conditions. Moving to main menu.";
-        // DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.        
-        // clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-        // SoundManager.instance.PlayClips(clips); // To notify that this scene loaded, but it immediately moves to the main menu.
-        SceneManager.LoadScene("Title_Screen"); // Move to main menu.
-#endif
-        // Check if we are running on iOS/Android.
-#if UNITY_IOS || UNITY_ANDROID
-        if (eh.isActivate())
-        {
-            InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
-
-            /*             
+            /*
             if (ie.isSwipe == true)
             {
                 if (ie.isLeft == true)
                 {
-                    hearingConsentForm = true;
-                    debugPlayerInfo = "Swipe left registered. Reading consent form through audio instructions.";
-                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    if ((hearingConsentForm == false) && (readingConsentForm == false) && (noConsent == false))
+                    {
+                        hearingConsentForm = true;
+                        canRepeat = true;
+                        debugPlayerInfo = "Swipe left registered. Reading consent form through audio instructions.";
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.                             
+                        clips = new List<AudioClip>() { Database.consentClips[1], Database.consentClips[2] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                    }
+                    if ((hearingConsentForm == true) && (SoundManager.instance.finishedAllClips == true) && (answeredQuestion1 == false))
+                    {
+                        question1 = false;
+                        answeredQuestion1 = true;
+                        canRepeat = true;
+                        debugPlayerInfo = "Swipe left registered. Is not eighteen.";
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                        clips = new List<AudioClip>() { Database.consentClips[3] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                    }
+                    if ((hearingConsentForm == true) && (SoundManager.instance.finishedAllClips == true) && (answeredQuestion1 == true) && (answeredQuestion2 == false))
+                    {
+                        question2 = false;
+                        answeredQuestion2 = true;
+                        canRepeat = true;
+                        debugPlayerInfo = "Swipe left registered. Did not understand information.";
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                        clips = new List<AudioClip>() { Database.consentClips[4] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                    }
+                    if ((hearingConsentForm == true) && (SoundManager.instance.finishedAllClips == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == false))
+                    {
+                        question3 = false;
+                        answeredQuestion3 = true;
+                        canRepeat = true;
+                        debugPlayerInfo = "Swipe left registered. Does not want to participate.";
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    }
+                    if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && ((question1 == false) || (question2 == false) || (question3 == false)))
+                    {
+                        answeredQuestion1 = false;
+                        answeredQuestion2 = false;
+                        answeredQuestion3 = false;
+                        question1 = false;
+                        question2 = false;
+                        question3 = false;
+                        canRepeat = true;
+                    }
+                    if ((readingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && ((question1 == false) || (question2 == false) || (question3 == false)))
+                    {
+                        answeredQuestion1 = false;
+                        answeredQuestion2 = false;
+                        answeredQuestion3 = false;
+                        question1 = false;
+                        question2 = false;
+                        question3 = false;
+                        canRepeat = true;
+                    }
                 }
                 else if (ie.isRight == true)
                 {
-                    readingConsentForm = true;
-                    debugPlayerInfo = "Swipe right registered. Reading consent form PDF.";
-                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    if ((readingConsentForm == false) && (hearingConsentForm == false) && (noConsent == false))
+                    {
+                        readingConsentForm = true;
+                        debugPlayerInfo = "Swipe right registered. Reading consent form manually.";
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                        clips = new List<AudioClip>() { Database.soundEffectClips[0] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                        finished_reading = true;
+                        answeredQuestion1 = true;
+                        question1 = true;
+                        answeredQuestion2 = true;
+                        question2 = true;
+                        answeredQuestion3 = true;
+                        question3 = true;
+                    }
+                    if ((hearingConsentForm == true) && (SoundManager.instance.finishedAllClips == true) && (answeredQuestion1 == false))
+                    {
+                        question1 = true;
+                        answeredQuestion1 = true;
+                        canRepeat = true;
+                        debugPlayerInfo = "Swipe right registered. Is eighteen.";
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                        clips = new List<AudioClip>() { Database.consentClips[3] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                    }
+                    if ((hearingConsentForm == true) && (SoundManager.instance.finishedAllClips == true) && (answeredQuestion1 == true) && (answeredQuestion2 == false))
+                    {
+                        question2 = true;
+                        answeredQuestion2 = true;
+                        canRepeat = true;
+                        debugPlayerInfo = "Swipe right registered. Understood information.";
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                        clips = new List<AudioClip>() { Database.consentClips[4] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                    }
+                    if ((hearingConsentForm == true) && (SoundManager.instance.finishedAllClips == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == false))
+                    {
+                        question3 = true;
+                        answeredQuestion3 = true;
+                        canRepeat = true;
+                        debugPlayerInfo = "Swipe right registered. Wants to participate.";
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.                       
+                    }
+                    if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && ((question1 == false) || (question2 == false) || (question3 == false)))
+                    {
+                        finished_reading = false;
+                        answeredQuestion1 = false;
+                        answeredQuestion2 = false;
+                        answeredQuestion3 = false;
+                        question1 = false;
+                        question2 = false;
+                        question3 = false;
+                        readConsent = false;
+                        consentFlag = false;
+                        readProcedures = false;
+                        proceduresFlag = false;
+                        readRequirements = false;
+                        requirementsFlag = false;
+                        readRisks = false;
+                        risksFlag = false;
+                        readBenefits = false;
+                        benefitsFlag = false;
+                        readCompCost = false;
+                        compCostFlag = false;
+                        readConfidentiality = false;
+                        confidentialityFlag = false;
+                        readQuestionsContact = false;
+                        questionsContactFlag = false;
+                        readEighteenPlus = false;
+                        eighteenPlusFlag = false;
+                        readUnderstand = false;
+                        understandFlag = false;
+                        readParticipate = false;
+                        participateFlag = false;
+                        canRepeat = true;
+                    }
+                    if ((readingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && ((question1 == false) || (question2 == false) || (question3 == false)))
+                    {
+                        finished_reading = false;
+                        answeredQuestion1 = false;
+                        answeredQuestion2 = false;
+                        answeredQuestion3 = false;
+                        question1 = false;
+                        question2 = false;
+                        question3 = false;
+                        readConsent = false;
+                        consentFlag = false;
+                        readProcedures = false;
+                        proceduresFlag = false;
+                        readRequirements = false;
+                        requirementsFlag = false;
+                        readRisks = false;
+                        risksFlag = false;
+                        readBenefits = false;
+                        benefitsFlag = false;
+                        readCompCost = false;
+                        compCostFlag = false;
+                        readConfidentiality = false;
+                        confidentialityFlag = false;
+                        readQuestionsContact = false;
+                        questionsContactFlag = false;
+                        readEighteenPlus = false;
+                        eighteenPlusFlag = false;
+                        readUnderstand = false;
+                        understandFlag = false;
+                        readParticipate = false;
+                        participateFlag = false;
+                        canRepeat = true;
+                    }
                 }
                 else if (ie.isUp == true)
                 {
                     debugPlayerInfo = "Swipe up registered. Does nothing in this menu.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                } 
+                }
                 else if (ie.isDown == true)
                 {
-                    noConsent = true;
-                    debugPlayerInfo = "Swipe down registered. Does nothing in this menu.";
-                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    if ((hearingConsentForm == false) && (readingConsentForm == false) && (noConsent == false))
+                    {
+                        noConsent = true;
+                        canRepeat = true;
+                        debugPlayerInfo = "Swipe down registered. Deciding not to give consent.";
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                        clips = new List<AudioClip>() { Database.consentClips[6] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                    }
+                    if (((hearingConsentForm == true) || (readingConsentForm == true)) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true))
+                    {
+                        hearingConsentForm = false;
+                        readingConsentForm = false;
+                        noConsent = true;
+                        canRepeat = true;
+                        debugPlayerInfo = "Swipe down registered. Deciding not to give consent.";
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                        clips = new List<AudioClip>() { Database.consentClips[6] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                    }
                 }
             }
 
@@ -315,19 +882,26 @@ public class GM_TC : MonoBehaviour
                 if (noConsent == true)
                 {
                     Utilities.writefile("consentRecord", "0");
-                    debugPlayerInfo = "Did not consent to having data collected. Moving to main menu.";
-                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SceneManager.LoadScene("Title_Screen"); // Move to main menu.
+                    debugPlayerInfo = "Tap registered. Did not consent to having data collected. Moving to main menu.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.                              
+                    clips = new List<AudioClip>() { Database.consentClips[8] };
+                    SoundManager.instance.PlayClips(clips, null, 0, () => SceneManager.LoadScene("Title_Screen"), 1, 0.5f, true);
                     Screen.sleepTimeout = SleepTimeout.NeverSleep;
                     Screen.orientation = ScreenOrientation.Landscape;
                 }
-                else if (readingConsentForm == true)
+                else if (((hearingConsentForm == true) || (readingConsentForm == true)) && (finished_reading == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (question1 == true) && (question2 == true) && (question3 == true))
                 {
-
+                    Utilities.writefile("consentRecord", "1");
+                    debugPlayerInfo = "Tap registered. Consented to having data collected. Moving to main menu.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.                         
+                    clips = new List<AudioClip>() { Database.consentClips[7] };
+                    SoundManager.instance.PlayClips(clips, null, 0, () => SceneManager.LoadScene("Title_Screen"), 1, 0.5f, true);
+                    Screen.sleepTimeout = SleepTimeout.NeverSleep;
+                    Screen.orientation = ScreenOrientation.Landscape;
                 }
-                else if (hearingConsentForm == true)
+                else
                 {
-                    debugPlayerInfo = "Tap registered. Does nothing in this menu.";
+                    debugPlayerInfo = "Tap registered. Does nothing here.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 }
             }
@@ -351,12 +925,267 @@ public class GM_TC : MonoBehaviour
             }
             */
         }
-        Utilities.writefile("consentRecord", "1");
-        debugPlayerInfo = "Consented to having data collected. Moving to main menu.";
-        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-        SceneManager.LoadScene("Title_Screen"); // Move to main menu.
+        SceneManager.LoadScene("Title_Screen");
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
         Screen.orientation = ScreenOrientation.Landscape;
+#endif
+        // Check if we are running on iOS/Android.
+#if UNITY_IOS || UNITY_ANDROID
+        if (eh.isActivate())
+        {
+            InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
+            
+            /*
+            if (ie.isSwipe == true)
+            {
+                if (ie.isLeft == true)
+                {
+                    if ((hearingConsentForm == false) && (readingConsentForm == false) && (noConsent == false))
+                    {
+                        hearingConsentForm = true;
+                        canRepeat = true;
+                        debugPlayerInfo = "Swipe left registered. Reading consent form through audio instructions.";
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.                             
+                        clips = new List<AudioClip>() { Database.consentClips[1], Database.consentClips[2] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                    }
+                    if ((hearingConsentForm == true) && (SoundManager.instance.finishedAllClips == true) && (answeredQuestion1 == false))
+                    {
+                        question1 = false;
+                        answeredQuestion1 = true;
+                        canRepeat = true;
+                        debugPlayerInfo = "Swipe left registered. Is not eighteen.";
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                        clips = new List<AudioClip>() { Database.consentClips[3] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                    }
+                    if ((hearingConsentForm == true) && (SoundManager.instance.finishedAllClips == true) && (answeredQuestion1 == true) && (answeredQuestion2 == false))
+                    {                    
+                        question2 = false;
+                        answeredQuestion2 = true;
+                        canRepeat = true;
+                        debugPlayerInfo = "Swipe left registered. Did not understand information.";
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                        clips = new List<AudioClip>() { Database.consentClips[4] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                    }
+                    if ((hearingConsentForm == true) && (SoundManager.instance.finishedAllClips == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == false))
+                    {
+                        question3 = false;
+                        answeredQuestion3 = true;
+                        canRepeat = true;
+                        debugPlayerInfo = "Swipe left registered. Does not want to participate.";
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    }
+                    if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && ((question1 == false) || (question2 == false) || (question3 == false)))
+                    {
+                        answeredQuestion1 = false;
+                        answeredQuestion2 = false;
+                        answeredQuestion3 = false;
+                        question1 = false;
+                        question2 = false;
+                        question3 = false;
+                        canRepeat = true;
+                    }
+                    if ((readingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && ((question1 == false) || (question2 == false) || (question3 == false)))
+                    {               
+                        answeredQuestion1 = false;
+                        answeredQuestion2 = false;
+                        answeredQuestion3 = false;
+                        question1 = false;
+                        question2 = false;
+                        question3 = false;
+                        canRepeat = true;
+                    }
+                }
+                else if (ie.isRight == true)
+                {
+                    if ((readingConsentForm == false) && (hearingConsentForm == false) && (noConsent == false))
+                    {
+                        readingConsentForm = true;
+                        canRepeat = true;
+                        debugPlayerInfo = "Swipe right registered. Reading consent form manually.";
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                        clips = new List<AudioClip>() { Database.soundEffectClips[0] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                    }
+                    if ((hearingConsentForm == true) && (SoundManager.instance.finishedAllClips == true) && (answeredQuestion1 == false))
+                    {
+                        question1 = true;
+                        answeredQuestion1 = true;
+                        canRepeat = true;
+                        debugPlayerInfo = "Swipe right registered. Is eighteen.";
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                        clips = new List<AudioClip>() { Database.consentClips[3] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                    }
+                    if ((hearingConsentForm == true) && (SoundManager.instance.finishedAllClips == true) && (answeredQuestion1 == true) && (answeredQuestion2 == false))
+                    {
+                        question2 = true;
+                        answeredQuestion2 = true;
+                        canRepeat = true;
+                        debugPlayerInfo = "Swipe right registered. Understood information.";
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                        clips = new List<AudioClip>() { Database.consentClips[4] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                    }
+                    if ((hearingConsentForm == true) && (SoundManager.instance.finishedAllClips == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == false))
+                    {
+                        question3 = true;
+                        answeredQuestion3 = true;
+                        canRepeat = true;
+                        debugPlayerInfo = "Swipe right registered. Wants to participate.";
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.                       
+                    }
+                    if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && ((question1 == false) || (question2 == false) || (question3 == false)))
+                    {
+                        finished_reading = false;
+                        answeredQuestion1 = false;
+                        answeredQuestion2 = false;
+                        answeredQuestion3 = false;
+                        question1 = false;
+                        question2 = false;
+                        question3 = false;
+                        readConsent = false;
+                        consentFlag = false;
+                        readProcedures = false;
+                        proceduresFlag = false;
+                        readRequirements = false;
+                        requirementsFlag = false;
+                        readRisks = false;
+                        risksFlag = false;
+                        readBenefits = false;
+                        benefitsFlag = false;
+                        readCompCost = false;
+                        compCostFlag = false;
+                        readConfidentiality = false;
+                        confidentialityFlag = false;
+                        readQuestionsContact = false;
+                        questionsContactFlag = false;
+                        readEighteenPlus = false;
+                        eighteenPlusFlag = false;
+                        readUnderstand = false;
+                        understandFlag = false;
+                        readParticipate = false;
+                        participateFlag = false;
+                        canRepeat = true;
+                    }
+                    if ((readingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && ((question1 == false) || (question2 == false) || (question3 == false)))
+                    {
+                        finished_reading = false;
+                        answeredQuestion1 = false;
+                        answeredQuestion2 = false;
+                        answeredQuestion3 = false;
+                        question1 = false;
+                        question2 = false;
+                        question3 = false;
+                        readConsent = false;
+                        consentFlag = false;
+                        readProcedures = false;
+                        proceduresFlag = false;
+                        readRequirements = false;
+                        requirementsFlag = false;
+                        readRisks = false;
+                        risksFlag = false;
+                        readBenefits = false;
+                        benefitsFlag = false;
+                        readCompCost = false;
+                        compCostFlag = false;
+                        readConfidentiality = false;
+                        confidentialityFlag = false;
+                        readQuestionsContact = false;
+                        questionsContactFlag = false;
+                        readEighteenPlus = false;
+                        eighteenPlusFlag = false;
+                        readUnderstand = false;
+                        understandFlag = false;
+                        readParticipate = false;
+                        participateFlag = false;
+                        canRepeat = true;
+                    }
+                }
+                else if (ie.isUp == true)
+                {
+                    debugPlayerInfo = "Swipe up registered. Does nothing in this menu.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                }
+                else if (ie.isDown == true)
+                {
+                    if ((hearingConsentForm == false) && (readingConsentForm == false) && (noConsent == false))
+                    {
+                        noConsent = true;
+                        canRepeat = true;
+                        debugPlayerInfo = "Swipe down registered. Deciding not to give consent.";
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                        clips = new List<AudioClip>() { Database.consentClips[6] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                    }
+                    if (((hearingConsentForm == true) || (readingConsentForm == true)) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true))
+                    {
+                        hearingConsentForm = false;
+                        readingConsentForm = false;
+                        noConsent = true;
+                        canRepeat = true;
+                        debugPlayerInfo = "Swipe down registered. Deciding not to give consent.";
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                        clips = new List<AudioClip>() { Database.consentClips[6] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                    }
+                }
+            }
+
+            else if (ie.isTap == true)
+            {
+                if (noConsent == true)
+                {
+                    Utilities.writefile("consentRecord", "0");
+                    debugPlayerInfo = "Tap registered. Did not consent to having data collected. Moving to main menu.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.                            
+                    clips = new List<AudioClip>() { Database.consentClips[8] };
+                    SoundManager.instance.PlayClips(clips, null, 0, () => SceneManager.LoadScene("Title_Screen"), 1, 0.5f, true);
+                    Screen.sleepTimeout = SleepTimeout.NeverSleep;
+                    Screen.orientation = ScreenOrientation.Landscape;
+                }
+                else if (((hearingConsentForm == true) || (readingConsentForm == true)) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (question1 == true) && (question2 == true) && (question3 == true))
+                {                    
+                    Utilities.writefile("consentRecord", "1");
+                    debugPlayerInfo = "Tap registered. Consented to having data collected. Moving to main menu.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.                        
+                    clips = new List<AudioClip>() { Database.consentClips[7] };
+                    SoundManager.instance.PlayClips(clips, null, 0, () => SceneManager.LoadScene("Title_Screen"), 1, 0.5f, true);
+                    Screen.sleepTimeout = SleepTimeout.NeverSleep;
+                    Screen.orientation = ScreenOrientation.Landscape;
+                }
+                else
+                {
+                    debugPlayerInfo = "Tap registered. Does nothing here.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                }
+            }
+            else if (ie.isHold == true)
+            {
+                debugPlayerInfo = "Hold registered. Does nothing in this menu.";
+                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+            }
+            else if (ie.isRotate == true)
+            {
+                if (ie.isLeft == true)
+                {
+                    debugPlayerInfo = "Left rotation registered. Does nothing in this menu.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                }
+                else if (ie.isRight == true)
+                {
+                    debugPlayerInfo = "Right rotation registered. Does nothing in this menu.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                }
+            }
+            */
+        }
 #endif // End of mobile platform dependendent compilation section started above with #elif
+
+        SceneManager.LoadScene("Title_Screen");
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
+        Screen.orientation = ScreenOrientation.Landscape;
     }
 }
