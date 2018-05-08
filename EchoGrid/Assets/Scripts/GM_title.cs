@@ -338,20 +338,29 @@ public class GM_title : MonoBehaviour
     /// </summary>
     void Update()
     {
+        /*
         if (Const.TEST_CONNECTION)
         {
             if (!doneTesting)
-            {
-                string str = Utilities.check_InternetConnection();
-                if (str.Length == 0)
+            {               
+                Utilities.check_InternetConnection();
+
+                if (Utilities.connectedToInternet == true)
                 {//we're good to go
                     doneTesting = true;
-                    titleText.text = Database.titleText_main;
+                    // debugPlayerInfo = "Connected to Internet.";
+                    // DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                    print("Established connection to Internet.");
                 }
-                else
-                    titleText.text = str;
+                else if (Utilities.connectedToInternet == false)
+                {
+                    // debugPlayerInfo = "Unable to connect to Internet.";
+                    // DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                    print("Established connection to Internet.");
+                }               
             }
         }
+        */
 
         if (GM_main_pre.hasGoneThroughSetup == true)
         {
@@ -606,7 +615,7 @@ public class GM_title : MonoBehaviour
 
         // Check if we are running either in the Unity editor or in a standalone build.
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
-        if (eh.isActivate() && doneTesting) // isActivate() has side effects so this order is required...
+        if (eh.isActivate()) // isActivate() has side effects so this order is required...
         {
             InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs
 
@@ -908,7 +917,7 @@ public class GM_title : MonoBehaviour
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
         Screen.orientation = ScreenOrientation.Landscape;
 
-        if (eh.isActivate() && doneTesting)
+        if (eh.isActivate())
         {  // isActivate() has side effects so this order is required...
             InputEvent ie = eh.getEventData();  // Get input event data from InputModule.cs
 

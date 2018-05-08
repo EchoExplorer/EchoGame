@@ -25,8 +25,52 @@ public class Utilities : MonoBehaviour
 
     public static bool OLD_ANDROID_SUPPORT = true;
 
+    public static string pingAddress = "8.8.8.8"; // Google Public DNS server
+    public static float waitingTime = 2.0f;
+    public static bool internetConnectBool;
+    public static Ping ping;
+    public static float pingStartTime;
+
+    public static bool connectedToInternet = false;
+
+    public static string debugPlayerInfo;
+
     //encrypt related
     public static RSACryptoServiceProvider encrypter = new RSACryptoServiceProvider();
+
+    void Awake()
+    {
+
+    }
+
+    void Update()
+    {
+        /*
+        if (ping != null)
+        {
+            print("Pinging address.");
+            bool stopCheck = true;
+            if (ping.isDone)
+            {                
+                print("Connected to Internet.");
+                connectedToInternet = true;
+            }
+            else if (Time.time - pingStartTime < waitingTime)
+            {
+                stopCheck = false;
+            }
+            else
+            {                
+                print("Unable to connect to Internet.");
+                connectedToInternet = false;
+            }
+            if (stopCheck)
+            {
+                ping = null;
+            }
+        }
+        */
+    }
 
     public static void initEncrypt()
     {
@@ -154,14 +198,46 @@ public class Utilities : MonoBehaviour
     ///  The returned string is an error message, where an empty string
     ///  indicates the lack of any errors.
     /// </summary>
-    public static string check_InternetConnection()
+    public void check_InternetConnection()
     {
+        StartCoroutine(CheckConnectivity());
+
+        /*
+        bool internetPossiblyAvailable = false;
+        switch (Application.internetReachability)
+        {
+            case NetworkReachability.ReachableViaLocalAreaNetwork:
+                internetPossiblyAvailable = true;
+                break;
+            case NetworkReachability.ReachableViaCarrierDataNetwork:
+                internetPossiblyAvailable = true;
+                break;
+            case NetworkReachability.NotReachable:
+                internetPossiblyAvailable = false;
+                break;
+            default:
+                internetPossiblyAvailable = false;
+                break;
+        }
+
+        if (internetPossiblyAvailable == false)
+        {            
+            print("Unable to connect to Internet.");
+            connectedToInternet = false;
+        }
+        else
+        {            
+            ping = new Ping(pingAddress);
+            pingStartTime = Time.time;
+        }
+        */
+
         // Always return an empty string, temporarily.
         // Network.TestConnection() is suspected not capable for testing internet connectivity. 
         // See reference: https://stackoverflow.com/a/34140417
-        return "";
+        // return "";
 
-
+        /*
         ConnectionTesterStatus connectionTestResult = ConnectionTesterStatus.Undetermined;
         connectionTestResult = Network.TestConnection();
         string testMessage = "";
@@ -202,6 +278,26 @@ public class Utilities : MonoBehaviour
         }
 
         return testMessage;
+        */
+    }
+
+    IEnumerator CheckConnectivity()
+    {
+        Ping ping = new Ping("8.8.8.8");
+        print("IP: " + ping.ip);
+        float startTime = Time.time;
+        while (!ping.isDone && Time.time < startTime + 5.0f)
+        {
+            yield return new WaitForSeconds(0.1f);
+        }
+        if (ping.isDone)
+        {
+            connectedToInternet = true;
+        }
+        else
+        {
+            connectedToInternet = false;
+        }
     }
 
     /// <summary>

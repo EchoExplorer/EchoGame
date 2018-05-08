@@ -161,7 +161,6 @@
      <Compile Include="Assets\Scripts\DebugTouch2.cs" />
      <Compile Include="Assets\Scripts\DebugTouchDuration.cs" />
      <Compile Include="Assets\Scripts\GM_Agreement.cs" />
-     <Compile Include="Assets\Scripts\GM_TC.cs" />
      <Compile Include="Assets\Scripts\GM_main_pre.cs" />
      <Compile Include="Assets\Scripts\GM_title.cs" />
      <Compile Include="Assets\Scripts\GameData.cs" />
