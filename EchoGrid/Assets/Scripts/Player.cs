@@ -132,20 +132,21 @@ public class Player : MovingObject
     public int level1_remaining_ups = -1; // Gesture tutorial level 1 remaining swipes up. Initially set to -1 as there are checks for if they are greater or equal to 0, and we don't want hints playing at the wrong time.
     public int level1_remaining_menus = -1; // Gesture tutorial level 1 remaining holds for pause menu. Initially set to -1 as there are checks for if they are greater or equal to 0, and we don't want hints playing at the wrong time.
     public int level3_remaining_turns = -1; // Gesture tutorial level 3 remaining turns/rotations. Initially set to -1 as there are checks for if they are greater or equal to 0, and we don't want hints playing at the wrong time.
-    enum InterceptAction { NONE, UP, DOWN, LEFT, RIGHT, TAP, DOUBLE_TAP, TRIPLE_TAP, MENU };
+    enum InterceptAction { NONE, UP, DOWN, LEFTSWIPE, RIGHTSWIPE, LEFTROTATE, RIGHTROTATE, TAP, MENU };
     string prefix = "C00";
     string surveyCode = "";
 
-	AudioClip attenuatedClick = Database.attenuatedClick;
-	AudioClip echofront=Database.hrtf_front;
-	AudioClip echoleft=Database.hrtf_left;
-	AudioClip echoright=Database.hrtf_right;
-	AudioClip echoleftfront=Database.hrtf_leftfront;
-	AudioClip echorightfront=Database.hrtf_rightfront;
+    AudioClip attenuatedClick = Database.attenuatedClick;
+    AudioClip echofront = Database.hrtf_front;
+    AudioClip echoleft = Database.hrtf_left;
+    AudioClip echoright = Database.hrtf_right;
+    AudioClip echoleftfront = Database.hrtf_leftfront;
+    AudioClip echorightfront = Database.hrtf_rightfront;
 
     bool doneTesting = false;
 
     bool canCheckForConsent = false;
+    bool hasCheckedForConsent = false;
     public static bool hasFinishedConsentForm = false;
 
     bool canRepeat = true;
@@ -321,22 +322,22 @@ public class Player : MovingObject
     {
         if (GM_title.switch_click_toggle == true)
         {
-			attenuatedClick = Database.attenuatedClick;
-			echofront=Database.hrtf_front;
-			echoleft=Database.hrtf_left;
-			echoright=Database.hrtf_right;
-			echoleftfront=Database.hrtf_leftfront;
-			echorightfront=Database.hrtf_rightfront;
+            attenuatedClick = Database.attenuatedClick;
+            echofront = Database.hrtf_front;
+            echoleft = Database.hrtf_left;
+            echoright = Database.hrtf_right;
+            echoleftfront = Database.hrtf_leftfront;
+            echorightfront = Database.hrtf_rightfront;
         }
 
         if (GM_title.switch_click_toggle == false)
         {
-			attenuatedClick = Database.attenuatedClick;
-			echofront=Database.hrtf_front;
-			echoleft=Database.hrtf_left;
-			echoright=Database.hrtf_right;
-			echoleftfront=Database.hrtf_leftfront;
-			echorightfront=Database.hrtf_rightfront;
+            attenuatedClick = Database.attenuatedClick;
+            echofront = Database.hrtf_front;
+            echoleft = Database.hrtf_left;
+            echoright = Database.hrtf_right;
+            echoleftfront = Database.hrtf_leftfront;
+            echorightfront = Database.hrtf_rightfront;
 
         }
 
@@ -409,7 +410,7 @@ public class Player : MovingObject
         while (frontWall == null);
         // Player echo preparation
         GvrAudioSource playerGAS = this.GetComponent<GvrAudioSource>();
-		playerGAS.clip = attenuatedClick;
+        playerGAS.clip = attenuatedClick;
         // Front wall echo preparation
         GvrAudioSource frontGAS = frontWall.GetComponent<GvrAudioSource>();
         frontGAS.clip = echofront;
@@ -417,10 +418,10 @@ public class Player : MovingObject
         // Four-wall echoes preparation
         GvrAudioSource leftGAS = null, rightGAS = null, leftFrontGAS = null, rightFrontGAS = null, leftEndGAS = null, rightEndGAS = null, leftTwoFrontGAS = null, rightTwoFrontGAS = null;
 
-		float horizontal_45db = -5.3f;
+        float horizontal_45db = -5.3f;
         float horizontaldb = 2.3f;
         float frontwalldb = 10.3f;
-		float farenddb = -5.3f;
+        float farenddb = -5.3f;
 
         //float fourblockdb =-13.7f;
         //float frontwalldb = -5.7f;
@@ -428,63 +429,65 @@ public class Player : MovingObject
         if (leftWall != null)
         {
             leftGAS = leftWall.GetComponent<GvrAudioSource>();
-			leftGAS.clip = echoleft;
-			leftGAS.gainDb = horizontaldb;
+            leftGAS.clip = echoleft;
+            leftGAS.gainDb = horizontaldb;
 
         }
         else
         {
             //Left end wall if at left corner
             leftEndGAS = leftEndWall.GetComponent<GvrAudioSource>();
-			leftEndGAS.clip = echoleft;
-			leftEndGAS.gainDb = farenddb;
+            leftEndGAS.clip = echoleft;
+            leftEndGAS.gainDb = farenddb;
         }
         if (rightWall != null)
         {
             rightGAS = rightWall.GetComponent<GvrAudioSource>();
-			rightGAS.clip = echoright;
-			rightGAS.gainDb = horizontaldb;
+            rightGAS.clip = echoright;
+            rightGAS.gainDb = horizontaldb;
         }
         else
         {
             //Right end wall if at right corner
             rightEndGAS = rightEndWall.GetComponent<GvrAudioSource>();
-			rightEndGAS.clip = echoright;
-			rightEndGAS.gainDb = farenddb;
+            rightEndGAS.clip = echoright;
+            rightEndGAS.gainDb = farenddb;
         }
 
-		if (blocksToFrontWall > 0 && leftFrontWall != null &&  leftWall != null)
-        {            
+        if (blocksToFrontWall > 0 && leftFrontWall != null && leftWall != null)
+        {
 
             leftFrontGAS = leftFrontWall.GetComponent<GvrAudioSource>();
-			leftFrontGAS.clip = echoleftfront;
-			leftFrontGAS.gainDb = horizontal_45db;
+            leftFrontGAS.clip = echoleftfront;
+            leftFrontGAS.gainDb = horizontal_45db;
 
         }
 
-		if (blocksToFrontWall ==0 && leftTwoFrontWall != null && leftWall == null) {
-			//Right two and front one block
-			leftTwoFrontGAS = leftTwoFrontWall.GetComponent<GvrAudioSource> ();
-			leftTwoFrontGAS.clip = echoleftfront;
-			leftTwoFrontGAS.gainDb = horizontal_45db;
-		}
+        if (blocksToFrontWall == 0 && leftTwoFrontWall != null && leftWall == null)
+        {
+            //Right two and front one block
+            leftTwoFrontGAS = leftTwoFrontWall.GetComponent<GvrAudioSource>();
+            leftTwoFrontGAS.clip = echoleftfront;
+            leftTwoFrontGAS.gainDb = horizontal_45db;
+        }
 
-		if (blocksToFrontWall > 0 && rightFrontWall != null &&rightWall != null)
+        if (blocksToFrontWall > 0 && rightFrontWall != null && rightWall != null)
         {
 
             rightFrontGAS = rightFrontWall.GetComponent<GvrAudioSource>();
-			rightFrontGAS.clip = echorightfront;
-			rightFrontGAS.gainDb = horizontal_45db;
-             
+            rightFrontGAS.clip = echorightfront;
+            rightFrontGAS.gainDb = horizontal_45db;
+
         }
 
 
-		if (blocksToFrontWall ==0 && rightTwoFrontWall != null && rightWall == null) {
-			//Right two and front one block
-			rightTwoFrontGAS = rightTwoFrontWall.GetComponent<GvrAudioSource> ();
-			rightTwoFrontGAS.clip = echorightfront;
-			rightTwoFrontGAS.gainDb = horizontal_45db;
-		}
+        if (blocksToFrontWall == 0 && rightTwoFrontWall != null && rightWall == null)
+        {
+            //Right two and front one block
+            rightTwoFrontGAS = rightTwoFrontWall.GetComponent<GvrAudioSource>();
+            rightTwoFrontGAS.clip = echorightfront;
+            rightTwoFrontGAS.gainDb = horizontal_45db;
+        }
 
 
         // Play all echoes
@@ -504,41 +507,43 @@ public class Player : MovingObject
             return;
         }
 
-		SoundManager.instance.PlaySingle(attenuatedClick);
+        SoundManager.instance.PlaySingle(attenuatedClick);
 
 
         if (leftGAS != null)
         {
             leftGAS.PlayDelayed(1.5f / 340);
 
-			UnityEngine.Debug.Log ("left palyed!");
+            UnityEngine.Debug.Log("left palyed!");
         }
         if (rightGAS != null)
         {
             rightGAS.PlayDelayed(1.5f / 340);
-			UnityEngine.Debug.Log ("right palyed!");
+            UnityEngine.Debug.Log("right palyed!");
         }
         if (blocksToFrontWall > 0 && leftFrontGAS != null)
         {
             leftFrontGAS.PlayDelayed(2.12132f / 340);
-			UnityEngine.Debug.Log ("leftfront palyed!");
+            UnityEngine.Debug.Log("leftfront palyed!");
         }
         if (blocksToFrontWall > 0 && rightFrontGAS != null)
         {
             rightFrontGAS.PlayDelayed(2.12132f / 340);
-			UnityEngine.Debug.Log ("rightfront palyed!");
+            UnityEngine.Debug.Log("rightfront palyed!");
         }
 
-		if (blocksToFrontWall ==0 && leftEndGAS != null) {
-			leftEndGAS.PlayDelayed ((1.5f * stepsize) / 340);
-			UnityEngine.Debug.Log ("Left End is " + stepsize + " blocks away!");
-		}
-		if (blocksToFrontWall ==0 && rightEndGAS != null) {
-			rightEndGAS.PlayDelayed ((1.5f * stepsize) / 340);
-			UnityEngine.Debug.Log ("Right End is " + stepsize + " blocks away!");
-		}
+        if (blocksToFrontWall == 0 && leftEndGAS != null)
+        {
+            leftEndGAS.PlayDelayed((1.5f * stepsize) / 340);
+            UnityEngine.Debug.Log("Left End is " + stepsize + " blocks away!");
+        }
+        if (blocksToFrontWall == 0 && rightEndGAS != null)
+        {
+            rightEndGAS.PlayDelayed((1.5f * stepsize) / 340);
+            UnityEngine.Debug.Log("Right End is " + stepsize + " blocks away!");
+        }
 
-		/*
+        /*
 		if (leftTwoFrontGAS != null)
 		{
 			leftTwoFrontGAS.PlayDelayed(3.1f / 340);
@@ -550,12 +555,12 @@ public class Player : MovingObject
 			UnityEngine.Debug.Log ("Right Front End is played");
 		}*/
 
-		if (frontGAS != null)
-		{
-			frontGAS.gainDb = frontwalldb;
-			frontGAS.PlayDelayed((1.5f * blocksToFrontWall + 0.75f) * 2 / 340);
-			UnityEngine.Debug.Log ("frontwall palyed!");
-		}
+        if (frontGAS != null)
+        {
+            frontGAS.gainDb = frontwalldb;
+            frontGAS.PlayDelayed((1.5f * blocksToFrontWall + 0.75f) * 2 / 340);
+            UnityEngine.Debug.Log("frontwall palyed!");
+        }
 
 
         return;
@@ -566,82 +571,82 @@ public class Player : MovingObject
         // Logging.Log(data.all_jun_to_string(), Logging.LogLevel.NORMAL);
         if ((GameManager.instance.level >= 17) && (GameManager.instance.level < 22))
         {
-			horizontaldb = 1.3f;
+            horizontaldb = 1.3f;
             frontwalldb = 9.3f;
         }
         else if ((GameManager.instance.level >= 22) && (GameManager.instance.level < 27))
         {
-			horizontaldb = 0.3f;
+            horizontaldb = 0.3f;
             frontwalldb = 8.3f;
         }
         else if ((GameManager.instance.level >= 27) && (GameManager.instance.level < 32))
         {
-			horizontaldb = -0.7f;
+            horizontaldb = -0.7f;
             frontwalldb = 7.3f;
         }
         else if ((GameManager.instance.level >= 32) && (GameManager.instance.level < 37))
         {
-			horizontaldb = -1.7f;
+            horizontaldb = -1.7f;
             frontwalldb = 6.3f;
         }
         else if ((GameManager.instance.level >= 37) && (GameManager.instance.level < 42))
         {
-			horizontaldb = -2.7f;
+            horizontaldb = -2.7f;
             frontwalldb = 5.3f;
         }
         else if ((GameManager.instance.level >= 42) && (GameManager.instance.level < 47))
         {
-			horizontaldb = -3.7f;
+            horizontaldb = -3.7f;
             frontwalldb = 4.3f;
         }
         else if ((GameManager.instance.level >= 47) && (GameManager.instance.level < 52))
         {
-			horizontaldb = -4.7f;
+            horizontaldb = -4.7f;
             frontwalldb = 3.3f;
         }
         else if ((GameManager.instance.level >= 52) && (GameManager.instance.level < 57))
         {
-			horizontaldb = -5.7f;
+            horizontaldb = -5.7f;
             frontwalldb = 2.3f;
         }
         else if ((GameManager.instance.level >= 57) && (GameManager.instance.level < 62))
         {
-			horizontaldb = -6.7f;
+            horizontaldb = -6.7f;
             frontwalldb = 1.3f;
         }
         else if ((GameManager.instance.level >= 62) && (GameManager.instance.level < 67))
         {
-			horizontaldb = -7.7f;
+            horizontaldb = -7.7f;
             frontwalldb = 0.3f;
         }
         else if ((GameManager.instance.level >= 67) && (GameManager.instance.level < 72))
         {
-			horizontaldb = -8.7f;
+            horizontaldb = -8.7f;
             frontwalldb = -0.7f;
         }
         else if ((GameManager.instance.level >= 72) && (GameManager.instance.level < 77))
         {
-			horizontaldb = -9.7f;
+            horizontaldb = -9.7f;
             frontwalldb = -1.7f;
         }
         else if ((GameManager.instance.level >= 77) && (GameManager.instance.level < 82))
         {
-			horizontaldb = -10.7f;
+            horizontaldb = -10.7f;
             frontwalldb = -2.7f;
         }
         else if ((GameManager.instance.level >= 82) && (GameManager.instance.level < 87))
         {
-			horizontaldb = -11.7f;
+            horizontaldb = -11.7f;
             frontwalldb = -3.7f;
         }
         else if ((GameManager.instance.level >= 87) && (GameManager.instance.level < 92))
         {
-			horizontaldb = -12.7f;
+            horizontaldb = -12.7f;
             frontwalldb = -4.7f;
         }
         else if ((GameManager.instance.level >= 92))
         {
-			horizontaldb = -13.7f;
+            horizontaldb = -13.7f;
             frontwalldb = -5.7f;
         }
     }
@@ -1908,23 +1913,25 @@ public class Player : MovingObject
                 // Play level 1 beginning clips.
                 if ((canPlayClip[0, 0] == true) && (intercepted == false) && (BoardManager.finishedTutorialLevel1 == true))
                 {
+                    if (((SoundManager.instance.finishedAllClips == true) || (canRepeat == true)) && (canCheckForConsent == false) && (hasCheckedForConsent == false))
+                    {
+                        canRepeat = false;
+                        debugPlayerInfo = "Playing level 1 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                        clips = new List<AudioClip>() { Database.levelStartClips[1], Database.levelStartClips[0] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
 
-                    debugPlayerInfo = "Playing level 1 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
-                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                    clips = new List<AudioClip>() { Database.levelStartClips[1], Database.levelStartClips[0] };
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
-
-                    canCheckForConsent = true;
-
-                    if ((hasFinishedConsentForm == true) && (SoundManager.instance.finishedAllClips == true))
+                        canCheckForConsent = true;
+                    }
+                    else if ((hasFinishedConsentForm == true) && (SoundManager.instance.finishedAllClips == true) && (hasCheckedForConsent == true))
                     {
                         canPlayClip[0, 0] = false;
-                        canCheckForConsent = false;
+                        hasCheckedForConsent = false;
 
                         debugPlayerInfo = "Playing level 1 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
 
-                        clips = new List<AudioClip>() { Database.levelStartClips[1], Database.levelStartClips[0], Database.soundEffectClips[2], Database.mainGameClips[0], Database.soundEffectClips[0], Database.mainGameClips[1], Database.soundEffectClips[0], Database.mainGameClips[2], Database.soundEffectClips[0], Database.mainGameClips[3], Database.soundEffectClips[0], Database.soundEffectClips[8], Database.soundEffectClips[0], Database.mainGameClips[4], Database.soundEffectClips[0], Database.mainGameClips[5], Database.soundEffectClips[0], Database.mainGameClips[6], Database.soundEffectClips[0], Database.mainGameClips[7], Database.soundEffectClips[0], Database.mainGameClips[8] };
+                        clips = new List<AudioClip>() { Database.soundEffectClips[2], Database.mainGameClips[0], Database.soundEffectClips[0], Database.mainGameClips[1], Database.soundEffectClips[0], Database.mainGameClips[2], Database.soundEffectClips[0], Database.mainGameClips[3], Database.soundEffectClips[0], Database.soundEffectClips[8], Database.soundEffectClips[0], Database.mainGameClips[4], Database.soundEffectClips[0], Database.mainGameClips[5], Database.soundEffectClips[0], Database.mainGameClips[6], Database.soundEffectClips[0], Database.mainGameClips[7], Database.soundEffectClips[0], Database.mainGameClips[8] };
                         SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
                     }
                 }
@@ -2196,6 +2203,10 @@ public class Player : MovingObject
                     canCheckForConsent = true;
                 }
             }
+            if ((canPlayClip[11, 0] == false) && (hasCheckedForConsent == true))
+            {
+                hasCheckedForConsent = false;
+            }
             // If the player is not at the exit and swiped down.
             if ((canPlayClip[11, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
             {
@@ -2426,6 +2437,8 @@ public class Player : MovingObject
                         hasFinishedConsentForm = false;
                         canRepeat = true;
                     }
+
+                    hasCheckedForConsent = true;
                 }
             }
             else if ((curLevel == 12) && (canPlayClip[11, 0] == false) && (SoundManager.instance.finishedAllClips == true))
@@ -2462,6 +2475,8 @@ public class Player : MovingObject
                         hasFinishedConsentForm = false;
                         canRepeat = true;
                     }
+
+                    hasCheckedForConsent = true;
                 }
             }
         }
@@ -3214,6 +3229,8 @@ public class Player : MovingObject
                     if (SoundManager.instance.finishedAllClips == true)
                     {
                         finished_listening = true;
+                        debugPlayerInfo = "Finished listening to consent form and consent question 1.";
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     }
                 }
 
@@ -4858,12 +4875,12 @@ public class Player : MovingObject
             // If a swipe left was registered, set that as the action.
             if (ie.isLeft == true)
             {
-                action = InterceptAction.LEFT;
+                action = InterceptAction.LEFTSWIPE;
             }
             // If a swipe right was registered, set that as the action.
             else if (ie.isRight == true)
             {
-                action = InterceptAction.RIGHT;
+                action = InterceptAction.RIGHTSWIPE;
             }
             // If a swipe right was registered, set that as the action.
             else if (ie.isUp == true)
@@ -4882,12 +4899,12 @@ public class Player : MovingObject
             // If a left rotation was registered, set that as the action.
             if (ie.isLeft == true)
             {
-                action = InterceptAction.LEFT;
+                action = InterceptAction.LEFTROTATE;
             }
             // If a right rotation was registered, set that as the action.
             else if (ie.isRight == true)
             {
-                action = InterceptAction.RIGHT;
+                action = InterceptAction.RIGHTROTATE;
             }
         }
         // If a hold was registered, set that as the action.
@@ -4920,6 +4937,14 @@ public class Player : MovingObject
             {
                 action = InterceptAction.DOWN;
             }
+            else if (ie.isLeft == true)
+            {
+                action = InterceptAction.LEFTSWIPE;
+            }
+            else if (ie.isRight == true)
+            {
+                action = InterceptAction.RIGHTSWIPE;
+            }
         }
         // If a rotation was registered.
         else if (ie.isRotate == true)
@@ -4927,12 +4952,12 @@ public class Player : MovingObject
             // If the rotation was left, set this as the action.
             if (ie.isLeft == true)
             {
-                action = InterceptAction.LEFT;
+                action = InterceptAction.LEFTROTATE;
             }
             // If the rotation was right, set this as the action.
             else if (ie.isRight == true)
             {
-                action = InterceptAction.RIGHT;
+                action = InterceptAction.RIGHTROTATE;
             }
         }
 #endif
@@ -4997,7 +5022,7 @@ public class Player : MovingObject
                         }
                     }
                     // If the action was not a tap.
-                    else if (((action == InterceptAction.MENU) || (action == InterceptAction.LEFT) || (action == InterceptAction.RIGHT) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || ((ie.isSwipe == true) && (ie.isLeft == true)) || ((ie.isSwipe == true) && (ie.isRight == true)) || (ie.isUnrecognized == true)) && (finishedTappingInstruction == true))
+                    else if (((action == InterceptAction.MENU) || (action == InterceptAction.LEFTSWIPE) || (action == InterceptAction.RIGHTSWIPE) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || (action == InterceptAction.LEFTROTATE) || (action == InterceptAction.RIGHTROTATE) || (ie.isUnrecognized == true)) && (finishedTappingInstruction == true))
                     {
                         // If this error was registered.
                         if ((ie.isUnrecognized == true) && (ie.isTapHorizontalError == true))
@@ -5029,7 +5054,7 @@ public class Player : MovingObject
                         }
                     }
                     // If the tapping instruction has not finished yet.
-                    else if (((action == InterceptAction.TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.LEFT) || (action == InterceptAction.RIGHT) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || ((ie.isSwipe == true) && (ie.isLeft == true)) || ((ie.isSwipe == true) && (ie.isRight == true)) || (ie.isUnrecognized == true)) && (finishedTappingInstruction == false))
+                    else if (((action == InterceptAction.TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.LEFTSWIPE) || (action == InterceptAction.RIGHTSWIPE) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || (action == InterceptAction.LEFTROTATE) || (action == InterceptAction.RIGHTROTATE) || (ie.isUnrecognized == true)) && (finishedTappingInstruction == false))
                     {
                         debugPlayerInfo = "Please wait for the instructions to finish.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
@@ -5078,7 +5103,7 @@ public class Player : MovingObject
                             }
                         }
                         // If the action was not a swipe up.
-                        else if (((action == InterceptAction.TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.LEFT) || (action == InterceptAction.RIGHT) || (action == InterceptAction.DOWN) || ((ie.isSwipe == true) && (ie.isLeft == true)) || ((ie.isSwipe == true) && (ie.isRight == true)) || (ie.isUnrecognized == true)) && (finishedSwipingInstruction == true))
+                        else if (((action == InterceptAction.TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.LEFTSWIPE) || (action == InterceptAction.RIGHTSWIPE) || (action == InterceptAction.DOWN) || (action == InterceptAction.LEFTROTATE) || (action == InterceptAction.RIGHTROTATE) || (ie.isUnrecognized == true)) && (finishedSwipingInstruction == true))
                         {
                             // If this error was registered.
                             if ((ie.isUnrecognized == true) && (ie.isSwipeUpVerticalError == true))
@@ -5103,7 +5128,7 @@ public class Player : MovingObject
                             }
                         }
                         // If the swiping instruction has not finished yet.
-                        else if (((action == InterceptAction.TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.LEFT) || (action == InterceptAction.RIGHT) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || ((ie.isSwipe == true) && (ie.isLeft == true)) || ((ie.isSwipe == true) && (ie.isRight == true)) || (ie.isUnrecognized == true)) && (finishedSwipingInstruction == false))
+                        else if (((action == InterceptAction.TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.LEFTSWIPE) || (action == InterceptAction.RIGHTSWIPE) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || (action == InterceptAction.LEFTROTATE) || (action == InterceptAction.RIGHTROTATE) || (ie.isUnrecognized == true)) && (finishedSwipingInstruction == false))
                         {
                             debugPlayerInfo = "Please wait for the instructions to finish.";
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
@@ -5160,7 +5185,7 @@ public class Player : MovingObject
                                 }
                             }
                             // If the action was not a hold.
-                            else if (((action == InterceptAction.TAP) || (action == InterceptAction.LEFT) || (action == InterceptAction.RIGHT) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || ((ie.isSwipe == true) && (ie.isLeft == true)) || ((ie.isSwipe == true) && (ie.isRight == true)) || (ie.isUnrecognized == true)) && (finishedMenuInstruction == true))
+                            else if (((action == InterceptAction.TAP) || (action == InterceptAction.LEFTSWIPE) || (action == InterceptAction.RIGHTSWIPE) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || (action == InterceptAction.LEFTROTATE) || (action == InterceptAction.RIGHTROTATE) || (ie.isUnrecognized == true)) && (finishedMenuInstruction == true))
                             {
                                 // If this error was registered.
                                 if ((ie.isUnrecognized == true) && (ie.isHoldHorizontalError == true))
@@ -5192,7 +5217,7 @@ public class Player : MovingObject
                                 }
                             }
                             // If the pause menu instruction has not finished yet.
-                            else if (((action == InterceptAction.TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.LEFT) || (action == InterceptAction.RIGHT) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || ((ie.isSwipe == true) && (ie.isLeft == true)) || ((ie.isSwipe == true) && (ie.isRight == true)) || (ie.isUnrecognized == true)) && ((finishedMenuInstruction == false) || (waitingForOpenMenuInstruction == true)))
+                            else if (((action == InterceptAction.TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.LEFTSWIPE) || (action == InterceptAction.RIGHTSWIPE) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || (action == InterceptAction.LEFTROTATE) || (action == InterceptAction.RIGHTROTATE) || (ie.isUnrecognized == true)) && ((finishedMenuInstruction == false) || (waitingForOpenMenuInstruction == true)))
                             {
                                 debugPlayerInfo = "Please wait for the instructions to finish.";
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
@@ -5204,9 +5229,17 @@ public class Player : MovingObject
                             // If the action was a swipe down.
                             if ((action == InterceptAction.DOWN) && (finishedExitingInstruction == true) && (BoardManager.finishedTutorialLevel1 == false))
                             {
-                                debugPlayerInfo = "Swiped down correctly. Moving to consent instructions.";
+                                if (hasFinishedConsentForm == false)
+                                {
+                                    debugPlayerInfo = "Swiped down correctly. Moving to consent instructions.";
+                                }
+                                else if (hasFinishedConsentForm == true)
+                                {
+                                    debugPlayerInfo = "Swiped down correctly. Moving to level 1.";
+                                }
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                                // TODO: Replace the winSound with "Congratulations! You have completed the tutorial. Now we will move back to the game!"                                
+                                // TODO: Replace the winSound with "Congratulations! You have completed the tutorial. Now we will move back to the game!"                      
+                                canRepeat = true;
                                 BoardManager.finishedTutorialLevel1 = true; // Make sure the player does not have to go through the tutorial again if they have gone through it once.
                                 GameMode.finishedLevel1Tutorial = BoardManager.finishedTutorialLevel1;
                                 GameMode.finishedLevel3Tutorial = BoardManager.finishedTutorialLevel3;
@@ -5215,7 +5248,7 @@ public class Player : MovingObject
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
                             }
                             // If the action was not a swipe down.
-                            else if (((action == InterceptAction.TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.LEFT) || (action == InterceptAction.RIGHT) || (action == InterceptAction.UP) || ((ie.isSwipe == true) && (ie.isLeft == true)) || ((ie.isSwipe == true) && (ie.isRight == true)) || (ie.isUnrecognized == true)) && (finishedExitingInstruction == true) && (BoardManager.finishedTutorialLevel1 == false))
+                            else if (((action == InterceptAction.TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.LEFTSWIPE) || (action == InterceptAction.RIGHTSWIPE) || (action == InterceptAction.UP) || (action == InterceptAction.LEFTROTATE) || (action == InterceptAction.RIGHTROTATE) || (ie.isUnrecognized == true)) && (finishedExitingInstruction == true) && (BoardManager.finishedTutorialLevel1 == false))
                             {
                                 // If this error was registered.
                                 if ((ie.isUnrecognized == true) && (ie.isSwipeDownVerticalError == true))
@@ -5240,13 +5273,13 @@ public class Player : MovingObject
                                 }
                             }
                             // If the exit instruction has not finished yet.
-                            else if (((action == InterceptAction.TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.LEFT) || (action == InterceptAction.RIGHT) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || ((ie.isSwipe == true) && (ie.isLeft == true)) || ((ie.isSwipe == true) && (ie.isRight == true)) || (ie.isUnrecognized == true)) && (finishedExitingInstruction == false))
+                            else if (((action == InterceptAction.TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.LEFTSWIPE) || (action == InterceptAction.RIGHTSWIPE) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || (action == InterceptAction.LEFTROTATE) || (action == InterceptAction.RIGHTROTATE) || (ie.isUnrecognized == true)) && (finishedExitingInstruction == false))
                             {
                                 debugPlayerInfo = "Please wait for the instructions to finish.";
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                             }
 
-                            if ((((action == InterceptAction.LEFT) && (ie.isPhone == true)) || ((ie.isKeyboard == true) && (ie.isSwipe == true) && (ie.isLeft == true))) && (hasStartedConsent == true))
+                            if ((action == InterceptAction.LEFTSWIPE) && (hasStartedConsent == true))
                             {
                                 if ((hearingConsentForm == false) && (readingConsentForm == false) && (noConsent == false))
                                 {
@@ -5283,6 +5316,8 @@ public class Player : MovingObject
                                 }
                                 else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && ((question1 == false) || (question2 == false) || (question3 == false)))
                                 {
+                                    finished_listening = false;
+                                    finished_reading = false;
                                     answeredQuestion1 = false;
                                     answeredQuestion2 = false;
                                     answeredQuestion3 = false;
@@ -5293,6 +5328,8 @@ public class Player : MovingObject
                                 }
                                 else if ((readingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && ((question1 == false) || (question2 == false) || (question3 == false)))
                                 {
+                                    finished_listening = false;
+                                    finished_reading = false;
                                     answeredQuestion1 = false;
                                     answeredQuestion2 = false;
                                     answeredQuestion3 = false;
@@ -5302,7 +5339,7 @@ public class Player : MovingObject
                                     canRepeat = true;
                                 }
                             }
-                            else if ((((action == InterceptAction.RIGHT) && (ie.isPhone == true)) || ((ie.isKeyboard == true) && (ie.isSwipe == true) && (ie.isRight == true))) && (hasStartedConsent == true))
+                            else if ((action == InterceptAction.RIGHTSWIPE) && (hasStartedConsent == true))
                             {
                                 if ((readingConsentForm == false) && (hearingConsentForm == false) && (noConsent == false))
                                 {
@@ -5349,6 +5386,7 @@ public class Player : MovingObject
                                 }
                                 else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && ((question1 == false) || (question2 == false) || (question3 == false)))
                                 {
+                                    finished_listening = false;
                                     finished_reading = false;
                                     answeredQuestion1 = false;
                                     answeredQuestion2 = false;
@@ -5382,6 +5420,7 @@ public class Player : MovingObject
                                 }
                                 else if ((readingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && ((question1 == false) || (question2 == false) || (question3 == false)))
                                 {
+                                    finished_listening = false;
                                     finished_reading = false;
                                     answeredQuestion1 = false;
                                     answeredQuestion2 = false;
@@ -5438,7 +5477,7 @@ public class Player : MovingObject
                                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                                 }
                             }
-                            else if ((action == InterceptAction.TAP) && (hasStartedConsent == true))
+                            else if ((action == InterceptAction.TAP) && (hasStartedConsent == true) && (hasFinishedConsentForm == false))
                             {
                                 if (noConsent == true)
                                 {
@@ -5446,6 +5485,7 @@ public class Player : MovingObject
                                     debugPlayerInfo = "Tap registered. Did not consent to having data collected. Moving to level 1.";
                                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                                     hasFinishedConsentForm = true;
+                                    canRepeat = true;
                                     clips = new List<AudioClip>() { Database.consentClips[8] };
                                     SoundManager.instance.PlayClips(clips, null, 0, () => quitInterception(), 1, 0.5f, true);
                                 }
@@ -5455,6 +5495,7 @@ public class Player : MovingObject
                                     debugPlayerInfo = "Tap registered. Consented to having data collected. Moving to level 1.";
                                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                                     hasFinishedConsentForm = true;
+                                    canRepeat = true;
                                     clips = new List<AudioClip>() { Database.consentClips[7] };
                                     SoundManager.instance.PlayClips(clips, null, 0, () => quitInterception(), 1, 0.5f, true);
                                 }
@@ -5469,12 +5510,12 @@ public class Player : MovingObject
                                 debugPlayerInfo = "Hold registered. Does nothing here.";
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                             }
-                            else if ((((action == InterceptAction.LEFT) && (ie.isPhone == true)) || ((ie.isKeyboard == true) && (ie.isSwipe == true) && (ie.isLeft == true))) && (hasStartedConsent == true))
+                            else if ((action == InterceptAction.LEFTROTATE) && (hasStartedConsent == true))
                             {
                                 debugPlayerInfo = "Left rotation registered. Does nothing here.";
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                             }
-                            else if ((((action == InterceptAction.RIGHT) && (ie.isPhone == true)) || ((ie.isKeyboard == true) && (ie.isSwipe == true) && (ie.isRight == true))) && (hasStartedConsent == true))
+                            else if ((action == InterceptAction.RIGHTROTATE) && (hasStartedConsent == true))
                             {
                                 debugPlayerInfo = "Right rotation registered. Does nothing here.";
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
@@ -5506,7 +5547,7 @@ public class Player : MovingObject
                         }
                     }
                     // If the player has not tapped at the corner yet and the gesture was not a tap.
-                    else if (((action == InterceptAction.MENU) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || (action == InterceptAction.LEFT) || (action == InterceptAction.RIGHT) || (ie.isUnrecognized == true)) && (finishedCornerInstruction == true) && (hasTappedAtCorner == false) && (finishedTurningInstruction == false))
+                    else if (((action == InterceptAction.MENU) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || (action == InterceptAction.LEFTSWIPE) || (action == InterceptAction.RIGHTSWIPE) || (action == InterceptAction.LEFTROTATE) || (action == InterceptAction.RIGHTROTATE) || (ie.isUnrecognized == true)) && (finishedCornerInstruction == true) && (hasTappedAtCorner == false) && (finishedTurningInstruction == false))
                     {
                         // If this error was registered.
                         if ((ie.isUnrecognized == true) && (ie.isTapHorizontalError == true))
@@ -5538,24 +5579,24 @@ public class Player : MovingObject
                         }
                     }
                     // If the tap at corner instruction has not finished yet.
-                    else if (((action == InterceptAction.TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.LEFT) || (action == InterceptAction.RIGHT) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || (ie.isUnrecognized == true)) && (finishedCornerInstruction == false) && (finishedTurningInstruction == false))
+                    else if (((action == InterceptAction.TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.LEFTSWIPE) || (action == InterceptAction.RIGHTSWIPE) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || (action == InterceptAction.LEFTROTATE) || (action == InterceptAction.RIGHTROTATE) || (ie.isUnrecognized == true)) && (finishedCornerInstruction == false) && (finishedTurningInstruction == false))
                     {
                         debugPlayerInfo = "Please wait for the instructions to finish.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     }
                     // If the action was a left or right rotation.
-                    else if (((action == InterceptAction.LEFT) || (action == InterceptAction.RIGHT)) && (hasTappedAtCorner == true) && (finishedTurningInstruction == true))
+                    else if (((action == InterceptAction.LEFTROTATE) || (action == InterceptAction.RIGHTROTATE)) && (hasTappedAtCorner == true) && (finishedTurningInstruction == true))
                     {
                         debugPlayerInfo = "Rotated for gesture tutorial. Turned player 90 degrees.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         level3_remaining_turns--; // Decrease the number of turns left to do.
                         if (level3_remaining_turns == 3)
                         {
-                            if (action == InterceptAction.LEFT)
+                            if (action == InterceptAction.LEFTROTATE)
                             {
                                 clips = new List<AudioClip> { Database.soundEffectClips[5], Database.soundEffectClips[0], Database.tutorialClips[26] };
                             }
-                            else if (action == InterceptAction.RIGHT)
+                            else if (action == InterceptAction.RIGHTROTATE)
                             {
                                 clips = new List<AudioClip> { Database.soundEffectClips[6], Database.soundEffectClips[0], Database.tutorialClips[26] };
                             }
@@ -5563,11 +5604,11 @@ public class Player : MovingObject
                         }
                         else if (level3_remaining_turns == 2)
                         {
-                            if (action == InterceptAction.LEFT)
+                            if (action == InterceptAction.LEFTROTATE)
                             {
                                 clips = new List<AudioClip> { Database.soundEffectClips[5], Database.soundEffectClips[0], Database.tutorialClips[27] };
                             }
-                            else if (action == InterceptAction.RIGHT)
+                            else if (action == InterceptAction.RIGHTROTATE)
                             {
                                 clips = new List<AudioClip> { Database.soundEffectClips[6], Database.soundEffectClips[0], Database.tutorialClips[27] };
                             }
@@ -5575,11 +5616,11 @@ public class Player : MovingObject
                         }
                         else if (level3_remaining_turns == 1)
                         {
-                            if (action == InterceptAction.LEFT)
+                            if (action == InterceptAction.LEFTROTATE)
                             {
                                 clips = new List<AudioClip> { Database.soundEffectClips[5], Database.soundEffectClips[0], Database.tutorialClips[28] };
                             }
-                            else if (action == InterceptAction.RIGHT)
+                            else if (action == InterceptAction.RIGHTROTATE)
                             {
                                 clips = new List<AudioClip> { Database.soundEffectClips[6], Database.soundEffectClips[0], Database.tutorialClips[28] };
                             }
@@ -5595,11 +5636,11 @@ public class Player : MovingObject
                             GameMode.finishedLevel3Tutorial = BoardManager.finishedTutorialLevel3;
                             GameMode.write_save_mode(curLevel, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.instance.gamemode);
                             // Good job! now we will move back to the game. Try and get around the corner!
-                            if (action == InterceptAction.LEFT)
+                            if (action == InterceptAction.LEFTROTATE)
                             {
                                 clips = new List<AudioClip> { Database.soundEffectClips[5], Database.soundEffectClips[0], Database.tutorialClips[29] };
                             }
-                            else if (action == InterceptAction.RIGHT)
+                            else if (action == InterceptAction.RIGHTROTATE)
                             {
                                 clips = new List<AudioClip> { Database.soundEffectClips[6], Database.soundEffectClips[0], Database.tutorialClips[29] };
                             }
@@ -5607,7 +5648,7 @@ public class Player : MovingObject
                         }
                     }
                     // If the action was not a right or left rotation.
-                    else if (((action == InterceptAction.TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || (ie.isUnrecognized == true)) && (hasTappedAtCorner == true) && (finishedTurningInstruction == true))
+                    else if (((action == InterceptAction.TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || (action == InterceptAction.LEFTSWIPE) || (action == InterceptAction.RIGHTSWIPE) || (ie.isUnrecognized == true)) && (hasTappedAtCorner == true) && (finishedTurningInstruction == true))
                     {
                         // If this error was registered.
                         if ((ie.isUnrecognized == true) && (ie.isRotationAngleError == true))
@@ -5625,7 +5666,7 @@ public class Player : MovingObject
                         }
                     }
                     // If the turning instruction has not finished yet.
-                    else if (((action == InterceptAction.TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.LEFT) || (action == InterceptAction.RIGHT) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || (ie.isUnrecognized == true)) && (hasTappedAtCorner == true) && (finishedTurningInstruction == false))
+                    else if (((action == InterceptAction.TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.LEFTSWIPE) || (action == InterceptAction.RIGHTSWIPE) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || (action == InterceptAction.LEFTROTATE) || (action == InterceptAction.RIGHTROTATE) || (ie.isUnrecognized == true)) && (hasTappedAtCorner == true) && (finishedTurningInstruction == false))
                     {
                         debugPlayerInfo = "Please wait for the instructions to finish.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
