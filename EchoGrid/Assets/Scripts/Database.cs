@@ -25,7 +25,11 @@ public class Database : MonoBehaviour
     [HideInInspector]
     public static AudioClip attenuatedClick;
     public static AudioClip attenuatedaround;
-    public static AudioClip attenuatedClickfront;
+	public static AudioClip hrtf_front;
+	public static AudioClip hrtf_left;
+	public static AudioClip hrtf_right;
+	public static AudioClip hrtf_leftfront;
+	public static AudioClip hrtf_rightfront;
 
     public static AudioClip attenuatedaround_odeon;
     public static AudioClip attenuatedClickfront_odeon;
@@ -82,12 +86,15 @@ public class Database : MonoBehaviour
     {
         //Option1:
         attenuatedClickfront_odeon = Resources.Load("fx/00-0_F-6.75-D_B-w-D_L-w-D_R-w-D_fadeout") as AudioClip;
-		attenuatedClick = Resources.Load("fx/ExpertClickSingle_attenuated") as AudioClip;
+		attenuatedClick = Resources.Load("fx/echolocaterclicks_3rd_attenuated") as AudioClip;
         attenuatedaround_odeon = Resources.Load("fx/00-0_F-0.75-D_B-w-D_L-w-D_R-w-D_fadeout") as AudioClip;
 
         //Option1:
-		attenuatedClickfront = Resources.Load("fx/ExpertClickSingle_attenuated") as AudioClip;
-		attenuatedaround = Resources.Load("fx/ExpertClickSingle_attenuated") as AudioClip;
+		hrtf_front =Resources.Load("fx/kemar_front") as AudioClip;
+		hrtf_left =Resources.Load("fx/kemar_left") as AudioClip;
+		hrtf_right =Resources.Load("fx/kemar_right") as AudioClip;
+		hrtf_leftfront =Resources.Load("fx/kemar_leftfront") as AudioClip;
+		hrtf_rightfront =Resources.Load("fx/kemar_rightfront") as AudioClip;
 
         // Consent menu clips
         consentClips[0] = Resources.Load("instructions/consent/consent_intro") as AudioClip;

@@ -136,8 +136,12 @@ public class Player : MovingObject
     string prefix = "C00";
     string surveyCode = "";
 
-    AudioClip echoaround = Database.attenuatedaround_odeon;
-    AudioClip echofront = Database.attenuatedClickfront_odeon;
+	AudioClip attenuatedClick = Database.attenuatedClick;
+	AudioClip echofront=Database.hrtf_front;
+	AudioClip echoleft=Database.hrtf_left;
+	AudioClip echoright=Database.hrtf_right;
+	AudioClip echoleftfront=Database.hrtf_leftfront;
+	AudioClip echorightfront=Database.hrtf_rightfront;
 
     bool doneTesting = false;
 
@@ -317,14 +321,23 @@ public class Player : MovingObject
     {
         if (GM_title.switch_click_toggle == true)
         {
-            echoaround = Database.attenuatedaround_odeon;
-            echofront = Database.attenuatedClickfront_odeon;
+			attenuatedClick = Database.attenuatedClick;
+			echofront=Database.hrtf_front;
+			echoleft=Database.hrtf_left;
+			echoright=Database.hrtf_right;
+			echoleftfront=Database.hrtf_leftfront;
+			echorightfront=Database.hrtf_rightfront;
         }
 
         if (GM_title.switch_click_toggle == false)
         {
-            echoaround = Database.attenuatedaround;
-            echofront = Database.attenuatedaround;
+			attenuatedClick = Database.attenuatedClick;
+			echofront=Database.hrtf_front;
+			echoleft=Database.hrtf_left;
+			echoright=Database.hrtf_right;
+			echoleftfront=Database.hrtf_leftfront;
+			echorightfront=Database.hrtf_rightfront;
+
         }
 
         Vector3 dir = transform.right;
@@ -396,7 +409,7 @@ public class Player : MovingObject
         while (frontWall == null);
         // Player echo preparation
         GvrAudioSource playerGAS = this.GetComponent<GvrAudioSource>();
-        playerGAS.clip = Database.attenuatedClick;
+		playerGAS.clip = attenuatedClick;
         // Front wall echo preparation
         GvrAudioSource frontGAS = frontWall.GetComponent<GvrAudioSource>();
         frontGAS.clip = echofront;
@@ -404,9 +417,10 @@ public class Player : MovingObject
         // Four-wall echoes preparation
         GvrAudioSource leftGAS = null, rightGAS = null, leftFrontGAS = null, rightFrontGAS = null, leftEndGAS = null, rightEndGAS = null, leftTwoFrontGAS = null, rightTwoFrontGAS = null;
 
-
-        float fourblockdb = 2.3f;
+		float horizontal_45db = -5.3f;
+        float horizontaldb = 2.3f;
         float frontwalldb = 10.3f;
+		float farenddb = -5.3f;
 
         //float fourblockdb =-13.7f;
         //float frontwalldb = -5.7f;
@@ -414,53 +428,53 @@ public class Player : MovingObject
         if (leftWall != null)
         {
             leftGAS = leftWall.GetComponent<GvrAudioSource>();
-            leftGAS.clip = echoaround;
-            leftGAS.gainDb = fourblockdb;
+			leftGAS.clip = echoleft;
+			leftGAS.gainDb = horizontaldb;
 
         }
         else
         {
             //Left end wall if at left corner
             leftEndGAS = leftEndWall.GetComponent<GvrAudioSource>();
-            leftEndGAS.clip = echofront;
-            leftEndGAS.gainDb = fourblockdb;
+			leftEndGAS.clip = echoleft;
+			leftEndGAS.gainDb = farenddb;
         }
         if (rightWall != null)
         {
             rightGAS = rightWall.GetComponent<GvrAudioSource>();
-            rightGAS.clip = echoaround;
-            rightGAS.gainDb = fourblockdb;
+			rightGAS.clip = echoright;
+			rightGAS.gainDb = horizontaldb;
         }
         else
         {
             //Right end wall if at right corner
             rightEndGAS = rightEndWall.GetComponent<GvrAudioSource>();
-            rightEndGAS.clip = echofront;
-            rightEndGAS.gainDb = fourblockdb;
+			rightEndGAS.clip = echoright;
+			rightEndGAS.gainDb = farenddb;
         }
 
 		if (blocksToFrontWall > 0 && leftFrontWall != null &&  leftWall != null)
         {            
 
-                leftFrontGAS = leftFrontWall.GetComponent<GvrAudioSource>();
-                leftFrontGAS.clip = echoaround;
-                leftFrontGAS.gainDb = fourblockdb;
+            leftFrontGAS = leftFrontWall.GetComponent<GvrAudioSource>();
+			leftFrontGAS.clip = echoleftfront;
+			leftFrontGAS.gainDb = horizontal_45db;
 
         }
 
 		if (blocksToFrontWall ==0 && leftTwoFrontWall != null && leftWall == null) {
 			//Right two and front one block
 			leftTwoFrontGAS = leftTwoFrontWall.GetComponent<GvrAudioSource> ();
-			leftTwoFrontGAS.clip = echofront;
-			leftTwoFrontGAS.gainDb = fourblockdb;
+			leftTwoFrontGAS.clip = echoleftfront;
+			leftTwoFrontGAS.gainDb = horizontal_45db;
 		}
 
 		if (blocksToFrontWall > 0 && rightFrontWall != null &&rightWall != null)
         {
 
-                rightFrontGAS = rightFrontWall.GetComponent<GvrAudioSource>();
-                rightFrontGAS.clip = echoaround;
-                rightFrontGAS.gainDb = fourblockdb;
+            rightFrontGAS = rightFrontWall.GetComponent<GvrAudioSource>();
+			rightFrontGAS.clip = echorightfront;
+			rightFrontGAS.gainDb = horizontal_45db;
              
         }
 
@@ -468,8 +482,8 @@ public class Player : MovingObject
 		if (blocksToFrontWall ==0 && rightTwoFrontWall != null && rightWall == null) {
 			//Right two and front one block
 			rightTwoFrontGAS = rightTwoFrontWall.GetComponent<GvrAudioSource> ();
-			rightTwoFrontGAS.clip = echofront;
-			rightTwoFrontGAS.gainDb = fourblockdb;
+			rightTwoFrontGAS.clip = echorightfront;
+			rightTwoFrontGAS.gainDb = horizontal_45db;
 		}
 
 
@@ -490,7 +504,7 @@ public class Player : MovingObject
             return;
         }
 
-        SoundManager.instance.PlaySingle(Database.attenuatedClick);
+		SoundManager.instance.PlaySingle(attenuatedClick);
 
 
         if (leftGAS != null)
@@ -502,7 +516,6 @@ public class Player : MovingObject
         if (rightGAS != null)
         {
             rightGAS.PlayDelayed(1.5f / 340);
-
 			UnityEngine.Debug.Log ("right palyed!");
         }
         if (blocksToFrontWall > 0 && leftFrontGAS != null)
@@ -553,82 +566,82 @@ public class Player : MovingObject
         // Logging.Log(data.all_jun_to_string(), Logging.LogLevel.NORMAL);
         if ((GameManager.instance.level >= 17) && (GameManager.instance.level < 22))
         {
-            fourblockdb = 1.3f;
+			horizontaldb = 1.3f;
             frontwalldb = 9.3f;
         }
         else if ((GameManager.instance.level >= 22) && (GameManager.instance.level < 27))
         {
-            fourblockdb = 0.3f;
+			horizontaldb = 0.3f;
             frontwalldb = 8.3f;
         }
         else if ((GameManager.instance.level >= 27) && (GameManager.instance.level < 32))
         {
-            fourblockdb = -0.7f;
+			horizontaldb = -0.7f;
             frontwalldb = 7.3f;
         }
         else if ((GameManager.instance.level >= 32) && (GameManager.instance.level < 37))
         {
-            fourblockdb = -1.7f;
+			horizontaldb = -1.7f;
             frontwalldb = 6.3f;
         }
         else if ((GameManager.instance.level >= 37) && (GameManager.instance.level < 42))
         {
-            fourblockdb = -2.7f;
+			horizontaldb = -2.7f;
             frontwalldb = 5.3f;
         }
         else if ((GameManager.instance.level >= 42) && (GameManager.instance.level < 47))
         {
-            fourblockdb = -3.7f;
+			horizontaldb = -3.7f;
             frontwalldb = 4.3f;
         }
         else if ((GameManager.instance.level >= 47) && (GameManager.instance.level < 52))
         {
-            fourblockdb = -4.7f;
+			horizontaldb = -4.7f;
             frontwalldb = 3.3f;
         }
         else if ((GameManager.instance.level >= 52) && (GameManager.instance.level < 57))
         {
-            fourblockdb = -5.7f;
+			horizontaldb = -5.7f;
             frontwalldb = 2.3f;
         }
         else if ((GameManager.instance.level >= 57) && (GameManager.instance.level < 62))
         {
-            fourblockdb = -6.7f;
+			horizontaldb = -6.7f;
             frontwalldb = 1.3f;
         }
         else if ((GameManager.instance.level >= 62) && (GameManager.instance.level < 67))
         {
-            fourblockdb = -7.7f;
+			horizontaldb = -7.7f;
             frontwalldb = 0.3f;
         }
         else if ((GameManager.instance.level >= 67) && (GameManager.instance.level < 72))
         {
-            fourblockdb = -8.7f;
+			horizontaldb = -8.7f;
             frontwalldb = -0.7f;
         }
         else if ((GameManager.instance.level >= 72) && (GameManager.instance.level < 77))
         {
-            fourblockdb = -9.7f;
+			horizontaldb = -9.7f;
             frontwalldb = -1.7f;
         }
         else if ((GameManager.instance.level >= 77) && (GameManager.instance.level < 82))
         {
-            fourblockdb = -10.7f;
+			horizontaldb = -10.7f;
             frontwalldb = -2.7f;
         }
         else if ((GameManager.instance.level >= 82) && (GameManager.instance.level < 87))
         {
-            fourblockdb = -11.7f;
+			horizontaldb = -11.7f;
             frontwalldb = -3.7f;
         }
         else if ((GameManager.instance.level >= 87) && (GameManager.instance.level < 92))
         {
-            fourblockdb = -12.7f;
+			horizontaldb = -12.7f;
             frontwalldb = -4.7f;
         }
         else if ((GameManager.instance.level >= 92))
         {
-            fourblockdb = -13.7f;
+			horizontaldb = -13.7f;
             frontwalldb = -5.7f;
         }
     }
