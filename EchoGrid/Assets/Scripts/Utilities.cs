@@ -25,52 +25,10 @@ public class Utilities : MonoBehaviour
 
     public static bool OLD_ANDROID_SUPPORT = true;
 
-    public static string pingAddress = "8.8.8.8"; // Google Public DNS server
-    public static float waitingTime = 2.0f;
-    public static bool internetConnectBool;
-    public static Ping ping;
-    public static float pingStartTime;
-
-    public static bool connectedToInternet = false;
-
     public static string debugPlayerInfo;
 
     //encrypt related
     public static RSACryptoServiceProvider encrypter = new RSACryptoServiceProvider();
-
-    void Awake()
-    {
-
-    }
-
-    void Update()
-    {
-        /*
-        if (ping != null)
-        {
-            print("Pinging address.");
-            bool stopCheck = true;
-            if (ping.isDone)
-            {                
-                print("Connected to Internet.");
-                connectedToInternet = true;
-            }
-            else if (Time.time - pingStartTime < waitingTime)
-            {
-                stopCheck = false;
-            }
-            else
-            {                
-                print("Unable to connect to Internet.");
-                connectedToInternet = false;
-            }
-            if (stopCheck)
-            {
-                ping = null;
-            }
-        }
-        */
-    }
 
     public static void initEncrypt()
     {
@@ -200,104 +158,7 @@ public class Utilities : MonoBehaviour
     /// </summary>
     public void check_InternetConnection()
     {
-        StartCoroutine(CheckConnectivity());
-
-        /*
-        bool internetPossiblyAvailable = false;
-        switch (Application.internetReachability)
-        {
-            case NetworkReachability.ReachableViaLocalAreaNetwork:
-                internetPossiblyAvailable = true;
-                break;
-            case NetworkReachability.ReachableViaCarrierDataNetwork:
-                internetPossiblyAvailable = true;
-                break;
-            case NetworkReachability.NotReachable:
-                internetPossiblyAvailable = false;
-                break;
-            default:
-                internetPossiblyAvailable = false;
-                break;
-        }
-
-        if (internetPossiblyAvailable == false)
-        {            
-            print("Unable to connect to Internet.");
-            connectedToInternet = false;
-        }
-        else
-        {            
-            ping = new Ping(pingAddress);
-            pingStartTime = Time.time;
-        }
-        */
-
-        // Always return an empty string, temporarily.
-        // Network.TestConnection() is suspected not capable for testing internet connectivity. 
-        // See reference: https://stackoverflow.com/a/34140417
-        // return "";
-
-        /*
-        ConnectionTesterStatus connectionTestResult = ConnectionTesterStatus.Undetermined;
-        connectionTestResult = Network.TestConnection();
-        string testMessage = "";
-        //bool probingPublicIP = false;
-        int serverPort = 1337;
-
-        switch (connectionTestResult)
-        {
-            case ConnectionTesterStatus.Error:
-                testMessage = "Problem determining NAT capabilities";
-                break;
-
-            case ConnectionTesterStatus.Undetermined:
-                testMessage = "Undetermined NAT capabilities";
-                break;
-
-            case ConnectionTesterStatus.PublicIPIsConnectable:
-                testMessage = "";
-                //testMessage = "Directly connectable public IP address.";
-                break;
-
-            // This case is a bit special as we now need to check if we can 
-            // circumvent the blocking by using NAT punchthrough
-            case ConnectionTesterStatus.PublicIPPortBlocked:
-                testMessage = "Non-connectable public IP address (port " +
-                    serverPort + " blocked),\nrunning a server is impossible.";
-                break;
-
-            case ConnectionTesterStatus.PublicIPNoServerStarted:
-                testMessage = "Public IP address but server not initialized,\n" +
-                    "it must be started to check server accessibility.\nRestart " +
-                    "connection test when ready.";
-                break;
-
-            default:
-                //testMessage = "Error in test routine, got " + connectionTestResult;
-                break;
-        }
-
-        return testMessage;
-        */
-    }
-
-    IEnumerator CheckConnectivity()
-    {
-        Ping ping = new Ping("8.8.8.8");
-        print("IP: " + ping.ip);
-        float startTime = Time.time;
-        while (!ping.isDone && Time.time < startTime + 5.0f)
-        {
-            yield return new WaitForSeconds(0.1f);
-        }
-        if (ping.isDone)
-        {
-            connectedToInternet = true;
-        }
-        else
-        {
-            connectedToInternet = false;
-        }
+        
     }
 
     /// <summary>
