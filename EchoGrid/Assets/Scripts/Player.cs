@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using SimpleJSON;
 using System.Security.Cryptography;
 using System;
+using System.IO;
 using System.Text;
 using System.Diagnostics;
 using UnityEngine.SceneManagement;
@@ -143,8 +144,6 @@ public class Player : MovingObject
     AudioClip echoleftfront = Database.hrtf_leftfront;
     AudioClip echorightfront = Database.hrtf_rightfront;
 
-    bool doneTesting = false;
-
     bool canCheckForConsent = false;
     bool hasCheckedForConsent = false;
     public static bool hasFinishedConsentForm = false;
@@ -191,6 +190,8 @@ public class Player : MovingObject
     bool answeredQuestion2 = false;
     bool question3 = false;
     bool answeredQuestion3 = false;
+
+    bool canSendGameData = false;
 
     // bool switch_click_toggle = false; // If switch_click_toggle is false, then play the odeon click, which is option 1 in database.
 
@@ -1233,36 +1234,12 @@ public class Player : MovingObject
         // Logging.Log(boardScript.mazeSolution.Length - 1, Logging.LogLevel.NORMAL);
         // Logging.Log(numCrashes, Logging.LogLevel.NORMAL);
 
-        // TODO(agotsis) understand this. Reimplement.
-        // Send the crash count data and level information to server
+        // TODO(agotsis) understand this. Reimplement.       
         string levelDataEndpoint = "http://echolock.andrew.cmu.edu/cgi-bin/acceptLevelData.py";
         int temp = GameManager.instance.boardScript.local_stats[curLevel];
 
-        WWWForm levelCompleteForm = new WWWForm();
-        levelCompleteForm.AddField("userName", Utilities.encrypt(SystemInfo.deviceUniqueIdentifier));
-        levelCompleteForm.AddField("currentLevel", Utilities.encrypt(curLevel.ToString()));
-        levelCompleteForm.AddField("trackCount", Utilities.encrypt(temp.ToString()));
-        levelCompleteForm.AddField("crashCount", Utilities.encrypt(numCrashes.ToString()));
-        levelCompleteForm.AddField("stepCount", Utilities.encrypt(numSteps.ToString()));
-        levelCompleteForm.AddField("startTime", Utilities.encrypt(startTime.ToString()));
-        levelCompleteForm.AddField("endTime", Utilities.encrypt(endTime.ToString()));
-        levelCompleteForm.AddField("timeElapsed", Utilities.encrypt(accurateElapsed.ToString("F3")));
-        levelCompleteForm.AddField("exitAttempts", Utilities.encrypt(exitAttempts.ToString()));
-        levelCompleteForm.AddField("asciiLevelRep", Utilities.encrypt(GameManager.instance.boardScript.asciiLevelRep));
-        levelCompleteForm.AddField("levelRecord", (GameManager.instance.boardScript.gamerecord));
-
-        // Logging.Log(System.Text.Encoding.ASCII.GetString(levelCompleteForm.data), Logging.LogLevel.LOW_PRIORITY);
-
-        // Send the name of the echo files used in this level and the counts
-        // form.AddField("echoFileNames", getEchoNames());
-
-        // Send the details of the crash locations
-        // form.AddField("crashLocations", crashLocs);
-
-        levelCompleteForm.AddField("score", score);
-
-        WWW www = new WWW(levelDataEndpoint, levelCompleteForm);
-        StartCoroutine(Utilities.WaitForRequest(www));
+        // Check if we are connected to the internet.
+        CheckInternetConnection(temp, accurateElapsed, score, levelDataEndpoint);       
 
         // display score
 #if UNITY_ANDROID
@@ -3468,7 +3445,6 @@ public class Player : MovingObject
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         hasFinishedConsentForm = true;
                         canRepeat = true;
-                        CheckInternetConnection();
                         clips = new List<AudioClip>() { Database.consentClips[8] };
                         SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
                     }
@@ -3479,7 +3455,6 @@ public class Player : MovingObject
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         hasFinishedConsentForm = true;
                         canRepeat = true;
-                        CheckInternetConnection();
                         clips = new List<AudioClip>() { Database.consentClips[7] };
                         SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
                     }
@@ -4219,7 +4194,6 @@ public class Player : MovingObject
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         hasFinishedConsentForm = true;
                         canRepeat = true;
-                        CheckInternetConnection();
                         clips = new List<AudioClip>() { Database.consentClips[8] };
                         SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
                     }
@@ -4230,7 +4204,6 @@ public class Player : MovingObject
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         hasFinishedConsentForm = true;
                         canRepeat = true;
-                        CheckInternetConnection();
                         clips = new List<AudioClip>() { Database.consentClips[7] };
                         SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
                     }
@@ -5775,7 +5748,6 @@ public class Player : MovingObject
                                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                                     hasFinishedConsentForm = true;
                                     canRepeat = true;
-                                    CheckInternetConnection();
                                     clips = new List<AudioClip>() { Database.consentClips[8] };
                                     SoundManager.instance.PlayClips(clips, null, 0, () => quitInterception(), 1, 0.5f, true);
                                 }
@@ -5786,7 +5758,6 @@ public class Player : MovingObject
                                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                                     hasFinishedConsentForm = true;
                                     canRepeat = true;
-                                    CheckInternetConnection();
                                     clips = new List<AudioClip>() { Database.consentClips[7] };
                                     SoundManager.instance.PlayClips(clips, null, 0, () => quitInterception(), 1, 0.5f, true);
                                 }
@@ -5970,47 +5941,328 @@ public class Player : MovingObject
         return false;
     }
 
+    /// <summary>
+    /// If the player is in a gesture tutorial, leave the tutorial so that they can continue with the level.
+    /// </summary>
     private void quitInterception()
     {
         intercepted = false;
     }
 
-    void CheckInternetConnection()
+    /// <summary>
+    /// Check if the player is connected to the internet.
+    /// </summary>
+    /// <param name="temp"></param>
+    /// <param name="accurateElapsed"></param>
+    /// <param name="score"></param>
+    /// <param name="levelDataEndpoint"></param>   
+    void CheckInternetConnection(int temp, float accurateElapsed, int score, string levelDataEndpoint)
     {
-        StartCoroutine(CheckConnectivity());
+        // Start the coroutine that checks their connectivity.
+        StartCoroutine(CheckConnectivity(temp, accurateElapsed, score, levelDataEndpoint));
     }
 
-    IEnumerator CheckConnectivity()
+    /// <summary>
+    /// Check if the player is connected to the internet via WiFi or cell service. 
+    /// If the player is connected to the internet and would not be redirected to another page if they tried to go to a site (i.e. an airport or hotel WiFi login screen), 
+    /// then send their game data for the level to the server. 
+    /// If they are not connected to the internet, if there is an error connecting, or they would be redirected, store their data for the level in a file and send it next time they are connected.
+    /// </summary>
+    /// <param name="temp"></param>
+    /// <param name="accurateElapsed"></param>
+    /// <param name="score"></param>
+    /// <param name="levelDataEndpoint"></param>
+    /// <returns></returns>
+    IEnumerator CheckConnectivity(int temp, float accurateElapsed, int score, string levelDataEndpoint)
     {
+        // We are going to attempt to look at this site, which just has the text 'Microsoft NCSI' on it. 
+        // If the text retrieved later in the function is equal to this, then we know the player is connected to the internet properly and can send their data to the server.
         WWW www = new WWW("http://www.msftncsi.com/ncsi.txt");
 
+        // Wait until the page is finished downloading.
         while (www.isDone == false)
         {
             yield return false;
         }
 
-        if (www.error != null)
+        string filename = Application.persistentDataPath + "consentRecord";
+        string[] svdata_split;
+
+        if (System.IO.File.Exists(filename))
         {
-            print("Error: " + www.error);
-            print("Text: " + www.text);
-            print("Could not connect to the Internet.");
-            debugPlayerInfo = "Error: " + www.error;
-            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-        }
-        else
-        {
-            print("Text: " + www.text);
-            if (www.text == "Microsoft NCSI")
+            svdata_split = System.IO.File.ReadAllLines(filename);
+            int hasConsented = Int32.Parse(svdata_split[0]);
+
+            if (hasConsented == 1)
             {
-                print("Connected to the Internet.");
-                debugPlayerInfo = "Connected to the internet.";
-                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                print("Has consented to sending their data to the server for research.");
+
+                // If an error occcurs while loading the page, or if the player is not connected to the internet via WiFi or cell service.
+                if (www.error != null)
+                {
+                    print("Text: " + www.text);
+                    print("Error: " + www.error);
+                    print("Could not connect to the Internet.");
+
+                    string storedFilepath = Application.persistentDataPath + "storeddata" + curLevel;
+
+                    int directoryEnd = 0;
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
+                    directoryEnd = Application.persistentDataPath.IndexOf("AuditoryLab") + 10;
+#endif
+#if UNITY_IOS || UNITY_ANDROID
+                    directoryEnd = Application.persistentDataPath.IndexOf("AuditoryLab.Echoadventure") + 24;
+#endif
+
+                    string searchPath = Application.persistentDataPath.Substring(0, (directoryEnd + 1));
+                    print("Search Path: " + searchPath);
+                    string searchPattern = Application.productName + "storeddata";
+                    print("Search Pattern: " + searchPattern);
+
+                    DirectoryInfo directory = new DirectoryInfo(searchPath);
+                    FileInfo[] files = directory.GetFiles();
+                    string tempFilepath = storedFilepath;
+                    string tempTempFilepath = tempFilepath;
+                    int sameFilepathIndex = 2;
+                    string storedFilename = "";
+
+                    foreach (FileInfo file in files)
+                    {
+                        if (file.Name.Contains("storeddata") == true)
+                        {
+                            print("File: " + file.Name);
+
+                            if (file.Name.Equals(tempFilepath) == true)
+                            {
+                                tempTempFilepath = storedFilepath + "_" + sameFilepathIndex.ToString();
+                                tempFilepath = tempTempFilepath;
+                                storedFilename = file.Name;
+                                sameFilepathIndex += 1;
+                                print("New Filepath: " + tempTempFilepath);
+                                print("Next Index: " + sameFilepathIndex.ToString());
+                            }
+                        }
+                    }
+
+                    storedFilepath = tempFilepath;
+                    print("Final Path: " + storedFilepath);
+
+                    string[] levelData = new string[12];
+
+                    levelData[0] = Utilities.encrypt(SystemInfo.deviceUniqueIdentifier);
+                    levelData[1] = Utilities.encrypt(curLevel.ToString());
+                    levelData[2] = Utilities.encrypt(temp.ToString());
+                    levelData[3] = Utilities.encrypt(numCrashes.ToString());
+                    levelData[4] = Utilities.encrypt(numSteps.ToString());
+                    levelData[5] = Utilities.encrypt(startTime.ToString());
+                    levelData[6] = Utilities.encrypt(endTime.ToString());
+                    levelData[7] = Utilities.encrypt(accurateElapsed.ToString("F3"));
+                    levelData[8] = Utilities.encrypt(exitAttempts.ToString());
+                    levelData[9] = Utilities.encrypt(GameManager.instance.boardScript.asciiLevelRep);
+                    levelData[10] = GameManager.instance.boardScript.gamerecord;
+                    levelData[11] = score.ToString();
+
+                    System.IO.File.WriteAllLines(storedFilepath, levelData);
+                    print("Stored data in local file to send later.");
+
+                    debugPlayerInfo = "Error connecting to the Internet. Storing data to file: " + storedFilename;
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.            
+                }
+                // If no errors occur in loading the page.
+                else
+                {
+                    print("Text: " + www.text);
+
+                    // If the player can go to the msftncsi.com site without being redirected.
+                    if (www.text == "Microsoft NCSI")
+                    {
+                        debugPlayerInfo = "Connected to the Internet.";
+                       
+                        // Since the player is connected to the internet, send any data from levels where they were not connected to the internet to the server.
+                        SendStoredData(levelDataEndpoint);
+
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                        print("Connected to the Internet.");
+
+                        // Send the crash count data and level information to server
+                        WWWForm levelCompleteForm = new WWWForm();
+                        levelCompleteForm.AddField("userName", Utilities.encrypt(SystemInfo.deviceUniqueIdentifier));
+                        levelCompleteForm.AddField("currentLevel", Utilities.encrypt(curLevel.ToString()));
+                        levelCompleteForm.AddField("trackCount", Utilities.encrypt(temp.ToString()));
+                        levelCompleteForm.AddField("crashCount", Utilities.encrypt(numCrashes.ToString()));
+                        levelCompleteForm.AddField("stepCount", Utilities.encrypt(numSteps.ToString()));
+                        levelCompleteForm.AddField("startTime", Utilities.encrypt(startTime.ToString()));
+                        levelCompleteForm.AddField("endTime", Utilities.encrypt(endTime.ToString()));
+                        levelCompleteForm.AddField("timeElapsed", Utilities.encrypt(accurateElapsed.ToString("F3")));
+                        levelCompleteForm.AddField("exitAttempts", Utilities.encrypt(exitAttempts.ToString()));
+                        levelCompleteForm.AddField("asciiLevelRep", Utilities.encrypt(GameManager.instance.boardScript.asciiLevelRep));
+                        levelCompleteForm.AddField("levelRecord", (GameManager.instance.boardScript.gamerecord));
+
+                        // Logging.Log(System.Text.Encoding.ASCII.GetString(levelCompleteForm.data), Logging.LogLevel.LOW_PRIORITY);
+
+                        // Send the name of the echo files used in this level and the counts
+                        // form.AddField("echoFileNames", getEchoNames());
+
+                        // Send the details of the crash locations
+                        // form.AddField("crashLocations", crashLocs);
+
+                        levelCompleteForm.AddField("score", score);
+
+                        WWW www2 = new WWW(levelDataEndpoint, levelCompleteForm);
+
+                        print("Sending the data to the server.");
+                        StartCoroutine(Utilities.WaitForRequest(www2));
+
+                    }
+                    // If the player could connect to the internet, but would be directed to another page.
+                    else
+                    {
+                        debugPlayerInfo = "Connected to the internet, but redirected to another page.";
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                        print("Connected to the Internet, but got redirected to another page.");
+
+                        string storedFilepath = Application.persistentDataPath + "storeddata" + curLevel;
+
+                        int directoryEnd = 0;
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
+                        directoryEnd = Application.persistentDataPath.IndexOf("AuditoryLab") + 10;
+#endif
+#if UNITY_IOS || UNITY_ANDROID
+                        directoryEnd = Application.persistentDataPath.IndexOf("AuditoryLab.Echoadventure") + 24;
+#endif
+
+                        string searchPath = Application.persistentDataPath.Substring(0, (directoryEnd + 1));
+                        print("Search Path: " + searchPath);
+                        string searchPattern = Application.productName + "storeddata";
+                        print("Search Pattern: " + searchPattern);
+
+                        DirectoryInfo directory = new DirectoryInfo(searchPath);
+                        FileInfo[] files = directory.GetFiles();
+                        string tempFilepath = storedFilepath;
+                        string tempTempFilepath = tempFilepath;
+                        int sameFilepathIndex = 2;
+                        string storedFilename = "";
+
+                        foreach (FileInfo file in files)
+                        {
+                            if (file.Name.Contains("storeddata") == true)
+                            {
+                                print("File: " + file.Name);
+
+                                if (file.Name.Equals(tempFilepath) == true)
+                                {
+                                    tempTempFilepath = storedFilepath + "_" + sameFilepathIndex.ToString();
+                                    tempFilepath = tempTempFilepath;
+                                    storedFilename = file.Name;
+                                    sameFilepathIndex += 1;
+                                    print("New Filepath: " + tempTempFilepath);
+                                    print("Next Index: " + sameFilepathIndex.ToString());
+                                }
+                            }
+                        }
+
+                        storedFilepath = tempFilepath;
+                        print("Final Path: " + storedFilepath);
+
+                        string[] levelData = new string[12];
+
+                        levelData[0] = Utilities.encrypt(SystemInfo.deviceUniqueIdentifier);
+                        levelData[1] = Utilities.encrypt(curLevel.ToString());
+                        levelData[2] = Utilities.encrypt(temp.ToString());
+                        levelData[3] = Utilities.encrypt(numCrashes.ToString());
+                        levelData[4] = Utilities.encrypt(numSteps.ToString());
+                        levelData[5] = Utilities.encrypt(startTime.ToString());
+                        levelData[6] = Utilities.encrypt(endTime.ToString());
+                        levelData[7] = Utilities.encrypt(accurateElapsed.ToString("F3"));
+                        levelData[8] = Utilities.encrypt(exitAttempts.ToString());
+                        levelData[9] = Utilities.encrypt(GameManager.instance.boardScript.asciiLevelRep);
+                        levelData[10] = GameManager.instance.boardScript.gamerecord;
+                        levelData[11] = score.ToString();
+
+                        System.IO.File.WriteAllLines(storedFilepath, levelData);
+                        print("Stored data in local file to send later.");
+
+                        debugPlayerInfo = "Error connecting to the Internet. Storing data to file: " + storedFilename;
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.    
+                    }
+                }
             }
-            else
+            else if (hasConsented == 0)
             {
-                debugPlayerInfo = "Connected to the internet, but redirected to another page.";
-                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                print("Connected to the Internet, but got redirected to another page.");
+                print("Has not consented to sending their data to the server for research.");
+            }
+        }              
+    }
+
+    /// <summary>
+    /// Sends the stored data from levels that were completed.
+    /// </summary>
+    /// <param name="temp"></param>
+    /// <param name="accurateElapsed"></param>
+    /// <param name="score"></param>
+    /// <param name="levelDataEndpoint"></param>
+    void SendStoredData(string levelDataEndpoint)
+    {
+        int directoryEnd = 0;
+#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
+        directoryEnd = Application.persistentDataPath.IndexOf("AuditoryLab") + 10;
+#endif
+#if UNITY_IOS || UNITY_ANDROID 
+        directoryEnd = Application.persistentDataPath.IndexOf("AuditoryLab.Echoadventure") + 24;
+#endif 
+
+        string searchPath = Application.persistentDataPath.Substring(0, (directoryEnd + 1));
+        print("Search Path: " + searchPath);
+        string searchPattern = Application.productName + "storeddata";
+        print("Search Pattern: " + searchPattern);
+
+        DirectoryInfo directory = new DirectoryInfo(searchPath);
+        FileInfo[] files = directory.GetFiles();
+
+        foreach (FileInfo file in files)
+        {            
+            if (file.Name.Contains("storeddata") == true)
+            {
+                print("Stored Data File Found: " + file.Name);              
+
+                // If the file exists.
+                if (System.IO.File.Exists(file.FullName))
+                {
+                    debugPlayerInfo += "Stored: " + file.Name + ", ";
+
+                    // Read the lines of the file.
+                    print("Reading lines of stored data file.");
+                    string[] svdata_split = System.IO.File.ReadAllLines(file.FullName);
+
+                    // Send the crash count data and level information to server
+                    WWWForm levelCompleteForm = new WWWForm();
+                    levelCompleteForm.AddField("userName", svdata_split[0]);
+                    levelCompleteForm.AddField("currentLevel", svdata_split[1]);
+                    levelCompleteForm.AddField("trackCount", svdata_split[2]);
+                    levelCompleteForm.AddField("crashCount", svdata_split[3]);
+                    levelCompleteForm.AddField("stepCount", svdata_split[4]);
+                    levelCompleteForm.AddField("startTime", svdata_split[5]);
+                    levelCompleteForm.AddField("endTime", svdata_split[6]);
+                    levelCompleteForm.AddField("timeElapsed", svdata_split[7]);
+                    levelCompleteForm.AddField("exitAttempts", svdata_split[8]);
+                    levelCompleteForm.AddField("asciiLevelRep", svdata_split[9]);
+                    levelCompleteForm.AddField("levelRecord", svdata_split[10]);
+
+                    // Logging.Log(System.Text.Encoding.ASCII.GetString(levelCompleteForm.data), Logging.LogLevel.LOW_PRIORITY);
+
+                    // Send the name of the echo files used in this level and the counts
+                    // form.AddField("echoFileNames", getEchoNames());
+
+                    // Send the details of the crash locations
+                    // form.AddField("crashLocations", crashLocs);
+
+                    levelCompleteForm.AddField("score", Int32.Parse(svdata_split[11]));
+
+                    WWW www2 = new WWW(levelDataEndpoint, levelCompleteForm);                    
+
+                    print("Sending stored data to the server.");
+                    StartCoroutine(Utilities.WaitForRequest(www2, file.Name, file.FullName));
+                }
             }
         }
     }
