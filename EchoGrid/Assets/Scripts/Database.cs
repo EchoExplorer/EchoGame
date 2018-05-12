@@ -26,7 +26,8 @@ public class Database : MonoBehaviour
     public static AudioClip attenuatedClick;
     public static AudioClip attenuatedaround;
 	public static AudioClip hrtf_front;
-	public static AudioClip hrtf_left;
+	public static AudioClip hrtf_left_leftspeaker;
+	public static AudioClip hrtf_left_rightspeaker;
 	public static AudioClip hrtf_right;
 	public static AudioClip hrtf_leftfront;
 	public static AudioClip hrtf_rightfront;
@@ -91,7 +92,8 @@ public class Database : MonoBehaviour
 
         //Option1:
 		hrtf_front =Resources.Load("fx/kemar_front") as AudioClip;
-		hrtf_left =Resources.Load("fx/kemar_left") as AudioClip;
+		hrtf_left_leftspeaker =Resources.Load("fx/kemar_left_leftspeaker") as AudioClip;
+		hrtf_left_rightspeaker=Resources.Load("fx/kemar_left_rightspeaker") as AudioClip;
 		hrtf_right =Resources.Load("fx/kemar_right") as AudioClip;
 		hrtf_leftfront =Resources.Load("fx/kemar_leftfront") as AudioClip;
 		hrtf_rightfront =Resources.Load("fx/kemar_rightfront") as AudioClip;

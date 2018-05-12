@@ -50,7 +50,6 @@ public class Player : MovingObject
     int cur_clip = 0;
     int max_quit_clip = 2;
     bool reset_audio;
-
     // private SpriteRenderer spriteRenderer;
 
     // variables to implement data collection
@@ -138,7 +137,8 @@ public class Player : MovingObject
 
     AudioClip attenuatedClick = Database.attenuatedClick;
     AudioClip echofront = Database.hrtf_front;
-    AudioClip echoleft = Database.hrtf_left;
+	AudioClip echoleft_leftspeaker = Database.hrtf_left_leftspeaker;
+	AudioClip echoleft_rightspeaker = Database.hrtf_left_rightspeaker;
     AudioClip echoright = Database.hrtf_right;
     AudioClip echoleftfront = Database.hrtf_leftfront;
     AudioClip echorightfront = Database.hrtf_rightfront;
@@ -191,7 +191,7 @@ public class Player : MovingObject
     bool answeredQuestion2 = false;
     bool question3 = false;
     bool answeredQuestion3 = false;
-
+	GameObject dummyobject;
     // bool switch_click_toggle = false; // If switch_click_toggle is false, then play the odeon click, which is option 1 in database.
 
     void Awake()
@@ -213,6 +213,7 @@ public class Player : MovingObject
 
     private void init()
     {
+		
         numCrashes = 0;
         numSteps = 0;
         crashLocs = "";
@@ -315,7 +316,6 @@ public class Player : MovingObject
     string[] frontDistS = { "2.25", "3.75" };
     string[] frontDistM = { "5.25", "6.75" };
     string[] frontDistL = { "8.25", "9.75", "11.25", "12.75" };
-
     /// <summary>
     /// A function that determines which echo file to play based on the surrounding environment.
     /// </summary>
@@ -325,7 +325,7 @@ public class Player : MovingObject
         {
             attenuatedClick = Database.attenuatedClick;
             echofront = Database.hrtf_front;
-            echoleft = Database.hrtf_left;
+			echoleft_leftspeaker = Database.hrtf_left_leftspeaker;
             echoright = Database.hrtf_right;
             echoleftfront = Database.hrtf_leftfront;
             echorightfront = Database.hrtf_rightfront;
@@ -335,7 +335,7 @@ public class Player : MovingObject
         {
             attenuatedClick = Database.attenuatedClick;
             echofront = Database.hrtf_front;
-            echoleft = Database.hrtf_left;
+			echoleft_leftspeaker = Database.hrtf_left_leftspeaker;
             echoright = Database.hrtf_right;
             echoleftfront = Database.hrtf_leftfront;
             echorightfront = Database.hrtf_rightfront;
@@ -355,8 +355,10 @@ public class Player : MovingObject
         //print("Facing: " + dir_x + ", " + dir_y);
 
         GameObject frontWall, leftWall, rightWall, leftFrontWall, rightFrontWall, tempWall, rightEndWall, leftEndWall, leftTwoFrontWall, rightTwoFrontWall;
-        //leftWall = GameObject.Find("Wall_" + x + "_" + y);
-        //rightWall = GameObject.Find("Wall_" + x + "_" + y);
+		GameObject dummyleft=null;
+		//leftWall = GameObject.Find("Wall_" + x + "_" + y);
+       
+		//rightWall = GameObject.Find("Wall_" + x + "_" + y);
         // assume dir.x != 0
         leftWall = GameObject.Find("Wall_" + (x + dir_y) + "_" + (y + dir_x));
         rightWall = GameObject.Find("Wall_" + (x + -dir_y) + "_" + (y + -dir_x));
@@ -418,27 +420,36 @@ public class Player : MovingObject
         float blocksToFrontWall = Vector3.Distance(transform.position, frontWall.transform.position) - 1;
         // Four-wall echoes preparation
         GvrAudioSource leftGAS = null, rightGAS = null, leftFrontGAS = null, rightFrontGAS = null, leftEndGAS = null, rightEndGAS = null, leftTwoFrontGAS = null, rightTwoFrontGAS = null;
-
+		GvrAudioSource leftGAS_right = null, rightGAS_left = null, leftFrontGAS_rightfront = null, rightfrontGAS_leftfront = null, leftEndGAS_rightend = null, rightEndGAS_leftend = null;
         float horizontal_45db = -5.3f;
-        float horizontaldb = 2.3f;
+        float horizontaldb = 5.3f;
         float frontwalldb = 10.3f;
         float farenddb = -5.3f;
-
         //float fourblockdb =-13.7f;
         //float frontwalldb = -5.7f;
 
         if (leftWall != null)
-        {
+		{	
+			if (dummyleft == null) {
+				dummyleft = GameObject.Instantiate (dummyobject, new Vector3 ((x + -dir_y), (y + -dir_x), 0), Quaternion.identity);
+			} else {
+				dummyleft.transform.position = new Vector3 ((x + -dir_y), (y + -dir_x), 0);
+			}
+
             leftGAS = leftWall.GetComponent<GvrAudioSource>();
-            leftGAS.clip = echoleft;
+			leftGAS.clip = echoleft_leftspeaker;
             leftGAS.gainDb = horizontaldb;
+			leftGAS_right=dummyleft.GetComponent<GvrAudioSource>();
+			leftGAS_right.clip=echoleft_rightspeaker;
+			leftGAS_right.gainDb = horizontaldb;
+			leftGAS_right.PlayDelayed(1.5f / 340);
 
         }
         else
         {
             //Left end wall if at left corner
             leftEndGAS = leftEndWall.GetComponent<GvrAudioSource>();
-            leftEndGAS.clip = echoleft;
+			leftEndGAS.clip = echoleft_leftspeaker;
             leftEndGAS.gainDb = farenddb;
         }
         if (rightWall != null)
@@ -507,16 +518,17 @@ public class Player : MovingObject
             if (rightTwoFrontGAS != null) rightTwoFrontGAS.DummyInit();
             return;
         }
-
+		/*
         SoundManager.instance.PlaySingle(attenuatedClick);
-
+		*/
 
         if (leftGAS != null)
         {
-            leftGAS.PlayDelayed(1.5f / 340);
-
+            //leftGAS.PlayDelayed(1.5f / 340);
+			leftGAS_right.PlayDelayed(1.5f / 340);
             UnityEngine.Debug.Log("left palyed!");
         }
+        /*
         if (rightGAS != null)
         {
             rightGAS.PlayDelayed(1.5f / 340);
@@ -555,14 +567,14 @@ public class Player : MovingObject
 			rightTwoFrontGAS.PlayDelayed(3.1f / 340);
 			UnityEngine.Debug.Log ("Right Front End is played");
 		}*/
-
+		/*
         if (frontGAS != null)
         {
             frontGAS.gainDb = frontwalldb;
             frontGAS.PlayDelayed((1.5f * blocksToFrontWall + 0.75f) * 2 / 340);
             UnityEngine.Debug.Log("frontwall palyed!");
         }
-
+		*/
 
         return;
         tapped = true;

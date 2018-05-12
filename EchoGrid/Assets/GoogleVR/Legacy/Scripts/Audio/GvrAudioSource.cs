@@ -259,7 +259,7 @@ public class GvrAudioSource : MonoBehaviour {
 
   /// Binaural (HRTF) rendering toggle.
   [SerializeField]
-  private bool hrtfEnabled = true;
+	private bool hrtfEnabled = false;
 
   // Unity audio source attached to the game object.
   [SerializeField]
