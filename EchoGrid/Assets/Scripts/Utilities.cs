@@ -107,13 +107,18 @@ public class Utilities : MonoBehaviour
     ///  data from the ``WWW``` instance to finish downloading.
     ///  This should be called in a coroutine.
     /// </summary>
-	public static IEnumerator WaitForRequest(WWW www)
+	public static IEnumerator WaitForRequest(WWW www, string filename = null, string filePath = null)
     {
         yield return www;
 
         //Check for errors
         if (www.error == null)
         {
+            if ((filename != null) && (filePath != null))
+            {
+                System.IO.File.Delete(filePath);
+                print("Deleted file: " + filename);
+            }
             //JSONNode data = JSON.Parse (www.text);
             //Debug.Log("this is the parsed json data: " + data["testData"]);
             //Debug.Log(data["testData"]);

@@ -173,10 +173,7 @@ public class InputModule : MonoBehaviour
     // Use for initialization.
     void Start()
     {
-        debugCanvas = GameObject.Find("Debug Canvas").gameObject;
-        gestureBoundary = GameObject.Find("GestureBoundary").gameObject;
-        gestureBoundary.GetComponent<RectTransform>().sizeDelta = new Vector2(Screen.width - 30, Screen.height - 20);
-        gestureBoundary.GetComponent<BoxCollider2D>().size = new Vector2(Screen.width - 30, Screen.height - 20);
+        
     }
 
     /// <summary>

@@ -20,7 +20,6 @@ public class GM_title : MonoBehaviour
     public bool toMainflag = false;
 
     Text titleText;
-    bool doneTesting = false;
     eventHandler eh;
 
     bool repeatSetupClip = false;
@@ -338,30 +337,6 @@ public class GM_title : MonoBehaviour
     /// </summary>
     void Update()
     {
-        /*
-        if (Const.TEST_CONNECTION)
-        {
-            if (!doneTesting)
-            {               
-                Utilities.check_InternetConnection();
-
-                if (Utilities.connectedToInternet == true)
-                {//we're good to go
-                    doneTesting = true;
-                    // debugPlayerInfo = "Connected to Internet.";
-                    // DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                    print("Established connection to Internet.");
-                }
-                else if (Utilities.connectedToInternet == false)
-                {
-                    // debugPlayerInfo = "Unable to connect to Internet.";
-                    // DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                    print("Established connection to Internet.");
-                }               
-            }
-        }
-        */
-
         if (GM_main_pre.hasGoneThroughSetup == true)
         {
             determined_talkback = true;
@@ -1373,7 +1348,7 @@ public class GM_title : MonoBehaviour
                 }
                 else if (inOptionsMenu == false)
                 {
-                    debugPlayerInfo = "Swiped right. Moving to pregame menu to continue where you left off.";
+                    debugPlayerInfo = "Swiped right. Moving to pregame menu for post-tutorial levels.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
                     SceneManager.LoadScene("Main_pre"); // Move to pregame menu.				
@@ -1405,7 +1380,7 @@ public class GM_title : MonoBehaviour
                 }
                 else if (inOptionsMenu == false)
                 {
-                    debugPlayerInfo = "Swiped left. Moving to pregame menu to start tutorial.";
+                    debugPlayerInfo = "Swiped left. Moving to pregame menu for tutorial levels.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
                     SceneManager.LoadScene("Main_pre"); // Move to pregame menu.				
