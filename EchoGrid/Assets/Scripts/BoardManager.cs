@@ -576,6 +576,12 @@ public class BoardManager : MonoBehaviour
             //Loop along y axis, starting from -1 to place floor or outerwall tiles.
             for (int y = 0; y <= (rows + 1); y++)
             {
+                Transform sounders = transform.Find("Sounders");
+                GameObject sounder = Instantiate(Resources.Load("Sounder"), gridPositions[(y * 11) + x], Quaternion.identity) as GameObject;
+                sounder.name = "Sounder_" + gridPositions[(y * 11) + x].x + "_" + gridPositions[(y * 11) + x].y;
+                sounder.transform.localScale = sounder.transform.localScale * scale;
+                sounder.transform.SetParent(sounders);
+
                 //Choose a random tile from our array of floor tile prefabs and prepare to instantiate it.
                 GameObject toInstantiate = floorTiles[Random.Range(0, floorTiles.Length)];
 

@@ -190,7 +190,6 @@ public class Player : MovingObject
     bool answeredQuestion2 = false;
     bool question3 = false;
     bool answeredQuestion3 = false;
-	GameObject dummyobject;
 
     bool canSendGameData = false;
     // bool switch_click_toggle = false; // If switch_click_toggle is false, then play the odeon click, which is option 1 in database.
@@ -209,12 +208,10 @@ public class Player : MovingObject
         enabled = true;
         surveyCode = "";
         // DontDestroyOnLoad(gameObject); // I don't understand why this is here, please check for bugs.
-
     }
 
     private void init()
-    {
-		
+    {		
         numCrashes = 0;
         numSteps = 0;
         crashLocs = "";
@@ -317,11 +314,20 @@ public class Player : MovingObject
     string[] frontDistS = { "2.25", "3.75" };
     string[] frontDistM = { "5.25", "6.75" };
     string[] frontDistL = { "8.25", "9.75", "11.25", "12.75" };
+
+    private String wallPrefix = "Wall_";
+    private String sounderPrefix = "Sounder_";
+    private GvrAudioSource[] GetGASs(String pos)
+    {
+        return GameObject.Find(sounderPrefix + pos).GetComponents<GvrAudioSource>();
+    }
+
     /// <summary>
     /// A function that determines which echo file to play based on the surrounding environment.
     /// </summary>
     private void PlayEcho(bool real = true)
     {
+        if (!real) return;
         if (GM_title.switch_click_toggle == true)
         {
             attenuatedClick = Database.attenuatedClick;
@@ -356,27 +362,34 @@ public class Player : MovingObject
         //print("Facing: " + dir_x + ", " + dir_y);
 
         GameObject frontWall, leftWall, rightWall, leftFrontWall, rightFrontWall, tempWall, rightEndWall, leftEndWall, leftTwoFrontWall, rightTwoFrontWall;
-		GameObject dummyleft=null;
-		//leftWall = GameObject.Find("Wall_" + x + "_" + y);
-       
-		//rightWall = GameObject.Find("Wall_" + x + "_" + y);
-        // assume dir.x != 0
-        leftWall = GameObject.Find("Wall_" + (x + dir_y) + "_" + (y + dir_x));
-        rightWall = GameObject.Find("Wall_" + (x + -dir_y) + "_" + (y + -dir_x));
-        leftFrontWall = GameObject.Find("Wall_" + (x + dir_y + dir_x) + "_" + (y + dir_x + dir_y));
-        rightFrontWall = GameObject.Find("Wall_" + (x + -dir_y + dir_x) + "_" + (y + -dir_x + dir_y));
+        String frontWallPos, leftWallPos, rightWallPos, leftFrontWallPos, rightFrontWallPos, tempWallPos, rightEndWallPos, leftEndWallPos, leftTwoFrontWallPos, rightTwoFrontWallPos;
+
+        leftWallPos =  (x + dir_y) + "_" + (y + dir_x);
+        rightWallPos = (x + -dir_y) + "_" + (y + -dir_x);
+        leftFrontWallPos = (x + dir_y + dir_x) + "_" + (y + dir_x + dir_y);
+        rightFrontWallPos = (x + -dir_y + dir_x) + "_" + (y + -dir_x + dir_y);
+        leftEndWallPos = "";
+        rightEndWallPos = "";
+        leftTwoFrontWallPos = (x + 2 * dir_y + dir_x) + "_" + (y + 2 * dir_x + dir_y);
+        rightTwoFrontWallPos = (x + (-dir_y * 2) + dir_x) + "_" + (y + (-dir_x * 2) + dir_y);
+
+        leftWall = GameObject.Find(wallPrefix + leftWallPos);
+        rightWall = GameObject.Find(wallPrefix + rightWallPos);
+        leftFrontWall = GameObject.Find(wallPrefix + leftFrontWallPos);
+        rightFrontWall = GameObject.Find(wallPrefix + rightFrontWallPos);
 
         leftEndWall = null;
         rightEndWall = null;
-        leftTwoFrontWall = GameObject.Find("Wall_" + (x + 2 * dir_y + dir_x) + "_" + (y + 2 * dir_x + dir_y));
-        rightTwoFrontWall = GameObject.Find("Wall_" + (x + (-dir_y * 2) + dir_x) + "_" + (y + (-dir_x * 2) + dir_y));
+        leftTwoFrontWall = GameObject.Find(wallPrefix + leftTwoFrontWallPos);
+        rightTwoFrontWall = GameObject.Find(wallPrefix + rightTwoFrontWallPos);
         int stepsize = 1;
         if (leftWall == null)
         {
             stepsize = 1;
             while (leftEndWall == null)
             {
-                leftEndWall = GameObject.Find("Wall_" + (x + dir_y * stepsize) + "_" + (y + dir_x * stepsize));
+                leftEndWallPos = (x + dir_y * stepsize) + "_" + (y + dir_x * stepsize);
+                leftEndWall = GameObject.Find(wallPrefix + leftEndWallPos);
                 stepsize += 1;
             }
         }
@@ -385,13 +398,26 @@ public class Player : MovingObject
             stepsize = 1;
             while (rightEndWall == null)
             {
-                rightEndWall = GameObject.Find("Wall_" + (x + (-dir_y * stepsize)) + "_" + (y + (-dir_x * stepsize)));
+                rightEndWallPos = (x + (-dir_y * stepsize)) + "_" + (y + (-dir_x * stepsize));
+                rightEndWall = GameObject.Find(wallPrefix + rightEndWallPos);
                 stepsize += 1;
             }
         }
 
         if (dir.y != 0)
         {
+            tempWallPos = leftWallPos;
+            leftWallPos = rightWallPos;
+            rightWallPos = tempWallPos;
+            tempWallPos = leftFrontWallPos;
+            leftFrontWallPos = rightFrontWallPos;
+            rightFrontWallPos = tempWallPos;
+            tempWallPos = leftEndWallPos;
+            leftEndWallPos = rightEndWallPos;
+            rightEndWallPos = tempWallPos;
+            tempWallPos = leftTwoFrontWallPos;
+            leftTwoFrontWallPos = rightTwoFrontWallPos;
+            rightTwoFrontWallPos = tempWallPos;
             tempWall = leftWall;
             leftWall = rightWall;
             rightWall = tempWall;
@@ -409,14 +435,15 @@ public class Player : MovingObject
         {
             x += dir_x;
             y += dir_y;
-            frontWall = GameObject.Find("Wall_" + x + "_" + y);
+            frontWallPos = x + "_" + y;
+            frontWall = GameObject.Find(wallPrefix + frontWallPos);
         }
         while (frontWall == null);
         // Player echo preparation
         GvrAudioSource playerGAS = this.GetComponent<GvrAudioSource>();
         playerGAS.clip = attenuatedClick;
         // Front wall echo preparation
-        GvrAudioSource frontGAS = frontWall.GetComponent<GvrAudioSource>();
+        GvrAudioSource frontGAS = GetGASs(frontWallPos)[0];
         frontGAS.clip = echofront;
         float blocksToFrontWall = Vector3.Distance(transform.position, frontWall.transform.position) - 1;
         // Four-wall echoes preparation
@@ -430,39 +457,31 @@ public class Player : MovingObject
         //float frontwalldb = -5.7f;
 
         if (leftWall != null)
-		{	
-			if (dummyleft == null) {
-				dummyleft = GameObject.Instantiate (dummyobject, new Vector3 ((x + -dir_y), (y + -dir_x), 0), Quaternion.identity);
-			} else {
-				dummyleft.transform.position = new Vector3 ((x + -dir_y), (y + -dir_x), 0);
-			}
-
-            leftGAS = leftWall.GetComponent<GvrAudioSource>();
-			leftGAS.clip = echoleft_leftspeaker;
+		{
+            leftGAS = GetGASs(leftWallPos)[0];
+			leftGAS.clip = Database.hrtf_left_leftspeaker;
             leftGAS.gainDb = horizontaldb;
-			leftGAS_right=dummyleft.GetComponent<GvrAudioSource>();
-			leftGAS_right.clip=echoleft_rightspeaker;
+            leftGAS_right = GetGASs(rightWallPos)[1];
+            leftGAS_right.clip = Database.hrtf_right_rightspeaker;
 			leftGAS_right.gainDb = horizontaldb;
-			leftGAS_right.PlayDelayed(1.5f / 340);
-
         }
         else
         {
             //Left end wall if at left corner
-            leftEndGAS = leftEndWall.GetComponent<GvrAudioSource>();
+            leftEndGAS = GetGASs(leftEndWallPos)[0];
 			leftEndGAS.clip = echoleft_leftspeaker;
             leftEndGAS.gainDb = farenddb;
         }
         if (rightWall != null)
         {
-            rightGAS = rightWall.GetComponent<GvrAudioSource>();
+            rightGAS = GetGASs(rightWallPos)[0];
             rightGAS.clip = echoright;
             rightGAS.gainDb = horizontaldb;
         }
         else
         {
             //Right end wall if at right corner
-            rightEndGAS = rightEndWall.GetComponent<GvrAudioSource>();
+            rightEndGAS = GetGASs(rightEndWallPos)[0];
             rightEndGAS.clip = echoright;
             rightEndGAS.gainDb = farenddb;
         }
@@ -470,7 +489,7 @@ public class Player : MovingObject
         if (blocksToFrontWall > 0 && leftFrontWall != null && leftWall != null)
         {
 
-            leftFrontGAS = leftFrontWall.GetComponent<GvrAudioSource>();
+            leftFrontGAS = GetGASs(leftFrontWallPos)[0];
             leftFrontGAS.clip = echoleftfront;
             leftFrontGAS.gainDb = horizontal_45db;
 
@@ -479,7 +498,7 @@ public class Player : MovingObject
         if (blocksToFrontWall == 0 && leftTwoFrontWall != null && leftWall == null)
         {
             //Right two and front one block
-            leftTwoFrontGAS = leftTwoFrontWall.GetComponent<GvrAudioSource>();
+            leftTwoFrontGAS = GetGASs(leftTwoFrontWallPos)[0];
             leftTwoFrontGAS.clip = echoleftfront;
             leftTwoFrontGAS.gainDb = horizontal_45db;
         }
@@ -487,7 +506,7 @@ public class Player : MovingObject
         if (blocksToFrontWall > 0 && rightFrontWall != null && rightWall != null)
         {
 
-            rightFrontGAS = rightFrontWall.GetComponent<GvrAudioSource>();
+            rightFrontGAS = GetGASs(rightFrontWallPos)[0];
             rightFrontGAS.clip = echorightfront;
             rightFrontGAS.gainDb = horizontal_45db;
 
@@ -497,7 +516,7 @@ public class Player : MovingObject
         if (blocksToFrontWall == 0 && rightTwoFrontWall != null && rightWall == null)
         {
             //Right two and front one block
-            rightTwoFrontGAS = rightTwoFrontWall.GetComponent<GvrAudioSource>();
+            rightTwoFrontGAS = GetGASs(rightTwoFrontWallPos)[0];
             rightTwoFrontGAS.clip = echorightfront;
             rightTwoFrontGAS.gainDb = horizontal_45db;
         }
@@ -510,6 +529,7 @@ public class Player : MovingObject
         {
             if (frontGAS != null) frontGAS.DummyInit();
             if (leftGAS != null) leftGAS.DummyInit();
+            if (leftGAS_right != null) leftGAS_right.DummyInit();
             if (rightGAS != null) rightGAS.DummyInit();
             if (leftFrontGAS != null) leftFrontGAS.DummyInit();
             if (rightFrontGAS != null) rightFrontGAS.DummyInit();
@@ -568,7 +588,7 @@ public class Player : MovingObject
 			rightTwoFrontGAS.PlayDelayed(3.1f / 340);
 			UnityEngine.Debug.Log ("Right Front End is played");
 		}*/
-		/*
+        /*
         if (frontGAS != null)
         {
             frontGAS.gainDb = frontwalldb;
@@ -576,7 +596,7 @@ public class Player : MovingObject
             UnityEngine.Debug.Log("frontwall palyed!");
         }
 		*/
-
+      
         return;
         tapped = true;
         reportSent = true;

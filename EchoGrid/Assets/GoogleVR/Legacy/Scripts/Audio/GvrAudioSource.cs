@@ -395,7 +395,7 @@ public class GvrAudioSource : MonoBehaviour {
   /// Plays the clip with a delay specified in seconds.
   public void PlayDelayed (float delay) {
     if (audioSource != null && InitializeSource()) {
-      audioSource.PlayDelayed(delay);
+            audioSource.PlayDelayed(delay);
       isPaused = false;
     } else {
       Debug.LogWarning ("GVR Audio source not initialized. Audio playback not supported " +
