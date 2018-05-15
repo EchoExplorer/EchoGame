@@ -348,7 +348,7 @@ public class Player : MovingObject
             echorightfront = Database.hrtf_rightfront;
 
         }
-
+        
         Vector3 dir = transform.right;
         int dir_x = (int)Math.Round(dir.x);
         int dir_y = (int)Math.Round(dir.y);
@@ -372,7 +372,7 @@ public class Player : MovingObject
         rightEndWallPos = "";
         leftTwoFrontWallPos = (x - 2 * dir_y + dir_x) + "_" + (y + 2 * dir_x + dir_y);
         rightTwoFrontWallPos = (x + (dir_y * 2) + dir_x) + "_" + (y - (dir_x * 2) + dir_y);
-
+        
         leftWall = GameObject.Find(wallPrefix + leftWallPos);
         rightWall = GameObject.Find(wallPrefix + rightWallPos);
         leftFrontWall = GameObject.Find(wallPrefix + leftFrontWallPos);
@@ -413,6 +413,13 @@ public class Player : MovingObject
             frontWall = GameObject.Find(wallPrefix + frontWallPos);
         }
         while (frontWall == null);
+
+        /*
+        print(frontWallPos);
+        print(leftWallPos);
+        print(rightWallPos);
+        */
+
         // Player echo preparation
         //GvrAudioSource playerGAS = this.GetComponent<GvrAudioSource>();
         //playerGAS.clip = attenuatedClick;
@@ -506,10 +513,10 @@ public class Player : MovingObject
             rightTwoFrontGAS.gainDb = horizontal_45db;
         }
 
-
         // Play all echoes
         // The SoundManager would be interrupted by GVR, Use GVR or Coroutine to avoid this.
         //playerGAS.Play();
+        /*
         if (!real)
         {
             if (frontGAS_left != null) frontGAS_left.DummyInit();
@@ -528,35 +535,36 @@ public class Player : MovingObject
             if (rightTwoFrontGAS != null) rightTwoFrontGAS.DummyInit();
             return;
         }
-		/*
+        */
+        /*
         SoundManager.instance.PlaySingle(attenuatedClick);
 		*/
 
         if (leftGAS != null)
         {
-            leftGAS.PlayDelayed(1.5f / 340);
-            leftGAS_right.PlayDelayed(1.5f / 340);
-            UnityEngine.Debug.Log("left palyed!");
+            //leftGAS.PlayDelayed(1.5f / 340);
+            //leftGAS_right.PlayDelayed(1.5f / 340);
+            //UnityEngine.Debug.Log("left palyed!");
         }
         
         if (rightGAS != null)
         {
-            rightGAS.PlayDelayed(1.5f / 340);
-            rightGAS_left.PlayDelayed(1.5f / 340);
-            UnityEngine.Debug.Log("right palyed!");
+            //rightGAS.PlayDelayed(1.5f / 340);
+            //rightGAS_left.PlayDelayed(1.5f / 340);
+            //UnityEngine.Debug.Log("right palyed!");
         }
         
         if (blocksToFrontWall > 0 && leftFrontGAS != null)
         {
-            leftFrontGAS.PlayDelayed(2.12132f / 340);
-            leftFrontGAS_rightfront.PlayDelayed(2.12132f / 340);
-            UnityEngine.Debug.Log("leftfront palyed!");
+            //leftFrontGAS.PlayDelayed(2.12132f / 340);
+            //leftFrontGAS_rightfront.PlayDelayed(2.12132f / 340);
+            //UnityEngine.Debug.Log("leftfront palyed!");
         }
         if (blocksToFrontWall > 0 && rightFrontGAS != null)
         {
-            rightFrontGAS.PlayDelayed(2.12132f / 340);
-            rightFrontGAS_leftfront.PlayDelayed(2.12132f / 340);
-            UnityEngine.Debug.Log("rightfront palyed!");
+            //rightFrontGAS.PlayDelayed(2.12132f / 340);
+            //rightFrontGAS_leftfront.PlayDelayed(2.12132f / 340);
+            //UnityEngine.Debug.Log("rightfront palyed!");
         }
         /*
         if (blocksToFrontWall == 0 && leftEndGAS != null)
@@ -583,11 +591,18 @@ public class Player : MovingObject
         
         if (frontGAS_left != null)
         {
-            frontGAS_left.PlayDelayed((1.5f * blocksToFrontWall + 0.75f) * 2 / 340);
-            frontGAS_right.PlayDelayed((1.5f * blocksToFrontWall + 0.75f) * 2 / 340);
-            UnityEngine.Debug.Log("frontwall palyed!");
+            //frontGAS_left.PlayDelayed((1.5f * blocksToFrontWall + 0.75f) * 2 / 340);
+            //frontGAS_right.PlayDelayed((1.5f * blocksToFrontWall + 0.75f) * 2 / 340);
+            //UnityEngine.Debug.Log("frontwall palyed!");
         }
-      
+
+        /*
+        GvrAudioSource gas = GameObject.Find("Sounder_3_5").GetComponents<GvrAudioSource>()[1];
+        gas.clip = Database.hrtf_right_leftspeaker;
+        gas.gainDb = frontwalldb;
+        gas.Play();
+        */
+
         return;
         tapped = true;
         reportSent = true;

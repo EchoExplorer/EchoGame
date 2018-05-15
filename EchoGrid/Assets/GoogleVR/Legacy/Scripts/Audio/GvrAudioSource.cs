@@ -259,7 +259,7 @@ public class GvrAudioSource : MonoBehaviour {
 
   /// Binaural (HRTF) rendering toggle.
   [SerializeField]
-	private bool hrtfEnabled = false;
+  private bool hrtfEnabled = true;
 
   // Unity audio source attached to the game object.
   [SerializeField]
@@ -395,7 +395,7 @@ public class GvrAudioSource : MonoBehaviour {
   /// Plays the clip with a delay specified in seconds.
   public void PlayDelayed (float delay) {
     if (audioSource != null && InitializeSource()) {
-            audioSource.PlayDelayed(delay);
+      audioSource.PlayDelayed(delay);
       isPaused = false;
     } else {
       Debug.LogWarning ("GVR Audio source not initialized. Audio playback not supported " +
@@ -462,23 +462,11 @@ public class GvrAudioSource : MonoBehaviour {
     }
   }
 
-
-  public void DummyInit()
-  {
-      if (id < 0) id = GvrAudio.CreateAudioSource(hrtfEnabled);
-      if (id >= 0)
-      {
-          GvrAudio.UpdateAudioSource(id, this, currentOcclusion);
-          audioSource.SetSpatializerFloat((int)GvrAudio.SpatializerData.Id, (float)id);
-      }
-  }
-
   // Initializes the source.
   private bool InitializeSource () {
     if (id < 0) {
-        id = GvrAudio.CreateAudioSource(hrtfEnabled);
-    }
-    if (id >= 0) {
+      id = GvrAudio.CreateAudioSource(hrtfEnabled);
+      if (id >= 0) {
         GvrAudio.UpdateAudioSource(id, this, currentOcclusion);
         audioSource.spatialize = true;
         audioSource.SetSpatializerFloat((int) GvrAudio.SpatializerData.Type,
@@ -491,6 +479,7 @@ public class GvrAudioSource : MonoBehaviour {
         // Source id must be set after all the spatializer parameters, to ensure that the source is
         // properly initialized before processing.
         audioSource.SetSpatializerFloat((int) GvrAudio.SpatializerData.Id, (float) id);
+      }
     }
     return id >= 0;
   }

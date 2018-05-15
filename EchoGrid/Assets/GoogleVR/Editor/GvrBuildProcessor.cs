@@ -59,7 +59,6 @@ class GvrBuildProcessor : IPreprocessBuild, IPostprocessBuild {
 
   public void OnPreprocessBuild (BuildTarget target, string path)
   {
-    return;
     if (target != BuildTarget.Android && target != BuildTarget.iOS) {
       // Do nothing when not building for Android or iOS.
       return;
