@@ -596,12 +596,12 @@ public class Player : MovingObject
             //UnityEngine.Debug.Log("frontwall palyed!");
         }
 
-        /*
+        
         GvrAudioSource gas = GameObject.Find("Sounder_3_5").GetComponents<GvrAudioSource>()[1];
-        gas.clip = Database.hrtf_right_leftspeaker;
+        gas.clip = Database.hrtf_front;
         gas.gainDb = frontwalldb;
         gas.Play();
-        */
+        
 
         return;
         tapped = true;
