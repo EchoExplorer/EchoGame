@@ -65,13 +65,13 @@ public abstract class MovingObject : MonoBehaviour
             rb2D.MovePosition(end);
             BoardManager.player_idx.x += xDir;
             BoardManager.player_idx.y += yDir;
-            print("Player_idx.x: " + BoardManager.player_idx.x.ToString() + ", Player_idx.y: " + BoardManager.player_idx.y.ToString());
+            //print("Player_idx.x: " + BoardManager.player_idx.x.ToString() + ", Player_idx.y: " + BoardManager.player_idx.y.ToString());
 
             //Return true to say that Move was successful
             return true;
         }
         //If something was hit, return false, Move was unsuccesful.
-        print("Player_idx.x: " + BoardManager.player_idx.x.ToString() + ", Player_idx.y: " + BoardManager.player_idx.y.ToString());
+        //print("Player_idx.x: " + BoardManager.player_idx.x.ToString() + ", Player_idx.y: " + BoardManager.player_idx.y.ToString());
         return false;
     }
 

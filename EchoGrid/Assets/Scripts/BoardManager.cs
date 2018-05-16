@@ -570,18 +570,23 @@ public class BoardManager : MonoBehaviour
 
         float scale = (float)Utilities.SCALE_REF / (float)Utilities.MAZE_SIZE;
 
+        // Floating Sounders
+        String[] sounder_names = { "Front", "Left", "Left_Right", "Right", "Right_Left", "LeftEnd", "LeftEnd_Right", "RightEnd", "RightEnd_Left", "LeftFront", "LeftFront_Right", "RightFront", "RightFront_Left" };
+        Transform sounders = transform.Find("Sounders");
+        foreach (String name in sounder_names)
+        {
+            GameObject nbSounder = Instantiate(Resources.Load("Sounder"), gridPositions[0], Quaternion.identity) as GameObject;
+            nbSounder.name = "Sounder_" + name;
+            nbSounder.transform.localScale = nbSounder.transform.localScale * scale;
+            nbSounder.transform.SetParent(sounders);
+        }
+
         //Loop along x axis, starting from -1 (to fill corner) with floor or outerwall edge tiles.
         for (int x = 0; x <= (columns + 1); x++)
         {
             //Loop along y axis, starting from -1 to place floor or outerwall tiles.
             for (int y = 0; y <= (rows + 1); y++)
             {
-                Transform sounders = transform.Find("Sounders");
-                GameObject sounder = Instantiate(Resources.Load("Sounder"), gridPositions[(y * 11) + x], Quaternion.identity) as GameObject;
-                sounder.name = "Sounder_" + gridPositions[(y * 11) + x].x + "_" + gridPositions[(y * 11) + x].y;
-                sounder.transform.localScale = sounder.transform.localScale * scale;
-                sounder.transform.SetParent(sounders);
-
                 //Choose a random tile from our array of floor tile prefabs and prepare to instantiate it.
                 GameObject toInstantiate = floorTiles[Random.Range(0, floorTiles.Length)];
 
