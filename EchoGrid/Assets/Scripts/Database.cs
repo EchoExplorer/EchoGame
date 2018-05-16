@@ -30,6 +30,7 @@ public class Database : MonoBehaviour
 	public static AudioClip hrtf_right;
 	public static AudioClip hrtf_leftfront;
 	public static AudioClip hrtf_rightfront;
+    public static AudioClip expert;
 
     public static AudioClip attenuatedaround_odeon;
     public static AudioClip attenuatedClickfront_odeon;
@@ -94,7 +95,8 @@ public class Database : MonoBehaviour
 		hrtf_left =Resources.Load("fx/kemar_left") as AudioClip;
 		hrtf_right =Resources.Load("fx/kemar_right") as AudioClip;
 		hrtf_leftfront =Resources.Load("fx/kemar_leftfront") as AudioClip;
-		hrtf_rightfront =Resources.Load("fx/kemar_rightfront") as AudioClip;
+		hrtf_rightfront =Resources.Load("fx/ExpertClickSingle") as AudioClip;
+        expert = Resources.Load("fx/ExpertClickSingle") as AudioClip;
 
         // Consent menu clips
         consentClips[0] = Resources.Load("instructions/consent/consent_intro") as AudioClip;

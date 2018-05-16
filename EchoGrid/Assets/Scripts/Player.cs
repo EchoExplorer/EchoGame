@@ -322,10 +322,11 @@ public class Player : MovingObject
     /// </summary>
     private void PlayEcho(bool real = true)
     {
+        if (!real) return;
         if (GM_title.switch_click_toggle == true)
         {
             attenuatedClick = Database.attenuatedClick;
-            echofront = Database.hrtf_front;
+            echofront = Database.expert;
             echoleft = Database.hrtf_left;
             echoright = Database.hrtf_right;
             echoleftfront = Database.hrtf_leftfront;
@@ -335,7 +336,7 @@ public class Player : MovingObject
         if (GM_title.switch_click_toggle == false)
         {
             attenuatedClick = Database.attenuatedClick;
-            echofront = Database.hrtf_front;
+            echofront = Database.expert;
             echoleft = Database.hrtf_left;
             echoright = Database.hrtf_right;
             echoleftfront = Database.hrtf_leftfront;
@@ -415,23 +416,24 @@ public class Player : MovingObject
         playerGAS.clip = attenuatedClick;
         // Front wall echo preparation
         GvrAudioSource frontGAS = frontWall.GetComponent<GvrAudioSource>();
-        frontGAS.clip = echofront;
         float blocksToFrontWall = Vector3.Distance(transform.position, frontWall.transform.position) - 1;
         // Four-wall echoes preparation
         GvrAudioSource leftGAS = null, rightGAS = null, leftFrontGAS = null, rightFrontGAS = null, leftEndGAS = null, rightEndGAS = null, leftTwoFrontGAS = null, rightTwoFrontGAS = null;
 
         float horizontal_45db = -5.3f;
-        float horizontaldb = 2.3f;
-        float frontwalldb = 10.3f;
+        float horizontaldb = 5.3f;
+        float frontwalldb = 0.3f;
         float farenddb = -5.3f;
 
         //float fourblockdb =-13.7f;
         //float frontwalldb = -5.7f;
-
+        
+        frontGAS.clip = echofront;
+        frontGAS.gainDb = frontwalldb;
         if (leftWall != null)
         {
             leftGAS = leftWall.GetComponent<GvrAudioSource>();
-            leftGAS.clip = echoleft;
+            leftGAS.clip = echofront;
             leftGAS.gainDb = horizontaldb;
 
         }
@@ -439,20 +441,20 @@ public class Player : MovingObject
         {
             //Left end wall if at left corner
             leftEndGAS = leftEndWall.GetComponent<GvrAudioSource>();
-            leftEndGAS.clip = echoleft;
+            leftEndGAS.clip = echofront;
             leftEndGAS.gainDb = farenddb;
         }
         if (rightWall != null)
         {
             rightGAS = rightWall.GetComponent<GvrAudioSource>();
-            rightGAS.clip = echoright;
+            rightGAS.clip = echofront;
             rightGAS.gainDb = horizontaldb;
         }
         else
         {
             //Right end wall if at right corner
             rightEndGAS = rightEndWall.GetComponent<GvrAudioSource>();
-            rightEndGAS.clip = echoright;
+            rightEndGAS.clip = echofront;
             rightEndGAS.gainDb = farenddb;
         }
 
@@ -460,7 +462,7 @@ public class Player : MovingObject
         {
 
             leftFrontGAS = leftFrontWall.GetComponent<GvrAudioSource>();
-            leftFrontGAS.clip = echoleftfront;
+            leftFrontGAS.clip = echofront;
             leftFrontGAS.gainDb = horizontal_45db;
 
         }
@@ -469,7 +471,7 @@ public class Player : MovingObject
         {
             //Right two and front one block
             leftTwoFrontGAS = leftTwoFrontWall.GetComponent<GvrAudioSource>();
-            leftTwoFrontGAS.clip = echoleftfront;
+            leftTwoFrontGAS.clip = echofront;
             leftTwoFrontGAS.gainDb = horizontal_45db;
         }
 
@@ -477,7 +479,7 @@ public class Player : MovingObject
         {
 
             rightFrontGAS = rightFrontWall.GetComponent<GvrAudioSource>();
-            rightFrontGAS.clip = echorightfront;
+            rightFrontGAS.clip = echofront;
             rightFrontGAS.gainDb = horizontal_45db;
 
         }
@@ -487,7 +489,7 @@ public class Player : MovingObject
         {
             //Right two and front one block
             rightTwoFrontGAS = rightTwoFrontWall.GetComponent<GvrAudioSource>();
-            rightTwoFrontGAS.clip = echorightfront;
+            rightTwoFrontGAS.clip = echofront;
             rightTwoFrontGAS.gainDb = horizontal_45db;
         }
 
@@ -515,7 +517,6 @@ public class Player : MovingObject
         if (leftGAS != null)
         {
             leftGAS.PlayDelayed(1.5f / 340);
-
             UnityEngine.Debug.Log("left palyed!");
         }
         if (rightGAS != null)
@@ -559,7 +560,6 @@ public class Player : MovingObject
 
         if (frontGAS != null)
         {
-            frontGAS.gainDb = frontwalldb;
             frontGAS.PlayDelayed((1.5f * blocksToFrontWall + 0.75f) * 2 / 340);
             UnityEngine.Debug.Log("frontwall palyed!");
         }
