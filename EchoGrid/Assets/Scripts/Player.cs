@@ -353,7 +353,6 @@ public class Player : MovingObject
             echoright = Database.hrtf_right;
             echoleftfront = Database.hrtf_leftfront;
             echorightfront = Database.hrtf_rightfront;
-
         }
         
         Vector3 dir = transform.right;
@@ -361,12 +360,6 @@ public class Player : MovingObject
         int dir_y = (int)Math.Round(dir.y);
         int x = (int)transform.position.x;
         int y = (int)transform.position.y;
-        //print("Position: " + transform.position);/////
-        //print("Rotation: " + transform.rotation);/////
-        //print("Forward: " + transform.forward);/////
-        //print("Right: " + transform.right);/////
-        //print("Up: " + transform.up);/////
-        //print("Facing: " + dir_x + ", " + dir_y);
 
         GameObject frontWall, leftWall, rightWall, leftFrontWall, rightFrontWall, tempWall, rightEndWall, leftEndWall, leftTwoFrontWall, rightTwoFrontWall;
         Vector3 frontWallPos, frontWallLeftPos, frontWallRightPos, leftWallPos, rightWallPos, leftFrontWallPos, rightFrontWallPos, tempWallPos, rightEndWallPos, leftEndWallPos, leftTwoFrontWallPos, rightTwoFrontWallPos;
@@ -435,6 +428,87 @@ public class Player : MovingObject
         //float fourblockdb = -13.7f;
         //float frontwalldb = -5.7f;
 
+        if ((GameManager.instance.level >= 17) && (GameManager.instance.level < 22))
+        {
+            horizontaldb = 1.3f;
+            frontwalldb = 9.3f;
+        }
+        else if ((GameManager.instance.level >= 22) && (GameManager.instance.level < 27))
+        {
+            horizontaldb = 0.3f;
+            frontwalldb = 8.3f;
+        }
+        else if ((GameManager.instance.level >= 27) && (GameManager.instance.level < 32))
+        {
+            horizontaldb = -0.7f;
+            frontwalldb = 7.3f;
+        }
+        else if ((GameManager.instance.level >= 32) && (GameManager.instance.level < 37))
+        {
+            horizontaldb = -1.7f;
+            frontwalldb = 6.3f;
+        }
+        else if ((GameManager.instance.level >= 37) && (GameManager.instance.level < 42))
+        {
+            horizontaldb = -2.7f;
+            frontwalldb = 5.3f;
+        }
+        else if ((GameManager.instance.level >= 42) && (GameManager.instance.level < 47))
+        {
+            horizontaldb = -3.7f;
+            frontwalldb = 4.3f;
+        }
+        else if ((GameManager.instance.level >= 47) && (GameManager.instance.level < 52))
+        {
+            horizontaldb = -4.7f;
+            frontwalldb = 3.3f;
+        }
+        else if ((GameManager.instance.level >= 52) && (GameManager.instance.level < 57))
+        {
+            horizontaldb = -5.7f;
+            frontwalldb = 2.3f;
+        }
+        else if ((GameManager.instance.level >= 57) && (GameManager.instance.level < 62))
+        {
+            horizontaldb = -6.7f;
+            frontwalldb = 1.3f;
+        }
+        else if ((GameManager.instance.level >= 62) && (GameManager.instance.level < 67))
+        {
+            horizontaldb = -7.7f;
+            frontwalldb = 0.3f;
+        }
+        else if ((GameManager.instance.level >= 67) && (GameManager.instance.level < 72))
+        {
+            horizontaldb = -8.7f;
+            frontwalldb = -0.7f;
+        }
+        else if ((GameManager.instance.level >= 72) && (GameManager.instance.level < 77))
+        {
+            horizontaldb = -9.7f;
+            frontwalldb = -1.7f;
+        }
+        else if ((GameManager.instance.level >= 77) && (GameManager.instance.level < 82))
+        {
+            horizontaldb = -10.7f;
+            frontwalldb = -2.7f;
+        }
+        else if ((GameManager.instance.level >= 82) && (GameManager.instance.level < 87))
+        {
+            horizontaldb = -11.7f;
+            frontwalldb = -3.7f;
+        }
+        else if ((GameManager.instance.level >= 87) && (GameManager.instance.level < 92))
+        {
+            horizontaldb = -12.7f;
+            frontwalldb = -4.7f;
+        }
+        else if ((GameManager.instance.level >= 92))
+        {
+            horizontaldb = -13.7f;
+            frontwalldb = -5.7f;
+        }
+
         frontGAS = MoveAndGetGAS("Front", frontWallPos);
         frontGAS.gainDb = frontwalldb;
         frontGAS.clip = Database.hrtf_front;
@@ -482,27 +556,6 @@ public class Player : MovingObject
 
         Vector3 RealLeftFrontPos = new Vector3(x - (x - (int)leftWallPos.x) * (float)Math.Sqrt(2), y - (y - (int)leftWallPos.y) * (float)Math.Sqrt(2));
         Vector3 RealRightFrontPos = new Vector3(x - (x - (int)rightWallPos.x) * (float)Math.Sqrt(2), y - (y - (int)rightWallPos.y) * (float)Math.Sqrt(2));
-		/*if (blocksToFrontWall == 0) {
-			if (leftWall != null) {
-				leftGAS = MoveAndGetGAS("Left", leftWallPos);
-				leftGAS.clip = Database.odeon_left_leftspeaker;
-				leftGAS.gainDb = horizontaldb;
-				leftGAS_right = MoveAndGetGAS("Left_Right", rightWallPos);
-				leftGAS_right.clip = Database.odeon_left_rightspeaker;
-				leftGAS_right.gainDb = horizontaldb;
-				UnityEngine.Debug.Log("Left odeon setted!");
-			}
-			if (rightWall != null) {
-				rightGAS = MoveAndGetGAS("Right", rightWallPos);
-				rightGAS.clip = Database.odeon_right_rightspeaker;
-				rightGAS.gainDb = horizontaldb;
-				rightGAS_left = MoveAndGetGAS("Right_Left", leftWallPos);
-				rightGAS_left.clip = Database.odeon_right_leftspeaker;
-				rightGAS_left.gainDb = horizontaldb;
-				UnityEngine.Debug.Log ("Right odeon setted!");
-			}
-		}
-		*/
         if (blocksToFrontWall > 0 && leftFrontWall != null && leftWall != null)
         {
             leftFrontGAS = MoveAndGetGAS("LeftFront", RealLeftFrontPos);
@@ -529,24 +582,19 @@ public class Player : MovingObject
         /*
         if (!real)
         {
-            if (frontGAS_left != null) frontGAS_left.DummyInit();
-            if (frontGAS_right != null) frontGAS_right.DummyInit();
+            if (frontGAS != null) frontGAS.DummyInit();
             if (leftGAS != null) leftGAS.DummyInit();
             if (leftGAS_right != null) leftGAS_right.DummyInit();
             if (rightGAS != null) rightGAS.DummyInit();
             if (rightGAS_left != null) rightGAS_left.DummyInit();
-            if (leftFrontGAS != null) leftFrontGAS.DummyInit();
-            if (leftFrontGAS_rightfront != null) leftFrontGAS_rightfront.DummyInit();
-            if (rightFrontGAS != null) rightFrontGAS.DummyInit();
-            if (rightFrontGAS_leftfront != null) rightFrontGAS_leftfront.DummyInit();
             if (leftEndGAS != null) leftEndGAS.DummyInit();
+            if (leftEndGAS_rightend != null) leftEndGAS_rightend.DummyInit();
             if (rightEndGAS != null) rightEndGAS.DummyInit();
-            if (leftTwoFrontGAS != null) leftTwoFrontGAS.DummyInit();
-            if (rightTwoFrontGAS != null) rightTwoFrontGAS.DummyInit();
+            if (rightEndGAS_leftend != null) rightEndGAS_leftend.DummyInit();
             return;
         }
-		
-*/
+        */
+
         SoundManager.instance.PlaySingle(attenuatedClick);
 
 
