@@ -426,10 +426,12 @@ public class Player : MovingObject
         // Four-wall echoes preparation
         GvrAudioSource frontGAS = null, leftGAS = null, rightGAS = null, leftFrontGAS = null, rightFrontGAS = null, leftEndGAS = null, rightEndGAS = null, leftTwoFrontGAS = null, rightTwoFrontGAS = null;
 		GvrAudioSource leftGAS_right = null, rightGAS_left = null, leftFrontGAS_rightfront = null, rightFrontGAS_leftfront = null, leftEndGAS_rightend = null, rightEndGAS_leftend = null;
-        float horizontal_45db = -5.3f;
-        float horizontaldb = 5.3f;
-        float frontwalldb = 10.3f;
-        float farenddb = -5.3f;
+        //Now 45db is inactive
+		float horizontal_45db = -10.3f;
+
+        float horizontaldb = 12f;
+        float frontwalldb = 20f;
+        float farenddb = -10;
         //float fourblockdb = -13.7f;
         //float frontwalldb = -5.7f;
 
@@ -449,17 +451,18 @@ public class Player : MovingObject
         {
             //Left end wall if at left corner
             leftEndGAS = MoveAndGetGAS("LeftEnd", leftEndWallPos);
-			leftEndGAS.clip = Database.hrtf_left_leftspeaker;
+			leftEndGAS.clip = Database.odeon_left_leftspeaker;
             leftEndGAS.gainDb = farenddb;
             Vector3 leftEnd_RightPos = new Vector3(x * 2 - (int)leftEndWallPos.x, y * 2 - (int)leftEndWallPos.y);
             leftEndGAS_rightend = MoveAndGetGAS("LeftEnd_Right", leftEnd_RightPos);
-            leftEndGAS_rightend.clip = Database.hrtf_left_rightspeaker;
+			leftEndGAS_rightend.clip = Database.odeon_left_rightspeaker;
             leftEndGAS_rightend.gainDb = farenddb;
         }
+
         if (rightWall != null)
         {
             rightGAS = MoveAndGetGAS("Right", rightWallPos);
-            rightGAS.clip = Database.hrtf_right_rightspeaker;
+			rightGAS.clip = Database.hrtf_right_rightspeaker;
             rightGAS.gainDb = horizontaldb;
             rightGAS_left = MoveAndGetGAS("Right_Left", leftWallPos);
             rightGAS_left.clip = Database.hrtf_right_leftspeaker;
@@ -469,17 +472,37 @@ public class Player : MovingObject
         {
             //Right end wall if at right corner
             rightEndGAS = MoveAndGetGAS("RightEnd", rightEndWallPos);
-            rightEndGAS.clip = Database.hrtf_right_rightspeaker;
+            rightEndGAS.clip = Database.odeon_right_rightspeaker;
             rightEndGAS.gainDb = farenddb;
             Vector3 rightEnd_LeftPos = new Vector3(x * 2 - (int)rightEndWallPos.x, y * 2 - (int)rightEndWallPos.y);
             rightEndGAS_leftend = MoveAndGetGAS("RightEnd_Left", rightEnd_LeftPos);
-            rightEndGAS_leftend.clip = Database.hrtf_right_leftspeaker;
+            rightEndGAS_leftend.clip = Database.odeon_right_leftspeaker;
             rightEndGAS_leftend.gainDb = farenddb;
         }
 
         Vector3 RealLeftFrontPos = new Vector3(x - (x - (int)leftWallPos.x) * (float)Math.Sqrt(2), y - (y - (int)leftWallPos.y) * (float)Math.Sqrt(2));
         Vector3 RealRightFrontPos = new Vector3(x - (x - (int)rightWallPos.x) * (float)Math.Sqrt(2), y - (y - (int)rightWallPos.y) * (float)Math.Sqrt(2));
-
+		/*if (blocksToFrontWall == 0) {
+			if (leftWall != null) {
+				leftGAS = MoveAndGetGAS("Left", leftWallPos);
+				leftGAS.clip = Database.odeon_left_leftspeaker;
+				leftGAS.gainDb = horizontaldb;
+				leftGAS_right = MoveAndGetGAS("Left_Right", rightWallPos);
+				leftGAS_right.clip = Database.odeon_left_rightspeaker;
+				leftGAS_right.gainDb = horizontaldb;
+				UnityEngine.Debug.Log("Left odeon setted!");
+			}
+			if (rightWall != null) {
+				rightGAS = MoveAndGetGAS("Right", rightWallPos);
+				rightGAS.clip = Database.odeon_right_rightspeaker;
+				rightGAS.gainDb = horizontaldb;
+				rightGAS_left = MoveAndGetGAS("Right_Left", leftWallPos);
+				rightGAS_left.clip = Database.odeon_right_leftspeaker;
+				rightGAS_left.gainDb = horizontaldb;
+				UnityEngine.Debug.Log ("Right odeon setted!");
+			}
+		}
+		*/
         if (blocksToFrontWall > 0 && leftFrontWall != null && leftWall != null)
         {
             leftFrontGAS = MoveAndGetGAS("LeftFront", RealLeftFrontPos);
@@ -522,9 +545,11 @@ public class Player : MovingObject
             if (rightTwoFrontGAS != null) rightTwoFrontGAS.DummyInit();
             return;
         }
-        */
-
+		
+*/
         SoundManager.instance.PlaySingle(attenuatedClick);
+
+
         if (leftGAS != null)
         {
             leftGAS.PlayDelayed(1.5f / 340);
@@ -538,7 +563,7 @@ public class Player : MovingObject
             rightGAS_left.PlayDelayed(1.5f / 340);
             //UnityEngine.Debug.Log("right palyed!");
         }
-        
+		/*
         if (blocksToFrontWall > 0 && leftFrontGAS != null)
         {
             leftFrontGAS.PlayDelayed(2.12132f / 340);
@@ -551,14 +576,14 @@ public class Player : MovingObject
             rightFrontGAS_leftfront.PlayDelayed(2.12132f / 340);
             //UnityEngine.Debug.Log("rightfront palyed!");
         }
-        
-        if (blocksToFrontWall == 0 && leftEndGAS != null)
+		*/
+        if (leftEndGAS != null)
         {
             leftEndGAS.PlayDelayed((1.5f * stepsize) / 340);
             leftEndGAS_rightend.PlayDelayed((1.5f * stepsize) / 340);
             //UnityEngine.Debug.Log("Left End is " + stepsize + " blocks away!");
         }
-        if (blocksToFrontWall == 0 && rightEndGAS != null)
+        if (rightEndGAS != null)
         {
             rightEndGAS.PlayDelayed((1.5f * stepsize) / 340);
             rightEndGAS_leftend.PlayDelayed((1.5f * stepsize) / 340);

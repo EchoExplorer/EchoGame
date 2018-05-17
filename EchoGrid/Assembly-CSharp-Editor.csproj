@@ -47,8 +47,6 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Editor\Doxygen\DoxygenWindow.cs" />
-     <Compile Include="Assets\GoogleVR\Demos\Editor\DemoInputManagerEditor.cs" />
-     <Compile Include="Assets\GoogleVR\Demos\Editor\PermissionsDemoBuildProcessor.cs" />
      <Compile Include="Assets\GoogleVR\Editor\Controller\GvrControllerVisualEditor.cs" />
      <Compile Include="Assets\GoogleVR\Editor\Controller\GvrLaserPointerEditor.cs" />
      <Compile Include="Assets\GoogleVR\Editor\Controller\GvrLaserVisualEditor.cs" />
@@ -77,7 +75,6 @@
      <None Include="Assets\Resources\GameData\test.txt" />
      <None Include="Assets\Resources\GameData\voices.txt" />
      <None Include="Assets\GoogleVR\Plugins\Android\AndroidManifest-Daydream.xml" />
-     <None Include="Assets\GoogleVR\Demos\Shaders\HelloVR\HelloVRUnlitGrayscaleToColor.shader" />
      <None Include="Assets\GoogleVR\Shaders\GvrReticleShader.shader" />
      <None Include="Assets\Editor\Doxygen\Resources\BaseDoxyfile.txt" />
      <None Include="Assets\GoogleVR\Shaders\GvrUIOverlay.shader" />

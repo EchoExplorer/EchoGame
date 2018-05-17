@@ -40,7 +40,10 @@ public class Database : MonoBehaviour
     public static AudioClip hrtf_right;
     public static AudioClip hrtf_leftfront;
 	public static AudioClip hrtf_rightfront;
-
+	public static AudioClip odeon_left_leftspeaker;
+	public static AudioClip odeon_left_rightspeaker;
+	public static AudioClip odeon_right_leftspeaker;
+	public static AudioClip odeon_right_rightspeaker;
     public static AudioClip attenuatedaround_odeon;
     public static AudioClip attenuatedClickfront_odeon;
 
@@ -95,15 +98,18 @@ public class Database : MonoBehaviour
     void LoadData()
     {
         //Option1:
-        attenuatedClickfront_odeon = Resources.Load("fx/00-0_F-6.75-D_B-w-D_L-w-D_R-w-D_fadeout") as AudioClip;
-		attenuatedClick = Resources.Load("fx/echolocaterclicks_3rd_attenuated") as AudioClip;
-        attenuatedaround_odeon = Resources.Load("fx/00-0_F-0.75-D_B-w-D_L-w-D_R-w-D_fadeout") as AudioClip;
-
-        //Option1:
-		hrtf_front =Resources.Load("fx/kemar_front") as AudioClip;
-        hrtf_front_leftspeaker = Resources.Load("fx/kemar_front_leftspeaker") as AudioClip;
-        hrtf_front_rightspeaker = Resources.Load("fx/kemar_front_rightspeaker") as AudioClip;
-        hrtf_left_leftspeaker =Resources.Load("fx/kemar_left_leftspeaker") as AudioClip;
+        //attenuatedClickfront_odeon = Resources.Load("fx/00-0_F-6.75-D_B-w-D_L-w-D_R-w-D_fadeout") as AudioClip;
+		attenuatedClick = Resources.Load("fx/TomClick_norm") as AudioClip;
+        //attenuatedaround_odeon = Resources.Load("fx/00-0_F-0.75-D_B-w-D_L-w-D_R-w-D_fadeout") as AudioClip;
+		odeon_left_leftspeaker = Resources.Load ("fx/odeon_left_leftspeaker") as AudioClip;
+		odeon_left_rightspeaker=Resources.Load ("fx/odeon_left_rightspeaker") as AudioClip;
+		odeon_right_leftspeaker = Resources.Load ("fx/odeon_right_leftspeaker") as AudioClip;
+		odeon_right_rightspeaker = Resources.Load ("fx/odeon_right_rightspeaker") as AudioClip;
+			//Option1:
+		hrtf_front =Resources.Load("fx/kemar_front_norm") as AudioClip;
+        //hrtf_front_leftspeaker = Resources.Load("fx/kemar_front_leftspeaker") as AudioClip;
+        //hrtf_front_rightspeaker = Resources.Load("fx/kemar_front_rightspeaker") as AudioClip;
+		hrtf_left_leftspeaker =Resources.Load("fx/kemar_left_leftspeaker") as AudioClip;
 		hrtf_left_rightspeaker=Resources.Load("fx/kemar_left_rightspeaker") as AudioClip;
         hrtf_right_leftspeaker = Resources.Load("fx/kemar_right_leftspeaker") as AudioClip;
         hrtf_right_rightspeaker = Resources.Load("fx/kemar_right_rightspeaker") as AudioClip;

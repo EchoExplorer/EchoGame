@@ -62,7 +62,6 @@
      <None Include="Assets\Resources\GameData\test.txt" />
      <None Include="Assets\Resources\GameData\voices.txt" />
      <None Include="Assets\GoogleVR\Plugins\Android\AndroidManifest-Daydream.xml" />
-     <None Include="Assets\GoogleVR\Demos\Shaders\HelloVR\HelloVRUnlitGrayscaleToColor.shader" />
      <None Include="Assets\GoogleVR\Shaders\GvrReticleShader.shader" />
      <None Include="Assets\Editor\Doxygen\Resources\BaseDoxyfile.txt" />
      <None Include="Assets\GoogleVR\Shaders\GvrUIOverlay.shader" />
