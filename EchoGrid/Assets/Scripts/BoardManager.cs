@@ -239,8 +239,6 @@ public class BoardManager : MonoBehaviour
 
     eventHandler eh;
 
-    string debugPlayerInfo = "";    
-
     public static bool hasTappedAtCorner = false;
 
     public static bool finishedTutorialLevel1 = false;

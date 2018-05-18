@@ -36,6 +36,8 @@ public class GM_main_pre : MonoBehaviour
     bool repeatPregameClip = false;
     static bool firstConfirm = true;
 
+    bool repeatInterruptedClips = true;
+
     int levelToStart;
     public static int tempLevelToStart;
     static int tempTempLevel;
@@ -202,13 +204,15 @@ public class GM_main_pre : MonoBehaviour
                                 canRepeat = false;
                                 if (repeatPregameClip == true)
                                 {
-                                    clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.preGameMenuClips[1], Database.preGameMenuClips[3], Database.levelStartClips[levelToStart], Database.preGameMenuClips[16], Database.preGameMenuClips[9] };
-                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
+                                    repeatInterruptedClips = true;
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.preGameMenuClips[1], Database.preGameMenuClips[5], Database.levelStartClips[levelToStart], Database.preGameMenuClips[9], Database.preGameMenuClips[13] };
+                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
                                 }
                                 else if (repeatPregameClip == false)
                                 {
-                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[1], Database.preGameMenuClips[3], Database.levelStartClips[levelToStart], Database.preGameMenuClips[16], Database.preGameMenuClips[9] };
-                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
+                                    repeatInterruptedClips = true;
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[1], Database.preGameMenuClips[5], Database.levelStartClips[levelToStart], Database.preGameMenuClips[9], Database.preGameMenuClips[13] };
+                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
                                     repeatPregameClip = true;
                                 }
                             }
@@ -218,13 +222,15 @@ public class GM_main_pre : MonoBehaviour
                                 canRepeat = false;
                                 if (repeatPregameClip == true)
                                 {
-                                    clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.preGameMenuClips[0], Database.preGameMenuClips[2], Database.levelStartClips[levelToStart], Database.preGameMenuClips[15], Database.preGameMenuClips[8] };
-                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
+                                    repeatInterruptedClips = true;
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.preGameMenuClips[0], Database.preGameMenuClips[4], Database.levelStartClips[levelToStart], Database.preGameMenuClips[8], Database.preGameMenuClips[12] };
+                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
                                 }
                                 else if (repeatPregameClip == false)
                                 {
-                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[0], Database.preGameMenuClips[2], Database.levelStartClips[levelToStart], Database.preGameMenuClips[15], Database.preGameMenuClips[8] };
-                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
+                                    repeatInterruptedClips = true;
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[0], Database.preGameMenuClips[4], Database.levelStartClips[levelToStart], Database.preGameMenuClips[8], Database.preGameMenuClips[12] };
+                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
                                     repeatPregameClip = true;
                                 }
                             }
@@ -240,13 +246,15 @@ public class GM_main_pre : MonoBehaviour
                                 canRepeat = false;
                                 if (repeatPregameClip == true)
                                 {
-                                    clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.preGameMenuClips[5], Database.preGameMenuClips[7], Database.levelStartClips[levelToStart], Database.preGameMenuClips[18], Database.preGameMenuClips[9] };
-                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
+                                    repeatInterruptedClips = true;
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.preGameMenuClips[3], Database.preGameMenuClips[7], Database.levelStartClips[levelToStart], Database.preGameMenuClips[11], Database.preGameMenuClips[13] };
+                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
                                 }
                                 else if (repeatPregameClip == false)
                                 {
-                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[5], Database.preGameMenuClips[7], Database.levelStartClips[levelToStart], Database.preGameMenuClips[18], Database.preGameMenuClips[9] };
-                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
+                                    repeatInterruptedClips = true;
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[3], Database.preGameMenuClips[7], Database.levelStartClips[levelToStart], Database.preGameMenuClips[11], Database.preGameMenuClips[13] };
+                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
                                     repeatPregameClip = true;
                                 }
                             }
@@ -256,13 +264,15 @@ public class GM_main_pre : MonoBehaviour
                                 canRepeat = false;
                                 if (repeatPregameClip == true)
                                 {
-                                    clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.preGameMenuClips[4], Database.preGameMenuClips[6], Database.levelStartClips[levelToStart], Database.preGameMenuClips[17], Database.preGameMenuClips[8] };
-                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
+                                    repeatInterruptedClips = true;
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.preGameMenuClips[2], Database.preGameMenuClips[6], Database.levelStartClips[levelToStart], Database.preGameMenuClips[10], Database.preGameMenuClips[12] };
+                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
                                 }
                                 else if (repeatPregameClip == false)
                                 {
-                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[4], Database.preGameMenuClips[6], Database.levelStartClips[levelToStart], Database.preGameMenuClips[17], Database.preGameMenuClips[8] };
-                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
+                                    repeatInterruptedClips = true;
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[2], Database.preGameMenuClips[6], Database.levelStartClips[levelToStart], Database.preGameMenuClips[10], Database.preGameMenuClips[12] };
+                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
                                     repeatPregameClip = true;
                                 }
                             }
@@ -281,13 +291,15 @@ public class GM_main_pre : MonoBehaviour
                                 canRepeat = false;
                                 if (repeatPregameClip == true)
                                 {
+                                    repeatInterruptedClips = true;
                                     clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.preGameMenuClips[19], Database.levelStartClips[levelToStart], Database.preGameMenuClips[21], Database.preGameMenuClips[23], Database.preGameMenuClips[25], Database.preGameMenuClips[27] };
-                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
+                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
                                 }
                                 else if (repeatPregameClip == false)
                                 {
+                                    repeatInterruptedClips = true;
                                     clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[19], Database.levelStartClips[levelToStart], Database.preGameMenuClips[21], Database.preGameMenuClips[23], Database.preGameMenuClips[25], Database.preGameMenuClips[27] };
-                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
+                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
                                     repeatPregameClip = true;
                                 }
                             }
@@ -297,13 +309,15 @@ public class GM_main_pre : MonoBehaviour
                                 canRepeat = false;
                                 if (repeatPregameClip == true)
                                 {
+                                    repeatInterruptedClips = true;
                                     clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.preGameMenuClips[19], Database.levelStartClips[levelToStart], Database.preGameMenuClips[20], Database.preGameMenuClips[22], Database.preGameMenuClips[24], Database.preGameMenuClips[26] };
-                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
+                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
                                 }
                                 else if (repeatPregameClip == false)
                                 {
+                                    repeatInterruptedClips = true;
                                     clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[19], Database.levelStartClips[levelToStart], Database.preGameMenuClips[20], Database.preGameMenuClips[22], Database.preGameMenuClips[24], Database.preGameMenuClips[26] };
-                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
+                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
                                     repeatPregameClip = true;
                                 }
                             }
@@ -317,16 +331,17 @@ public class GM_main_pre : MonoBehaviour
                             if (GM_title.isUsingTalkback == true)
                             {
                                 canRepeat = false;
-                                canRepeat = false;
                                 if (repeatPregameClip == true)
                                 {
+                                    repeatInterruptedClips = true;
                                     clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.preGameMenuClips[19], Database.levelStartClips[levelToStart], Database.preGameMenuClips[21], Database.preGameMenuClips[23], Database.preGameMenuClips[25], Database.preGameMenuClips[29] };
-                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
+                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
                                 }
                                 else if (repeatPregameClip == false)
                                 {
+                                    repeatInterruptedClips = true;
                                     clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[19], Database.levelStartClips[levelToStart], Database.preGameMenuClips[21], Database.preGameMenuClips[23], Database.preGameMenuClips[25], Database.preGameMenuClips[29] };
-                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
+                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
                                     repeatPregameClip = true;
                                 }
                             }
@@ -336,13 +351,15 @@ public class GM_main_pre : MonoBehaviour
                                 canRepeat = false;
                                 if (repeatPregameClip == true)
                                 {
+                                    repeatInterruptedClips = true;
                                     clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.preGameMenuClips[19], Database.levelStartClips[levelToStart], Database.preGameMenuClips[20], Database.preGameMenuClips[22], Database.preGameMenuClips[24], Database.preGameMenuClips[28] };
-                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
+                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
                                 }
                                 else if (repeatPregameClip == false)
                                 {
+                                    repeatInterruptedClips = true;
                                     clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[19], Database.levelStartClips[levelToStart], Database.preGameMenuClips[20], Database.preGameMenuClips[22], Database.preGameMenuClips[24], Database.preGameMenuClips[28] };
-                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
+                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
                                     repeatPregameClip = true;
                                 }
                             }
@@ -361,14 +378,16 @@ public class GM_main_pre : MonoBehaviour
                         {
                             firstConfirm = false;
                             canRepeat = false;
-                            clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[10], Database.preGameMenuClips[12] };
-                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
+                            repeatInterruptedClips = true;
+                            clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[14], Database.preGameMenuClips[16] };
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
                         }
                         else
                         {
                             canRepeat = false;
-                            clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.preGameMenuClips[10], Database.preGameMenuClips[12] };
-                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
+                            repeatInterruptedClips = false;
+                            clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.preGameMenuClips[14], Database.preGameMenuClips[16] };
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
                         }
                     }
                     // If the player is not using Talkback.
@@ -378,39 +397,34 @@ public class GM_main_pre : MonoBehaviour
                         {
                             firstConfirm = false;
                             canRepeat = false;
-                            clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[10], Database.preGameMenuClips[11] };
-                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
+                            repeatInterruptedClips = true;
+                            clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[14], Database.preGameMenuClips[15] };
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
                         }
                         else
                         {
                             canRepeat = false;
-                            clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.preGameMenuClips[10], Database.preGameMenuClips[11] };
-                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true); // Play the appropriate clips.
+                            repeatInterruptedClips = true;
+                            clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.preGameMenuClips[14], Database.preGameMenuClips[15] };
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
                         }
                     }
                 }
             }
         }
 
-        else if ((madeUnrecognizedGesture == true) && (SoundManager.instance.finishedClip == true))
+        else if ((madeUnrecognizedGesture == true) && (SoundManager.instance.finishedClip == true) && (repeatInterruptedClips == true))
         {
             madeUnrecognizedGesture = false;
             int i = 0;
-            bool canPlayInterruptedClip = true;
             print("Interrupted clips:");
             foreach (AudioClip clip in SoundManager.clipsCurrentlyPlaying)
             {
                 print("Clip " + i + ": " + clip.name);
-                if ((i == 0) && (clip.name == "inputSFX"))
-                {
-                    canPlayInterruptedClip = false;
-                }
                 i++;
             }
-            if (canPlayInterruptedClip == true)
-            {
-                SoundManager.instance.PlayClips(SoundManager.clipsCurrentlyPlaying, SoundManager.currentBalances, 0, SoundManager.currentCallback, SoundManager.currentCallbackIndex, 0.5f, true);
-            }
+
+            SoundManager.instance.PlayClips(SoundManager.clipsCurrentlyPlaying, SoundManager.currentBalances, 0, SoundManager.currentCallback, SoundManager.currentCallbackIndex, SoundManager.currentVolumes, true);           
         }
     }
 
@@ -436,6 +450,7 @@ public class GM_main_pre : MonoBehaviour
                 if (at_confirm == true)
                 {
                     canRepeat = true;
+                    repeatInterruptedClips = false;
                     selectMode = SelectMode.CONFIRM; // We have tapped to confirm we want to start a new game, so set mode to Confirm.
                 }
 
@@ -444,6 +459,7 @@ public class GM_main_pre : MonoBehaviour
                     selectMode = SelectMode.NONE;
                     canRepeat = true;
                     repeatPregameClip = false;
+                    repeatInterruptedClips = false;
                     tempLevelToStart = tempTempLevel;
                 }
             }
@@ -456,6 +472,7 @@ public class GM_main_pre : MonoBehaviour
                     if (selectMode != SelectMode.SPECIFIC)
                     {
                         canRepeat = true;
+                        repeatInterruptedClips = false;
                         selectMode = SelectMode.NEW; // If we have swiped left, set mode to New.
                     }
                 }
@@ -465,6 +482,7 @@ public class GM_main_pre : MonoBehaviour
                     if (selectMode != SelectMode.SPECIFIC)
                     {
                         canRepeat = true;
+                        repeatInterruptedClips = false;
                         selectMode = SelectMode.CONTINUE; // If we have swiped right, set mode to Continue.
                     }
                 }
@@ -475,6 +493,7 @@ public class GM_main_pre : MonoBehaviour
                     {
                         selectMode = SelectMode.SPECIFIC; // If we have swiped up, set mode to Specific.
                         canRepeat = true;
+                        repeatInterruptedClips = false;
                         repeatPregameClip = false;
                     }
                     else if (selectMode == SelectMode.SPECIFIC)
@@ -483,36 +502,40 @@ public class GM_main_pre : MonoBehaviour
                         {
                             if ((tempLevelToStart >= 1) && (tempLevelToStart < 11))
                             {
+                                repeatInterruptedClips = false;
                                 tempLevelToStart += 1;
                                 debugPlayerInfo = "Increased level to start from. Would start at level " + tempLevelToStart.ToString();
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                                 clips = new List<AudioClip>() { Database.levelStartClips[tempLevelToStart] };
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
                             else if (tempLevelToStart == 11)
                             {
+                                repeatInterruptedClips = false;
                                 debugPlayerInfo = "At maximum level for tutorial levels. Cannot pick a higher level to play.";
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                                 clips = new List<AudioClip>() { Database.preGameMenuClips[32] };
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
                         }
                         else if ((GameMode.instance.gamemode == GameMode.Game_Mode.CONTINUE) || (GameMode.instance.gamemode == GameMode.Game_Mode.RESTART))
                         {
                             if ((tempLevelToStart >= 12) && (tempLevelToStart < 150))
                             {
+                                repeatInterruptedClips = false;
                                 tempLevelToStart += 1;
                                 debugPlayerInfo = "Increased level to start from. Would start at level " + tempLevelToStart.ToString();
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                                 clips = new List<AudioClip>() { Database.levelStartClips[tempLevelToStart] };
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
                             else if (tempLevelToStart == 150)
                             {
+                                repeatInterruptedClips = false;
                                 debugPlayerInfo = "At maximum level for post-tutorial levels. Cannot pick a higher level to play.";
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                                 clips = new List<AudioClip>() { Database.preGameMenuClips[34] };
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
                         }
                     }
@@ -522,6 +545,7 @@ public class GM_main_pre : MonoBehaviour
                 {
                     if (selectMode != SelectMode.SPECIFIC)
                     {
+                        repeatInterruptedClips = false;
                         canRepeat = true;
                         selectMode = SelectMode.BACK; // If we have swiped down, set mode to Back.  
                     }
@@ -531,36 +555,40 @@ public class GM_main_pre : MonoBehaviour
                         {
                             if ((tempLevelToStart > 1) && (tempLevelToStart < 12))
                             {
+                                repeatInterruptedClips = false;
                                 tempLevelToStart -= 1;
                                 debugPlayerInfo = "Decreased level to start from. Would start at level " + tempLevelToStart.ToString();
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                                 clips = new List<AudioClip>() { Database.levelStartClips[tempLevelToStart] };
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
                             else if (tempLevelToStart == 1)
                             {
+                                repeatInterruptedClips = false;
                                 debugPlayerInfo = "At minimum level for tutorial levels. Cannot pick a lower level to play.";
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                                 clips = new List<AudioClip>() { Database.preGameMenuClips[31] };
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }                            
                         }
                         else if ((GameMode.instance.gamemode == GameMode.Game_Mode.CONTINUE) || (GameMode.instance.gamemode == GameMode.Game_Mode.RESTART))
                         {
                             if ((tempLevelToStart > 12) && (tempLevelToStart < 151))
                             {
+                                repeatInterruptedClips = false;
                                 tempLevelToStart -= 1;
                                 debugPlayerInfo = "Decreased level to start from. Would start at level " + tempLevelToStart.ToString();
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                                 clips = new List<AudioClip>() { Database.levelStartClips[tempLevelToStart] };
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
                             else if (tempLevelToStart == 12)
                             {
+                                repeatInterruptedClips = false;
                                 debugPlayerInfo = "At minimum level for post-tutorial levels. Cannot pick a lower level to play.";
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                                 clips = new List<AudioClip>() { Database.preGameMenuClips[33] };
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
                         }                        
                     }
@@ -584,6 +612,7 @@ public class GM_main_pre : MonoBehaviour
             {
                 if (selectMode == SelectMode.SPECIFIC)
                 {
+                    repeatInterruptedClips = false;
                     pickedSpecificLevel = true;
                 }
                 else
@@ -611,82 +640,111 @@ public class GM_main_pre : MonoBehaviour
                     SoundManager.instance.PlayVoice(Database.errorClips[1], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
+                else if (ie.isTapHorizontalVerticalError == true)
+                {
+                    debugPlayerInfo = "Nothing happened due to error with horizontal and vertical distance on tap.";
+                    SoundManager.instance.PlayVoice(Database.errorClips[2], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                }
+                // If this error was registered.
                 else if (ie.isTapRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on tap.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[2], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[3], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeLeftHorizontalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with horizontal distance on swipe left.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[3], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[4], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeRightHorizontalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with horizontal distance on swipe right.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[4], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[5], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeUpVerticalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with vertical distance on swipe up.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[5], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[6], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeDownVerticalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with vertical distance on swipe down.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[6], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[7], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                }
+                // If this error was registered.
+                else if (ie.isSwipeHorizontalVerticalError == true)
+                {
+                    debugPlayerInfo = "Nothing happened due to error with horizontal and vertical distance on swipe.";                  
                 }
                 // If this error was registered.
                 else if (ie.isSwipeLeftRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on swipe left.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[7], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeRightRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on swipe right.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[7], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeUpRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on swipe up.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[7], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeDownRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on swipe down.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[7], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isRotationAngleError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with angle on rotation.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[9], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isHoldHorizontalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with horizontal distance on hold.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[9], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[10], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isHoldVerticalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with vertical distance on hold.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[10], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[11], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                }
+                // If this error was registered.
+                else if (ie.isHoldHorizontalVerticalError == true)
+                {
+                    debugPlayerInfo = "Nothing happened due to error with horizontal and vertical distance on hold.";
+                    SoundManager.instance.PlayVoice(Database.errorClips[12], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isHoldRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on hold.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[11], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[13], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                }
+                else if (ie.isSwipeDirectionError == true)
+                {
+                    debugPlayerInfo = "Nothing happened because gesture was neither a horizontal or vertical swipe.";
+                }
+                else if (ie.isBetweenTapSwipeError == true)
+                {
+                    debugPlayerInfo = "Nothing happened because gesture was in between tap and swipe.";
+                }
+                else if (ie.isBetweenHoldSwipeError == true)
+                {
+                    debugPlayerInfo = "Nothing happened because gesture was in between hold and swipe.";
                 }
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
             }
@@ -743,6 +801,7 @@ public class GM_main_pre : MonoBehaviour
                     if (selectMode != SelectMode.SPECIFIC)
                     {
                         canRepeat = true;
+                        repeatInterruptedClips = false;
                         selectMode = SelectMode.NEW; // If we have swiped left, set mode to New.
                     }
                 }
@@ -752,6 +811,7 @@ public class GM_main_pre : MonoBehaviour
                     if (selectMode != SelectMode.SPECIFIC)
                     {
                         canRepeat = true;
+                        repeatInterruptedClips = false;
                         selectMode = SelectMode.CONTINUE; // If we have swiped right, set mode to Continue.
                     }
                 }               
@@ -763,6 +823,7 @@ public class GM_main_pre : MonoBehaviour
                         selectMode = SelectMode.SPECIFIC; // If we have swiped up, set mode to Specific.
                         canRepeat = true;
                         repeatPregameClip = false;
+                        repeatInterruptedClips = false;
                     }
                     else if (selectMode == SelectMode.SPECIFIC)
                     {
@@ -770,36 +831,40 @@ public class GM_main_pre : MonoBehaviour
                         {
                             if ((tempLevelToStart >= 1) && (tempLevelToStart < 11))
                             {
+                                repeatInterruptedClips = false;
                                 tempLevelToStart += 1;
                                 debugPlayerInfo = "Increased level to start from. Would start at level " + tempLevelToStart.ToString();
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                                 clips = new List<AudioClip>() { Database.levelStartClips[tempLevelToStart] };
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
                             else if (tempLevelToStart == 11)
                             {
+                                repeatInterruptedClips = false;
                                 debugPlayerInfo = "At maximum level for tutorial levels. Cannot pick a higher level to play.";
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                                 clips = new List<AudioClip>() { Database.preGameMenuClips[32] };
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
                         }
                         else if ((GameMode.instance.gamemode == GameMode.Game_Mode.CONTINUE) || (GameMode.instance.gamemode == GameMode.Game_Mode.RESTART))
                         {
                             if ((tempLevelToStart >= 12) && (tempLevelToStart < 150))
                             {
+                                repeatInterruptedClips = false;
                                 tempLevelToStart += 1;
                                 debugPlayerInfo = "Increased level to start from. Would start at level " + tempLevelToStart.ToString();
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                                 clips = new List<AudioClip>() { Database.levelStartClips[tempLevelToStart] };
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
                             else if (tempLevelToStart == 150)
                             {
+                                repeatInterruptedClips = false;
                                 debugPlayerInfo = "At maximum level for post-tutorial levels. Cannot pick a higher level to play.";
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                                 clips = new List<AudioClip>() { Database.preGameMenuClips[34] };
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
                         }
                     }
@@ -810,6 +875,7 @@ public class GM_main_pre : MonoBehaviour
                     if (selectMode != SelectMode.SPECIFIC)
                     {
                         canRepeat = true;
+                        repeatInterruptedClips = false;
                         selectMode = SelectMode.BACK; // If we have swiped down, set mode to Back.  
                     }
                     else if (selectMode == SelectMode.SPECIFIC)
@@ -818,36 +884,40 @@ public class GM_main_pre : MonoBehaviour
                         {
                             if ((tempLevelToStart > 1) && (tempLevelToStart < 12))
                             {
+                                repeatInterruptedClips = false;
                                 tempLevelToStart -= 1;
                                 debugPlayerInfo = "Decreased level to start from. Would start at level " + tempLevelToStart.ToString();
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                                 clips = new List<AudioClip>() { Database.levelStartClips[tempLevelToStart] };
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
                             else if (tempLevelToStart == 1)
                             {
+                                repeatInterruptedClips = false;
                                 debugPlayerInfo = "At minimum level for tutorial levels. Cannot pick a lower level to play.";
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                                 clips = new List<AudioClip>() { Database.preGameMenuClips[31] };
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
                         }
                         else if ((GameMode.instance.gamemode == GameMode.Game_Mode.CONTINUE) || (GameMode.instance.gamemode == GameMode.Game_Mode.RESTART))
                         {
                             if ((tempLevelToStart > 12) && (tempLevelToStart < 151))
                             {
+                                repeatInterruptedClips = false;
                                 tempLevelToStart -= 1;
                                 debugPlayerInfo = "Decreased level to start from. Would start at level " + tempLevelToStart.ToString();
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                                 clips = new List<AudioClip>() { Database.levelStartClips[tempLevelToStart] };
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
                             else if (tempLevelToStart == 12)
                             {
+                                repeatInterruptedClips = false;
                                 debugPlayerInfo = "At minimum level for post-tutorial levels. Cannot pick a lower level to play.";
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                                 clips = new List<AudioClip>() { Database.preGameMenuClips[33] };
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, 0.5f, true);
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
                         }
                     }
@@ -861,6 +931,7 @@ public class GM_main_pre : MonoBehaviour
                 if ((at_confirm) == true && TriggerStartNewGame.CDfinish())
                 {
                     canRepeat = true;
+                    repeatInterruptedClips = false;
                     selectMode = SelectMode.CONFIRM; // We have tapped to confirm we want to start a new game, so set mode to Confirm.
                 }
 
@@ -868,6 +939,7 @@ public class GM_main_pre : MonoBehaviour
                 { 
                     canRepeat = true;
                     repeatPregameClip = false;
+                    repeatInterruptedClips = false;
                     tempLevelToStart = tempTempLevel;
                     selectMode = SelectMode.NONE;
                 }
@@ -892,6 +964,7 @@ public class GM_main_pre : MonoBehaviour
             {
                 if (selectMode == SelectMode.SPECIFIC)
                 {
+                    repeatInterruptedClips = false;
                     pickedSpecificLevel = true;
                 }
                 else
@@ -910,7 +983,7 @@ public class GM_main_pre : MonoBehaviour
                 if (ie.isTapHorizontalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with horizontal distance on tap.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[0], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[0], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.                    
                 }
                 // If this error was registered.
                 else if (ie.isTapVerticalError == true)
@@ -919,82 +992,111 @@ public class GM_main_pre : MonoBehaviour
                     SoundManager.instance.PlayVoice(Database.errorClips[1], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
+                else if (ie.isTapHorizontalVerticalError == true)
+                {
+                    debugPlayerInfo = "Nothing happened due to error with horizontal and vertical distance on tap.";
+                    SoundManager.instance.PlayVoice(Database.errorClips[2], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                }
+                // If this error was registered.
                 else if (ie.isTapRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on tap.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[2], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[3], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeLeftHorizontalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with horizontal distance on swipe left.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[3], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[4], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeRightHorizontalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with horizontal distance on swipe right.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[4], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[5], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeUpVerticalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with vertical distance on swipe up.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[5], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[6], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeDownVerticalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with vertical distance on swipe down.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[6], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[7], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                }
+                // If this error was registered.
+                else if (ie.isSwipeHorizontalVerticalError == true)
+                {
+                    debugPlayerInfo = "Nothing happened due to error with horizontal and vertical distance on swipe.";
                 }
                 // If this error was registered.
                 else if (ie.isSwipeLeftRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on swipe left.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[7], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeRightRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on swipe right.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[7], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeUpRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on swipe up.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[7], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeDownRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on swipe down.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[7], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isRotationAngleError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with angle on rotation.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[9], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isHoldHorizontalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with horizontal distance on hold.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[9], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[10], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isHoldVerticalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with vertical distance on hold.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[10], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[11], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                }
+                // If this error was registered.
+                else if (ie.isHoldHorizontalVerticalError == true)
+                {
+                    debugPlayerInfo = "Nothing happened due to error with horizontal and vertical distance on hold.";
+                    SoundManager.instance.PlayVoice(Database.errorClips[12], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isHoldRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on hold.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[11], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[13], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                }
+                else if (ie.isSwipeDirectionError == true)
+                {
+                    debugPlayerInfo = "Nothing happened because gesture was neither a horizontal or vertical swipe.";
+                }
+                else if (ie.isBetweenTapSwipeError == true)
+                {
+                    debugPlayerInfo = "Nothing happened because gesture was in between tap and swipe.";
+                }
+                else if (ie.isBetweenHoldSwipeError == true)
+                {
+                    debugPlayerInfo = "Nothing happened because gesture was in between hold and swipe.";
                 }
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
             }
@@ -1016,9 +1118,9 @@ public class GM_main_pre : MonoBehaviour
                     //BoardManager.write_save(1, BoardManager.finishedTutorialLevel1, BoardManager.finishedTutorialLevel3);
                     //gameManager.write_save_mode(1, GameMode.instance.gamemode);
                     skippingTutorial = 1;
-                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[14] };
+                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[18] };
                     balances = new float[] { 0, 0, 0 };
-                    SoundManager.instance.PlayClips(clips, balances, 0, () => SceneManager.LoadScene("Main"), 3, 0.5f); // Play the appropriate clips.
+                    SoundManager.instance.PlayClips(clips, balances, 0, () => SceneManager.LoadScene("Main"), 3, null); // Play the appropriate clips.
                 }
                 break;
             // If mode is set to New, we have confirmed and swiped left, so start a new game from either the tutorial or the first non-tutorial level.
@@ -1050,9 +1152,9 @@ public class GM_main_pre : MonoBehaviour
                     //BoardManager.write_save(1, BoardManager.finishedTutorialLevel1, BoardManager.finishedTutorialLevel3);
                     //gameManager.write_save_mode(1, GameMode.instance.gamemode);
                     skippingTutorial = 0;
-                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[13] };
+                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[17] };
                     balances = new float[] { 0, 0, 0 };
-                    SoundManager.instance.PlayClips(clips, balances, 0, () => SceneManager.LoadScene("Main"), 3, 0.5f); // Play the appropriate clips.                  
+                    SoundManager.instance.PlayClips(clips, balances, 0, () => SceneManager.LoadScene("Main"), 3, null); // Play the appropriate clips.                  
                 }
                 break;
             // If mode is set to Back, go back to the main menu.
@@ -1079,9 +1181,9 @@ public class GM_main_pre : MonoBehaviour
                 {
                     selectMode = SelectMode.NONE;
                     skippingTutorial = 2;
-                    clips = new List<AudioClip>() { Database.preGameMenuClips[30], Database.soundEffectClips[0], Database.soundEffectClips[7], Database.soundEffectClips[0] };
+                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[30], Database.soundEffectClips[0] };
                     balances = new float[] { 0, 0, 0, 0 };
-                    SoundManager.instance.PlayClips(clips, balances, 0, () => SceneManager.LoadScene("Main"), 4, 0.5f); // Play the appropriate clips.
+                    SoundManager.instance.PlayClips(clips, balances, 0, () => SceneManager.LoadScene("Main"), 4, null); // Play the appropriate clips.
                 }         
                 break;
             default:

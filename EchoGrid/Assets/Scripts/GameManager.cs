@@ -20,8 +20,6 @@ public class GameManager : MonoBehaviour
     [HideInInspector]
     public bool playersTurn = true;
 
-    string debugPlayerInfo = "";
-
     private const int MAX_TUTORIAL_LEVEL = 11;
     private const int MAX_LEVEL = 150;
     public float levelStartDelay = 2f;

@@ -7,7 +7,6 @@ public class DebugTouch2 : MonoBehaviour
 {
     Text debugTouch2Text;
     string touch2Text;
-    bool usingTalkback = true;
 
     public static DebugTouch2 instance;
     void Awake()

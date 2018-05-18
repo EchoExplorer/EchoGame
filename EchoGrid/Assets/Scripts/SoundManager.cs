@@ -27,7 +27,7 @@ public class SoundManager : MonoBehaviour
     public static float[] currentBalances;
     public static Action currentCallback;
     public static int currentCallbackIndex;
-    public static float currentVolume;
+    public static float[] currentVolumes;
 
     void Awake()
     {
@@ -141,7 +141,7 @@ public class SoundManager : MonoBehaviour
     /// Plays an echo sound.
     /// </summary>
 	public void PlayEcho(AudioClip echoClip, Action callback = null)
-    {
+    {       
         echoSource.clip = Database.soundEffectClips[1];
         echoSource.Play();
         StartCoroutine(EchoWait(echoSource.clip.length, echoClip, callback));
@@ -213,7 +213,7 @@ public class SoundManager : MonoBehaviour
     }
 
     // Play a list of clips in their order with 0.5 seconds pausing. Callback function and its index allowed.
-    public void PlayClips(List<AudioClip> clips, float[] balances = null, int current = 0, Action callback = null, int callback_index = 0, float clipVolume = 1.0f, bool isFirstClip = true)
+    public void PlayClips(List<AudioClip> clips, float[] balances = null, int current = 0, Action callback = null, int callback_index = 0, float[] volumes = null, bool isFirstClip = true)
     {
         // If this clip is the first clip in our list.
         if (isFirstClip == true)
@@ -224,6 +224,7 @@ public class SoundManager : MonoBehaviour
         clipsCurrentlyPlaying = new List<AudioClip>() { };
         clipsCurrentlyPlaying.Clear();
         currentBalances = new float[clips.Count];
+        currentVolumes = new float[clips.Count];
         int i = 0;
         for (int j = current; j < clips.Count; j++)
         {
@@ -236,10 +237,18 @@ public class SoundManager : MonoBehaviour
             {
                 currentBalances = balances;
             }
+
+            if (volumes != null)
+            {
+                currentVolumes[i] = volumes[j];
+            }
+            else
+            {
+                currentVolumes = volumes;
+            }
             i++;
         }
 
-        currentVolume = clipVolume;
         currentCallback = callback;
         if (callback_index != 0)
         {
@@ -256,17 +265,31 @@ public class SoundManager : MonoBehaviour
 
         if (balances == null)
         {
-            PlayClip(clip, true, 0.0f, clipVolume);
+            if (volumes == null)
+            {
+                PlayClip(clip, true, 0.0f, 0.5f);
+            }
+            else if (volumes != null)
+            {
+                PlayClip(clip, true, 0.0f, volumes[current]);
+            }
         }
         else
         {
-            PlayClip(clip, true, balances[current], clipVolume);
+            if (volumes == null)
+            {
+                PlayClip(clip, true, balances[current], 0.5f);
+            }
+            else if (volumes != null)
+            {
+                PlayClip(clip, true, balances[current], volumes[current]);
+            }                
         }
 
-        StartCoroutine(WaitForLength(clipLength, clips, balances, current, callback, callback_index, clipVolume));
+        StartCoroutine(WaitForLength(clipLength, clips, balances, current, callback, callback_index, volumes));
     }
 
-    private IEnumerator WaitForLength(float clipLength, List<AudioClip> clips, float[] balances, int current, Action callback, int callback_index, float clipVolume)
+    private IEnumerator WaitForLength(float clipLength, List<AudioClip> clips, float[] balances, int current, Action callback, int callback_index, float[] volumes)
     {
         yield return new WaitForSeconds(clipLength + 0.3f);
         // Check if this clip is the last clip in the list and make sure this clip has finished playing.
@@ -276,7 +299,7 @@ public class SoundManager : MonoBehaviour
         }
         else if (current + 1 < clips.Count && !clipSource.isPlaying && clipSource.clip == clips[current])
         {
-            PlayClips(clips, balances, current + 1, callback, callback_index, clipVolume, false);
+            PlayClips(clips, balances, current + 1, callback, callback_index, volumes, false);
         }
         if (callback_index >= clips.Count && current >= clips.Count - 1 && callback != null)
         {

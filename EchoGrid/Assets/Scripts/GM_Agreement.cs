@@ -42,11 +42,11 @@ public class GM_Agreement : MonoBehaviour
         swipeAhead = Database.soundEffectClips[4];
         orit = new AudioClip[2];
         orit[0] = Resources.Load("instructions/Please hold your phone horizontally for this game") as AudioClip;
-        orit[1] = Database.soundEffectClips[3];
+        orit[1] = Database.soundEffectClips[7];
         clips = new AudioClip[3];
         clips[0] = Resources.Load("instructions/Swipe left to confirm") as AudioClip;
-        clips[1] = Database.soundEffectClips[3];
-        clips[2] = Database.soundEffectClips[3];
+        clips[1] = Database.soundEffectClips[7];
+        clips[2] = Database.soundEffectClips[7];
 
         //total_num_agreements = AgreementTexts.transform.childCount;
         cur_text = 0;
