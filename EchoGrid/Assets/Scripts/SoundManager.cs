@@ -59,7 +59,7 @@ public class SoundManager : MonoBehaviour
     /// Retries upon failure until the first successful run.
     /// </summary>
     void Update()
-    {
+    {       
         if (!voice_adjusted)
         {
             for (int i = 0; i < efxSource.Length; ++i)
@@ -105,6 +105,11 @@ public class SoundManager : MonoBehaviour
             {
                 voice_adjusted = false;
             }
+        }
+
+        if (finishedAllClips == true)
+        {
+            clipsCurrentlyPlaying.Clear();
         }
     }
 

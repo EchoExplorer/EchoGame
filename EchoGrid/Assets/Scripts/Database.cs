@@ -261,7 +261,7 @@ public class Database : MonoBehaviour
         mainGameClips[4] = Resources.Load("instructions/main_game/if_you_hit_a_wall") as AudioClip;
         mainGameClips[5] = Resources.Load("instructions/main_game/echolocation_simulation") as AudioClip;
         mainGameClips[6] = Resources.Load("instructions/main_game/tap_before_step") as AudioClip;
-        mainGameClips[7] = Resources.Load("instructions/main_game/proceed_by_tapping") as AudioClip;
+        mainGameClips[7] = Resources.Load("instructions/main_game/proceed_by_tapping_and_swiping") as AudioClip;
         mainGameClips[8] = Resources.Load("instructions/main_game/tap_at_exit") as AudioClip;
         mainGameClips[9] = Resources.Load("instructions/main_game/another_straight_hallway") as AudioClip;
         mainGameClips[10] = Resources.Load("instructions/main_game/move_on_from_straight_hallways") as AudioClip;

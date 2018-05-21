@@ -356,14 +356,20 @@ public class GM_title : MonoBehaviour
         {
             madeUnrecognizedGesture = false;
 
-            int i = 0;
-            print("Interrupted clips:");
-            foreach (AudioClip clip in SoundManager.clipsCurrentlyPlaying)
+            if (SoundManager.clipsCurrentlyPlaying.Count >= 1)
             {
-                print("Clip " + i + ": " + clip.name);
-                i++;
+                int i = 0;
+                print("Interrupted clips:");
+                foreach (AudioClip clip in SoundManager.clipsCurrentlyPlaying)
+                {
+                    print("Clip " + i + ": " + SoundManager.clipsCurrentlyPlaying[i]);
+                    i++;
+                }
+
+                List<AudioClip> currentClips = SoundManager.clipsCurrentlyPlaying;
+                SoundManager.instance.PlayClips(currentClips, SoundManager.currentBalances, 0, SoundManager.currentCallback, SoundManager.currentCallbackIndex, SoundManager.currentVolumes, true);
+                SoundManager.clipsCurrentlyPlaying.Clear();
             }
-            SoundManager.instance.PlayClips(SoundManager.clipsCurrentlyPlaying, SoundManager.currentBalances, 0, SoundManager.currentCallback, SoundManager.currentCallbackIndex, SoundManager.currentVolumes, true);
         }
     }
 

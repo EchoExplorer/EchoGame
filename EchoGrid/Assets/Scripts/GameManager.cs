@@ -250,14 +250,25 @@ public class GameManager : MonoBehaviour
         levelImageActive = false;
     }
 
-    //This is called each time a scene is loaded.
-    void OnLevelWasLoaded(int index)
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         // Since the gameObject is not destroyed automatically, the instance should be checked before calling this method.
         if (this != instance)
         {
             return;
         }
+        print("Level Loaded. Scene Name: " + scene.name + ", Mode: " + mode.ToString());
+
         // Call InitGame to initialize our level.
         levelImage = GameObject.Find("LevelImage").gameObject;
         levelText = levelImage.transform.Find("LevelText").gameObject.GetComponent<Text>();

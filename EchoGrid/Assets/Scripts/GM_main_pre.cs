@@ -117,11 +117,6 @@ public class GM_main_pre : MonoBehaviour
         init();
     }
 
-    void OnLevelWasLoaded(int index)
-    {
-        init();
-    }
-
     void init()
     {
         levelImage = GameObject.Find("LevelImage").gameObject;
@@ -416,15 +411,21 @@ public class GM_main_pre : MonoBehaviour
         else if ((madeUnrecognizedGesture == true) && (SoundManager.instance.finishedClip == true) && (repeatInterruptedClips == true))
         {
             madeUnrecognizedGesture = false;
-            int i = 0;
-            print("Interrupted clips:");
-            foreach (AudioClip clip in SoundManager.clipsCurrentlyPlaying)
-            {
-                print("Clip " + i + ": " + clip.name);
-                i++;
-            }
 
-            SoundManager.instance.PlayClips(SoundManager.clipsCurrentlyPlaying, SoundManager.currentBalances, 0, SoundManager.currentCallback, SoundManager.currentCallbackIndex, SoundManager.currentVolumes, true);           
+            if (SoundManager.clipsCurrentlyPlaying.Count >= 1)
+            {
+                int i = 0;
+                print("Interrupted clips:");
+                foreach (AudioClip clip in SoundManager.clipsCurrentlyPlaying)
+                {
+                    print("Clip " + i + ": " + SoundManager.clipsCurrentlyPlaying[i]);
+                    i++;
+                }
+
+                List<AudioClip> currentClips = SoundManager.clipsCurrentlyPlaying;
+                SoundManager.instance.PlayClips(currentClips, SoundManager.currentBalances, 0, SoundManager.currentCallback, SoundManager.currentCallbackIndex, SoundManager.currentVolumes, true);
+                SoundManager.clipsCurrentlyPlaying.Clear();
+            }
         }
     }
 
@@ -447,16 +448,18 @@ public class GM_main_pre : MonoBehaviour
             if (ie.isTap == true)
             {
                 // We have swiped left to start a new game and confirmed that this is the action we want, so set mode to Confirm.
-                if (at_confirm == true)
+                if ((at_confirm == true) && TriggerStartNewGame.CDfinish())
                 {
                     canRepeat = true;
                     repeatInterruptedClips = false;
                     selectMode = SelectMode.CONFIRM; // We have tapped to confirm we want to start a new game, so set mode to Confirm.
                 }
 
-                if (selectMode == SelectMode.SPECIFIC)
+                else if (selectMode == SelectMode.SPECIFIC)
                 {
                     selectMode = SelectMode.NONE;
+                    madeUnrecognizedGesture = false;
+                    at_confirm = false;
                     canRepeat = true;
                     repeatPregameClip = false;
                     repeatInterruptedClips = false;
@@ -569,7 +572,7 @@ public class GM_main_pre : MonoBehaviour
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                                 clips = new List<AudioClip>() { Database.preGameMenuClips[31] };
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }                            
+                            }
                         }
                         else if ((GameMode.instance.gamemode == GameMode.Game_Mode.CONTINUE) || (GameMode.instance.gamemode == GameMode.Game_Mode.RESTART))
                         {
@@ -590,7 +593,7 @@ public class GM_main_pre : MonoBehaviour
                                 clips = new List<AudioClip>() { Database.preGameMenuClips[33] };
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                        }                        
+                        }
                     }
                 }
             }
@@ -678,7 +681,7 @@ public class GM_main_pre : MonoBehaviour
                 // If this error was registered.
                 else if (ie.isSwipeHorizontalVerticalError == true)
                 {
-                    debugPlayerInfo = "Nothing happened due to error with horizontal and vertical distance on swipe.";                  
+                    debugPlayerInfo = "Nothing happened due to error with horizontal and vertical distance on swipe.";
                 }
                 // If this error was registered.
                 else if (ie.isSwipeLeftRotationError == true)
@@ -749,40 +752,7 @@ public class GM_main_pre : MonoBehaviour
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
             }
         }
-
-        /*
-		//Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction
-		if (Input.GetKeyUp(KeyCode.RightArrow)) {
-			if(!at_confirm){
-				GameMode.instance.gamemode = GameMode.Game_Mode.CONTINUE;
-				SoundManager.instance.PlayVoice(continue_game, true);
-				SceneManager.LoadScene("Main");
-			}
-			//SoundManager.instance.PlaySingle(swipeRight);
-		} else if (Input.GetKeyUp(KeyCode.LeftArrow)) {
-			if(at_confirm){
-				GameMode.instance.gamemode = GameMode.Game_Mode.RESTART;
-				SoundManager.instance.PlayVoice(new_game, true);
-				SceneManager.LoadScene("Main");
-			}
-			//SoundManager.instance.PlaySingle(swipeLeft);
-		} else if (Input.GetKeyUp("f")) {
-			//SceneManager.LoadScene("Main");
-			//SoundManager.instance.PlaySingle(swipeAhead);
-		} else if (Input.GetKeyUp("e")) {
-			if(!at_confirm){
-				at_confirm = true;
-				cur_clip = 0;
-				reset_audio = true;
-			}
-			else{
-				at_confirm = false;
-				cur_clip = 0;
-				reset_audio = true;
-			}
-			//SoundManager.instance.PlaySingle(swipeAhead);
-		}
-		*/
+    
 #endif
         // Check if we are running on iOS/Android.
 #if UNITY_IOS || UNITY_ANDROID
@@ -928,20 +898,22 @@ public class GM_main_pre : MonoBehaviour
             else if (ie.isTap == true)
             {
                 // We have swiped left to start a new game and confirmed that this is the action we want, so set mode to Confirm.
-                if ((at_confirm) == true && TriggerStartNewGame.CDfinish())
+                if ((at_confirm == true) && TriggerStartNewGame.CDfinish())
                 {
                     canRepeat = true;
                     repeatInterruptedClips = false;
                     selectMode = SelectMode.CONFIRM; // We have tapped to confirm we want to start a new game, so set mode to Confirm.
                 }
 
-                if (selectMode == SelectMode.SPECIFIC)
-                { 
+                else if (selectMode == SelectMode.SPECIFIC)
+                {
+                    selectMode = SelectMode.NONE;
+                    madeUnrecognizedGesture = false;
+                    at_confirm = false;
                     canRepeat = true;
                     repeatPregameClip = false;
                     repeatInterruptedClips = false;
                     tempLevelToStart = tempTempLevel;
-                    selectMode = SelectMode.NONE;
                 }
             }
 

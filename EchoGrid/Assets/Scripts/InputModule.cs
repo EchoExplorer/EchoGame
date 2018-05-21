@@ -27,8 +27,8 @@ public struct InputEvent
     public bool isSwipeLeftHorizontalError; // If the player did not move enough horizontally during the swipe left.
     public bool isSwipeRightHorizontalError; // If the player did not move enough horizontally during the swipe right.
     public bool isSwipeUpVerticalError; // If the player did not move enough vertically during the swipe up.
-    public bool isSwipeHorizontalVerticalError;
     public bool isSwipeDownVerticalError; // If the player did not move enough vertically during the swipe down.
+    public bool isSwipeHorizontalVerticalError;
     public bool isSwipeLeftRotationError; // If the player rotated too much during the swipe left.
     public bool isSwipeRightRotationError; // If the player rotated too much during the swipe right.
     public bool isSwipeUpRotationError; // If the player rotated too much during the swipe up.
@@ -334,6 +334,7 @@ public class InputModule : MonoBehaviour
                 totalY0 = vecEnd0.y - vecStart0.y;
                 debugTouch0Info = "XStart: " + vecStart0.x.ToString() + "\nYStart: " + vecStart0.y.ToString() + "\nXEnd: " + vecEnd0.x.ToString() + "\nYEnd: " + vecEnd0.y.ToString();
                 DebugTouch0.instance.ChangeDebugTouch0Text(debugTouch0Info); // Update the debug textbox. 
+                hasRegistered[0] = false; // Touch0 is no longer on the screen. Make sure that the end position for this touch cannot be updated based on another finger's position.
             }
             else if (touch0.phase == TouchPhase.Canceled)
             {
@@ -387,6 +388,7 @@ public class InputModule : MonoBehaviour
                 totalY1 = vecEnd1.y - vecStart1.y;
                 debugTouch1Info = "XStart: " + vecStart1.x.ToString() + "\nYStart: " + vecStart1.y.ToString() + "\nXEnd: " + vecEnd1.x.ToString() + "\nYEnd: " + vecEnd1.y.ToString();
                 DebugTouch1.instance.ChangeDebugTouch1Text(debugTouch1Info); // Update the debug textbox.
+                hasRegistered[1] = false; // Touch1 is no longer on the screen. Make sure that the end position for this touch cannot be updated based on another finger's position.
             }
             else if (touch1.phase == TouchPhase.Canceled)
             {
@@ -475,6 +477,7 @@ public class InputModule : MonoBehaviour
                 totalY2 = vecEnd2.y - vecStart2.y;
                 debugTouch2Info = "XStart: " + vecStart2.x.ToString() + "\nYStart: " + vecStart2.y.ToString() + "\nXEnd: " + vecEnd2.x.ToString() + "\nYEnd: " + vecEnd2.y.ToString();
                 DebugTouch2.instance.ChangeDebugTouch2Text(debugTouch2Info); // Update the debug textbox.
+                hasRegistered[2] = false; // Touch2 is no longer on the screen. Make sure that the end position for this touch cannot be updated based on another finger's position.
             }
             else if (touch2.phase == TouchPhase.Canceled)
             {
@@ -560,7 +563,7 @@ public class InputModule : MonoBehaviour
 
         // If there are currently no fingers on the screen, determine if a tap/swipe/rotation gesture was made.
         if (Input.touchCount == 0)
-        {
+        {            
             bool canMakeGesture = false;
 
             if (touchRegister == 1)
@@ -583,6 +586,7 @@ public class InputModule : MonoBehaviour
 #if UNITY_IOS || UNITY_ANDROID
             }
 
+            
             else if (touchRegister == 2)
             {
                 bool negativeAngle = false;

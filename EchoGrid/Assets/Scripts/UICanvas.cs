@@ -9,8 +9,7 @@ using System.Collections;
 public class UICanvas : MonoBehaviour
 {
     public static UICanvas instance;
-
-    // Use this for initialization
+    
     void Awake()
     {
         if (instance == null)
@@ -25,6 +24,7 @@ public class UICanvas : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
+    // Use this for initialization
     void Start()
     {
 
@@ -34,13 +34,5 @@ public class UICanvas : MonoBehaviour
     void Update()
     {
 
-    }
-
-    void OnLevelWasLoaded(int index)
-    {
-        // Since the gameObject is not destroyed automatically, the instance should be checked before calling this method.
-        if (this != instance) return;
-        //Call InitGame to initialize our level.
-        //transform.FindChild("LevelImage").gameObject.SetActive(true);
     }
 }
