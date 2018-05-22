@@ -155,6 +155,7 @@ public class Player : MovingObject
     bool finished_reading = false;
     bool finished_listening = false;
     bool finished_questions = false;
+    bool can_display_window = false;
     bool android_window_displayed = false;
 
     bool noConsent = false;
@@ -1247,6 +1248,7 @@ public class Player : MovingObject
                     readingConsentForm = false;
                     noConsent = false;
                     finished_listening = false;
+                    can_display_window = false;
                 }
             }
 
@@ -1268,6 +1270,7 @@ public class Player : MovingObject
                     readingConsentForm = false;
                     noConsent = false;
                     finished_listening = false;
+                    can_display_window = false;
                 }
             }
 
@@ -1332,12 +1335,50 @@ public class Player : MovingObject
                 }
             }
 
+            if ((readingConsentForm == true) && (answeredQuestion1 == false) && (answeredQuestion2 == false) && (answeredQuestion3 == false))
+            {
+                if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
+                {
+                    if ((canRepeat == false) && (SoundManager.instance.finishedAllClips == true))
+                    {
+                        can_display_window = true;
+                    }
+                    if (can_display_window == false)
+                    {
+                        canRepeat = false;
+                        clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.consentClips[9] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                    }
+                }
+            }           
+
             if ((readingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (question1 == true) && (question2 == true) && (question3 == true))
             {
                 if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
                 {
                     canRepeat = false;
-                    clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.consentClips[9] };
+                    if (curLevel == 1)
+                    {
+                        if (GM_title.isUsingTalkback == true)
+                        {
+                            clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.consentClips[12] };
+                        }
+                        else if (GM_title.isUsingTalkback == false)
+                        {
+                            clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.consentClips[11] };
+                        }
+                    }
+                    else if (curLevel == 12)
+                    {
+                        if (GM_title.isUsingTalkback == true)
+                        {
+                            clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.consentClips[14] };
+                        }
+                        else if (GM_title.isUsingTalkback == false)
+                        {
+                            clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.consentClips[13] };
+                        }
+                    }                    
                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                 }
             }
@@ -2390,7 +2431,7 @@ public class Player : MovingObject
 #if (UNITY_IOS || UNITY_ANDROID) && (!UNITY_STANDALONE || !UNITY_WEBPLAYER)
         if ((curLevel == 12) && (hasFinishedConsentForm == false))
         {
-            if ((readingConsentForm == true) && (android_window_displayed == false))
+            if ((readingConsentForm == true) && (android_window_displayed == false) && (can_display_window == true))
             {
                 android_window_displayed = true;
                 finished_reading = false;
@@ -2816,7 +2857,7 @@ public class Player : MovingObject
             if ((finishedExitingInstruction == true) && (BoardManager.finishedTutorialLevel1 == true) && (hasStartedConsent == true))
             {
 #if (UNITY_IOS || UNITY_ANDROID) && (!UNITY_STANDALONE || !UNITY_WEBPLAYER)
-                if ((readingConsentForm == true) && (android_window_displayed == false))
+                if ((readingConsentForm == true) && (android_window_displayed == false) && (can_display_window == true))
                 {
                     android_window_displayed = true;
                     finished_reading = false;
@@ -3359,6 +3400,7 @@ public class Player : MovingObject
                         {
                             finished_listening = false;
                             finished_reading = false;
+                            can_display_window = false;
                             finished_questions = false;
                             answeredQuestion1 = false;
                             answeredQuestion2 = false;
@@ -3372,6 +3414,7 @@ public class Player : MovingObject
                         {
                             finished_listening = false;
                             finished_reading = false;
+                            can_display_window = false;
                             finished_questions = false;
                             answeredQuestion1 = false;
                             answeredQuestion2 = false;
@@ -3387,6 +3430,7 @@ public class Player : MovingObject
                             readingConsentForm = false;
                             noConsent = false;
                             finished_listening = false;
+                            can_display_window = false;
                             finished_reading = false;
                             finished_questions = false;
                             answeredQuestion1 = false;
@@ -3514,6 +3558,7 @@ public class Player : MovingObject
                         {
                             finished_listening = false;
                             finished_reading = false;
+                            can_display_window = false;
                             finished_questions = false;
                             answeredQuestion1 = false;
                             answeredQuestion2 = false;
@@ -3669,7 +3714,7 @@ public class Player : MovingObject
                         else if (((hearingConsentForm == true) || (readingConsentForm == true)) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true))
                         {
                             hearingConsentForm = false;
-                            readingConsentForm = false;
+                            readingConsentForm = false;                          
                             noConsent = true;
                             canRepeat = true;
                             finished_questions = true;
@@ -4272,6 +4317,7 @@ public class Player : MovingObject
                         {
                             finished_listening = false;
                             finished_reading = false;
+                            can_display_window = false;
                             finished_questions = false;
                             answeredQuestion1 = false;
                             answeredQuestion2 = false;
@@ -4285,6 +4331,7 @@ public class Player : MovingObject
                         {
                             finished_listening = false;
                             finished_reading = false;
+                            can_display_window = false;
                             finished_questions = false;
                             answeredQuestion1 = false;
                             answeredQuestion2 = false;
@@ -4300,6 +4347,7 @@ public class Player : MovingObject
                             readingConsentForm = false;
                             noConsent = false;
                             finished_listening = false;
+                            can_display_window = false;
                             finished_reading = false;
                             finished_questions = false;
                             answeredQuestion1 = false;
@@ -4431,6 +4479,7 @@ public class Player : MovingObject
                             hearingConsentForm = false;
                             readingConsentForm = false;
                             noConsent = false;
+                            can_display_window = false;
                             finished_listening = false;
                             finished_reading = false;
                             finished_questions = false;
@@ -4493,6 +4542,7 @@ public class Player : MovingObject
                         {
                             hearingConsentForm = false;
                             readingConsentForm = false;
+                            can_display_window = false;
                             noConsent = true;
                             canRepeat = true;
                             finished_questions = true;
@@ -5370,6 +5420,7 @@ public class Player : MovingObject
                                     hasStartedConsent = false;
                                     hearingConsentForm = false;
                                     readingConsentForm = false;
+                                    can_display_window = false;
                                     noConsent = false;
                                     finished_reading = false;
                                     canRepeat = true;
@@ -5482,6 +5533,7 @@ public class Player : MovingObject
                                 {
                                     finished_listening = false;
                                     finished_reading = false;
+                                    can_display_window = false;
                                     finished_questions = false;
                                     answeredQuestion1 = false;
                                     answeredQuestion2 = false;
@@ -5495,6 +5547,7 @@ public class Player : MovingObject
                                 {
                                     finished_listening = false;
                                     finished_reading = false;
+                                    can_display_window = false;
                                     finished_questions = false;
                                     answeredQuestion1 = false;
                                     answeredQuestion2 = false;
@@ -5509,6 +5562,7 @@ public class Player : MovingObject
                                     hearingConsentForm = false;
                                     readingConsentForm = false;
                                     noConsent = false;
+                                    can_display_window = false;
                                     finished_listening = false;
                                     finished_reading = false;
                                     finished_questions = false;
@@ -5651,6 +5705,7 @@ public class Player : MovingObject
                                 {
                                     hearingConsentForm = false;
                                     readingConsentForm = false;
+                                    can_display_window = false;
                                     noConsent = false;
                                     finished_listening = false;                                  
                                     finished_reading = false;
@@ -5714,6 +5769,7 @@ public class Player : MovingObject
                                 {
                                     hearingConsentForm = false;
                                     readingConsentForm = false;
+                                    can_display_window = false;
                                     noConsent = true;
                                     canRepeat = true;
                                     finished_questions = true;
