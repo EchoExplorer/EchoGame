@@ -667,7 +667,7 @@ public class GM_title : MonoBehaviour
                 else if ((GM_main_pre.hasGoneThroughSetup == false) && (orientation_correct == true) && (determined_talkback == false))
                 {
                     debugPlayerInfo = "Tap registered. Incorrect gesture made. You should swipe left for Talkback or right for no Talkback.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[19], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[23], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // Tap registered, but it doesn't do anything in this instance.
                 else
@@ -697,7 +697,7 @@ public class GM_title : MonoBehaviour
                     else if ((GM_main_pre.hasGoneThroughSetup == false) && (orientation_correct == true) && (determined_talkback == true) && ((plugin_earphone == false) || (environment_setup == false)))
                     {
                         debugPlayerInfo = "Swiped left. Incorrect gesture made. You should tap.";
-                        SoundManager.instance.PlayVoice(Database.errorClips[14], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                        SoundManager.instance.PlayVoice(Database.errorClips[18], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
                     // If the player's game environment is set up properly.
                     else if ((GM_main_pre.hasGoneThroughSetup == true) || ((orientation_correct == true) && (determined_talkback == true) && (plugin_earphone == true) && (environment_setup == true)))
@@ -723,7 +723,7 @@ public class GM_title : MonoBehaviour
                     else if ((GM_main_pre.hasGoneThroughSetup == false) && (orientation_correct == true) && (determined_talkback == true) && ((plugin_earphone == false) || (environment_setup == false)))
                     {
                         debugPlayerInfo = "Swiped right. Incorrect gesture made. You should tap.";
-                        SoundManager.instance.PlayVoice(Database.errorClips[14], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                        SoundManager.instance.PlayVoice(Database.errorClips[18], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
                     // If the player's game environment is set up properly.
                     else if ((GM_main_pre.hasGoneThroughSetup == true) || ((orientation_correct == true) && (determined_talkback == true) && (plugin_earphone == true) && (environment_setup == true)))
@@ -738,13 +738,13 @@ public class GM_title : MonoBehaviour
                     if ((GM_main_pre.hasGoneThroughSetup == false) && (orientation_correct == true) && (determined_talkback == false))
                     {
                         debugPlayerInfo = "Swiped up. Incorrect gesture made. You should swipe left for Talkback or right for no Talkback.";
-                        SoundManager.instance.PlayVoice(Database.errorClips[19], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                        SoundManager.instance.PlayVoice(Database.errorClips[23], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
                     // If the player has made a swipe up when they were asked to tap.
                     else if ((GM_main_pre.hasGoneThroughSetup == false) && (orientation_correct == true) && (determined_talkback == true) && ((plugin_earphone == false) || (environment_setup == false)))
                     {
                         debugPlayerInfo = "Swiped up. Incorrect gesture made. You should tap.";
-                        SoundManager.instance.PlayVoice(Database.errorClips[14], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                        SoundManager.instance.PlayVoice(Database.errorClips[18], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
                     // If the player's game environment is set up properly.
                     else if ((GM_main_pre.hasGoneThroughSetup == true) || ((orientation_correct == true) && (determined_talkback == true) && (plugin_earphone == true) && (environment_setup == true)))
@@ -761,13 +761,13 @@ public class GM_title : MonoBehaviour
                     if ((GM_main_pre.hasGoneThroughSetup == false) && (orientation_correct == true) && (determined_talkback == false))
                     { 
                         debugPlayerInfo = "Swiped down. Incorrect gesture made. You should swipe left for Talkback or right for no Talkback.";
-                        SoundManager.instance.PlayVoice(Database.errorClips[19], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                        SoundManager.instance.PlayVoice(Database.errorClips[23], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
                     // If the player has made a swipe down when they were asked to tap.
                     else if ((GM_main_pre.hasGoneThroughSetup == false) && (orientation_correct == true) && (determined_talkback == true) && ((plugin_earphone == false) || (environment_setup == false)))
                     {
                         debugPlayerInfo = "Swiped down. Incorrect gesture made. You should tap.";
-                        SoundManager.instance.PlayVoice(Database.errorClips[14], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                        SoundManager.instance.PlayVoice(Database.errorClips[18], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
                     // If the player's game environment is set up properly.
                     else if ((GM_main_pre.hasGoneThroughSetup == true) || ((orientation_correct == true) && (determined_talkback == true) && (plugin_earphone == true) && (environment_setup == true)))
@@ -794,9 +794,8 @@ public class GM_title : MonoBehaviour
                     else if (ie.isRight == true)
                     {
                         debugPlayerInfo = "Right rotation registered. Incorrect gesture made. You should swipe left for Talkback or right for no Talkback.";
-                    }
-                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[19], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    }                    
+                    SoundManager.instance.PlayVoice(Database.errorClips[23], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If the player has made a rotation when they were asked to tap.
                 else if ((GM_main_pre.hasGoneThroughSetup == false) && (orientation_correct == true) && (determined_talkback == true) && ((plugin_earphone == false) || (environment_setup == false)))
@@ -811,8 +810,7 @@ public class GM_title : MonoBehaviour
                     {
                         debugPlayerInfo = "Right rotation registered. Incorrect gesture made. You should tap.";
                     }
-                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[14], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[18], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // Rotation registered, but it doesn't do anything in this instance.
                 else
@@ -827,8 +825,8 @@ public class GM_title : MonoBehaviour
                     {
                         debugPlayerInfo = "Right rotation registered. This gesture does nothing in this menu.";
                     }
-                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 }
+                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
             }
             // If a hold was registered.
             else if (ie.isHold == true)
@@ -837,13 +835,13 @@ public class GM_title : MonoBehaviour
                 if ((GM_main_pre.hasGoneThroughSetup == false) && (orientation_correct == true) && (determined_talkback == false))
                 {
                     debugPlayerInfo = "Hold registered. Incorrect gesture made. You should swipe left for Talkback or right for no Talkback.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[19], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[23], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If the player has made a hold when they were asked to tap.
                 else if ((GM_main_pre.hasGoneThroughSetup == false) && (orientation_correct == true) && (determined_talkback == true) && ((plugin_earphone == false) || (environment_setup == false)))
                 {
                     debugPlayerInfo = "Hold registered. Incorrect gesture made. You should tap.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[14], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[18], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // Hold registered, but doesn't do anything in this instance.
                 else
@@ -910,73 +908,77 @@ public class GM_title : MonoBehaviour
                 else if (ie.isSwipeHorizontalVerticalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with horizontal and vertical distance on swipe.";
+                    SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                }
+                else if (ie.isSwipeDirectionError == true)
+                {
+                    debugPlayerInfo = "Nothing happened because gesture was neither a horizontal or vertical swipe.";
+                    SoundManager.instance.PlayVoice(Database.errorClips[9], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                }
+                else if (ie.isBetweenTapSwipeError == true)
+                {
+                    debugPlayerInfo = "Nothing happened because gesture was in between tap and swipe.";
+                    SoundManager.instance.PlayVoice(Database.errorClips[10], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                }
+                else if (ie.isBetweenHoldSwipeError == true)
+                {
+                    debugPlayerInfo = "Nothing happened because gesture was in between hold and swipe.";
+                    SoundManager.instance.PlayVoice(Database.errorClips[11], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeLeftRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on swipe left.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[12], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeRightRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on swipe right.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[12], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeUpRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on swipe up.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[12], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeDownRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on swipe down.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[12], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isRotationAngleError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with angle on rotation.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[9], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[13], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isHoldHorizontalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with horizontal distance on hold.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[10], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[14], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isHoldVerticalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with vertical distance on hold.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[11], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[15], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isHoldHorizontalVerticalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with horizontal and vertical distance on hold.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[12], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[16], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isHoldRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on hold.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[13], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
-                }
-                else if (ie.isSwipeDirectionError == true)
-                {
-                    debugPlayerInfo = "Nothing happened because gesture was neither a horizontal or vertical swipe.";
-                }
-                else if (ie.isBetweenTapSwipeError == true)
-                {
-                    debugPlayerInfo = "Nothing happened because gesture was in between tap and swipe.";
-                }
-                else if (ie.isBetweenHoldSwipeError == true)
-                {
-                    debugPlayerInfo = "Nothing happened because gesture was in between hold and swipe.";
-                }  
+                    SoundManager.instance.PlayVoice(Database.errorClips[17], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                }               
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
             }
         }
@@ -1024,13 +1026,13 @@ public class GM_title : MonoBehaviour
                     else if (ie.isUp == true)
                     {
                         debugPlayerInfo = "Swiped up. Incorrect gesture made. You should swipe left for Talkback or right for no Talkback.";
-                        SoundManager.instance.PlayVoice(Database.errorClips[19], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                        SoundManager.instance.PlayVoice(Database.errorClips[23], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
                     // If the swipe was down, that was not the gesture asked for.
                     else if (ie.isDown == true)
                     {
                         debugPlayerInfo = "Swiped down. Incorrect gesture made. You should swipe left for Talkback or right for no Talkback.";
-                        SoundManager.instance.PlayVoice(Database.errorClips[19], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                        SoundManager.instance.PlayVoice(Database.errorClips[23], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.    
                 }
@@ -1039,14 +1041,14 @@ public class GM_title : MonoBehaviour
                 {
                     debugPlayerInfo = "Tap registered. Incorrect gesture made. You should swipe left for Talkback or right for no Talkback.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.  
-                    SoundManager.instance.PlayVoice(Database.errorClips[19], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[23], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If a hold is registered.
                 else if (ie.isHold == true)
                 {
                     debugPlayerInfo = "Hold registered. Incorrect gesture made. You should swipe left for Talkback or right for no Talkback.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.     
-                    SoundManager.instance.PlayVoice(Database.errorClips[19], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[23], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If a rotation is registered.
                 else if (ie.isRotate == true)
@@ -1060,7 +1062,7 @@ public class GM_title : MonoBehaviour
                         debugPlayerInfo = "Right rotation registered. Incorrect gesture made. You should swipe left for Talkback or right for no Talkback.";
                     }                  
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.   
-                    SoundManager.instance.PlayVoice(Database.errorClips[19], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[23], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If an unrecognized gesture is made.
                 else if (ie.isUnrecognized == true)
@@ -1083,36 +1085,40 @@ public class GM_title : MonoBehaviour
                     else if (ie.isSwipeHorizontalVerticalError == true)
                     {
                         debugPlayerInfo = "Nothing happened due to error with horizontal and vertical distance on swipe.";
-                    }
-                    // If this error was registered.
-                    else if (ie.isSwipeLeftRotationError == true)
-                    {
-                        debugPlayerInfo = "Nothing happened due to error with rotation on swipe left.";
-                        SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
-                    }
-                    // If this error was registered.
-                    else if (ie.isSwipeRightRotationError == true)
-                    {
-                        debugPlayerInfo = "Nothing happened due to error with rotation on swipe right.";
                         SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
                     else if (ie.isSwipeDirectionError == true)
                     {
                         debugPlayerInfo = "Nothing happened because gesture was neither a horizontal or vertical swipe.";
+                        SoundManager.instance.PlayVoice(Database.errorClips[9], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
                     else if (ie.isBetweenTapSwipeError == true)
                     {
                         debugPlayerInfo = "Nothing happened because gesture was in between tap and swipe.";
+                        SoundManager.instance.PlayVoice(Database.errorClips[10], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
                     else if (ie.isBetweenHoldSwipeError == true)
                     {
                         debugPlayerInfo = "Nothing happened because gesture was in between hold and swipe.";
+                        SoundManager.instance.PlayVoice(Database.errorClips[11], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
+                    // If this error was registered.
+                    else if (ie.isSwipeLeftRotationError == true)
+                    {
+                        debugPlayerInfo = "Nothing happened due to error with rotation on swipe left.";
+                        SoundManager.instance.PlayVoice(Database.errorClips[12], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    }
+                    // If this error was registered.
+                    else if (ie.isSwipeRightRotationError == true)
+                    {
+                        debugPlayerInfo = "Nothing happened due to error with rotation on swipe right.";
+                        SoundManager.instance.PlayVoice(Database.errorClips[12], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    }                   
                     // If another gesture error was registered that could have been a gesture other than a swipe left or right, tell the player that they should have swiped left or right.
                     else
                     {
                         debugPlayerInfo = "Incorrect gesture made. You should swipe left for Talkback or right for no Talkback.";
-                        SoundManager.instance.PlayVoice(Database.errorClips[19], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                        SoundManager.instance.PlayVoice(Database.errorClips[23], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 }
@@ -1137,7 +1143,7 @@ public class GM_title : MonoBehaviour
                 {
                     debugPlayerInfo = "Hold registered. Incorrect gesture made. You should tap to register that you are ready to continue.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.  
-                    SoundManager.instance.PlayVoice(Database.errorClips[14], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[18], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If a swipe is registered.
                 else if (ie.isSwipe == true)
@@ -1163,7 +1169,7 @@ public class GM_title : MonoBehaviour
                         debugPlayerInfo = "Swiped down. Incorrect gesture made. You should tap to register that you are ready to continue.";
                     }
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[14], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[18], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If a rotation is registered.
                 else if (ie.isRotate == true)
@@ -1179,7 +1185,7 @@ public class GM_title : MonoBehaviour
                         debugPlayerInfo = "Right rotation registered. Incorrect gesture made. You should tap to register that you are ready to continue.";
                     }
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.       
-                    SoundManager.instance.PlayVoice(Database.errorClips[14], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[18], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If an unrecognized gesture is made.
                 else if (ie.isUnrecognized == true)
@@ -1213,11 +1219,12 @@ public class GM_title : MonoBehaviour
                     else if (ie.isBetweenTapSwipeError == true)
                     {
                         debugPlayerInfo = "Nothing happened because gesture was in between tap and swipe.";
+                        SoundManager.instance.PlayVoice(Database.errorClips[10], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
                     else
                     {
                         debugPlayerInfo = "Incorrect gesture made. You should tap to register that you are ready to continue.";
-                        SoundManager.instance.PlayVoice(Database.errorClips[14], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                        SoundManager.instance.PlayVoice(Database.errorClips[18], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 }
@@ -1242,7 +1249,7 @@ public class GM_title : MonoBehaviour
                 {
                     debugPlayerInfo = "Hold registered. Incorrect gesture made. You should tap to register that you have put in headphones.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.  
-                    SoundManager.instance.PlayVoice(Database.errorClips[14], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[18], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If a swipe is registered.
                 else if (ie.isSwipe == true)
@@ -1250,28 +1257,25 @@ public class GM_title : MonoBehaviour
                     // If the swipe was left.
                     if (ie.isLeft == true)
                     {
-                        debugPlayerInfo = "Swiped left. Incorrect gesture made. You should tap to register that you have put in headphones.";
-                        SoundManager.instance.PlayVoice(Database.errorClips[14], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                        debugPlayerInfo = "Swiped left. Incorrect gesture made. You should tap to register that you have put in headphones.";                        
                     }
                     // If the swipe was right.
                     else if (ie.isRight == true)
                     {
                         debugPlayerInfo = "Swiped right. Incorrect gesture made. You should tap to register that you have put in headphones.";
-                        SoundManager.instance.PlayVoice(Database.errorClips[14], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
                     // If the swipe was up.
                     else if (ie.isUp == true)
                     {
                         debugPlayerInfo = "Swiped up. Incorrect gesture made. You should tap to register that you have put in headphones.";
-                        SoundManager.instance.PlayVoice(Database.errorClips[14], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
                     // If the swipe was down.
                     else if (ie.isDown == true)
                     {
                         debugPlayerInfo = "Swiped down. Incorrect gesture made. You should tap to register that you have put in headphones.";
-                        SoundManager.instance.PlayVoice(Database.errorClips[14], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
-                    }
+                    }                    
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.   
+                    SoundManager.instance.PlayVoice(Database.errorClips[18], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If a rotation is registered.
                 else if (ie.isRotate == true)
@@ -1287,7 +1291,7 @@ public class GM_title : MonoBehaviour
                         debugPlayerInfo = "Right rotation registered. Incorrect gesture made. You should tap to register that you have put in headphones.";
                     }
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    SoundManager.instance.PlayVoice(Database.errorClips[14], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[18], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If an unrecognized gesture is made.
                 else if (ie.isUnrecognized == true)
@@ -1321,11 +1325,12 @@ public class GM_title : MonoBehaviour
                     else if (ie.isBetweenTapSwipeError == true)
                     {
                         debugPlayerInfo = "Nothing happened because gesture was in between tap and swipe.";
+                        SoundManager.instance.PlayVoice(Database.errorClips[10], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
                     else
                     {
                         debugPlayerInfo = "Incorrect gesture made. You should tap to register that you have put in headphones.";
-                        SoundManager.instance.PlayVoice(Database.errorClips[14], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                        SoundManager.instance.PlayVoice(Database.errorClips[18], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 }
@@ -1447,69 +1452,77 @@ public class GM_title : MonoBehaviour
                     else if (ie.isSwipeHorizontalVerticalError == true)
                     {
                         debugPlayerInfo = "Nothing happened due to error with horizontal and vertical distance on swipe.";
+                        SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    }
+                    else if (ie.isSwipeDirectionError == true)
+                    {
+                        debugPlayerInfo = "Nothing happened because gesture was neither a horizontal or vertical swipe.";
+                        SoundManager.instance.PlayVoice(Database.errorClips[9], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    }
+                    else if (ie.isBetweenTapSwipeError == true)
+                    {
+                        debugPlayerInfo = "Nothing happened because gesture was in between tap and swipe.";
+                        SoundManager.instance.PlayVoice(Database.errorClips[10], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    }
+                    else if (ie.isBetweenHoldSwipeError == true)
+                    {
+                        debugPlayerInfo = "Nothing happened because gesture was in between hold and swipe.";
+                        SoundManager.instance.PlayVoice(Database.errorClips[11], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
                     // If this error was registered.
                     else if (ie.isSwipeLeftRotationError == true)
                     {
                         debugPlayerInfo = "Nothing happened due to error with rotation on swipe left.";
-                        SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                        SoundManager.instance.PlayVoice(Database.errorClips[12], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
                     // If this error was registered.
                     else if (ie.isSwipeRightRotationError == true)
                     {
                         debugPlayerInfo = "Nothing happened due to error with rotation on swipe right.";
-                        SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                        SoundManager.instance.PlayVoice(Database.errorClips[12], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
                     // If this error was registered.
                     else if (ie.isSwipeUpRotationError == true)
                     {
                         debugPlayerInfo = "Nothing happened due to error with rotation on swipe up.";
-                        SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                        SoundManager.instance.PlayVoice(Database.errorClips[12], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
                     // If this error was registered.
                     else if (ie.isSwipeDownRotationError == true)
                     {
                         debugPlayerInfo = "Nothing happened due to error with rotation on swipe down.";
-                        SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                        SoundManager.instance.PlayVoice(Database.errorClips[12], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
                     // If this error was registered.
                     else if (ie.isRotationAngleError == true)
                     {
                         debugPlayerInfo = "Nothing happened due to error with angle on rotation.";
-                        SoundManager.instance.PlayVoice(Database.errorClips[9], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                        SoundManager.instance.PlayVoice(Database.errorClips[13], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
                     // If this error was registered.
                     else if (ie.isHoldHorizontalError == true)
                     {
                         debugPlayerInfo = "Nothing happened due to error with horizontal distance on hold.";
-                        SoundManager.instance.PlayVoice(Database.errorClips[10], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                        SoundManager.instance.PlayVoice(Database.errorClips[14], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
                     // If this error was registered.
                     else if (ie.isHoldVerticalError == true)
                     {
                         debugPlayerInfo = "Nothing happened due to error with vertical distance on hold.";
-                        SoundManager.instance.PlayVoice(Database.errorClips[11], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                        SoundManager.instance.PlayVoice(Database.errorClips[15], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
                     // If this error was registered.
                     else if (ie.isHoldHorizontalVerticalError == true)
                     {
                         debugPlayerInfo = "Nothing happened due to error with horizontal and vertical distance on hold.";
-                        SoundManager.instance.PlayVoice(Database.errorClips[12], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                        SoundManager.instance.PlayVoice(Database.errorClips[16], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
                     // If this error was registered.
                     else if (ie.isHoldRotationError == true)
                     {
                         debugPlayerInfo = "Nothing happened due to error with rotation on hold.";
-                        SoundManager.instance.PlayVoice(Database.errorClips[13], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
-                    }
-                    else if (ie.isBetweenTapSwipeError == true)
-                    {
-                        debugPlayerInfo = "Nothing happened because gesture was in between tap and swipe.";
-                    }
-                    else if (ie.isBetweenHoldSwipeError == true)
-                    {
-                        debugPlayerInfo = "Nothing happened because gesture was in between hold and swipe.";
-                    }
+                        SoundManager.instance.PlayVoice(Database.errorClips[17], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    }                    
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 }
             }
@@ -1537,7 +1550,7 @@ public class GM_title : MonoBehaviour
                     {
                         readingConsentForm = true;
                         hearingConsentForm = false;
-                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[7] };
+                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[10] };
                         SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                     }
                 }

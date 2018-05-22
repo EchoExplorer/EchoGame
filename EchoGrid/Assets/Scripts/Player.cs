@@ -1286,7 +1286,14 @@ public class Player : MovingObject
                 if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
                 {
                     canRepeat = false;
-                    clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.consentClips[3] };
+                    if (GM_title.isUsingTalkback == true)
+                    {
+                        clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.consentClips[4] };
+                    }
+                    else if (GM_title.isUsingTalkback == false)
+                    {
+                        clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.consentClips[3] };
+                    }                    
                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                 }
             }
@@ -1296,7 +1303,14 @@ public class Player : MovingObject
                 if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
                 {
                     canRepeat = false;
-                    clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.consentClips[4] };
+                    if (GM_title.isUsingTalkback == true)
+                    {
+                        clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.consentClips[6] };
+                    }
+                    else if (GM_title.isUsingTalkback == false)
+                    {
+                        clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.consentClips[5] };
+                    }
                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                 }
             }
@@ -1306,7 +1320,14 @@ public class Player : MovingObject
                 if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
                 {
                     canRepeat = false;
-                    clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.consentClips[5] };
+                    if (GM_title.isUsingTalkback == true)
+                    {
+                        clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.consentClips[8] };
+                    }
+                    else if (GM_title.isUsingTalkback == false)
+                    {
+                        clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.consentClips[7] };
+                    }
                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                 }
             }
@@ -1316,7 +1337,7 @@ public class Player : MovingObject
                 if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
                 {
                     canRepeat = false;
-                    clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.consentClips[6] };
+                    clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.consentClips[9] };
                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                 }
             }
@@ -1328,7 +1349,7 @@ public class Player : MovingObject
                     if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
                     {
                         canRepeat = false;
-                        clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.consentClips[16] };
+                        clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.consentClips[19] };
                         SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                     }
                 }
@@ -1337,7 +1358,7 @@ public class Player : MovingObject
                     if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
                     {
                         canRepeat = false;
-                        clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.consentClips[17] };
+                        clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.consentClips[20] };
                         SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                     }
                 }
@@ -1346,7 +1367,7 @@ public class Player : MovingObject
                     if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
                     {
                         canRepeat = false;
-                        clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.consentClips[18] };
+                        clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.consentClips[21] };
                         SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                     }
                 }
@@ -3245,7 +3266,7 @@ public class Player : MovingObject
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         hasFinishedConsentForm = true;
                         canRepeat = true;                        
-                        clips = new List<AudioClip>() { Database.consentClips[22] };
+                        clips = new List<AudioClip>() { Database.consentClips[25] };
                         SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                     }
                     else if (((hearingConsentForm == true) || (readingConsentForm == true)) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (question1 == true) && (question2 == true) && (question3 == true))
@@ -3255,7 +3276,7 @@ public class Player : MovingObject
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         hasFinishedConsentForm = true;
                         canRepeat = true;
-                        clips = new List<AudioClip>() { Database.consentClips[20] };
+                        clips = new List<AudioClip>() { Database.consentClips[23] };
                         SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                     }
                     else
@@ -3299,7 +3320,14 @@ public class Player : MovingObject
                             canRepeat = true;
                             debugPlayerInfo = "Swipe left registered. Reading consent form through audio instructions.";
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                            clips = new List<AudioClip>() { Database.consentClips[2], Database.consentClips[3] };
+                            if (GM_title.isUsingTalkback == true)
+                            {
+                                clips = new List<AudioClip>() { Database.consentClips[2], Database.consentClips[4] };
+                            }
+                            else if (GM_title.isUsingTalkback == false)
+                            {
+                                clips = new List<AudioClip>() { Database.consentClips[2], Database.consentClips[3] };
+                            }
                             SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                         }
                         else if ((hearingConsentForm == true) && (answeredQuestion1 == false))
@@ -3439,11 +3467,11 @@ public class Player : MovingObject
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                             if (GM_title.isUsingTalkback == true)
                             {
-                                clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.consentClips[11] };
+                                clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.consentClips[14] };
                             }
                             else if (GM_title.isUsingTalkback == false)
                             {
-                                clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.consentClips[10] };
+                                clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.consentClips[13] };
                             }                            
                             SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                         }
@@ -3630,11 +3658,11 @@ public class Player : MovingObject
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                             if (GM_title.isUsingTalkback == true)
                             {
-                                clips = new List<AudioClip>() { Database.consentClips[15] };
+                                clips = new List<AudioClip>() { Database.consentClips[18] };
                             }
                             else if (GM_title.isUsingTalkback == false)
                             {
-                                clips = new List<AudioClip>() { Database.consentClips[14] };
+                                clips = new List<AudioClip>() { Database.consentClips[17] };
                             }                            
                             SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                         }
@@ -3649,11 +3677,11 @@ public class Player : MovingObject
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                             if (GM_title.isUsingTalkback == true)
                             {
-                                clips = new List<AudioClip>() { Database.consentClips[15] };
+                                clips = new List<AudioClip>() { Database.consentClips[18] };
                             }
                             else if (GM_title.isUsingTalkback == false)
                             {
-                                clips = new List<AudioClip>() { Database.consentClips[14] };
+                                clips = new List<AudioClip>() { Database.consentClips[17] };
                             }
                             SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                         }
@@ -3839,73 +3867,77 @@ public class Player : MovingObject
                 else if (ie.isSwipeHorizontalVerticalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with horizontal and vertical distance on swipe.";
+                    SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                }
+                else if (ie.isSwipeDirectionError == true)
+                {
+                    debugPlayerInfo = "Nothing happened because gesture was neither a horizontal or vertical swipe.";
+                    SoundManager.instance.PlayVoice(Database.errorClips[9], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                }
+                else if (ie.isBetweenTapSwipeError == true)
+                {
+                    debugPlayerInfo = "Nothing happened because gesture was in between tap and swipe.";
+                    SoundManager.instance.PlayVoice(Database.errorClips[10], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                }
+                else if (ie.isBetweenHoldSwipeError == true)
+                {
+                    debugPlayerInfo = "Nothing happened because gesture was in between hold and swipe.";
+                    SoundManager.instance.PlayVoice(Database.errorClips[11], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeLeftRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on swipe left.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[12], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeRightRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on swipe right.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[12], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeUpRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on swipe up.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[12], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeDownRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on swipe down.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[12], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isRotationAngleError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with angle on rotation.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[9], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[13], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isHoldHorizontalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with horizontal distance on hold.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[10], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[14], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isHoldVerticalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with vertical distance on hold.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[11], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[15], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isHoldHorizontalVerticalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with horizontal and vertical distance on hold.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[12], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[16], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isHoldRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on hold.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[13], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
-                }
-                else if (ie.isSwipeDirectionError == true)
-                {
-                    debugPlayerInfo = "Nothing happened because gesture was neither a horizontal or vertical swipe.";
-                }
-                else if (ie.isBetweenTapSwipeError == true)
-                {
-                    debugPlayerInfo = "Nothing happened because gesture was in between tap and swipe.";
-                }
-                else if (ie.isBetweenHoldSwipeError == true)
-                {
-                    debugPlayerInfo = "Nothing happened because gesture was in between hold and swipe.";
-                }
+                    SoundManager.instance.PlayVoice(Database.errorClips[17], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                }               
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
             }
         }
@@ -4030,7 +4062,7 @@ public class Player : MovingObject
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         hasFinishedConsentForm = true;
                         canRepeat = true;
-                        clips = new List<AudioClip>() { Database.consentClips[22] };
+                        clips = new List<AudioClip>() { Database.consentClips[25] };
                         SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                     }
                     else if (((hearingConsentForm == true) || (readingConsentForm == true)) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (question1 == true) && (question2 == true) && (question3 == true))
@@ -4040,7 +4072,7 @@ public class Player : MovingObject
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         hasFinishedConsentForm = true;
                         canRepeat = true;
-                        clips = new List<AudioClip>() { Database.consentClips[20] };
+                        clips = new List<AudioClip>() { Database.consentClips[23] };
                         SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                     }
                     else
@@ -4201,7 +4233,14 @@ public class Player : MovingObject
                             canRepeat = true;
                             debugPlayerInfo = "Swipe left registered. Reading consent form through audio instructions.";
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                            clips = new List<AudioClip>() { Database.consentClips[2], Database.consentClips[3] };
+                            if (GM_title.isUsingTalkback == true)
+                            {
+                                clips = new List<AudioClip>() { Database.consentClips[2], Database.consentClips[4] };
+                            }
+                            else if (GM_title.isUsingTalkback == false)
+                            {
+                                clips = new List<AudioClip>() { Database.consentClips[2], Database.consentClips[3] };
+                            }
                             SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                         }
                         else if ((hearingConsentForm == true) && (answeredQuestion1 == false))
@@ -4309,11 +4348,11 @@ public class Player : MovingObject
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                             if (GM_title.isUsingTalkback == true)
                             {
-                                clips = new List<AudioClip>() { Database.consentClips[11] };
+                                clips = new List<AudioClip>() { Database.consentClips[14] };
                             }
                             else if (GM_title.isUsingTalkback == false)
                             {
-                                clips = new List<AudioClip>() { Database.consentClips[10] };
+                                clips = new List<AudioClip>() { Database.consentClips[13] };
                             }
                             SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                         }
@@ -4442,11 +4481,11 @@ public class Player : MovingObject
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                             if (GM_title.isUsingTalkback == true)
                             {
-                                clips = new List<AudioClip>() { Database.consentClips[15] };
+                                clips = new List<AudioClip>() { Database.consentClips[18] };
                             }
                             else if (GM_title.isUsingTalkback == false)
                             {
-                                clips = new List<AudioClip>() { Database.consentClips[14] };
+                                clips = new List<AudioClip>() { Database.consentClips[17] };
                             }
                             SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                         }
@@ -4461,11 +4500,11 @@ public class Player : MovingObject
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                             if (GM_title.isUsingTalkback == true)
                             {
-                                clips = new List<AudioClip>() { Database.consentClips[15] };
+                                clips = new List<AudioClip>() { Database.consentClips[18] };
                             }
                             else if (GM_title.isUsingTalkback == false)
                             {
-                                clips = new List<AudioClip>() { Database.consentClips[14] };
+                                clips = new List<AudioClip>() { Database.consentClips[17] };
                             }
                             SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                         }
@@ -4589,73 +4628,77 @@ public class Player : MovingObject
                 else if (ie.isSwipeHorizontalVerticalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with horizontal and vertical distance on swipe.";
+                    SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                }
+                else if (ie.isSwipeDirectionError == true)
+                {
+                    debugPlayerInfo = "Nothing happened because gesture was neither a horizontal or vertical swipe.";
+                    SoundManager.instance.PlayVoice(Database.errorClips[9], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                }
+                else if (ie.isBetweenTapSwipeError == true)
+                {
+                    debugPlayerInfo = "Nothing happened because gesture was in between tap and swipe.";
+                    SoundManager.instance.PlayVoice(Database.errorClips[10], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                }
+                else if (ie.isBetweenHoldSwipeError == true)
+                {
+                    debugPlayerInfo = "Nothing happened because gesture was in between hold and swipe.";
+                    SoundManager.instance.PlayVoice(Database.errorClips[11], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeLeftRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on swipe left.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[12], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeRightRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on swipe right.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[12], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeUpRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on swipe up.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[12], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isSwipeDownRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on swipe down.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[12], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isRotationAngleError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with angle on rotation.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[9], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[13], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isHoldHorizontalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with horizontal distance on hold.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[10], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[14], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isHoldVerticalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with vertical distance on hold.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[11], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[15], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isHoldHorizontalVerticalError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with horizontal and vertical distance on hold.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[12], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                    SoundManager.instance.PlayVoice(Database.errorClips[16], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If this error was registered.
                 else if (ie.isHoldRotationError == true)
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on hold.";
-                    SoundManager.instance.PlayVoice(Database.errorClips[13], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
-                }
-                else if (ie.isSwipeDirectionError == true)
-                {
-                    debugPlayerInfo = "Nothing happened because gesture was neither a horizontal or vertical swipe.";
-                }
-                else if (ie.isBetweenTapSwipeError == true)
-                {
-                    debugPlayerInfo = "Nothing happened because gesture was in between tap and swipe.";
-                }
-                else if (ie.isBetweenHoldSwipeError == true)
-                {
-                    debugPlayerInfo = "Nothing happened because gesture was in between hold and swipe.";
-                }
+                    SoundManager.instance.PlayVoice(Database.errorClips[17], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                }           
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
             }
 
@@ -5073,41 +5116,38 @@ public class Player : MovingObject
                         if ((ie.isUnrecognized == true) && (ie.isTapHorizontalError == true))
                         {
                             debugPlayerInfo = "Nothing happened due to error with horizontal distance on tap.";
-                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                             SoundManager.instance.PlayVoice(Database.errorClips[0], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                         }
                         // If this error was registered.
                         else if ((ie.isUnrecognized == true) && (ie.isTapVerticalError == true))
                         {
                             debugPlayerInfo = "Nothing happened due to error with vertical distance on tap.";
-                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                             SoundManager.instance.PlayVoice(Database.errorClips[1], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                         }
                         // If this error was registered.
                         else if ((ie.isUnrecognized == true) && (ie.isTapHorizontalVerticalError == true))
                         {
                             debugPlayerInfo = "Nothing happened due to error with horizontal and vertical distance on tap.";
-                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                             SoundManager.instance.PlayVoice(Database.errorClips[2], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                         }
                         // If this error was registered.
                         else if ((ie.isUnrecognized == true) && (ie.isTapRotationError == true))
                         {
                             debugPlayerInfo = "Nothing happened due to error with rotation on tap.";
-                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                             SoundManager.instance.PlayVoice(Database.errorClips[3], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                         }
                         else if ((ie.isUnrecognized == true) && (ie.isBetweenTapSwipeError == true))
                         {
                             debugPlayerInfo = "Nothing happened because gesture was in between tap and swipe.";
+                            SoundManager.instance.PlayVoice(Database.errorClips[10], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                         }
                         // If the gesture was not a tap.
                         else
                         {
-                            debugPlayerInfo = "Incorrect gesture made. You should tap.";
-                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                            SoundManager.instance.PlayVoice(Database.errorClips[14], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                            debugPlayerInfo = "Incorrect gesture made. You should tap.";                            
+                            SoundManager.instance.PlayVoice(Database.errorClips[18], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                         }
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     }
                     // If the tapping instruction has not finished yet.
                     else if (((action == InterceptAction.TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.LEFTSWIPE) || (action == InterceptAction.RIGHTSWIPE) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || (action == InterceptAction.LEFTROTATE) || (action == InterceptAction.RIGHTROTATE) || (ie.isUnrecognized == true)) && (finishedTappingInstruction == false))
@@ -5161,41 +5201,43 @@ public class Player : MovingObject
                             // If this error was registered.
                             if ((ie.isUnrecognized == true) && (ie.isSwipeUpVerticalError == true))
                             {
-                                debugPlayerInfo = "Nothing happened due to error with vertical distance on swipe up.";
-                                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                                debugPlayerInfo = "Nothing happened due to error with vertical distance on swipe up.";                                
                                 SoundManager.instance.PlayVoice(Database.errorClips[6], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                             }
                             // If this error was registered.
                             else if (ie.isSwipeHorizontalVerticalError == true)
                             {
                                 debugPlayerInfo = "Nothing happened due to error with horizontal and vertical distance on swipe.";
-                            }
-                            // If this error was registered.
-                            else if ((ie.isUnrecognized == true) && (ie.isSwipeUpRotationError == true))
-                            {
-                                debugPlayerInfo = "Nothing happened due to error with rotation on swipe up.";
-                                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                                 SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                             }
                             else if (ie.isSwipeDirectionError == true)
                             {
                                 debugPlayerInfo = "Nothing happened because gesture was neither a horizontal or vertical swipe.";
+                                SoundManager.instance.PlayVoice(Database.errorClips[9], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                             }
                             else if ((ie.isUnrecognized == true) && (ie.isBetweenTapSwipeError == true))
                             {
                                 debugPlayerInfo = "Nothing happened because gesture was in between tap and swipe.";
+                                SoundManager.instance.PlayVoice(Database.errorClips[10], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                             }
                             else if ((ie.isUnrecognized == true) && (ie.isBetweenHoldSwipeError == true))
                             {
                                 debugPlayerInfo = "Nothing happened because gesture was in between hold and swipe.";
+                                SoundManager.instance.PlayVoice(Database.errorClips[11], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                             }
+                            // If this error was registered.
+                            else if ((ie.isUnrecognized == true) && (ie.isSwipeUpRotationError == true))
+                            {
+                                debugPlayerInfo = "Nothing happened due to error with rotation on swipe up.";
+                                SoundManager.instance.PlayVoice(Database.errorClips[12], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                            }                          
                             // If the gesture was not a swipe up.
                             else
                             {
                                 debugPlayerInfo = "Incorrect gesture made. You should swipe up.";
-                                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                                SoundManager.instance.PlayVoice(Database.errorClips[15], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                                SoundManager.instance.PlayVoice(Database.errorClips[19], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                             }
+                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         }
                         // If the swiping instruction has not finished yet.
                         else if (((action == InterceptAction.TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.LEFTSWIPE) || (action == InterceptAction.RIGHTSWIPE) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || (action == InterceptAction.LEFTROTATE) || (action == InterceptAction.RIGHTROTATE) || (ie.isUnrecognized == true)) && (finishedSwipingInstruction == false))
@@ -5267,45 +5309,42 @@ public class Player : MovingObject
                             // If the action was not a hold.
                             else if (((action == InterceptAction.TAP) || (action == InterceptAction.LEFTSWIPE) || (action == InterceptAction.RIGHTSWIPE) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || (action == InterceptAction.LEFTROTATE) || (action == InterceptAction.RIGHTROTATE) || (ie.isUnrecognized == true)) && (finishedMenuInstruction == true))
                             {
+                                if ((ie.isUnrecognized == true) && (ie.isBetweenHoldSwipeError == true))
+                                {
+                                    debugPlayerInfo = "Nothing happened because gesture was in between hold and swipe.";
+                                    SoundManager.instance.PlayVoice(Database.errorClips[11], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                                }
                                 // If this error was registered.
-                                if ((ie.isUnrecognized == true) && (ie.isHoldHorizontalError == true))
+                                else if ((ie.isUnrecognized == true) && (ie.isHoldHorizontalError == true))
                                 {
                                     debugPlayerInfo = "Nothing happened due to error with horizontal distance on hold.";
-                                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                                    SoundManager.instance.PlayVoice(Database.errorClips[10], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                                    SoundManager.instance.PlayVoice(Database.errorClips[14], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.                                    
                                 }
                                 // If this error was registered.
                                 else if ((ie.isUnrecognized == true) && (ie.isHoldVerticalError == true))
                                 {
                                     debugPlayerInfo = "Nothing happened due to error with vertical distance on hold.";
-                                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                                    SoundManager.instance.PlayVoice(Database.errorClips[11], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                                    SoundManager.instance.PlayVoice(Database.errorClips[15], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                                 }
                                 // If this error was registered.
                                 else if ((ie.isUnrecognized == true) && (ie.isHoldHorizontalVerticalError == true))
                                 {
                                     debugPlayerInfo = "Nothing happened due to error with horizontal and vertical distance on hold.";
-                                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                                    SoundManager.instance.PlayVoice(Database.errorClips[12], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                                    SoundManager.instance.PlayVoice(Database.errorClips[16], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                                 }
                                 // If this error was registered.
                                 else if ((ie.isUnrecognized == true) && (ie.isHoldRotationError == true))
                                 {
                                     debugPlayerInfo = "Nothing happened due to error with rotation on hold.";
-                                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                                    SoundManager.instance.PlayVoice(Database.errorClips[13], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
-                                }
-                                else if ((ie.isUnrecognized == true) && (ie.isBetweenHoldSwipeError == true))
-                                {
-                                    debugPlayerInfo = "Nothing happened because gesture was in between hold and swipe.";
-                                }
+                                    SoundManager.instance.PlayVoice(Database.errorClips[17], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                                }                                
                                 // If the gesture was not a hold.
                                 else
                                 {
-                                    debugPlayerInfo = "Incorrect gesture made. You should make a hold.";
-                                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                                    SoundManager.instance.PlayVoice(Database.errorClips[16], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                                    debugPlayerInfo = "Incorrect gesture made. You should make a hold.";                                    
+                                    SoundManager.instance.PlayVoice(Database.errorClips[20], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                                 }
+                                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                             }
                             // If the pause menu instruction has not finished yet.
                             else if (((action == InterceptAction.TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.LEFTSWIPE) || (action == InterceptAction.RIGHTSWIPE) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || (action == InterceptAction.LEFTROTATE) || (action == InterceptAction.RIGHTROTATE) || (ie.isUnrecognized == true)) && ((finishedMenuInstruction == false) || (waitingForOpenMenuInstruction == true)))
@@ -5351,41 +5390,43 @@ public class Player : MovingObject
                                 // If this error was registered.
                                 if ((ie.isUnrecognized == true) && (ie.isSwipeDownVerticalError == true))
                                 {
-                                    debugPlayerInfo = "Nothing happened due to error with vertical distance on swipe down.";
-                                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                                    debugPlayerInfo = "Nothing happened due to error with vertical distance on swipe down.";                                    
                                     SoundManager.instance.PlayVoice(Database.errorClips[7], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                                 }
                                 // If this error was registered.
                                 else if (ie.isSwipeHorizontalVerticalError == true)
                                 {
                                     debugPlayerInfo = "Nothing happened due to error with horizontal and vertical distance on swipe.";
-                                }
-                                // If this error was registered.
-                                else if ((ie.isUnrecognized == true) && (ie.isSwipeDownRotationError == true))
-                                {
-                                    debugPlayerInfo = "Nothing happened due to error with rotation on swipe down.";
-                                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                                     SoundManager.instance.PlayVoice(Database.errorClips[8], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                                 }
                                 else if (ie.isSwipeDirectionError == true)
                                 {
                                     debugPlayerInfo = "Nothing happened because gesture was neither a horizontal or vertical swipe.";
+                                    SoundManager.instance.PlayVoice(Database.errorClips[9], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                                 }
                                 else if ((ie.isUnrecognized == true) && (ie.isBetweenTapSwipeError == true))
                                 {
                                     debugPlayerInfo = "Nothing happened because gesture was in between tap and swipe.";
+                                    SoundManager.instance.PlayVoice(Database.errorClips[10], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                                 }
                                 else if ((ie.isUnrecognized == true) && (ie.isBetweenHoldSwipeError == true))
                                 {
                                     debugPlayerInfo = "Nothing happened because gesture was in between hold and swipe.";
+                                    SoundManager.instance.PlayVoice(Database.errorClips[11], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                                 }
+                                // If this error was registered.
+                                else if ((ie.isUnrecognized == true) && (ie.isSwipeDownRotationError == true))
+                                {
+                                    debugPlayerInfo = "Nothing happened due to error with rotation on swipe down.";
+                                    SoundManager.instance.PlayVoice(Database.errorClips[12], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                                }                                
                                 // If the gesture was not a swipe down.
                                 else
                                 {
                                     debugPlayerInfo = "Incorrect gesture made. You should swipe down.";
-                                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                                    SoundManager.instance.PlayVoice(Database.errorClips[17], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                                    SoundManager.instance.PlayVoice(Database.errorClips[21], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                                 }
+                                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                             }
                             // If the exit instruction has not finished yet.
                             else if (((action == InterceptAction.TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.LEFTSWIPE) || (action == InterceptAction.RIGHTSWIPE) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || (action == InterceptAction.LEFTROTATE) || (action == InterceptAction.RIGHTROTATE) || (ie.isUnrecognized == true)) && (finishedExitingInstruction == false))
@@ -5402,7 +5443,14 @@ public class Player : MovingObject
                                     canRepeat = true;
                                     debugPlayerInfo = "Swipe left registered. Reading consent form through audio instructions.";
                                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                                    clips = new List<AudioClip>() { Database.consentClips[2], Database.consentClips[3] };
+                                    if (GM_title.isUsingTalkback == true)
+                                    {
+                                        clips = new List<AudioClip>() { Database.consentClips[2], Database.consentClips[4] };
+                                    }
+                                    else if (GM_title.isUsingTalkback == false)
+                                    {
+                                        clips = new List<AudioClip>() { Database.consentClips[2], Database.consentClips[3] };
+                                    }
                                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                                 }
                                 else if ((hearingConsentForm == true) && (answeredQuestion1 == false))
@@ -5521,11 +5569,11 @@ public class Player : MovingObject
                                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                                     if (GM_title.isUsingTalkback == true)
                                     {
-                                        clips = new List<AudioClip>() { Database.consentClips[9] };
+                                        clips = new List<AudioClip>() { Database.consentClips[12] };
                                     }
                                     else if (GM_title.isUsingTalkback == false)
                                     {
-                                        clips = new List<AudioClip>() { Database.consentClips[8] };
+                                        clips = new List<AudioClip>() { Database.consentClips[11] };
                                     }
                                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                                 }
@@ -5654,11 +5702,11 @@ public class Player : MovingObject
                                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                                     if (GM_title.isUsingTalkback == true)
                                     {
-                                        clips = new List<AudioClip>() { Database.consentClips[13] };
+                                        clips = new List<AudioClip>() { Database.consentClips[16] };
                                     }
                                     else if (GM_title.isUsingTalkback == false)
                                     {
-                                        clips = new List<AudioClip>() { Database.consentClips[12] };
+                                        clips = new List<AudioClip>() { Database.consentClips[15] };
                                     }
                                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                                 }
@@ -5673,11 +5721,11 @@ public class Player : MovingObject
                                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                                     if (GM_title.isUsingTalkback == true)
                                     {
-                                        clips = new List<AudioClip>() { Database.consentClips[13] };
+                                        clips = new List<AudioClip>() { Database.consentClips[16] };
                                     }
                                     else if (GM_title.isUsingTalkback == false)
                                     {
-                                        clips = new List<AudioClip>() { Database.consentClips[12] };
+                                        clips = new List<AudioClip>() { Database.consentClips[15] };
                                     }
                                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                                 }
@@ -5691,7 +5739,7 @@ public class Player : MovingObject
                                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                                     hasFinishedConsentForm = true;
                                     canRepeat = true;
-                                    clips = new List<AudioClip>() { Database.consentClips[21] };
+                                    clips = new List<AudioClip>() { Database.consentClips[24] };
                                     SoundManager.instance.PlayClips(clips, null, 0, () => quitInterception(), 1, null, true);
                                 }
                                 else if (((hearingConsentForm == true) || (readingConsentForm == true)) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (question1 == true) && (question2 == true) && (question3 == true))
@@ -5701,7 +5749,7 @@ public class Player : MovingObject
                                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                                     hasFinishedConsentForm = true;
                                     canRepeat = true;
-                                    clips = new List<AudioClip>() { Database.consentClips[19] };
+                                    clips = new List<AudioClip>() { Database.consentClips[22] };
                                     SoundManager.instance.PlayClips(clips, null, 0, () => quitInterception(), 1, null, true);
                                 }
                                 else
@@ -5757,42 +5805,39 @@ public class Player : MovingObject
                         // If this error was registered.
                         if ((ie.isUnrecognized == true) && (ie.isTapHorizontalError == true))
                         {
-                            debugPlayerInfo = "Nothing happened due to error with horizontal distance on tap.";
-                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                            debugPlayerInfo = "Nothing happened due to error with horizontal distance on tap.";                            
                             SoundManager.instance.PlayVoice(Database.errorClips[0], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                         }
                         // If this error was registered.
                         else if ((ie.isUnrecognized == true) && (ie.isTapVerticalError == true))
                         {
                             debugPlayerInfo = "Nothing happened due to error with vertical distance on tap.";
-                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                             SoundManager.instance.PlayVoice(Database.errorClips[1], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                         }
                         // If this error was registered.
                         else if ((ie.isUnrecognized == true) && (ie.isTapHorizontalVerticalError == true))
                         {
                             debugPlayerInfo = "Nothing happened due to error with horizontal and vertical distance on tap.";
-                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                             SoundManager.instance.PlayVoice(Database.errorClips[2], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                         }
                         // If this error was registered.
                         else if ((ie.isUnrecognized == true) && (ie.isTapRotationError == true))
                         {
                             debugPlayerInfo = "Nothing happened due to error with rotation on tap.";
-                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                             SoundManager.instance.PlayVoice(Database.errorClips[3], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                         }
                         else if ((ie.isUnrecognized == true) && (ie.isBetweenTapSwipeError == true))
                         {
                             debugPlayerInfo = "Nothing happened because gesture was in between tap and swipe.";
+                            SoundManager.instance.PlayVoice(Database.errorClips[10], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                         }
                         // If a tap was not registered.
                         else
                         {
                             debugPlayerInfo = "Incorrect gesture made. You should tap.";
-                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                            SoundManager.instance.PlayVoice(Database.errorClips[14], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                            SoundManager.instance.PlayVoice(Database.errorClips[18], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                         }
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     }
                     // If the tap at corner instruction has not finished yet.
                     else if (((action == InterceptAction.TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.LEFTSWIPE) || (action == InterceptAction.RIGHTSWIPE) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || (action == InterceptAction.LEFTROTATE) || (action == InterceptAction.RIGHTROTATE) || (ie.isUnrecognized == true)) && (finishedCornerInstruction == false) && (finishedTurningInstruction == false))
@@ -5869,17 +5914,16 @@ public class Player : MovingObject
                         // If this error was registered.
                         if ((ie.isUnrecognized == true) && (ie.isRotationAngleError == true))
                         {
-                            debugPlayerInfo = "Nothing happened due to error with angle of rotation.";
-                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                            SoundManager.instance.PlayVoice(Database.errorClips[9], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                            debugPlayerInfo = "Nothing happened due to error with angle of rotation.";                            
+                            SoundManager.instance.PlayVoice(Database.errorClips[13], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                         }
                         // If the gesture was not a rotation
                         else
                         {
                             debugPlayerInfo = "Incorrect gesture made. You should make a left or right rotation.";
-                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                            SoundManager.instance.PlayVoice(Database.errorClips[18], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
+                            SoundManager.instance.PlayVoice(Database.errorClips[22], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                         }
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     }
                     // If the turning instruction has not finished yet.
                     else if (((action == InterceptAction.TAP) || (action == InterceptAction.MENU) || (action == InterceptAction.LEFTSWIPE) || (action == InterceptAction.RIGHTSWIPE) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || (action == InterceptAction.LEFTROTATE) || (action == InterceptAction.RIGHTROTATE) || (ie.isUnrecognized == true)) && (hasTappedAtCorner == true) && (finishedTurningInstruction == false))

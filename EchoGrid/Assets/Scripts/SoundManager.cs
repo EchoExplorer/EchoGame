@@ -10,13 +10,13 @@ using System;
 public class SoundManager : MonoBehaviour
 {
 
-    public AudioSource[] efxSource;                 // Drag a reference to the audio source which will play the sound effects.
+    public AudioSource[] efxSource; // Drag a reference to the audio source which will play the sound effects.
     public AudioSource voiceSource;
     public AudioSource clipSource;
     public AudioSource echoSource;
     public AudioSource crashSource;
     public AudioSource singleSource;
-    public static SoundManager instance = null;     // Allows other scripts to call functions from SoundManager.				
+    public static SoundManager instance = null; // Allows other scripts to call functions from SoundManager.				
     int max_sfx_playing = 5;
     bool voice_adjusted = false;
 
@@ -31,16 +31,15 @@ public class SoundManager : MonoBehaviour
 
     void Awake()
     {
+        // If instance does not already exist, set it to this.
         if (instance == null)
-        {
-            // If not, set it to this.
+        {            
             instance = this;
         }
-        // If instance already exists:
+        // If instance already exists.
         else if (instance != this)
-        {
-            // Destroy this, this enforces our singleton pattern so there can only be one instance of SoundManager.
-            Destroy(gameObject);
+        {           
+            Destroy(gameObject); // Destroy this. This enforces our singleton pattern so there can only be one instance of SoundManager.
         }
 
         // Set SoundManager to DontDestroyOnLoad so that it won't be destroyed when reloading our scene.

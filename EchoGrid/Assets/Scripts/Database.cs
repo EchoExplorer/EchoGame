@@ -46,7 +46,7 @@ public class Database : MonoBehaviour
 
     // Consent menu clips
     [HideInInspector]
-    public static AudioClip[] consentClips = new AudioClip[23];
+    public static AudioClip[] consentClips = new AudioClip[26];
 
     // Game environment settings clips
     [HideInInspector]
@@ -76,7 +76,7 @@ public class Database : MonoBehaviour
 
     // Error clips
     [HideInInspector]
-    public static AudioClip[] errorClips = new AudioClip[21];
+    public static AudioClip[] errorClips = new AudioClip[25];
 
     // Sound effect clips
     [HideInInspector]
@@ -120,26 +120,29 @@ public class Database : MonoBehaviour
         consentClips[0] = Resources.Load("instructions/consent/consent_intro_normal") as AudioClip;
         consentClips[1] = Resources.Load("instructions/consent/consent_intro_talkback") as AudioClip;
         consentClips[2] = Resources.Load("instructions/consent/consent_form") as AudioClip;
-        consentClips[3] = Resources.Load("instructions/consent/eighteen_plus") as AudioClip;
-        consentClips[4] = Resources.Load("instructions/consent/read_and_understand") as AudioClip;
-        consentClips[5] = Resources.Load("instructions/consent/want_to_participate") as AudioClip;
-        consentClips[6] = Resources.Load("instructions/consent/reading_consent_as_text") as AudioClip;
-        consentClips[7] = Resources.Load("instructions/consent/reading_consent_as_text_options") as AudioClip;
-        consentClips[8] = Resources.Load("instructions/consent/are_you_sure_you_consent_normal_1") as AudioClip;
-        consentClips[9] = Resources.Load("instructions/consent/are_you_sure_you_consent_talkback_1") as AudioClip;
-        consentClips[10] = Resources.Load("instructions/consent/are_you_sure_you_consent_normal_12") as AudioClip;
-        consentClips[11] = Resources.Load("instructions/consent/are_you_sure_you_consent_talkback_12") as AudioClip;
-        consentClips[12] = Resources.Load("instructions/consent/are_you_sure_no_consent_normal_1") as AudioClip;
-        consentClips[13] = Resources.Load("instructions/consent/are_you_sure_no_consent_talkback_1") as AudioClip;
-        consentClips[14] = Resources.Load("instructions/consent/are_you_sure_no_consent_normal_12") as AudioClip;
-        consentClips[15] = Resources.Load("instructions/consent/are_you_sure_no_consent_talkback_12") as AudioClip;
-        consentClips[16] = Resources.Load("instructions/consent/not_eighteen_plus") as AudioClip;
-        consentClips[17] = Resources.Load("instructions/consent/did_not_understand_consent") as AudioClip;
-        consentClips[18] = Resources.Load("instructions/consent/does_not_want_to_participate") as AudioClip;
-        consentClips[19] = Resources.Load("instructions/consent/thank_you_for_consenting_1") as AudioClip;
-        consentClips[20] = Resources.Load("instructions/consent/thank_you_for_consenting_12") as AudioClip;
-        consentClips[21] = Resources.Load("instructions/consent/did_not_consent_1") as AudioClip;
-        consentClips[22] = Resources.Load("instructions/consent/did_not_consent_12") as AudioClip;
+        consentClips[3] = Resources.Load("instructions/consent/eighteen_plus_normal") as AudioClip;
+        consentClips[4] = Resources.Load("instructions/consent/eighteen_plus_talkback") as AudioClip;
+        consentClips[5] = Resources.Load("instructions/consent/read_and_understand_normal") as AudioClip;
+        consentClips[6] = Resources.Load("instructions/consent/read_and_understand_talkback") as AudioClip;
+        consentClips[7] = Resources.Load("instructions/consent/want_to_participate_normal") as AudioClip;
+        consentClips[8] = Resources.Load("instructions/consent/want_to_participate_talkback") as AudioClip;
+        consentClips[9] = Resources.Load("instructions/consent/reading_consent_as_text") as AudioClip;
+        consentClips[10] = Resources.Load("instructions/consent/reading_consent_as_text_options") as AudioClip;
+        consentClips[11] = Resources.Load("instructions/consent/are_you_sure_you_consent_normal_1") as AudioClip;
+        consentClips[12] = Resources.Load("instructions/consent/are_you_sure_you_consent_talkback_1") as AudioClip;
+        consentClips[13] = Resources.Load("instructions/consent/are_you_sure_you_consent_normal_12") as AudioClip;
+        consentClips[14] = Resources.Load("instructions/consent/are_you_sure_you_consent_talkback_12") as AudioClip;
+        consentClips[15] = Resources.Load("instructions/consent/are_you_sure_no_consent_normal_1") as AudioClip;
+        consentClips[16] = Resources.Load("instructions/consent/are_you_sure_no_consent_talkback_1") as AudioClip;
+        consentClips[17] = Resources.Load("instructions/consent/are_you_sure_no_consent_normal_12") as AudioClip;
+        consentClips[18] = Resources.Load("instructions/consent/are_you_sure_no_consent_talkback_12") as AudioClip;
+        consentClips[19] = Resources.Load("instructions/consent/not_eighteen_plus") as AudioClip;
+        consentClips[20] = Resources.Load("instructions/consent/did_not_understand_consent") as AudioClip;
+        consentClips[21] = Resources.Load("instructions/consent/does_not_want_to_participate") as AudioClip;
+        consentClips[22] = Resources.Load("instructions/consent/thank_you_for_consenting_1") as AudioClip;
+        consentClips[23] = Resources.Load("instructions/consent/thank_you_for_consenting_12") as AudioClip;
+        consentClips[24] = Resources.Load("instructions/consent/did_not_consent_1") as AudioClip;
+        consentClips[25] = Resources.Load("instructions/consent/did_not_consent_12") as AudioClip;
 
         // Game environment setting clips
         settingsClips[0] = Resources.Load("instructions/settings/orient_phone") as AudioClip;
@@ -475,19 +478,23 @@ public class Database : MonoBehaviour
         errorClips[5] = Resources.Load("instructions/errors/swipe_right_horizontal_error") as AudioClip;
         errorClips[6] = Resources.Load("instructions/errors/swipe_up_vertical_error") as AudioClip;
         errorClips[7] = Resources.Load("instructions/errors/swipe_down_vertical_error") as AudioClip;
-        errorClips[8] = Resources.Load("instructions/errors/swipe_rotation_error") as AudioClip;
-        errorClips[9] = Resources.Load("instructions/errors/rotation_angle_error") as AudioClip;
-        errorClips[10] = Resources.Load("instructions/errors/hold_horizontal_error") as AudioClip;
-        errorClips[11] = Resources.Load("instructions/errors/hold_vertical_error") as AudioClip;
-        errorClips[12] = Resources.Load("instructions/errors/hold_horizontal_vertical_error") as AudioClip;
-        errorClips[13] = Resources.Load("instructions/errors/hold_rotation_error") as AudioClip;
-        errorClips[14] = Resources.Load("instructions/errors/not_a_tap") as AudioClip;
-        errorClips[15] = Resources.Load("instructions/errors/not_a_swipe_up") as AudioClip;
-        errorClips[16] = Resources.Load("instructions/errors/not_a_hold") as AudioClip;
-        errorClips[17] = Resources.Load("instructions/errors/not_a_swipe_down") as AudioClip;
-        errorClips[18] = Resources.Load("instructions/errors/not_a_rotation") as AudioClip;
-        errorClips[19] = Resources.Load("instructions/errors/not_a_left_right_swipe") as AudioClip;
-        errorClips[20] = Resources.Load("instructions/errors/finger_offscreen") as AudioClip;
+        errorClips[8] = Resources.Load("instructions/errors/swipe_horizontal_vertical_error") as AudioClip;
+        errorClips[9] = Resources.Load("instructions/errors/swipe_direction_error") as AudioClip;
+        errorClips[10] = Resources.Load("instructions/errors/tap_swipe_error") as AudioClip;
+        errorClips[11] = Resources.Load("instructions/errors/hold_swipe_error") as AudioClip;
+        errorClips[12] = Resources.Load("instructions/errors/swipe_rotation_error") as AudioClip;
+        errorClips[13] = Resources.Load("instructions/errors/rotation_angle_error") as AudioClip;
+        errorClips[14] = Resources.Load("instructions/errors/hold_horizontal_error") as AudioClip;
+        errorClips[15] = Resources.Load("instructions/errors/hold_vertical_error") as AudioClip;
+        errorClips[16] = Resources.Load("instructions/errors/hold_horizontal_vertical_error") as AudioClip;
+        errorClips[17] = Resources.Load("instructions/errors/hold_rotation_error") as AudioClip;
+        errorClips[18] = Resources.Load("instructions/errors/not_a_tap") as AudioClip;
+        errorClips[19] = Resources.Load("instructions/errors/not_a_swipe_up") as AudioClip;
+        errorClips[20] = Resources.Load("instructions/errors/not_a_hold") as AudioClip;
+        errorClips[21] = Resources.Load("instructions/errors/not_a_swipe_down") as AudioClip;
+        errorClips[22] = Resources.Load("instructions/errors/not_a_rotation") as AudioClip;
+        errorClips[23] = Resources.Load("instructions/errors/not_a_left_right_swipe") as AudioClip;
+        errorClips[24] = Resources.Load("instructions/errors/finger_offscreen") as AudioClip;
 
         // Sound effect clips
         soundEffectClips[0] = Resources.Load("fx/0_25_sec_silence") as AudioClip;

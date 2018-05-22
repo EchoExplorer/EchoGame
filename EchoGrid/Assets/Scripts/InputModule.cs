@@ -210,6 +210,7 @@ public class InputModule : MonoBehaviour
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
         Scene activeScene = SceneManager.GetActiveScene(); // Gets the active scene.
 
+        // If the right arrow key is pressed.
         if (Input.GetKeyUp(KeyCode.RightArrow) == true)
         {
             // For swipe rights.
@@ -232,6 +233,7 @@ public class InputModule : MonoBehaviour
             }
             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
         }
+        // If the left arrow key is pressed.
         else if (Input.GetKeyUp(KeyCode.LeftArrow) == true)
         {
             // For swipe lefts.
@@ -254,6 +256,7 @@ public class InputModule : MonoBehaviour
             }
             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.                
         }
+        // If the up arrow key is pressed.
         else if (Input.GetKeyUp(KeyCode.UpArrow) == true)
         {
             ievent.isSwipe = true; // A swipe was registered.
@@ -262,6 +265,7 @@ public class InputModule : MonoBehaviour
             debugInputInfo = "Up arrow key pressed " + swipeUpTimes + " times.";
             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.                
         }
+        // If the down arrow key is pressed.
         else if (Input.GetKeyUp(KeyCode.DownArrow) == true)
         {
             ievent.isSwipe = true; // A swipe was registered.
@@ -270,6 +274,7 @@ public class InputModule : MonoBehaviour
             debugInputInfo = "Down arrow key pressed " + swipeDownTimes + " times.";
             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.                
         }
+        // If the 'f' key is pressed.
         else if (Input.GetKeyUp(KeyCode.F) == true)
         {
             ievent.isTap = true; // A tap was registered.
@@ -277,6 +282,7 @@ public class InputModule : MonoBehaviour
             debugInputInfo = "F key pressed " + tapTimes + " times.";
             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.                
         }
+        // If the 'r' key is pressed.
         else if (Input.GetKeyUp(KeyCode.R) == true)
         {
             ievent.isHold = true; // A hold was registered.
@@ -284,7 +290,7 @@ public class InputModule : MonoBehaviour
             debugInputInfo = "R key pressed " + holdTimes + " times.";
             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.                              
         }
-        // If the 'p' key was pressed.
+        // If the 'p' key is pressed.
         else if (Input.GetKeyUp(KeyCode.P) == true)
         {
             ievent.isMain = true; // The 'p' key was registered.
@@ -294,199 +300,226 @@ public class InputModule : MonoBehaviour
         }
 #endif
 #if UNITY_IOS || UNITY_ANDROID
-        //Check if Input has registered more than zero touches
+        // Check if Input has registered more than zero touches
         int numTouches = Input.touchCount;
         ievent.touchNum = numTouches;
         bool wentOffscreen = false;
 
+        // If at least one finger is on the screen, register/update the position of touch0.
         if (Input.touchCount >= 1)
         {
-            touch0 = Input.touches[0];
+            touch0 = Input.touches[0]; // Get touch0.
 
+            // If the touch has begun, get its current position.
             if (touch0.phase == TouchPhase.Began)
             {
-                vecStart0 = touch0.position;
-                vecEnd0 = touch0.position;
-                totalX0 = vecEnd0.x - vecStart0.x;
-                totalY0 = vecEnd0.y - vecStart0.y;
+                vecStart0 = touch0.position; // Set the start position vector for this touch.
+                vecEnd0 = touch0.position; // Set the end position vector for this touch (should be the same as the start vector for now).
+                totalX0 = vecEnd0.x - vecStart0.x; // Get the total x distance covered by this finger (currently 0).
+                totalY0 = vecEnd0.y - vecStart0.y; // Get the total y distance covered by this finger (currently 0).
                 debugTouch0Info = "XStart: " + vecStart0.x.ToString() + "\nYStart: " + vecStart0.y.ToString() + "\nXEnd: " + vecEnd0.x.ToString() + "\nYEnd: " + vecEnd0.y.ToString();
                 DebugTouch0.instance.ChangeDebugTouch0Text(debugTouch0Info); // Update the debug textbox. 
-                hasRegistered[0] = true;
-                touchRegister = 0;
+                hasRegistered[0] = true; // This touch has been registered on the screen, so we can start updating its position if it moves.
+                touchRegister = 0; // Reset the current number of fingers registered for when there are no fingers on the screen to zero.
             }
+            // If the touch is stationary.
             else if ((touch0.phase == TouchPhase.Stationary) && (hasRegistered[0] == true))
             {
                 debugTouch0Info = "XStart: " + vecStart0.x.ToString() + "\nYStart: " + vecStart0.y.ToString() + "\nXEnd: " + vecEnd0.x.ToString() + "\nYEnd: " + vecEnd0.y.ToString();
                 DebugTouch0.instance.ChangeDebugTouch0Text(debugTouch0Info); // Update the debug textbox. 
             }
+            // If the touch has moved, update its position.
             else if ((touch0.phase == TouchPhase.Moved) && (hasRegistered[0] == true))
             {
                 vecEnd0 = touch0.position; // Update the end position vector of this touch.
-                totalX0 = vecEnd0.x - vecStart0.x;
+                totalX0 = vecEnd0.x - vecStart0.x; // Update the total x distance covered by this finger. 
+                totalY0 = vecEnd0.y - vecStart0.y; // Update the total y distance covered by this finger.
                 debugTouch0Info = "XStart: " + vecStart0.x.ToString() + "\nYStart: " + vecStart0.y.ToString() + "\nXEnd: " + vecEnd0.x.ToString() + "\nYEnd: " + vecEnd0.y.ToString();
                 DebugTouch0.instance.ChangeDebugTouch0Text(debugTouch0Info); // Update the debug textbox.
             }
+            // If the touch has ended, update its position.
             else if ((touch0.phase == TouchPhase.Ended) && (hasRegistered[0] == true))
             {
                 touchRegister += 1; // Update the number of touches that have left the screen.
-                vecEnd0 = touch0.position;
-                totalX0 = vecEnd0.x - vecStart0.x;
-                totalY0 = vecEnd0.y - vecStart0.y;
+                vecEnd0 = touch0.position; // Update the end position vector of this touch.
+                totalX0 = vecEnd0.x - vecStart0.x; // Update the total x distance covered by this touch.
+                totalY0 = vecEnd0.y - vecStart0.y; // Update the total y distance covered by this touch.
                 debugTouch0Info = "XStart: " + vecStart0.x.ToString() + "\nYStart: " + vecStart0.y.ToString() + "\nXEnd: " + vecEnd0.x.ToString() + "\nYEnd: " + vecEnd0.y.ToString();
                 DebugTouch0.instance.ChangeDebugTouch0Text(debugTouch0Info); // Update the debug textbox. 
                 hasRegistered[0] = false; // Touch0 is no longer on the screen. Make sure that the end position for this touch cannot be updated based on another finger's position.
             }
+            // If the touch was canceled.
             else if (touch0.phase == TouchPhase.Canceled)
             {
                 debugTouch0Info = "Touch0 canceled";
                 DebugTouch0.instance.ChangeDebugTouch0Text(debugTouch0Info); // Update the debug textbox.
             }
-            else if (touch0.phase != TouchPhase.Moved)
+            // If something else happened.
+            else
             {
                 debugTouch0Info = "Cannot compute";
+                print("Touch0.phase: " + touch0.phase.ToString() + ", hasRegistered: " + hasRegistered[0].ToString());
                 DebugTouch0.instance.ChangeDebugTouch0Text(debugTouch0Info); // Update the debug textbox.
             }
         }
 
+        // If at least two fingers are on the screen, register/update the position of touch1.
         if (Input.touchCount >= 2)
         {
-            touch1 = Input.touches[1];
+            touch1 = Input.touches[1]; // Get touch1.
 
+            // If the touch has begun, get its current position.
             if (touch1.phase == TouchPhase.Began)
             {
-                vecStart1 = touch1.position;
-                vecEnd1 = touch1.position;
-                totalX1 = vecEnd1.x - vecStart1.x;
-                totalY1 = vecEnd1.y - vecStart1.y;
+                vecStart1 = touch1.position; // Set the start position vector for this touch.
+                vecEnd1 = touch1.position; // Set the end position vector for this touch (should be the same as the start vector for now).
+                totalX1 = vecEnd1.x - vecStart1.x; // Get the total x distance covered by this finger (currently 0).
+                totalY1 = vecEnd1.y - vecStart1.y; // Get the total y distance covered by this finger (currently 0).
                 debugTouch1Info = "XStart: " + vecStart1.x.ToString() + "\nYStart: " + vecStart1.y.ToString() + "\nXEnd: " + vecEnd1.x.ToString() + "\nYEnd: " + vecEnd1.y.ToString();
                 DebugTouch1.instance.ChangeDebugTouch1Text(debugTouch1Info); // Update the debug textbox.
-                hasRegistered[1] = true;
+                hasRegistered[1] = true; // This touch has been registered on the screen, so we can start updating its position if it moves.
 
                 if (GM_title.isUsingTalkback == false)
                 {
                     ResetCDTimers(); // Reset the CD timers.
                 }
             }
+            // If the touch is stationary.
             else if ((touch1.phase == TouchPhase.Stationary) && (hasRegistered[1] == true))
             {
                 debugTouch1Info = "XStart: " + vecStart1.x.ToString() + "\nYStart: " + vecStart1.y.ToString() + "\nXEnd: " + vecEnd1.x.ToString() + "\nYEnd: " + vecEnd1.y.ToString();
                 DebugTouch1.instance.ChangeDebugTouch1Text(debugTouch1Info); // Update the debug textbox.
             }
+            // If the touch has moved, update its position.
             else if ((touch1.phase == TouchPhase.Moved) && (hasRegistered[1] == true))
             {
                 vecEnd1 = touch1.position; // Update the end position vector of this touch.
-                totalX1 = vecEnd1.x - vecStart1.x;
-                totalY1 = vecEnd1.y - vecStart1.y;
+                totalX1 = vecEnd1.x - vecStart1.x; // Update the total x distance covered by this finger. 
+                totalY1 = vecEnd1.y - vecStart1.y; // Update the total y distance covered by this finger. 
                 debugTouch1Info = "XStart: " + vecStart1.x.ToString() + "\nYStart: " + vecStart1.y.ToString() + "\nXEnd: " + vecEnd1.x.ToString() + "\nYEnd: " + vecEnd1.y.ToString();
                 DebugTouch1.instance.ChangeDebugTouch1Text(debugTouch1Info); // Update the debug textbox.
             }
+            // If the touch has ended, update its position.
             else if ((touch1.phase == TouchPhase.Ended) && (hasRegistered[1] == true))
             {
                 touchRegister += 1; // Update the number of touches that have left the screen.
-                vecEnd1 = touch1.position;
-                totalX1 = vecEnd1.x - vecStart1.x;
-                totalY1 = vecEnd1.y - vecStart1.y;
+                vecEnd1 = touch1.position; // Update the end position vector of this touch.
+                totalX1 = vecEnd1.x - vecStart1.x; // Update the total x distance covered by this finger. 
+                totalY1 = vecEnd1.y - vecStart1.y; // Update the total y distance covered by this finger. 
                 debugTouch1Info = "XStart: " + vecStart1.x.ToString() + "\nYStart: " + vecStart1.y.ToString() + "\nXEnd: " + vecEnd1.x.ToString() + "\nYEnd: " + vecEnd1.y.ToString();
                 DebugTouch1.instance.ChangeDebugTouch1Text(debugTouch1Info); // Update the debug textbox.
                 hasRegistered[1] = false; // Touch1 is no longer on the screen. Make sure that the end position for this touch cannot be updated based on another finger's position.
             }
+            // If the touch was canceled.
             else if (touch1.phase == TouchPhase.Canceled)
             {
                 debugTouch1Info = "Touch1 canceled";
                 DebugTouch1.instance.ChangeDebugTouch1Text(debugTouch1Info); // Update the debug textbox.
             }
-            else if (touch1.phase != TouchPhase.Moved)
+            // If something else happened.
+            else
             {
                 debugTouch1Info = "Cannot compute";
+                print("Touch1.phase: " + touch1.phase.ToString() + ", hasRegistered: " + hasRegistered[1].ToString());
                 DebugTouch1.instance.ChangeDebugTouch1Text(debugTouch1Info); // Update the debug textbox.
             }
 
-            // If the touch has moved and has been registered.
+            // If touch0 or touch1 have moved and that touch has been registered, get the angle between them. 
             if (((touch0.phase == TouchPhase.Moved) && (hasRegistered[0] == true)) || ((touch1.phase == TouchPhase.Moved) && (hasRegistered[1] == true)))
             {
-                Vector2 currentStart = touch1.position - touch0.position;
-                Vector2 currentEnd = new Vector2(1, 0);
+                Vector2 currentStart = touch1.position - touch0.position; // Get the difference between touch1's current position and touch0's current position.
+                Vector2 currentEnd = new Vector2(1, 0); // Set the current end position.
 
-                float currentAngle = Vector2.Angle(currentStart, currentEnd);
-                Vector3 currentCross = Vector3.Cross(currentStart, currentEnd);
+                float currentAngle = Vector2.Angle(currentStart, currentEnd); // Get the angle between the current start and end positions.
+                Vector3 currentCross = Vector3.Cross(currentStart, currentEnd); // Get the cross product between the current start and end positions.
 
+                // If the x-component of the cross product is greater than zero.
                 if (currentCross.z > 0)
                 {
-                    currentAngle = 360.0f - currentAngle;
+                    currentAngle = 360.0f - currentAngle; // Flip the angle around the 'x-axis' (i.e. if the angle was 140, it would now be 220, as if you went 140 degrees in the other direction).
                 }
 
-                Vector2 touch0Diff = touch0.position - touch0.deltaPosition;
-                Vector2 touch1Diff = touch1.position - touch1.deltaPosition;
-                Vector2 previousStart = touch1Diff - touch0Diff;
-                Vector2 previousEnd = new Vector2(1, 0);
+                Vector2 touch0Diff = touch0.position - touch0.deltaPosition; // Get the difference between touch0's current position and its change in position since last frame.
+                Vector2 touch1Diff = touch1.position - touch1.deltaPosition; // Get the difference between touch1's current position and its change in position since last frame.
+                Vector2 previousStart = touch1Diff - touch0Diff; // Get the difference between touch1Diff and touch0Diff.
+                Vector2 previousEnd = new Vector2(1, 0); // Set the previous end position.
 
-                float previousAngle = Vector2.Angle(previousStart, previousEnd);
-                Vector3 previousCross = Vector3.Cross(previousStart, previousEnd);
+                float previousAngle = Vector2.Angle(previousStart, previousEnd); // Get the angle between the previous start and end positions.
+                Vector3 previousCross = Vector3.Cross(previousStart, previousEnd); // Get the cross product between the previous start and end positions.
 
+                // If the x-component of the cross product is greater than zero.
                 if (previousCross.z > 0)
                 {
-                    previousAngle = 360.0f - previousAngle;
+                    previousAngle = 360.0f - previousAngle; // Flip the angle around the 'x-axis' (i.e. if the angle was 140, it would now be 220, as if you went 140 degrees in the other direction).
                 }
 
-                angle += Mathf.DeltaAngle(currentAngle, previousAngle);
+                angle += Mathf.DeltaAngle(currentAngle, previousAngle); // Add the difference between the angle during the last frame and this frame to the total angle.
 
-                VecStart = vecStart0 - vecStart1; // Get the vector between the start positions of touch0 and touch1.
-                VecEnd = vecEnd0 - vecEnd1; // Get the vector between the end positions of touch0 and touch1.
-                cross = Vector3.Cross((Vector3)VecStart.normalized, (Vector3)VecEnd.normalized); // Get the cross product between the two vectors.
+                VecStart = vecStart0 - vecStart1; // Get the vector between the start position vectors of touch0 and touch1.
+                VecEnd = vecEnd0 - vecEnd1; // Get the vector between the end position vectors of touch0 and touch1.
+                cross = Vector3.Cross((Vector3)VecStart.normalized, (Vector3)VecEnd.normalized); // Get the cross product between the start and end vectors.
                 crossPz = cross.z; // Get the z-component of the cross product.              
             }
         }
 
+        // If at least three fingers are on the screen, register/update the position of touch2.
         if (Input.touchCount >= 3)
         {
-            touch2 = Input.touches[2];
+            touch2 = Input.touches[2]; // Get touch2.
 
+            // If the touch has begun, get uts current position.
             if (touch2.phase == TouchPhase.Began)
             {
-                vecStart2 = touch2.position;
-                vecEnd2 = touch2.position;
-                totalX2 = vecEnd2.x - vecStart2.x;
-                totalY2 = vecEnd2.y - vecStart2.y;
+                vecStart2 = touch2.position; // Set the start position vector for this touch.
+                vecEnd2 = touch2.position; // Set the end position vector for this touch (should be the same as the start vector for now).
+                totalX2 = vecEnd2.x - vecStart2.x; // Get the total x distance covered by this finger (currently 0).
+                totalY2 = vecEnd2.y - vecStart2.y; // Get the total y distance covered by this finger (currently 0).
                 debugTouch2Info = "XStart: " + vecStart2.x.ToString() + "\nYStart: " + vecStart2.y.ToString() + "\nXEnd: " + vecEnd2.x.ToString() + "\nYEnd: " + vecEnd2.y.ToString();
                 DebugTouch2.instance.ChangeDebugTouch2Text(debugTouch2Info); // Update the debug textbox.
-                hasRegistered[2] = true;
+                hasRegistered[2] = true; // This touch has been registered on the screen, so we can start updating its position if it moves.
 
                 if (GM_title.isUsingTalkback == true)
                 {
                     ResetCDTimers(); // Reset the CD timers.
                 }
             }
+            // If the touch is stationary.
             else if ((touch2.phase == TouchPhase.Stationary) && (hasRegistered[2] == true))
             {
                 debugTouch2Info = "XStart: " + vecStart2.x.ToString() + "\nYStart: " + vecStart2.y.ToString() + "\nXEnd: " + vecEnd2.x.ToString() + "\nYEnd: " + vecEnd2.y.ToString();
                 DebugTouch2.instance.ChangeDebugTouch2Text(debugTouch2Info); // Update the debug textbox.
             }
+            // If the touch has moved, update its position.
             else if ((touch2.phase == TouchPhase.Moved) && (hasRegistered[2] == true))
             {
-                vecEnd2 = touch2.position;
-                totalX2 = vecEnd2.x - vecStart2.x;
-                totalY2 = vecEnd2.y - vecStart2.y;
+                vecEnd2 = touch2.position; // Update the end position vector of this touch.
+                totalX2 = vecEnd2.x - vecStart2.x; // Update the total x distance covered by this finger. 
+                totalY2 = vecEnd2.y - vecStart2.y; // Update the total y distance covered by this finger. 
                 debugTouch2Info = "XStart: " + vecStart2.x.ToString() + "\nYStart: " + vecStart2.y.ToString() + "\nXEnd: " + vecEnd2.x.ToString() + "\nYEnd: " + vecEnd2.y.ToString();
                 DebugTouch2.instance.ChangeDebugTouch2Text(debugTouch2Info); // Update the debug textbox.
             }
+            // If the touch has ended, update its position.
             else if ((touch2.phase == TouchPhase.Ended) && (hasRegistered[2] == true))
             {
                 touchRegister += 1; // Update the number of touches that have left the screen.
-                vecEnd2 = touch2.position;
-                totalX2 = vecEnd2.x - vecStart2.x;
-                totalY2 = vecEnd2.y - vecStart2.y;
+                vecEnd2 = touch2.position; // Update the end position vector of this touch.
+                totalX2 = vecEnd2.x - vecStart2.x; // Update the total x distance covered by this finger. 
+                totalY2 = vecEnd2.y - vecStart2.y; // Update the total y distance covered by this finger. 
                 debugTouch2Info = "XStart: " + vecStart2.x.ToString() + "\nYStart: " + vecStart2.y.ToString() + "\nXEnd: " + vecEnd2.x.ToString() + "\nYEnd: " + vecEnd2.y.ToString();
                 DebugTouch2.instance.ChangeDebugTouch2Text(debugTouch2Info); // Update the debug textbox.
                 hasRegistered[2] = false; // Touch2 is no longer on the screen. Make sure that the end position for this touch cannot be updated based on another finger's position.
             }
+            // If the touch was canceled.
             else if (touch2.phase == TouchPhase.Canceled)
             {
                 debugTouch2Info = "Touch2 canceled";
                 DebugTouch2.instance.ChangeDebugTouch2Text(debugTouch2Info); // Update the debug textbox.
             }
-            else if (touch2.phase != TouchPhase.Moved)
+            // If something else happened.
+            else
             {
                 debugTouch2Info = "Cannot compute";
+                print("Touch2.phase: " + touch2.phase.ToString() + ", hasRegistered: " + hasRegistered[2].ToString());
                 DebugTouch2.instance.ChangeDebugTouch2Text(debugTouch2Info); // Update the debug textbox.
             }
         }
@@ -494,9 +527,10 @@ public class InputModule : MonoBehaviour
         // If there is at least one touch currently on the screen.
         if (Input.touchCount > 0)
         {
-            // IF the player has not told us if they are using Talkback or not, accept two and three finger inputs.
+            // If the player has not told us if they are using Talkback or not, accept two and three finger inputs.
             if (((Input.touchCount == 2) || (Input.touchCount == 3)) && (GM_title.determined_talkback == false))
             {
+                // If a finger has not gone offscreen, check if one has this frame.
                 if (wentOffscreen == false)
                 {
                     // If a finger went off the screen.
@@ -504,6 +538,7 @@ public class InputModule : MonoBehaviour
                     {
                         wentOffscreen = true;
                     }
+                    // If a finger went off the screen and there was three fingers on the screen.
                     else if ((Input.touchCount == 3) && (wentOffscreen == false))
                     {
                         if ((vecEnd2.x >= (Screen.width - 15.0f)) || (vecEnd2.x <= 15.0f) || (vecEnd2.y >= (Screen.height - 10.0f)) || (vecEnd2.y <= 5.0f))
@@ -521,6 +556,7 @@ public class InputModule : MonoBehaviour
             // If the player has told us they are not using Talkback and there are currently two or three fingers on the screen.
             else if (((Input.touchCount == 2) || (Input.touchCount == 3)) && (GM_title.determined_talkback == true) && (GM_title.isUsingTalkback == false))
             {
+                // If a finger has not gone offscreen, check if one has this frame.
                 if (wentOffscreen == false)
                 {
                     // If a finger went off the screen.
@@ -528,6 +564,7 @@ public class InputModule : MonoBehaviour
                     {
                         wentOffscreen = true;
                     }
+                    // If a finger went off the screen and there was three fingers on the screen.
                     else if ((Input.touchCount == 3) && (wentOffscreen == false))
                     {
                         if ((vecEnd2.x >= (Screen.width - 15.0f)) || (vecEnd2.x <= 15.0f) || (vecEnd2.y >= (Screen.height - 10.0f)) || (vecEnd2.y <= 5.0f))
@@ -545,6 +582,7 @@ public class InputModule : MonoBehaviour
             // If the player has told us they are using Talkback and there are currently three fingers on the screen.
             else if ((Input.touchCount == 3) && (GM_title.determined_talkback == true) && (GM_title.isUsingTalkback == true))
             {
+                // If a finger has not gone offscreen, check if one has this frame.
                 if (wentOffscreen == false)
                 {
                     // If a finger went off the screen.
@@ -561,11 +599,12 @@ public class InputModule : MonoBehaviour
             }
         }
 
-        // If there are currently no fingers on the screen, determine if a tap/swipe/rotation gesture was made.
+        // If there are currently no fingers on the screen, determine if a tap/swipe/rotation/hold gesture was made.
         if (Input.touchCount == 0)
         {            
             bool canMakeGesture = false;
 
+            // If one finger was on the screen.
             if (touchRegister == 1)
             {
 #endif
@@ -586,7 +625,7 @@ public class InputModule : MonoBehaviour
 #if UNITY_IOS || UNITY_ANDROID
             }
 
-            
+            // If two fingers were on the screen.
             else if (touchRegister == 2)
             {
                 bool negativeAngle = false;
@@ -596,27 +635,35 @@ public class InputModule : MonoBehaviour
                 }
                 angle = Mathf.Abs(angle);
 
+                // If the player has not informed us if they are using Talkback, they can make a gesture.
                 if (GM_title.determined_talkback == false)
                 {
                     canMakeGesture = true;
                 }
+                // If the player has informed us that they are not using Talkback, they can make a gesture.
                 else if ((GM_title.determined_talkback == true) && (GM_title.isUsingTalkback == false))
                 {
                     canMakeGesture = true;
                 }
+                // If the player has informed us that they are using Talkback, they cannot make a gesture.
+                else if ((GM_title.determined_talkback == true) && (GM_title.isUsingTalkback == true))
+                {
+                    canMakeGesture = false;
+                }
 
+                // If the player is able to make a gesture.
                 if (canMakeGesture == true)
                 {
                     // If a finger went off the screen.
                     if ((wentOffscreen == true) && (touchDuration > 0.0f))
                     {
-                        unrecognizedTimes += 1;
+                        unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                         debugInputInfo = "At least one finger went off the screen. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
-                        List<AudioClip> clips = new List<AudioClip>() { Database.errorClips[20] };
-                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                        List<AudioClip> clips = new List<AudioClip>() { Database.errorClips[24] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
                     }
 
                     // If the gesture was a tap.
@@ -626,7 +673,7 @@ public class InputModule : MonoBehaviour
                         tapTimes += 1; // Update the number of times a tap was made.
                         debugInputInfo = "Tapped " + tapTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.   
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     }
 
@@ -641,7 +688,7 @@ public class InputModule : MonoBehaviour
                             swipeLeftTimes += 1; // Update the number of times a swipe left was made.
                             debugInputInfo = "Swiped left " + swipeLeftTimes + " times";
                             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.   
-                            touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                            touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                             touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                         }
                         // Swipe right detected.
@@ -652,7 +699,7 @@ public class InputModule : MonoBehaviour
                             swipeRightTimes += 1; // Update the number of times a swipe right was made.
                             debugInputInfo = "Swiped right " + swipeRightTimes + " times";
                             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
-                            touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                            touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                             touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                         }
                     }
@@ -668,7 +715,7 @@ public class InputModule : MonoBehaviour
                             swipeUpTimes += 1; // Update the number of times a swipe up was made.
                             debugInputInfo = "Swiped up " + swipeUpTimes + " times";
                             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.   
-                            touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                            touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                             touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                         }
                         // Swipe down detected.
@@ -679,7 +726,7 @@ public class InputModule : MonoBehaviour
                             swipeDownTimes += 1; // Update the number of times a swipe down was made.
                             debugInputInfo = "Swiped down " + swipeDownTimes + " times";
                             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.      
-                            touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                            touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                             touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                         }
                     }
@@ -692,7 +739,7 @@ public class InputModule : MonoBehaviour
                         rotateLeftTimes += 1; // Update the number of times a left rotation was made.
                         debugInputInfo = "Rotated left " + rotateLeftTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.     
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     }
 
@@ -704,7 +751,7 @@ public class InputModule : MonoBehaviour
                         rotateRightTimes += 1; // Update the number of times a right rotation was made.
                         debugInputInfo = "Rotated right " + rotateRightTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.     
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     }
 
@@ -715,7 +762,7 @@ public class InputModule : MonoBehaviour
                         holdTimes += 1; // Update the number of times a hold was made.
                         debugInputInfo = "Hold registered " + holdTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.       
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     }
 
@@ -727,43 +774,43 @@ public class InputModule : MonoBehaviour
                         unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                         debugInputInfo = "Tap rotation error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.         
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     }
 
                     // If the gesture was a tap with too much horizontal movement.
                     else if (((touchDuration < 1.0f) && (touchDuration > 0.0f)) && ((Mathf.Abs(totalX0) <= maxTapHorizontalDist) && (Mathf.Abs(totalY0) <= maxTapVerticalDist) && (Mathf.Abs(totalX1) > maxTapHorizontalDist)) || ((Mathf.Abs(totalX1) <= maxTapHorizontalDist) && (Mathf.Abs(totalY1) <= maxTapVerticalDist) && (Mathf.Abs(totalX0) > maxTapHorizontalDist)))
                     {
-                        ievent.isTapHorizontalError = true;
+                        ievent.isTapHorizontalError = true; // This error was registered.
                         ievent.isUnrecognized = true; // An unrecognized gesture was registered.                      
                         unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                         debugInputInfo = "Tap horizontal distance error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.        
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     }
 
                     // If the gesture was a tap with too much vertical movement.
                     else if (((touchDuration < 1.0f) && (touchDuration > 0.0f)) && ((Mathf.Abs(totalX0) <= maxTapHorizontalDist) && (Mathf.Abs(totalY0) <= maxTapVerticalDist) && (Mathf.Abs(totalY1) > maxTapVerticalDist)) || ((Mathf.Abs(totalX1) <= maxTapHorizontalDist) && (Mathf.Abs(totalY1) <= maxTapVerticalDist) && (Mathf.Abs(totalY0) > maxTapVerticalDist)))
                     {
-                        ievent.isTapVerticalError = true;
+                        ievent.isTapVerticalError = true; // This error was registered.
                         ievent.isUnrecognized = true; // An unrecognized gesture was registered.                      
                         unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                         debugInputInfo = "Tap vertical distance error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.        
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     }
 
                     // If the gesture was a tap with too much horizontal and vertical movement.
                     else if (((touchDuration < 1.0f) && (touchDuration > 0.0f)) && (((Mathf.Abs(totalX0) > maxTapHorizontalDist) && (Mathf.Abs(totalX0) < minSwipeHorizontalDist) && (Mathf.Abs(totalX1) <= maxTapHorizontalDist)) || ((Mathf.Abs(totalX1) > maxTapHorizontalDist) && (Mathf.Abs(totalX1) < minSwipeHorizontalDist) && (Mathf.Abs(totalX0) <= maxTapHorizontalDist))) && (((Mathf.Abs(totalY0) > maxTapVerticalDist) && (Mathf.Abs(totalY0) < minSwipeVerticalDist) && (Mathf.Abs(totalY1) <= maxTapVerticalDist)) || ((Mathf.Abs(totalY1) > maxTapVerticalDist) && (Mathf.Abs(totalY1) < minSwipeVerticalDist) && (Mathf.Abs(totalY0) <= maxTapVerticalDist))))
                     {
-                        ievent.isTapHorizontalVerticalError = true;
+                        ievent.isTapHorizontalVerticalError = true; // This error was registered.
                         ievent.isUnrecognized = true; // An unrecognized gesture was registered.                      
                         unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                         debugInputInfo = "Tap horizontal and vertical distance error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.        
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     }
 
@@ -778,7 +825,7 @@ public class InputModule : MonoBehaviour
                             unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                             debugInputInfo = "Swipe left rotation error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.     
-                            touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                            touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                             touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                         }
                         // Swipe right detected.
@@ -789,7 +836,7 @@ public class InputModule : MonoBehaviour
                             unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                             debugInputInfo = "Swipe right rotation error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
-                            touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                            touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                             touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                         }
                     }
@@ -805,7 +852,7 @@ public class InputModule : MonoBehaviour
                             unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                             debugInputInfo = "Swipe left horizontal distance error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.        
-                            touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                            touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                             touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                         }
                         // Swipe right detected.
@@ -816,7 +863,7 @@ public class InputModule : MonoBehaviour
                             unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                             debugInputInfo = "Swipe right horizontal distance error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.   
-                            touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                            touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                             touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                         }
                     }
@@ -832,7 +879,7 @@ public class InputModule : MonoBehaviour
                             unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                             debugInputInfo = "Swipe up rotation error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
-                            touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                            touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                             touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                         }
                         // Swipe down detected.
@@ -843,7 +890,7 @@ public class InputModule : MonoBehaviour
                             unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                             debugInputInfo = "Swipe down rotation error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.  
-                            touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                            touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                             touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                         }
                     }
@@ -859,7 +906,7 @@ public class InputModule : MonoBehaviour
                             unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                             debugInputInfo = "Swipe up vertical distance error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.  
-                            touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                            touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                             touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                         }
                         // Swipe down detected.
@@ -870,7 +917,7 @@ public class InputModule : MonoBehaviour
                             unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                             debugInputInfo = "Swipe down vertical distance error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                             DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.   
-                            touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                            touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                             touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                         }
                     }
@@ -883,55 +930,55 @@ public class InputModule : MonoBehaviour
                         unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                         debugInputInfo = "Cannot determine if the swipe was horizontal or vertical. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.  
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     }
 
                     // If a swipe had not enough horizontal and vertical movement.
                     else if ((touchDuration > 0.0f) && (((Mathf.Abs(totalX0) > Mathf.Abs(totalY0)) && (Mathf.Abs(totalX1) < Mathf.Abs(totalY1))) || ((Mathf.Abs(totalX1) > Mathf.Abs(totalY1)) && (Mathf.Abs(totalX0) < Mathf.Abs(totalY0)))) && (((Mathf.Abs(totalX0) >= minSwipeHorizontalDist) && ((Mathf.Abs(totalX1) < minSwipeHorizontalDist) && (Mathf.Abs(totalX1) > maxHoldHorizontalDist))) || ((Mathf.Abs(totalX1) >= minSwipeHorizontalDist) && ((Mathf.Abs(totalX0) < minSwipeHorizontalDist) && (Mathf.Abs(totalX0) > maxHoldHorizontalDist)))))
                     {
-                        ievent.isSwipeHorizontalVerticalError = true;
+                        ievent.isSwipeHorizontalVerticalError = true; // This error was registered.
                         ievent.isUnrecognized = true; // An unrecognized gesture was registered.
                         unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                         debugInputInfo = "Swipe horizontal and vertical distance error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.   
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     }
 
                     // If a swipe had not enough horizontal and vertical movement.
                     else if ((touchDuration > 0.0f) && (((Mathf.Abs(totalY0) > Mathf.Abs(totalX0)) && (Mathf.Abs(totalY1) < Mathf.Abs(totalX1))) || ((Mathf.Abs(totalY1) > Mathf.Abs(totalX1)) && (Mathf.Abs(totalY0) < Mathf.Abs(totalX0)))) && (((Mathf.Abs(totalY0) >= minSwipeVerticalDist) && ((Mathf.Abs(totalY1) < minSwipeVerticalDist) && (Mathf.Abs(totalY1) > maxHoldVerticalDist))) || ((Mathf.Abs(totalY1) >= minSwipeVerticalDist) && ((Mathf.Abs(totalY0) < minSwipeVerticalDist) && (Mathf.Abs(totalY0) > maxHoldVerticalDist)))))
                     {
-                        ievent.isSwipeHorizontalVerticalError = true;
+                        ievent.isSwipeHorizontalVerticalError = true; // This error was registered.
                         ievent.isUnrecognized = true; // An unrecognized gesture was registered.
                         unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                         debugInputInfo = "Swipe horizontal and vertical distance error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.   
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     }
 
                     // If both fingers moved too much for a tap and too little for a swipe.
                     else if (((touchDuration < 1.0f) && (touchDuration > 0.0f)) && ((((Mathf.Abs(totalX0) > maxTapHorizontalDist) && (Mathf.Abs(totalX0) < minSwipeHorizontalDist)) && ((Mathf.Abs(totalX1) > maxTapHorizontalDist) && (Mathf.Abs(totalX1) < minSwipeHorizontalDist))) || (((Mathf.Abs(totalY0) > maxTapVerticalDist) && (Mathf.Abs(totalY0) < minSwipeVerticalDist)) && ((Mathf.Abs(totalY1) > maxTapVerticalDist) && (Mathf.Abs(totalY1) < minSwipeVerticalDist)))))
                     {
-                        ievent.isBetweenTapSwipeError = true;
+                        ievent.isBetweenTapSwipeError = true; // This error was registered.
                         ievent.isUnrecognized = true; // An unrecognized gesture was registered.
                         unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                         debugInputInfo = "Gesture not recognized as either a tap or a swipe. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.     
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     }
 
                     // If both fingers moved too much for a hold and too little for a swipe.
                     else if ((touchDuration >= 1.0f) && ((((Mathf.Abs(totalX0) > maxTapHorizontalDist) && (Mathf.Abs(totalX0) < minSwipeHorizontalDist)) && ((Mathf.Abs(totalX1) > maxTapHorizontalDist) && (Mathf.Abs(totalX1) < minSwipeHorizontalDist))) || (((Mathf.Abs(totalY0) > maxTapVerticalDist) && (Mathf.Abs(totalY0) < minSwipeVerticalDist)) && ((Mathf.Abs(totalY1) > maxTapVerticalDist) && (Mathf.Abs(totalY1) < minSwipeVerticalDist)))))
                     {
-                        ievent.isBetweenHoldSwipeError = true;
+                        ievent.isBetweenHoldSwipeError = true; // This error was registered.
                         ievent.isUnrecognized = true; // An unrecognized gesture was registered.
                         unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                         debugInputInfo = "Gesture not recognized as either a hold or a swipe. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.     
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     }
 
@@ -943,7 +990,7 @@ public class InputModule : MonoBehaviour
                         unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                         debugInputInfo = "Turn rotation error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.     
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     }
 
@@ -955,46 +1002,47 @@ public class InputModule : MonoBehaviour
                         unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                         debugInputInfo = "Hold rotation error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.         
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     }
 
                     // If the gesture was a hold with too much horizontal movement.
                     else if ((touchDuration >= 1.0f) && ((Mathf.Abs(totalX0) <= maxHoldHorizontalDist) && (Mathf.Abs(totalY0) <= maxHoldVerticalDist) && (Mathf.Abs(totalX1) > maxHoldHorizontalDist)) || ((Mathf.Abs(totalX1) <= maxHoldHorizontalDist) && (Mathf.Abs(totalY1) <= maxHoldVerticalDist) && (Mathf.Abs(totalX0) > maxHoldHorizontalDist)))
                     {
-                        ievent.isHoldHorizontalError = true;
+                        ievent.isHoldHorizontalError = true; // This error was registered.
                         ievent.isUnrecognized = true; // An unrecognized gesture was registered.                      
                         unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                         debugInputInfo = "Hold horizontal distance error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.        
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     }
 
                     // If the gesture was a hold with too much vertical movement.
                     else if ((touchDuration >= 1.0f) && ((Mathf.Abs(totalX0) <= maxHoldHorizontalDist) && (Mathf.Abs(totalY0) <= maxHoldVerticalDist) && (Mathf.Abs(totalY1) > maxHoldVerticalDist)) || ((Mathf.Abs(totalX1) <= maxHoldHorizontalDist) && (Mathf.Abs(totalY1) <= maxHoldVerticalDist) && (Mathf.Abs(totalY0) > maxHoldVerticalDist)))
                     {
-                        ievent.isHoldVerticalError = true;
+                        ievent.isHoldVerticalError = true; // This error was registered.
                         ievent.isUnrecognized = true; // An unrecognized gesture was registered.                      
                         unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                         debugInputInfo = "Hold vertical distance error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.        
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     }
 
                     // If the gesture was a hold with too much horizontal and vertical movement.
                     else if ((touchDuration >= 1.0f) && (((Mathf.Abs(totalX0) > maxHoldHorizontalDist) && (Mathf.Abs(totalX0) < minSwipeHorizontalDist) && (Mathf.Abs(totalX1) <= maxHoldHorizontalDist)) || ((Mathf.Abs(totalX1) > maxHoldHorizontalDist) && (Mathf.Abs(totalX1) < minSwipeHorizontalDist) && (Mathf.Abs(totalX0) <= maxHoldHorizontalDist))) && (((Mathf.Abs(totalY0) > maxHoldVerticalDist) && (Mathf.Abs(totalY0) < minSwipeVerticalDist) && (Mathf.Abs(totalY1) <= maxHoldVerticalDist)) || ((Mathf.Abs(totalY1) > maxHoldVerticalDist) && (Mathf.Abs(totalY1) < minSwipeVerticalDist) && (Mathf.Abs(totalY0) <= maxHoldVerticalDist))))
                     {
-                        ievent.isHoldHorizontalVerticalError = true;
+                        ievent.isHoldHorizontalVerticalError = true; // This error was registered.
                         ievent.isUnrecognized = true; // An unrecognized gesture was registered.                      
                         unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                         debugInputInfo = "Hold horizontal and vertical distance error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.        
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     }
 
+                    // If some other gesture error was recognized.
                     else
                     {
                         unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
@@ -1011,20 +1059,22 @@ public class InputModule : MonoBehaviour
                         print("MinSwipeHorizontal: " + minSwipeHorizontalDist.ToString() + ", MinSwipeVertical: " + minSwipeVerticalDist.ToString());
                         print("MinRotHorizontal: " + minRotateHorizontalDist.ToString() + ", MinRotVertical: " + minRotateVerticalDist.ToString());
                         print("MaxHoldHorizontal: " + maxHoldHorizontalDist.ToString() + ", MaxHoldVertical: " + maxHoldVerticalDist.ToString());
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     }
                 }
 
+                // If the player cannot make a gesture with two fingers at this time.
                 else if (canMakeGesture == false)
                 {
                     debugInputInfo = "Cannot make gesture with two fingers because you are using Talkback.";
                     DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
-                    touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                    touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                     touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                 }
             }
 
+            // If three fingers were on the screen.
             else if (touchRegister == 3)
             {
                 bool negativeAngle = false;
@@ -1037,12 +1087,12 @@ public class InputModule : MonoBehaviour
                 // If a finger went off the screen.
                 if ((wentOffscreen == true) && (touchDuration > 0.0f))
                 {
-                    unrecognizedTimes += 1;
+                    unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                     debugInputInfo = "At least one finger went off the screen. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                     DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
-                    touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                    touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                     touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
-                    List<AudioClip> clips = new List<AudioClip>() { Database.errorClips[20] };
+                    List<AudioClip> clips = new List<AudioClip>() { Database.errorClips[24] };
                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                 }
 
@@ -1053,7 +1103,7 @@ public class InputModule : MonoBehaviour
                     tapTimes += 1; // Update the number of times a tap was made.
                     debugInputInfo = "Tapped " + tapTimes + " times";
                     DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.       
-                    touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                    touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                     touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                 }
 
@@ -1068,7 +1118,7 @@ public class InputModule : MonoBehaviour
                         swipeLeftTimes += 1; // Update the number of times a swipe left was made.
                         debugInputInfo = "Swiped left " + swipeLeftTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.    
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     }
                     // Swipe right detected.
@@ -1079,7 +1129,7 @@ public class InputModule : MonoBehaviour
                         swipeRightTimes += 1; // Update the number of times a swipe right was made.
                         debugInputInfo = "Swiped right " + swipeRightTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     }
                 }
@@ -1095,7 +1145,7 @@ public class InputModule : MonoBehaviour
                         swipeUpTimes += 1; // Update the number of times a swipe up was made.
                         debugInputInfo = "Swiped up " + swipeUpTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.          
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     }
                     // Swipe down detected.
@@ -1106,7 +1156,7 @@ public class InputModule : MonoBehaviour
                         swipeDownTimes += 1; // Update the number of times a swipe down was made.
                         debugInputInfo = "Swiped down " + swipeDownTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.      
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     }
                 }
@@ -1119,7 +1169,7 @@ public class InputModule : MonoBehaviour
                     rotateLeftTimes += 1; // Update the number of times a left rotation was made.
                     debugInputInfo = "Rotated left " + rotateLeftTimes + " times";
                     DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.      
-                    touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                    touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                     touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                 }
 
@@ -1131,7 +1181,7 @@ public class InputModule : MonoBehaviour
                     rotateRightTimes += 1; // Update the number of times a right rotation was made.
                     debugInputInfo = "Rotated right " + rotateRightTimes + " times";
                     DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.         
-                    touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                    touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                     touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                 }
 
@@ -1142,7 +1192,7 @@ public class InputModule : MonoBehaviour
                     holdTimes += 1; // Update the number of times a hold was made.
                     debugInputInfo = "Hold registered " + holdTimes + " times";
                     DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.   
-                    touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                    touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                     touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                 }
 
@@ -1154,43 +1204,43 @@ public class InputModule : MonoBehaviour
                     unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                     debugInputInfo = "Tap rotation error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                     DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.         
-                    touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                    touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                     touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                 }
 
                 // If the gesture was a tap with too much horizontal movement.
                 else if (((touchDuration < 1.0f) && (touchDuration > 0.0f)) && (((Mathf.Abs(totalX0) <= maxTapHorizontalDist) && (Mathf.Abs(totalY0) <= maxTapVerticalDist) && ((Mathf.Abs(totalX1) > maxTapHorizontalDist) || (Mathf.Abs(totalX2) > maxTapHorizontalDist))) || ((Mathf.Abs(totalX1) <= maxTapHorizontalDist) && (Mathf.Abs(totalY1) <= maxTapVerticalDist) && ((Mathf.Abs(totalX0) > maxTapHorizontalDist) || (Mathf.Abs(totalX2) > maxTapHorizontalDist))) || ((Mathf.Abs(totalX2) <= maxTapHorizontalDist) && (Mathf.Abs(totalY2) <= maxTapVerticalDist) && ((Mathf.Abs(totalX0) > maxTapHorizontalDist) || (Mathf.Abs(totalX1) > maxTapHorizontalDist)))))
                 {
-                    ievent.isTapHorizontalError = true;
+                    ievent.isTapHorizontalError = true; // This error was registered.
                     ievent.isUnrecognized = true; // An unrecognized gesture was registered.                      
                     unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                     debugInputInfo = "Tap horizontal distance error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                     DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.        
-                    touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                    touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                     touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                 }
 
                 // If the gesture was a tap with too much vertical movement.
                 else if (((touchDuration < 1.0f) && (touchDuration > 0.0f)) && (((Mathf.Abs(totalX0) <= maxTapHorizontalDist) && (Mathf.Abs(totalY0) <= maxTapVerticalDist) && ((Mathf.Abs(totalY1) > maxTapVerticalDist) || (Mathf.Abs(totalY2) > maxTapVerticalDist))) || ((Mathf.Abs(totalX1) <= maxTapHorizontalDist) && (Mathf.Abs(totalY1) <= maxTapVerticalDist) && ((Mathf.Abs(totalY0) > maxTapVerticalDist) || (Mathf.Abs(totalY2) > maxTapVerticalDist))) || ((Mathf.Abs(totalX2) <= maxTapHorizontalDist) && (Mathf.Abs(totalY2) <= maxTapVerticalDist) && ((Mathf.Abs(totalY0) > maxTapVerticalDist) || (Mathf.Abs(totalY1) > maxTapVerticalDist)))))
                 {
-                    ievent.isTapVerticalError = true;
+                    ievent.isTapVerticalError = true; // This error was registered.
                     ievent.isUnrecognized = true; // An unrecognized gesture was registered.                      
                     unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                     debugInputInfo = "Tap vertical distance error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                     DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.        
-                    touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                    touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                     touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                 }
 
                 // If the gesture was a tap with too much horizontal and vertical movement.
                 else if (((touchDuration < 1.0f) && (touchDuration > 0.0f)) && (((Mathf.Abs(totalX0) > maxTapHorizontalDist) && (Mathf.Abs(totalX0) < minSwipeHorizontalDist) && ((Mathf.Abs(totalX1) <= maxTapHorizontalDist) || (Mathf.Abs(totalX2) <= maxTapHorizontalDist))) || ((Mathf.Abs(totalX1) > maxTapHorizontalDist) && (Mathf.Abs(totalX1) < minSwipeHorizontalDist) && ((Mathf.Abs(totalX0) <= maxTapHorizontalDist) || (Mathf.Abs(totalX2) <= maxTapHorizontalDist))) || ((Mathf.Abs(totalX2) > maxTapHorizontalDist) && (Mathf.Abs(totalX2) < minSwipeHorizontalDist) && ((Mathf.Abs(totalX0) <= maxTapHorizontalDist) || (Mathf.Abs(totalX1) <= maxTapHorizontalDist)))) && (((Mathf.Abs(totalY0) > maxTapVerticalDist) && (Mathf.Abs(totalY0) < minSwipeVerticalDist) && ((Mathf.Abs(totalY1) <= maxTapVerticalDist) || (Mathf.Abs(totalY2) <= maxTapVerticalDist))) || ((Mathf.Abs(totalY1) > maxTapVerticalDist) && (Mathf.Abs(totalY1) < minSwipeVerticalDist) && ((Mathf.Abs(totalY0) <= maxTapVerticalDist) || (Mathf.Abs(totalY2) <= maxTapVerticalDist))) || ((Mathf.Abs(totalY2) > maxTapVerticalDist) && (Mathf.Abs(totalY2) < minSwipeVerticalDist) && ((Mathf.Abs(totalY0) <= maxTapVerticalDist) || (Mathf.Abs(totalY1) <= maxTapVerticalDist)))))
                 {
-                    ievent.isTapHorizontalVerticalError = true;
+                    ievent.isTapHorizontalVerticalError = true; // This error was registered.
                     ievent.isUnrecognized = true; // An unrecognized gesture was registered.                      
                     unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                     debugInputInfo = "Tap horizontal and vertical distance error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                     DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.        
-                    touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                    touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                     touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                 }
 
@@ -1205,7 +1255,7 @@ public class InputModule : MonoBehaviour
                         unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                         debugInputInfo = "Swipe left rotation error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.     
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     }
                     // Swipe right detected.
@@ -1216,7 +1266,7 @@ public class InputModule : MonoBehaviour
                         unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                         debugInputInfo = "Swipe right rotation error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     }
                 }
@@ -1232,7 +1282,7 @@ public class InputModule : MonoBehaviour
                         unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                         debugInputInfo = "Swipe left horizontal distance error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.        
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     }
                     // Swipe right detected.
@@ -1243,7 +1293,7 @@ public class InputModule : MonoBehaviour
                         unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                         debugInputInfo = "Swipe right horizontal distance error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.   
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     }
                 }
@@ -1259,7 +1309,7 @@ public class InputModule : MonoBehaviour
                         unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                         debugInputInfo = "Swipe left horizontal distance error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.        
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     }
                     // Swipe right detected.
@@ -1270,7 +1320,7 @@ public class InputModule : MonoBehaviour
                         unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                         debugInputInfo = "Swipe right horizontal distance error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.   
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     }
                 }
@@ -1286,7 +1336,7 @@ public class InputModule : MonoBehaviour
                         unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                         debugInputInfo = "Swipe up rotation error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     }
                     // Swipe down detected.
@@ -1297,7 +1347,7 @@ public class InputModule : MonoBehaviour
                         unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                         debugInputInfo = "Swipe down rotation error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.  
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     }
                 }
@@ -1313,7 +1363,7 @@ public class InputModule : MonoBehaviour
                         unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                         debugInputInfo = "Swipe up vertical distance error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.  
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     }
                     // Swipe down detected.
@@ -1324,7 +1374,7 @@ public class InputModule : MonoBehaviour
                         unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                         debugInputInfo = "Swipe down vertical distance error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.   
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     }
                 }
@@ -1340,7 +1390,7 @@ public class InputModule : MonoBehaviour
                         unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                         debugInputInfo = "Swipe up vertical distance error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.  
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     }
                     // Swipe down detected.
@@ -1351,7 +1401,7 @@ public class InputModule : MonoBehaviour
                         unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                         debugInputInfo = "Swipe down vertical distance error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                         DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.   
-                        touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                        touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                         touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                     }
                 }
@@ -1359,96 +1409,96 @@ public class InputModule : MonoBehaviour
                 // If a swipe had not enough horizontal and vertical movement.
                 else if ((touchDuration > 0.0f) && (((Mathf.Abs(totalX0) > Mathf.Abs(totalY0)) && ((Mathf.Abs(totalX1) < Mathf.Abs(totalY1)) || (Mathf.Abs(totalX2) < Mathf.Abs(totalY2)))) || ((Mathf.Abs(totalX1) > Mathf.Abs(totalY1)) && ((Mathf.Abs(totalX0) < Mathf.Abs(totalY0)) || (Mathf.Abs(totalX2) < Mathf.Abs(totalY2)))) || ((Mathf.Abs(totalX2) > Mathf.Abs(totalY2)) && ((Mathf.Abs(totalX0) < Mathf.Abs(totalY0)) || (Mathf.Abs(totalX1) < Mathf.Abs(totalY1))))) && ((((Mathf.Abs(totalX1) >= minSwipeHorizontalDist) || (Mathf.Abs(totalX2) >= minSwipeHorizontalDist)) && ((Mathf.Abs(totalX0) < minSwipeHorizontalDist) && (Mathf.Abs(totalX0) > maxHoldHorizontalDist))) || (((Mathf.Abs(totalX0) >= minSwipeHorizontalDist) || (Mathf.Abs(totalX2) >= minSwipeHorizontalDist)) && ((Mathf.Abs(totalX1) < minSwipeHorizontalDist) && (Mathf.Abs(totalX1) > maxHoldHorizontalDist))) || (((Mathf.Abs(totalX0) >= minSwipeHorizontalDist) || (Mathf.Abs(totalX1) >= minSwipeHorizontalDist)) && ((Mathf.Abs(totalX2) < minSwipeHorizontalDist) && (Mathf.Abs(totalX2) > maxHoldHorizontalDist)))))
                 {
-                    ievent.isSwipeHorizontalVerticalError = true;
+                    ievent.isSwipeHorizontalVerticalError = true; // This error was registered.
                     ievent.isUnrecognized = true; // An unrecognized gesture was registered.
                     unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                     debugInputInfo = "Swipe horizontal and vertical distance error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                     DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.   
-                    touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                    touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                     touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                 }                
 
                 // If a swipe had not enough horizontal and vertical movement.
                 else if ((touchDuration > 0.0f) && (((Mathf.Abs(totalY0) > Mathf.Abs(totalX0)) && ((Mathf.Abs(totalY1) < Mathf.Abs(totalX1)) || (Mathf.Abs(totalY2) < Mathf.Abs(totalX2)))) || ((Mathf.Abs(totalY1) > Mathf.Abs(totalX1)) && ((Mathf.Abs(totalY0) < Mathf.Abs(totalX0)) || (Mathf.Abs(totalY2) < Mathf.Abs(totalX2)))) || ((Mathf.Abs(totalY2) > Mathf.Abs(totalX2)) && ((Mathf.Abs(totalY0) < Mathf.Abs(totalX0)) || (Mathf.Abs(totalY1) < Mathf.Abs(totalX1))))) && ((((Mathf.Abs(totalY1) >= minSwipeVerticalDist) || (Mathf.Abs(totalY2) >= minSwipeVerticalDist)) && ((Mathf.Abs(totalY0) < minSwipeVerticalDist) && (Mathf.Abs(totalY0) > maxHoldVerticalDist))) || (((Mathf.Abs(totalY0) >= minSwipeVerticalDist) || (Mathf.Abs(totalY2) >= minSwipeVerticalDist)) && ((Mathf.Abs(totalY1) < minSwipeVerticalDist) && (Mathf.Abs(totalY1) > maxHoldVerticalDist))) || (((Mathf.Abs(totalY0) >= minSwipeVerticalDist) || (Mathf.Abs(totalY1) >= minSwipeVerticalDist)) && ((Mathf.Abs(totalY2) < minSwipeVerticalDist) && (Mathf.Abs(totalY2) > maxHoldVerticalDist)))))
                 {
-                    ievent.isSwipeDirectionError = true;
+                    ievent.isSwipeDirectionError = true; // This error was registered.
                     ievent.isUnrecognized = true; // An unrecognized gesture was registered.
                     unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                     debugInputInfo = "Swipe horizontal and vertical distance error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                     DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.   
-                    touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                    touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                     touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                 }
 
                 // If the swipe was neither horizontal or vertical.
                 else if ((touchDuration > 0.0f) && (((Mathf.Abs(totalY0) < Mathf.Abs(totalX0)) && (Mathf.Abs(totalY1) < Mathf.Abs(totalX1))) || ((Mathf.Abs(totalY0) < Mathf.Abs(totalX0)) && (Mathf.Abs(totalY2) < Mathf.Abs(totalX2))) || ((Mathf.Abs(totalY1) < Mathf.Abs(totalX1)) && (Mathf.Abs(totalY2) < Mathf.Abs(totalX2)))) && ((((Mathf.Abs(totalX0) < minSwipeHorizontalDist) && (Mathf.Abs(totalX1) < minSwipeHorizontalDist) && (Mathf.Abs(totalX2) >= minSwipeHorizontalDist)) || ((Mathf.Abs(totalX0) < minSwipeHorizontalDist) && (Mathf.Abs(totalX2) < minSwipeHorizontalDist) && (Mathf.Abs(totalX1) >= minSwipeHorizontalDist)) || ((Mathf.Abs(totalX1) < minSwipeHorizontalDist) && (Mathf.Abs(totalX2) < minSwipeHorizontalDist) && (Mathf.Abs(totalX0) >= minSwipeHorizontalDist))) || (((Mathf.Abs(totalY0) < minSwipeVerticalDist) && (Mathf.Abs(totalY1) < minSwipeVerticalDist) && (Mathf.Abs(totalY2) >= minSwipeVerticalDist)) || ((Mathf.Abs(totalY0) < minSwipeVerticalDist) && (Mathf.Abs(totalY2) < minSwipeVerticalDist) && (Mathf.Abs(totalY1) >= minSwipeVerticalDist)) || ((Mathf.Abs(totalY1) < minSwipeVerticalDist) && (Mathf.Abs(totalY2) < minSwipeVerticalDist) && (Mathf.Abs(totalY0) >= minSwipeVerticalDist)))))
                 {
-                    ievent.isSwipeHorizontalVerticalError = true;
+                    ievent.isSwipeHorizontalVerticalError = true; // This error was registered.
                     ievent.isUnrecognized = true; // An unrecognized gesture was registered.
                     unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                     debugInputInfo = "Cannot determine if the swipe was horizontal or vertical. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                     DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.   
-                    touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                    touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                     touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                 }
 
                 // If the swipe was neither horizontal or vertical.
                 else if ((touchDuration > 0.0f) && (((Mathf.Abs(totalX0) < Mathf.Abs(totalY0)) && (Mathf.Abs(totalX1) < Mathf.Abs(totalY1))) || ((Mathf.Abs(totalX0) < Mathf.Abs(totalY0)) && (Mathf.Abs(totalX2) < Mathf.Abs(totalY2))) || ((Mathf.Abs(totalX1) < Mathf.Abs(totalY1)) && (Mathf.Abs(totalX2) < Mathf.Abs(totalY2)))) && ((((Mathf.Abs(totalX0) < minSwipeHorizontalDist) && (Mathf.Abs(totalX1) < minSwipeHorizontalDist) && (Mathf.Abs(totalX2) >= minSwipeHorizontalDist)) || ((Mathf.Abs(totalX0) < minSwipeHorizontalDist) && (Mathf.Abs(totalX2) < minSwipeHorizontalDist) && (Mathf.Abs(totalX1) >= minSwipeHorizontalDist)) || ((Mathf.Abs(totalX1) < minSwipeHorizontalDist) && (Mathf.Abs(totalX2) < minSwipeHorizontalDist) && (Mathf.Abs(totalX0) >= minSwipeHorizontalDist))) || (((Mathf.Abs(totalY0) < minSwipeVerticalDist) && (Mathf.Abs(totalY1) < minSwipeVerticalDist) && (Mathf.Abs(totalY2) >= minSwipeVerticalDist)) || ((Mathf.Abs(totalY0) < minSwipeVerticalDist) && (Mathf.Abs(totalY2) < minSwipeVerticalDist) && (Mathf.Abs(totalY1) >= minSwipeVerticalDist)) || ((Mathf.Abs(totalY1) < minSwipeVerticalDist) && (Mathf.Abs(totalY2) < minSwipeVerticalDist) && (Mathf.Abs(totalY0) >= minSwipeVerticalDist)))))
                 {
-                    ievent.isSwipeHorizontalVerticalError = true;
+                    ievent.isSwipeHorizontalVerticalError = true; // This error was registered.
                     ievent.isUnrecognized = true; // An unrecognized gesture was registered.
                     unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                     debugInputInfo = "Cannot determine if the swipe was horizontal or vertical. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                     DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.   
-                    touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                    touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                     touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                 }
 
                 // If the swipe was neither horizontal or vertical.
                 else if ((touchDuration > 0.0f) && (((Mathf.Abs(totalY0) < Mathf.Abs(totalX0)) && (Mathf.Abs(totalY1) < Mathf.Abs(totalX1))) || ((Mathf.Abs(totalY0) < Mathf.Abs(totalX0)) && (Mathf.Abs(totalY2) < Mathf.Abs(totalX2))) || ((Mathf.Abs(totalY1) < Mathf.Abs(totalX1)) && (Mathf.Abs(totalY2) < Mathf.Abs(totalX2)))) && ((((Mathf.Abs(totalX0) < minSwipeHorizontalDist) && (Mathf.Abs(totalX1) >= minSwipeHorizontalDist) && (Mathf.Abs(totalX2) >= minSwipeHorizontalDist)) || ((Mathf.Abs(totalX1) < minSwipeHorizontalDist) && (Mathf.Abs(totalX0) >= minSwipeHorizontalDist) && (Mathf.Abs(totalX2) >= minSwipeHorizontalDist)) || ((Mathf.Abs(totalX2) < minSwipeHorizontalDist) && (Mathf.Abs(totalX0) >= minSwipeHorizontalDist) && (Mathf.Abs(totalX1) >= minSwipeHorizontalDist))) || (((Mathf.Abs(totalY0) < minSwipeVerticalDist) && (Mathf.Abs(totalY1) >= minSwipeVerticalDist) && (Mathf.Abs(totalY2) >= minSwipeVerticalDist)) || ((Mathf.Abs(totalY1) < minSwipeVerticalDist) && (Mathf.Abs(totalY0) >= minSwipeVerticalDist) && (Mathf.Abs(totalY2) >= minSwipeVerticalDist)) || ((Mathf.Abs(totalY2) < minSwipeVerticalDist) && (Mathf.Abs(totalY0) >= minSwipeVerticalDist) && (Mathf.Abs(totalY1) >= minSwipeVerticalDist)))))
                 {
-                    ievent.isSwipeHorizontalVerticalError = true;
+                    ievent.isSwipeHorizontalVerticalError = true; // This error was registered.
                     ievent.isUnrecognized = true; // An unrecognized gesture was registered.
                     unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                     debugInputInfo = "Cannot determine if the swipe was horizontal or vertical. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                     DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.   
-                    touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                    touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                     touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                 }
 
                 // If the swipe was neither horizontal or vertical.
                 else if ((touchDuration > 0.0f) && (((Mathf.Abs(totalX0) < Mathf.Abs(totalY0)) && (Mathf.Abs(totalX1) < Mathf.Abs(totalY1))) || ((Mathf.Abs(totalX0) < Mathf.Abs(totalY0)) && (Mathf.Abs(totalX2) < Mathf.Abs(totalY2))) || ((Mathf.Abs(totalX1) < Mathf.Abs(totalY1)) && (Mathf.Abs(totalX2) < Mathf.Abs(totalY2)))) && ((((Mathf.Abs(totalX0) < minSwipeHorizontalDist) && (Mathf.Abs(totalX1) >= minSwipeHorizontalDist) && (Mathf.Abs(totalX2) >= minSwipeHorizontalDist)) || ((Mathf.Abs(totalX1) < minSwipeHorizontalDist) && (Mathf.Abs(totalX0) >= minSwipeHorizontalDist) && (Mathf.Abs(totalX2) >= minSwipeHorizontalDist)) || ((Mathf.Abs(totalX2) < minSwipeHorizontalDist) && (Mathf.Abs(totalX0) >= minSwipeHorizontalDist) && (Mathf.Abs(totalX1) >= minSwipeHorizontalDist))) || (((Mathf.Abs(totalY0) < minSwipeVerticalDist) && (Mathf.Abs(totalY1) >= minSwipeVerticalDist) && (Mathf.Abs(totalY2) >= minSwipeVerticalDist)) || ((Mathf.Abs(totalY1) < minSwipeVerticalDist) && (Mathf.Abs(totalY0) >= minSwipeVerticalDist) && (Mathf.Abs(totalY2) >= minSwipeVerticalDist)) || ((Mathf.Abs(totalY2) < minSwipeVerticalDist) && (Mathf.Abs(totalY0) >= minSwipeVerticalDist) && (Mathf.Abs(totalY1) >= minSwipeVerticalDist)))))
                 {
-                    ievent.isSwipeHorizontalVerticalError = true;
+                    ievent.isSwipeHorizontalVerticalError = true; // This error was registered.
                     ievent.isUnrecognized = true; // An unrecognized gesture was registered.
                     unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                     debugInputInfo = "Cannot determine if the swipe was horizontal or vertical. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                     DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.   
-                    touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                    touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                     touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                 }
 
                 // If both fingers moved too much for a tap and too little for a swipe.
                 else if (((touchDuration < 1.0f) && (touchDuration > 0.0f)) && ((((Mathf.Abs(totalX0) > maxTapHorizontalDist) && (Mathf.Abs(totalX0) < minSwipeHorizontalDist)) && ((Mathf.Abs(totalX1) > maxTapHorizontalDist) && (Mathf.Abs(totalX1) < minSwipeHorizontalDist)) && ((Mathf.Abs(totalX2) > maxTapHorizontalDist) && (Mathf.Abs(totalX2) < minSwipeHorizontalDist))) || (((Mathf.Abs(totalY0) > maxTapVerticalDist) && (Mathf.Abs(totalY0) < minSwipeVerticalDist)) && ((Mathf.Abs(totalY1) > maxTapVerticalDist) && (Mathf.Abs(totalY1) < minSwipeVerticalDist)) && ((Mathf.Abs(totalY2) > maxTapVerticalDist) && (Mathf.Abs(totalY2) < minSwipeVerticalDist)))))
                 {
-                    ievent.isBetweenTapSwipeError = true;
+                    ievent.isBetweenTapSwipeError = true; // This error was registered.
                     ievent.isUnrecognized = true; // An unrecognized gesture was registered.
                     unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                     debugInputInfo = "Gesture not recognized as either a tap or a swipe. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                     DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.     
-                    touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                    touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                     touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                 }
 
                 // If both fingers moved too much for a hold and too little for a swipe.
                 else if ((touchDuration >= 1.0f) && ((((Mathf.Abs(totalX0) > maxTapHorizontalDist) && (Mathf.Abs(totalX0) < minSwipeHorizontalDist)) && ((Mathf.Abs(totalX1) > maxTapHorizontalDist) && (Mathf.Abs(totalX1) < minSwipeHorizontalDist)) && ((Mathf.Abs(totalX2) > maxTapHorizontalDist) && (Mathf.Abs(totalX2) < minSwipeHorizontalDist))) || (((Mathf.Abs(totalY0) > maxTapVerticalDist) && (Mathf.Abs(totalY0) < minSwipeVerticalDist)) && ((Mathf.Abs(totalY1) > maxTapVerticalDist) && (Mathf.Abs(totalY1) < minSwipeVerticalDist)) && ((Mathf.Abs(totalY2) > maxTapVerticalDist) && (Mathf.Abs(totalY2) < minSwipeVerticalDist)))))
                 {
-                    ievent.isBetweenHoldSwipeError = true;
+                    ievent.isBetweenHoldSwipeError = true; // This error was registered.
                     ievent.isUnrecognized = true; // An unrecognized gesture was registered.
                     unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                     debugInputInfo = "Gesture not recognized as either a hold or a swipe. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                     DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.     
-                    touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                    touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                     touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                 }
 
@@ -1460,7 +1510,7 @@ public class InputModule : MonoBehaviour
                     unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                     debugInputInfo = "Turn rotation error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                     DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.     
-                    touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                    touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                     touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                 }
 
@@ -1472,43 +1522,43 @@ public class InputModule : MonoBehaviour
                     unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                     debugInputInfo = "Hold rotation error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                     DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.         
-                    touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                    touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                     touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                 }
 
                 // If the gesture was a hold with too much horizontal movement.
                 else if ((touchDuration >= 1.0f) && (((Mathf.Abs(totalX0) <= maxTapHorizontalDist) && (Mathf.Abs(totalY0) <= maxTapVerticalDist) && ((Mathf.Abs(totalX1) > maxTapHorizontalDist) || (Mathf.Abs(totalX2) > maxTapHorizontalDist))) || ((Mathf.Abs(totalX1) <= maxTapHorizontalDist) && (Mathf.Abs(totalY1) <= maxTapVerticalDist) && ((Mathf.Abs(totalX0) > maxTapHorizontalDist) || (Mathf.Abs(totalX2) > maxTapHorizontalDist))) || ((Mathf.Abs(totalX2) <= maxTapHorizontalDist) && (Mathf.Abs(totalY2) <= maxTapVerticalDist) && ((Mathf.Abs(totalX0) > maxTapHorizontalDist) || (Mathf.Abs(totalX1) > maxTapHorizontalDist)))))
                 {
-                    ievent.isHoldHorizontalError = true;
+                    ievent.isHoldHorizontalError = true; // This error was registered.
                     ievent.isUnrecognized = true; // An unrecognized gesture was registered.                      
                     unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                     debugInputInfo = "Hold horizontal distance error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                     DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.        
-                    touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                    touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                     touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                 }
 
                 // If the gesture was a hold with too much vertical movement.
                 else if ((touchDuration >= 1.0f) && (((Mathf.Abs(totalX0) <= maxTapHorizontalDist) && (Mathf.Abs(totalY0) <= maxTapVerticalDist) && ((Mathf.Abs(totalY1) > maxTapVerticalDist) || (Mathf.Abs(totalY2) > maxTapVerticalDist))) || ((Mathf.Abs(totalX1) <= maxTapHorizontalDist) && (Mathf.Abs(totalY1) <= maxTapVerticalDist) && ((Mathf.Abs(totalY0) > maxTapVerticalDist) || (Mathf.Abs(totalY2) > maxTapVerticalDist))) || ((Mathf.Abs(totalX2) <= maxTapHorizontalDist) && (Mathf.Abs(totalY2) <= maxTapVerticalDist) && ((Mathf.Abs(totalY0) > maxTapVerticalDist) || (Mathf.Abs(totalY1) > maxTapVerticalDist)))))
                 {
-                    ievent.isHoldVerticalError = true;
+                    ievent.isHoldVerticalError = true; // This error was registered.
                     ievent.isUnrecognized = true; // An unrecognized gesture was registered.                      
                     unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                     debugInputInfo = "Hold vertical distance error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                     DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.        
-                    touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                    touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                     touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                 }
 
                 // If the gesture was a hold with too much horizontal and vertical movement.
                 else if ((touchDuration >= 1.0f) && (((Mathf.Abs(totalX0) > maxTapHorizontalDist) && (Mathf.Abs(totalX0) < minSwipeHorizontalDist) && ((Mathf.Abs(totalX1) <= maxTapHorizontalDist) || (Mathf.Abs(totalX2) <= maxTapHorizontalDist))) || ((Mathf.Abs(totalX1) > maxTapHorizontalDist) && (Mathf.Abs(totalX1) < minSwipeHorizontalDist) && ((Mathf.Abs(totalX0) <= maxTapHorizontalDist) || (Mathf.Abs(totalX2) <= maxTapHorizontalDist))) || ((Mathf.Abs(totalX2) > maxTapHorizontalDist) && (Mathf.Abs(totalX2) < minSwipeHorizontalDist) && ((Mathf.Abs(totalX0) <= maxTapHorizontalDist) || (Mathf.Abs(totalX1) <= maxTapHorizontalDist)))) && (((Mathf.Abs(totalY0) > maxTapVerticalDist) && (Mathf.Abs(totalY0) < minSwipeVerticalDist) && ((Mathf.Abs(totalY1) <= maxTapVerticalDist) || (Mathf.Abs(totalY2) <= maxTapVerticalDist))) || ((Mathf.Abs(totalY1) > maxTapVerticalDist) && (Mathf.Abs(totalY1) < minSwipeVerticalDist) && ((Mathf.Abs(totalY0) <= maxTapVerticalDist) || (Mathf.Abs(totalY2) <= maxTapVerticalDist))) || ((Mathf.Abs(totalY2) > maxTapVerticalDist) && (Mathf.Abs(totalY2) < minSwipeVerticalDist) && ((Mathf.Abs(totalY0) <= maxTapVerticalDist) || (Mathf.Abs(totalY1) <= maxTapVerticalDist)))))
                 {
-                    ievent.isHoldHorizontalVerticalError = true;
+                    ievent.isHoldHorizontalVerticalError = true; // This error was registered.
                     ievent.isUnrecognized = true; // An unrecognized gesture was registered.                      
                     unrecognizedTimes += 1; // Update the number of times an unrecognized gesture was made.
                     debugInputInfo = "Hold horizontal and vertical distance error. An unrecognized gesture has been made " + unrecognizedTimes + " times";
                     DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.        
-                    touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                    touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                     touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                 }
 
@@ -1528,24 +1578,22 @@ public class InputModule : MonoBehaviour
                     print("MinSwipeHorizontal: " + minSwipeHorizontalDist.ToString() + ", MinSwipeVertical: " + minSwipeVerticalDist.ToString());
                     print("MinRotHorizontal: " + minRotateHorizontalDist.ToString() + ", MinRotVertical: " + minRotateVerticalDist.ToString());
                     print("MaxHoldHorizontal: " + maxHoldHorizontalDist.ToString() + ", MaxHoldVertical: " + maxHoldVerticalDist.ToString());
-                    touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+                    touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                     touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
                 }
             }
 
-            touchDuration = 0.0f; // Reset duration of touch duration to 0, as nothing is touch the screen.
+            touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
             touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
-            angle = 0.0f;
+            angle = 0.0f; // Reset the angle to 0.
 
             hasRegistered[0] = false; // Touch0 is no longer on the screen. Make sure it is not registered for the next time it touches so that its start position can be obtained.
             hasRegistered[1] = false; // Touch1 is no longer on the screen. Make sure it is not registered for the next time it touches so that its start position can be obtained.
             hasRegistered[2] = false; // Touch2 is no longer on the screen. Make sure it is not registered for the next time it touches so that its start position can be obtained.
         }
 #endif
-        // print(touchTime);
-        // if no input, code should not reach here
-        PassDataToListeners(ievent);
-        NotifyLlisteners();
+        PassDataToListeners(ievent); // Pass the event information to the event listeners.
+        NotifyLlisteners(); // Notify the listeners that an event happened.
     }
 
     /// <summary>
@@ -1553,6 +1601,7 @@ public class InputModule : MonoBehaviour
     /// </summary>
     void PassDataToListeners(InputEvent _ie)
     {
+        // For each listener, set the event data based on the event passed in.
         foreach (eventHandler eh in listeners)
         {
             if (eh != null)
@@ -1567,6 +1616,7 @@ public class InputModule : MonoBehaviour
     /// </summary>
     void NotifyLlisteners()
     {
+        // For each listener, allow the event stored to happen.
         foreach (eventHandler eh in listeners)
         {
             if (eh != null)
@@ -1581,6 +1631,7 @@ public class InputModule : MonoBehaviour
     /// </summary>
     void ResetCDTimers()
     {
+        // Reset each countdown timer.
         foreach (CDTimer ctimer in cdtimers)
         {
             if (ctimer != null)

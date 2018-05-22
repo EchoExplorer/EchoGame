@@ -14,12 +14,14 @@ public class Loader : MonoBehaviour
     void Awake()
     {
         if (GameManager.instance == null)
-            Instantiate(gameManager);
+        {
+            Instantiate(gameManager); // Instantiate GameManager prefab.
+        }
 
         if (SoundManager.instance == null)
-
-            //Instantiate SoundManager prefab
-            Instantiate(soundManager);
+        {            
+            Instantiate(soundManager); // Instantiate SoundManager prefab.
+        }
     }
 
 }
