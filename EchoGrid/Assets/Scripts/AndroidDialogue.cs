@@ -12,7 +12,6 @@ using System.Collections;
 /// </remarks>
 public class AndroidDialogue : MonoBehaviour
 {
-
     /// <summary>
     /// The type of the dialogue, mostly determining what buttons and input fields exist.
     /// Normal refers to a yes or no prompt. Yes-only refers to a single button prompt.
@@ -88,9 +87,13 @@ public class AndroidDialogue : MonoBehaviour
     public string getInputStr()
     {
         if (inputStr == null)
+        {
             return " ";
+        }
         else if (inputStr.Length == 0)
+        {
             return " ";
+        }
 
         return inputStr;
     }
@@ -107,8 +110,7 @@ public class AndroidDialogue : MonoBehaviour
     {
         private AndroidDialogue mDialog;
 
-        public PositiveButtonListner(AndroidDialogue d)
-            : base("android.content.DialogInterface$OnClickListener")
+        public PositiveButtonListner(AndroidDialogue d) : base("android.content.DialogInterface$OnClickListener")
         {
             mDialog = d;
         }
@@ -125,8 +127,7 @@ public class AndroidDialogue : MonoBehaviour
         private AndroidDialogue mDialog;
         private AndroidJavaObject InputText;
 
-        public InputTextFieldListner(AndroidDialogue d, AndroidJavaObject text)
-            : base("android.content.DialogInterface$OnClickListener")
+        public InputTextFieldListner(AndroidDialogue d, AndroidJavaObject text) : base("android.content.DialogInterface$OnClickListener")
         {
             mDialog = d;
             InputText = text;
@@ -149,8 +150,7 @@ public class AndroidDialogue : MonoBehaviour
     {
         private AndroidDialogue mDialog;
 
-        public NegativeButtonListner(AndroidDialogue d)
-            : base("android.content.DialogInterface$OnClickListener")
+        public NegativeButtonListner(AndroidDialogue d) : base("android.content.DialogInterface$OnClickListener")
         {
             mDialog = d;
         }
@@ -216,7 +216,6 @@ public class AndroidDialogue : MonoBehaviour
             dialog.Call("show");
         }));
 #endif
-
     }
 }
 // This was copied from http://blog.trsquarelab.com/2015_02_01_archive.html, it seems.

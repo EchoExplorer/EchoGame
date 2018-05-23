@@ -105,7 +105,7 @@ public class GM_title : MonoBehaviour
                         // Tell them to orient their phone to the proper position.
                         canRepeat = false;
                         if (repeatSetupClip == true)
-                        {                            
+                        {
                             clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.settingsClips[0] };
                             SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
                         }
@@ -759,7 +759,7 @@ public class GM_title : MonoBehaviour
                 {
                     // If the player has made a swipe down when they were asked to swipe left or right.
                     if ((GM_main_pre.hasGoneThroughSetup == false) && (orientation_correct == true) && (determined_talkback == false))
-                    { 
+                    {
                         debugPlayerInfo = "Swiped down. Incorrect gesture made. You should swipe left for Talkback or right for no Talkback.";
                         SoundManager.instance.PlayVoice(Database.errorClips[23], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
@@ -794,7 +794,7 @@ public class GM_title : MonoBehaviour
                     else if (ie.isRight == true)
                     {
                         debugPlayerInfo = "Right rotation registered. Incorrect gesture made. You should swipe left for Talkback or right for no Talkback.";
-                    }                    
+                    }
                     SoundManager.instance.PlayVoice(Database.errorClips[23], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
                 // If the player has made a rotation when they were asked to tap.
@@ -978,7 +978,7 @@ public class GM_title : MonoBehaviour
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on hold.";
                     SoundManager.instance.PlayVoice(Database.errorClips[17], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
-                }               
+                }
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
             }
         }
@@ -1060,7 +1060,7 @@ public class GM_title : MonoBehaviour
                     else if (ie.isRight == true)
                     {
                         debugPlayerInfo = "Right rotation registered. Incorrect gesture made. You should swipe left for Talkback or right for no Talkback.";
-                    }                  
+                    }
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.   
                     SoundManager.instance.PlayVoice(Database.errorClips[23], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
@@ -1113,7 +1113,7 @@ public class GM_title : MonoBehaviour
                     {
                         debugPlayerInfo = "Nothing happened due to error with rotation on swipe right.";
                         SoundManager.instance.PlayVoice(Database.errorClips[12], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
-                    }                   
+                    }
                     // If another gesture error was registered that could have been a gesture other than a swipe left or right, tell the player that they should have swiped left or right.
                     else
                     {
@@ -1257,7 +1257,7 @@ public class GM_title : MonoBehaviour
                     // If the swipe was left.
                     if (ie.isLeft == true)
                     {
-                        debugPlayerInfo = "Swiped left. Incorrect gesture made. You should tap to register that you have put in headphones.";                        
+                        debugPlayerInfo = "Swiped left. Incorrect gesture made. You should tap to register that you have put in headphones.";
                     }
                     // If the swipe was right.
                     else if (ie.isRight == true)
@@ -1273,7 +1273,7 @@ public class GM_title : MonoBehaviour
                     else if (ie.isDown == true)
                     {
                         debugPlayerInfo = "Swiped down. Incorrect gesture made. You should tap to register that you have put in headphones.";
-                    }                    
+                    }
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.   
                     SoundManager.instance.PlayVoice(Database.errorClips[18], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
@@ -1522,7 +1522,7 @@ public class GM_title : MonoBehaviour
                     {
                         debugPlayerInfo = "Nothing happened due to error with rotation on hold.";
                         SoundManager.instance.PlayVoice(Database.errorClips[17], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
-                    }                    
+                    }
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 }
             }

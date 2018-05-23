@@ -36,10 +36,10 @@ public class SoundManager : MonoBehaviour
         {            
             instance = this;
         }
-        // If instance already exists.
+        // If instance already exists:
         else if (instance != this)
-        {           
-            Destroy(gameObject); // Destroy this. This enforces our singleton pattern so there can only be one instance of SoundManager.
+        {            
+            Destroy(gameObject); // Destroy this, this enforces our singleton pattern so there can only be one instance of SoundManager.
         }
 
         // Set SoundManager to DontDestroyOnLoad so that it won't be destroyed when reloading our scene.
@@ -58,7 +58,7 @@ public class SoundManager : MonoBehaviour
     /// Retries upon failure until the first successful run.
     /// </summary>
     void Update()
-    {       
+    {
         if (!voice_adjusted)
         {
             for (int i = 0; i < efxSource.Length; ++i)
@@ -145,7 +145,7 @@ public class SoundManager : MonoBehaviour
     /// Plays an echo sound.
     /// </summary>
 	public void PlayEcho(AudioClip echoClip, Action callback = null)
-    {       
+    {
         echoSource.clip = Database.soundEffectClips[1];
         echoSource.Play();
         StartCoroutine(EchoWait(echoSource.clip.length, echoClip, callback));
@@ -287,7 +287,7 @@ public class SoundManager : MonoBehaviour
             else if (volumes != null)
             {
                 PlayClip(clip, true, balances[current], volumes[current]);
-            }                
+            }
         }
 
         StartCoroutine(WaitForLength(clipLength, clips, balances, current, callback, callback_index, volumes));

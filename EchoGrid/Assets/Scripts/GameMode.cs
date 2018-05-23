@@ -65,7 +65,7 @@ public class GameMode : MonoBehaviour
         else
         {
             filename = Application.persistentDataPath + "echosaved_tutorial"; // Set this string as the filename.
-        }        
+        }
 
         fileLines[0] = level.ToString(); // Set the first line of the file to be the level passed.
 

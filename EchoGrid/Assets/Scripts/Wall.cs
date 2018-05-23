@@ -6,9 +6,10 @@ using System.Collections;
 /// </summary>
 public class Wall : MonoBehaviour
 {
-	// private SpriteRenderer spriteRenderer;
+    // private SpriteRenderer spriteRenderer;
 	// Use this for initialization
-	void Awake () {
-		// spriteRenderer = GetComponent<SpriteRenderer>();
+	void Awake ()
+    {
+		// spriteRenderer = GetComponent<SpriteRenderer> ();
 	}
 }

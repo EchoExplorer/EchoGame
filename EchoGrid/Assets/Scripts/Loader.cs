@@ -6,7 +6,6 @@ using System.Collections;
 /// </summary>
 public class Loader : MonoBehaviour
 {
-
     public GameObject gameManager;
     public GameObject soundManager;
 
@@ -14,14 +13,13 @@ public class Loader : MonoBehaviour
     void Awake()
     {
         if (GameManager.instance == null)
-        {
-            Instantiate(gameManager); // Instantiate GameManager prefab.
+        {            
+            Instantiate(gameManager); // Instantiate GameManager prefab
         }
 
         if (SoundManager.instance == null)
         {            
-            Instantiate(soundManager); // Instantiate SoundManager prefab.
+            Instantiate(soundManager); // Instantiate SoundManager prefab
         }
     }
-
 }

@@ -57,7 +57,7 @@ public struct InputEvent
         isTap = false; isHold = false; isSwipe = false; isRotate = false; isMain = false; isUnrecognized = false; keycode = KeyCode.None;
         isTapHorizontalError = false; isTapVerticalError = false; isTapHorizontalVerticalError = false; isTapRotationError = false;
         isSwipeLeftHorizontalError = false; isSwipeRightHorizontalError = false; isSwipeUpVerticalError = false; isSwipeDownVerticalError = false; isSwipeHorizontalVerticalError = false;
-        isSwipeLeftRotationError = false; isSwipeRightRotationError = false; isSwipeUpRotationError = false; isSwipeDownRotationError = false; 
+        isSwipeLeftRotationError = false; isSwipeRightRotationError = false; isSwipeUpRotationError = false; isSwipeDownRotationError = false;
         isRotationAngleError = false; isHoldHorizontalError = false; isHoldVerticalError = false; isHoldHorizontalVerticalError = false; isHoldRotationError = false;
         isSwipeDirectionError = false; isBetweenTapSwipeError = false; isBetweenHoldSwipeError = false;
         elapsedTime = 0.0f;
@@ -109,9 +109,7 @@ public class InputModule : MonoBehaviour
     Touch touch0;
     Touch touch1;
     Touch touch2;
-
-    Vector2[] touchStart = { new Vector2(), new Vector2(), new Vector2() }; // Array for the start positions of the three touches.
-    Vector2[] touchEnd = { new Vector2(), new Vector2(), new Vector2() }; // Array for the end positions of the three touches.
+   
     Vector2 vecStart0 = new Vector2(); // Vector for the start position of touch0.
     Vector2 vecEnd0 = new Vector2(); // Vector for the end position of touch0.
     Vector2 vecStart1 = new Vector2(); // Vector for the start position of touch1.
@@ -163,7 +161,7 @@ public class InputModule : MonoBehaviour
     // Use for initialization.
     void Start()
     {
-        
+
     }
 
     /// <summary>
@@ -601,7 +599,7 @@ public class InputModule : MonoBehaviour
 
         // If there are currently no fingers on the screen, determine if a tap/swipe/rotation/hold gesture was made.
         if (Input.touchCount == 0)
-        {            
+        {
             bool canMakeGesture = false;
 
             // If one finger was on the screen.
@@ -1416,7 +1414,7 @@ public class InputModule : MonoBehaviour
                     DebugInput.instance.ChangeDebugInputText(debugInputInfo); // Update the debug textbox.   
                     touchDuration = 0.0f; // Reset touchDuration to 0, as nothing is touching the screen.
                     touchRegister = 0; // Reset the touchRegister just to make sure no inputs are recognized when there are no fingers touching the screen.
-                }                
+                }
 
                 // If a swipe had not enough horizontal and vertical movement.
                 else if ((touchDuration > 0.0f) && (((Mathf.Abs(totalY0) > Mathf.Abs(totalX0)) && ((Mathf.Abs(totalY1) < Mathf.Abs(totalX1)) || (Mathf.Abs(totalY2) < Mathf.Abs(totalX2)))) || ((Mathf.Abs(totalY1) > Mathf.Abs(totalX1)) && ((Mathf.Abs(totalY0) < Mathf.Abs(totalX0)) || (Mathf.Abs(totalY2) < Mathf.Abs(totalX2)))) || ((Mathf.Abs(totalY2) > Mathf.Abs(totalX2)) && ((Mathf.Abs(totalY0) < Mathf.Abs(totalX0)) || (Mathf.Abs(totalY1) < Mathf.Abs(totalX1))))) && ((((Mathf.Abs(totalY1) >= minSwipeVerticalDist) || (Mathf.Abs(totalY2) >= minSwipeVerticalDist)) && ((Mathf.Abs(totalY0) < minSwipeVerticalDist) && (Mathf.Abs(totalY0) > maxHoldVerticalDist))) || (((Mathf.Abs(totalY0) >= minSwipeVerticalDist) || (Mathf.Abs(totalY2) >= minSwipeVerticalDist)) && ((Mathf.Abs(totalY1) < minSwipeVerticalDist) && (Mathf.Abs(totalY1) > maxHoldVerticalDist))) || (((Mathf.Abs(totalY0) >= minSwipeVerticalDist) || (Mathf.Abs(totalY1) >= minSwipeVerticalDist)) && ((Mathf.Abs(totalY2) < minSwipeVerticalDist) && (Mathf.Abs(totalY2) > maxHoldVerticalDist)))))

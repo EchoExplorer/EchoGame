@@ -9,7 +9,7 @@ using System.Collections;
 public class UICanvas : MonoBehaviour
 {
     public static UICanvas instance;
-    
+
     void Awake()
     {
         if (instance == null)

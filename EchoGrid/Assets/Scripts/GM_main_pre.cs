@@ -84,7 +84,7 @@ public class GM_main_pre : MonoBehaviour
                     levelToStart = 12;
                     tempLevelToStart = 12;
                     tempTempLevel = 12;
-                }                
+                }
             }
             else if ((current == GameMode.Game_Mode.TUTORIAL_RESTART) || (current == GameMode.Game_Mode.TUTORIAL))
             {
@@ -273,7 +273,7 @@ public class GM_main_pre : MonoBehaviour
                             }
                         }
                     }
-                }                
+                }
                 else if (selectMode == SelectMode.SPECIFIC)
                 {
                     if ((GameMode.instance.gamemode == GameMode.Game_Mode.TUTORIAL) || (GameMode.instance.gamemode == GameMode.Game_Mode.TUTORIAL_RESTART))
@@ -433,7 +433,7 @@ public class GM_main_pre : MonoBehaviour
     /// Checks user input with raw touch data and transitions to the next scene according to the input.
     /// </summary>
     void Update()
-    {       
+    {
         play_audio();
 
         // Check if we are running either in the Unity editor or in a standalone build.
@@ -509,7 +509,7 @@ public class GM_main_pre : MonoBehaviour
                                 tempLevelToStart += 1;
                                 debugPlayerInfo = "Increased level to start from. Would start at level " + tempLevelToStart.ToString();
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                                clips = new List<AudioClip>() { Database.levelStartClips[tempLevelToStart] };
+                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.levelStartClips[tempLevelToStart] };
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
                             else if (tempLevelToStart == 11)
@@ -517,7 +517,7 @@ public class GM_main_pre : MonoBehaviour
                                 repeatInterruptedClips = false;
                                 debugPlayerInfo = "At maximum level for tutorial levels. Cannot pick a higher level to play.";
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                                clips = new List<AudioClip>() { Database.preGameMenuClips[32] };
+                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[32] };
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
                         }
@@ -529,7 +529,7 @@ public class GM_main_pre : MonoBehaviour
                                 tempLevelToStart += 1;
                                 debugPlayerInfo = "Increased level to start from. Would start at level " + tempLevelToStart.ToString();
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                                clips = new List<AudioClip>() { Database.levelStartClips[tempLevelToStart] };
+                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.levelStartClips[tempLevelToStart] };
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
                             else if (tempLevelToStart == 150)
@@ -537,7 +537,7 @@ public class GM_main_pre : MonoBehaviour
                                 repeatInterruptedClips = false;
                                 debugPlayerInfo = "At maximum level for post-tutorial levels. Cannot pick a higher level to play.";
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                                clips = new List<AudioClip>() { Database.preGameMenuClips[34] };
+                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[34] };
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
                         }
@@ -562,7 +562,7 @@ public class GM_main_pre : MonoBehaviour
                                 tempLevelToStart -= 1;
                                 debugPlayerInfo = "Decreased level to start from. Would start at level " + tempLevelToStart.ToString();
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                                clips = new List<AudioClip>() { Database.levelStartClips[tempLevelToStart] };
+                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.levelStartClips[tempLevelToStart] };
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
                             else if (tempLevelToStart == 1)
@@ -570,7 +570,7 @@ public class GM_main_pre : MonoBehaviour
                                 repeatInterruptedClips = false;
                                 debugPlayerInfo = "At minimum level for tutorial levels. Cannot pick a lower level to play.";
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                                clips = new List<AudioClip>() { Database.preGameMenuClips[31] };
+                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[31] };
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
                         }
@@ -582,7 +582,7 @@ public class GM_main_pre : MonoBehaviour
                                 tempLevelToStart -= 1;
                                 debugPlayerInfo = "Decreased level to start from. Would start at level " + tempLevelToStart.ToString();
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                                clips = new List<AudioClip>() { Database.levelStartClips[tempLevelToStart] };
+                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.levelStartClips[tempLevelToStart] };
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
                             else if (tempLevelToStart == 12)
@@ -590,7 +590,7 @@ public class GM_main_pre : MonoBehaviour
                                 repeatInterruptedClips = false;
                                 debugPlayerInfo = "At minimum level for post-tutorial levels. Cannot pick a lower level to play.";
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                                clips = new List<AudioClip>() { Database.preGameMenuClips[33] };
+                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[33] };
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
                         }
@@ -752,11 +752,11 @@ public class GM_main_pre : MonoBehaviour
                 {
                     debugPlayerInfo = "Nothing happened due to error with rotation on hold.";
                     SoundManager.instance.PlayVoice(Database.errorClips[17], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
-                }                
+                }
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
             }
         }
-    
+
 #endif
         // Check if we are running on iOS/Android.
 #if UNITY_IOS || UNITY_ANDROID
@@ -769,7 +769,7 @@ public class GM_main_pre : MonoBehaviour
             // If a swipe was recognized.
             if (ie.isSwipe == true)
             {
-                 // If the swipe was left.
+                // If the swipe was left.
                 if (ie.isLeft == true)
                 {
                     if (selectMode != SelectMode.SPECIFIC)
@@ -788,7 +788,7 @@ public class GM_main_pre : MonoBehaviour
                         repeatInterruptedClips = false;
                         selectMode = SelectMode.CONTINUE; // If we have swiped right, set mode to Continue.
                     }
-                }               
+                }
                 // If the swipe was up.
                 else if (ie.isUp == true)
                 {
@@ -809,7 +809,7 @@ public class GM_main_pre : MonoBehaviour
                                 tempLevelToStart += 1;
                                 debugPlayerInfo = "Increased level to start from. Would start at level " + tempLevelToStart.ToString();
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                                clips = new List<AudioClip>() { Database.levelStartClips[tempLevelToStart] };
+                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.levelStartClips[tempLevelToStart] };
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
                             else if (tempLevelToStart == 11)
@@ -817,7 +817,7 @@ public class GM_main_pre : MonoBehaviour
                                 repeatInterruptedClips = false;
                                 debugPlayerInfo = "At maximum level for tutorial levels. Cannot pick a higher level to play.";
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                                clips = new List<AudioClip>() { Database.preGameMenuClips[32] };
+                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[32] };
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
                         }
@@ -829,7 +829,7 @@ public class GM_main_pre : MonoBehaviour
                                 tempLevelToStart += 1;
                                 debugPlayerInfo = "Increased level to start from. Would start at level " + tempLevelToStart.ToString();
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                                clips = new List<AudioClip>() { Database.levelStartClips[tempLevelToStart] };
+                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.levelStartClips[tempLevelToStart] };
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
                             else if (tempLevelToStart == 150)
@@ -837,7 +837,7 @@ public class GM_main_pre : MonoBehaviour
                                 repeatInterruptedClips = false;
                                 debugPlayerInfo = "At maximum level for post-tutorial levels. Cannot pick a higher level to play.";
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                                clips = new List<AudioClip>() { Database.preGameMenuClips[34] };
+                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[34] };
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
                         }
@@ -862,7 +862,7 @@ public class GM_main_pre : MonoBehaviour
                                 tempLevelToStart -= 1;
                                 debugPlayerInfo = "Decreased level to start from. Would start at level " + tempLevelToStart.ToString();
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                                clips = new List<AudioClip>() { Database.levelStartClips[tempLevelToStart] };
+                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.levelStartClips[tempLevelToStart] };
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
                             else if (tempLevelToStart == 1)
@@ -870,7 +870,7 @@ public class GM_main_pre : MonoBehaviour
                                 repeatInterruptedClips = false;
                                 debugPlayerInfo = "At minimum level for tutorial levels. Cannot pick a lower level to play.";
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                                clips = new List<AudioClip>() { Database.preGameMenuClips[31] };
+                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[31] };
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
                         }
@@ -882,7 +882,7 @@ public class GM_main_pre : MonoBehaviour
                                 tempLevelToStart -= 1;
                                 debugPlayerInfo = "Decreased level to start from. Would start at level " + tempLevelToStart.ToString();
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                                clips = new List<AudioClip>() { Database.levelStartClips[tempLevelToStart] };
+                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.levelStartClips[tempLevelToStart] };
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
                             else if (tempLevelToStart == 12)
@@ -890,7 +890,7 @@ public class GM_main_pre : MonoBehaviour
                                 repeatInterruptedClips = false;
                                 debugPlayerInfo = "At minimum level for post-tutorial levels. Cannot pick a lower level to play.";
                                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                                clips = new List<AudioClip>() { Database.preGameMenuClips[33] };
+                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[33] };
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
                         }
@@ -1164,7 +1164,7 @@ public class GM_main_pre : MonoBehaviour
                     clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[30], Database.soundEffectClips[0] };
                     balances = new float[] { 0, 0, 0, 0 };
                     SoundManager.instance.PlayClips(clips, balances, 0, () => SceneManager.LoadScene("Main"), 4, null); // Play the appropriate clips.
-                }         
+                }
                 break;
             default:
                 break;

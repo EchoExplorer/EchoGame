@@ -12,9 +12,13 @@ public class Database : MonoBehaviour
     void Awake()
     {
         if (instance == null)
+        {
             instance = this;
+        }
         else if (instance != this)
+        {
             Destroy(gameObject);
+        }
 
         DontDestroyOnLoad(gameObject);
         LoadData();
@@ -40,7 +44,10 @@ public class Database : MonoBehaviour
     public static AudioClip hrtf_right;
     public static AudioClip hrtf_leftfront;
 	public static AudioClip hrtf_rightfront;
-
+	public static AudioClip odeon_left_leftspeaker;
+	public static AudioClip odeon_left_rightspeaker;
+	public static AudioClip odeon_right_leftspeaker;
+	public static AudioClip odeon_right_rightspeaker;
     public static AudioClip attenuatedaround_odeon;
     public static AudioClip attenuatedClickfront_odeon;
 
@@ -95,16 +102,19 @@ public class Database : MonoBehaviour
     void LoadData()
     {
         //Option1:
-        attenuatedClickfront_odeon = Resources.Load("fx/00-0_F-6.75-D_B-w-D_L-w-D_R-w-D_fadeout") as AudioClip;
-		attenuatedClick = Resources.Load("fx/echolocaterclicks_3rd_attenuated") as AudioClip;
-        attenuatedaround_odeon = Resources.Load("fx/00-0_F-0.75-D_B-w-D_L-w-D_R-w-D_fadeout") as AudioClip;
-
-        //Option1:
-		hrtf_front =Resources.Load("fx/kemar_front") as AudioClip;
-        hrtf_front_leftspeaker = Resources.Load("fx/kemar_front_leftspeaker") as AudioClip;
-        hrtf_front_rightspeaker = Resources.Load("fx/kemar_front_rightspeaker") as AudioClip;
-        hrtf_left_leftspeaker =Resources.Load("fx/kemar_left_leftspeaker") as AudioClip;
-		hrtf_left_rightspeaker=Resources.Load("fx/kemar_left_rightspeaker") as AudioClip;
+        //attenuatedClickfront_odeon = Resources.Load("fx/00-0_F-6.75-D_B-w-D_L-w-D_R-w-D_fadeout") as AudioClip;
+		attenuatedClick = Resources.Load("fx/TomClick_norm") as AudioClip;
+        //attenuatedaround_odeon = Resources.Load("fx/00-0_F-0.75-D_B-w-D_L-w-D_R-w-D_fadeout") as AudioClip;
+		odeon_left_leftspeaker = Resources.Load ("fx/odeon_left_leftspeaker") as AudioClip;
+		odeon_left_rightspeaker = Resources.Load ("fx/odeon_left_rightspeaker") as AudioClip;
+		odeon_right_leftspeaker = Resources.Load ("fx/odeon_right_leftspeaker") as AudioClip;
+		odeon_right_rightspeaker = Resources.Load ("fx/odeon_right_rightspeaker") as AudioClip;
+			//Option1:
+		hrtf_front = Resources.Load("fx/kemar_front_norm") as AudioClip;
+        //hrtf_front_leftspeaker = Resources.Load("fx/kemar_front_leftspeaker") as AudioClip;
+        //hrtf_front_rightspeaker = Resources.Load("fx/kemar_front_rightspeaker") as AudioClip;
+		hrtf_left_leftspeaker = Resources.Load("fx/kemar_left_leftspeaker") as AudioClip;
+		hrtf_left_rightspeaker = Resources.Load("fx/kemar_left_rightspeaker") as AudioClip;
         hrtf_right_leftspeaker = Resources.Load("fx/kemar_right_leftspeaker") as AudioClip;
         hrtf_right_rightspeaker = Resources.Load("fx/kemar_right_rightspeaker") as AudioClip;
         hrtf_leftfront_leftspeaker = Resources.Load("fx/kemar_leftfront_leftspeaker") as AudioClip;
@@ -112,9 +122,9 @@ public class Database : MonoBehaviour
         hrtf_rightfront_leftspeaker = Resources.Load("fx/kemar_rightfront_leftspeaker") as AudioClip;
         hrtf_rightfront_rightspeaker = Resources.Load("fx/kemar_rightfront_rightspeaker") as AudioClip;
         hrtf_left = Resources.Load("fx/kemar_left") as AudioClip;
-        hrtf_right =Resources.Load("fx/kemar_right") as AudioClip;
-		hrtf_leftfront =Resources.Load("fx/kemar_leftfront") as AudioClip;
-		hrtf_rightfront =Resources.Load("fx/kemar_rightfront") as AudioClip;
+        hrtf_right = Resources.Load("fx/kemar_right") as AudioClip;
+		hrtf_leftfront = Resources.Load("fx/kemar_leftfront") as AudioClip;
+		hrtf_rightfront = Resources.Load("fx/kemar_rightfront") as AudioClip;
 
         // Consent menu clips
         consentClips[0] = Resources.Load("instructions/consent/consent_intro_normal") as AudioClip;
@@ -245,8 +255,8 @@ public class Database : MonoBehaviour
         tutorialClips[19] = Resources.Load("instructions/tutorial/exit_level_instruction_talkback") as AudioClip;
         tutorialClips[20] = Resources.Load("instructions/tutorial/try_swipe_down_level_1") as AudioClip;
         tutorialClips[21] = Resources.Load("instructions/tutorial/try_swipe_down_consent_form") as AudioClip;
-        tutorialClips[22] = Resources.Load("instructions/tutorial/reached_corner_normal") as AudioClip;
-        tutorialClips[23] = Resources.Load("instructions/tutorial/reached_corner_talkback") as AudioClip;
+        tutorialClips[22] = Resources.Load("instructions/tutorial/reached_turn_normal") as AudioClip;
+        tutorialClips[23] = Resources.Load("instructions/tutorial/reached_turn_talkback") as AudioClip;
         tutorialClips[24] = Resources.Load("instructions/tutorial/rotate_instruction_normal") as AudioClip;
         tutorialClips[25] = Resources.Load("instructions/tutorial/rotate_instruction_talkback") as AudioClip;
         tutorialClips[26] = Resources.Load("instructions/tutorial/tap_after_rotating") as AudioClip;
@@ -254,7 +264,7 @@ public class Database : MonoBehaviour
         tutorialClips[28] = Resources.Load("instructions/tutorial/rotation_correct_3_more") as AudioClip;
         tutorialClips[29] = Resources.Load("instructions/tutorial/rotation_correct_2_more") as AudioClip;
         tutorialClips[30] = Resources.Load("instructions/tutorial/rotation_correct_1_more") as AudioClip;
-        tutorialClips[31] = Resources.Load("instructions/tutorial/get_around_corner") as AudioClip;
+        tutorialClips[31] = Resources.Load("instructions/tutorial/get_around_right_turn") as AudioClip;
 
         // Main game clips
         mainGameClips[0] = Resources.Load("instructions/main_game/welcome_you_are_in_a_dark_maze") as AudioClip;
@@ -269,15 +279,15 @@ public class Database : MonoBehaviour
         mainGameClips[9] = Resources.Load("instructions/main_game/another_straight_hallway") as AudioClip;
         mainGameClips[10] = Resources.Load("instructions/main_game/move_on_from_straight_hallways") as AudioClip;
         mainGameClips[11] = Resources.Load("instructions/main_game/hallway_has_right_turn") as AudioClip;
-        mainGameClips[12] = Resources.Load("instructions/main_game/approaching_corner") as AudioClip;
-        mainGameClips[13] = Resources.Load("instructions/main_game/reached_right_corner") as AudioClip;
+        mainGameClips[12] = Resources.Load("instructions/main_game/approaching_turn") as AudioClip;
+        mainGameClips[13] = Resources.Load("instructions/main_game/reached_right_turn") as AudioClip;
         mainGameClips[14] = Resources.Load("instructions/main_game/get_confused") as AudioClip;
         mainGameClips[15] = Resources.Load("instructions/main_game/move_forward_until_stairs") as AudioClip;
         mainGameClips[16] = Resources.Load("instructions/main_game/swipe_down_to_attempt_exit") as AudioClip;
         mainGameClips[17] = Resources.Load("instructions/main_game/hallway_has_another_right_turn") as AudioClip;
         mainGameClips[18] = Resources.Load("instructions/main_game/good_job") as AudioClip;
         mainGameClips[19] = Resources.Load("instructions/main_game/hallway_has_left_turn") as AudioClip;
-        mainGameClips[20] = Resources.Load("instructions/main_game/reached_left_corner") as AudioClip;
+        mainGameClips[20] = Resources.Load("instructions/main_game/reached_left_turn") as AudioClip;
         mainGameClips[21] = Resources.Load("instructions/main_game/hallway_has_another_left_turn") as AudioClip;
         mainGameClips[22] = Resources.Load("instructions/main_game/finished_first_part_of_tutorial") as AudioClip;
         mainGameClips[23] = Resources.Load("instructions/main_game/some_harder_levels") as AudioClip;
@@ -290,8 +300,8 @@ public class Database : MonoBehaviour
         mainGameClips[30] = Resources.Load("instructions/main_game/halfway_there") as AudioClip;
         mainGameClips[31] = Resources.Load("instructions/main_game/not_the_exit") as AudioClip;
         mainGameClips[32] = Resources.Load("instructions/main_game/crashed_at_exit") as AudioClip;
-        mainGameClips[33] = Resources.Load("instructions/main_game/crashed_at_right_corner") as AudioClip;
-        mainGameClips[34] = Resources.Load("instructions/main_game/crashed_at_left_corner") as AudioClip;
+        mainGameClips[33] = Resources.Load("instructions/main_game/crashed_at_right_turn") as AudioClip;
+        mainGameClips[34] = Resources.Load("instructions/main_game/crashed_at_left_turn") as AudioClip;
 
         // Level start clips
         levelStartClips[0] = Resources.Load("instructions/level_start/start") as AudioClip;
@@ -492,7 +502,7 @@ public class Database : MonoBehaviour
         errorClips[19] = Resources.Load("instructions/errors/not_a_swipe_up") as AudioClip;
         errorClips[20] = Resources.Load("instructions/errors/not_a_hold") as AudioClip;
         errorClips[21] = Resources.Load("instructions/errors/not_a_swipe_down") as AudioClip;
-        errorClips[22] = Resources.Load("instructions/errors/not_a_rotation") as AudioClip;
+        errorClips[22] = Resources.Load("instructions/errors/not_a_right_rotation") as AudioClip;
         errorClips[23] = Resources.Load("instructions/errors/not_a_left_right_swipe") as AudioClip;
         errorClips[24] = Resources.Load("instructions/errors/finger_offscreen") as AudioClip;
 
