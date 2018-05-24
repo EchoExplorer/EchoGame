@@ -267,7 +267,6 @@ public class GameManager : MonoBehaviour
         {
             return;
         }
-        print("Level Loaded. Scene Name: " + scene.name + ", Mode: " + mode.ToString());
 
         // Call InitGame to initialize our level.
         levelImage = GameObject.Find("LevelImage").gameObject;

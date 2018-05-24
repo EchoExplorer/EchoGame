@@ -10,6 +10,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Diagnostics;
+using System.Linq;
 using UnityEngine.SceneManagement;
 
 // Player inherits from MovingObject, our base class for objects that can move, Enemy also inherits from this.
@@ -46,7 +47,7 @@ public class Player : MovingObject
     bool is_freezed; // is player not allowed to do anything?
     bool tapped; // did player tap to hear an echo at this position?
     bool reportSent;
-    private int curLevel;
+    public int curLevel;
 
     int cur_clip = 0;
     int max_quit_clip = 2;
@@ -95,7 +96,8 @@ public class Player : MovingObject
     bool finishedMenuInstruction = false; // Make sure the player cannot make a gesture when we are explaining how to open or close the pause menu.
     bool finishedExitingInstruction = false; // Make sure the player cannot make a gesture when we are explaining how to exit a level.
     public static bool finishedCornerInstruction = false; // Make sure the player cannot make a gesture we we are explaining to tap at a corner.
-    bool finishedTurningInstruction = false; // Make sure the player cannot make a gesture when we are explaining how to make a rotation.
+    bool startedTurningInstruction = false;
+    bool finishedTurningInstruction = false; // Make sure the player cannot make a gesture when we are explaining how to make a rotation.    
 
     bool waitingForOpenMenuInstruction = false; // Make sure the player cannot make gestures while we are explaining what you can do in the pause menu in the gesture tutorial.
     bool wantLevelRestart = false; // Used to make sure the player has to tap once after swiping left in the pause menu to confirm they want to restart the level.
@@ -346,10 +348,15 @@ public class Player : MovingObject
         }
         
         Vector3 dir = transform.right;
+        // print("Direction: " + dir.ToString());
         int dir_x = (int)Math.Round(dir.x);
+        // print("Direction X: " + dir_x.ToString());
         int dir_y = (int)Math.Round(dir.y);
+        // print("Direction Y: " + dir_y.ToString());
         int x = (int)transform.position.x;
+        // print("X Position: " + x.ToString());
         int y = (int)transform.position.y;
+        // print("Y Position: " + y.ToString());
 
         GameObject frontWall, leftWall, rightWall, leftFrontWall, rightFrontWall, tempWall, rightEndWall, leftEndWall, leftTwoFrontWall, rightTwoFrontWall;
         Vector3 frontWallPos, frontWallLeftPos, frontWallRightPos, leftWallPos, rightWallPos, leftFrontWallPos, rightFrontWallPos, tempWallPos, rightEndWallPos, leftEndWallPos, leftTwoFrontWallPos, rightTwoFrontWallPos;
@@ -362,11 +369,27 @@ public class Player : MovingObject
         rightEndWallPos = new Vector3();
         leftTwoFrontWallPos = new Vector3((x - 2 * dir_y + dir_x), (y + 2 * dir_x + dir_y));
         rightTwoFrontWallPos = new Vector3((x + (dir_y * 2) + dir_x), + (y - (dir_x * 2) + dir_y));
-        
+
         leftWall = GameObject.Find(wallPrefix + PositionToString(leftWallPos));
+        if (leftWall != null)
+        {
+            // print("Left Wall: " + leftWall.name + ", Position: " + leftWall.transform.position.ToString());
+        }
         rightWall = GameObject.Find(wallPrefix + PositionToString(rightWallPos));
+        if (rightWall != null)
+        {
+            // print("Right Wall: " + rightWall.name + ", Position: " + rightWall.transform.position.ToString());
+        }
         leftFrontWall = GameObject.Find(wallPrefix + PositionToString(leftFrontWallPos));
+        if (leftFrontWall != null)
+        {
+            // print("Left Front Wall: " + leftFrontWall.name + ", Position: " + leftFrontWall.transform.position.ToString());
+        }
         rightFrontWall = GameObject.Find(wallPrefix + PositionToString(rightFrontWallPos));
+        if (rightFrontWall != null)
+        {
+            // print("Right Front Wall: " + rightFrontWall.name + ", Position: " + rightFrontWall.transform.position.ToString());
+        }
 
         leftEndWall = null;
         rightEndWall = null;
@@ -393,6 +416,14 @@ public class Player : MovingObject
                 stepsize += 1;
             }
         }
+        if (leftEndWall != null)
+        {
+            // print("Left End Wall: " + leftEndWall.name + ", Position: " + leftEndWall.transform.position.ToString());
+        }
+        if (rightEndWall != null)
+        {
+            // print("Right End Wall: " + rightEndWall.name + ", Position: " + rightEndWall.transform.position.ToString());
+        }
         int _x = x, _y = y;
         do
         {
@@ -404,8 +435,16 @@ public class Player : MovingObject
             frontWall = GameObject.Find(wallPrefix + PositionToString(frontWallPos));
         }
         while (frontWall == null);
+        if (frontWall != null)
+        {
+            // print("Front Wall: " + frontWall.name + ", Position: " + frontWall.transform.position.ToString());
+        }
 
         float blocksToFrontWall = Vector3.Distance(transform.position, frontWall.transform.position) - 1;
+        if (blocksToFrontWall >= 0.0f)
+        {
+            // print("Blocks To Front Wall: " + blocksToFrontWall.ToString());
+        }
         // Four-wall echoes preparation
         GvrAudioSource frontGAS = null, leftGAS = null, rightGAS = null, leftFrontGAS = null, rightFrontGAS = null, leftEndGAS = null, rightEndGAS = null, leftTwoFrontGAS = null, rightTwoFrontGAS = null;
 		GvrAudioSource leftGAS_right = null, rightGAS_left = null, leftFrontGAS_rightfront = null, rightFrontGAS_leftfront = null, leftEndGAS_rightend = null, rightEndGAS_leftend = null;
@@ -585,19 +624,29 @@ public class Player : MovingObject
         }
         */
 
-        SoundManager.instance.PlaySingle(attenuatedClick);
+        float leftDelay = 0.0f;
+        float left_rightDelay = 0.0f;
+        float rightDelay = 0.0f;
+        float right_leftDelay = 0.0f;
+        float leftEndDelay = 0.0f;
+        float leftEnd_rightEndDelay = 0.0f;
+        float rightEndDelay = 0.0f;
+        float rightEnd_leftEndDelay = 0.0f;
+        float frontDelay = 0.0f;
 
         if (leftGAS != null)
         {
-            leftGAS.PlayDelayed(1.5f / 340);
-            leftGAS_right.PlayDelayed(1.5f / 340);
+            // print("Playing Left GAS.");
+            leftDelay = 1.5f / 340;
+            left_rightDelay = 1.5f / 340;
             //UnityEngine.Debug.Log("left palyed!");
         }
 
         if (rightGAS != null)
         {
-            rightGAS.PlayDelayed(1.5f / 340);
-            rightGAS_left.PlayDelayed(1.5f / 340);
+            // print("Playing Right GAS.");
+            rightDelay = 1.5f / 340;
+            right_leftDelay = 1.5f / 340;
             //UnityEngine.Debug.Log("right palyed!");
         }
         /*
@@ -616,29 +665,163 @@ public class Player : MovingObject
         */
         if (leftEndGAS != null)
         {
-            leftEndGAS.PlayDelayed((1.5f * stepsize) / 340);
-            leftEndGAS_rightend.PlayDelayed((1.5f * stepsize) / 340);
+            // print("Playing Left End GAS.");
+            leftEndDelay = (1.5f * stepsize) / 340;
+            leftEnd_rightEndDelay = (1.5f * stepsize) / 340;
             //UnityEngine.Debug.Log("Left End is " + stepsize + " blocks away!");
         }
         if (rightEndGAS != null)
         {
-            rightEndGAS.PlayDelayed((1.5f * stepsize) / 340);
-            rightEndGAS_leftend.PlayDelayed((1.5f * stepsize) / 340);
+            // print("Playing Right End GAS.");
+            rightEndDelay = (1.5f * stepsize) / 340;
+            rightEnd_leftEndDelay = (1.5f * stepsize) / 340;
             //UnityEngine.Debug.Log("Right End is " + stepsize + " blocks away!");
         }
 
         if (frontGAS != null)
         {
-            frontGAS.PlayDelayed((1.5f * blocksToFrontWall + 0.75f) * 2 / 340);
+            // print("Playing Front GAS.");
+            frontDelay = (1.5f * blocksToFrontWall + 0.75f) * 2 / 340;
             //UnityEngine.Debug.Log("frontwall palyed!");
         }
 
+        StartCoroutine(PlayEchoClip(leftGAS, leftGAS_right, rightGAS, rightGAS_left, leftEndGAS, leftEndGAS_rightend, rightEndGAS, rightEndGAS_leftend, frontGAS, leftDelay, left_rightDelay, rightDelay, right_leftDelay, leftEndDelay, leftEnd_rightEndDelay, rightEndDelay, rightEnd_leftEndDelay, frontDelay));
+        
         /* for test
         GvrAudioSource gas = GameObject.Find("Sounder_3_5").GetComponents<GvrAudioSource>()[1];
         gas.clip = Database.hrtf_front;
         gas.gainDb = frontwalldb;
         gas.Play();
         */
+    }
+
+    IEnumerator PlayEchoClip(GvrAudioSource left, GvrAudioSource left_right, GvrAudioSource right, GvrAudioSource right_left, GvrAudioSource leftEnd, GvrAudioSource leftEnd_rightEnd, GvrAudioSource rightEnd, GvrAudioSource rightEnd_leftEnd, GvrAudioSource front, float leftDelay, float left_rightDelay, float rightDelay, float right_leftDelay, float leftEndDelay, float leftEnd_rightEndDelay, float rightEndDelay, float rightEnd_leftEndDelay, float frontDelay)
+    {
+        float[] volumes = new float[2];
+        if (intercepted == true)
+        {
+            clips = new List<AudioClip>() { Database.attenuatedClick, Database.soundEffectClips[0] };
+            volumes = new float[] { 1.0f, 0.0f };
+        }
+        else if (intercepted == false)
+        {
+            clips = new List<AudioClip>() { Database.attenuatedClick };
+            volumes = new float[] { 1.0f };
+        }
+
+        SoundManager.instance.PlayClips(clips, null, 0, () =>
+        {
+            if (left != null)
+            {
+                print("Playing Left GAS.");
+                left.PlayDelayed(leftDelay);
+                left_right.PlayDelayed(left_rightDelay);
+                //UnityEngine.Debug.Log("left palyed!");
+            }
+            if (left == null)
+            {
+                print("Left null");
+            }
+            if (right != null)
+            {
+                print("Playing Right GAS.");
+                right.PlayDelayed(rightDelay);
+                right_left.PlayDelayed(right_leftDelay);
+                //UnityEngine.Debug.Log("right palyed!");
+            }
+            if (right == null)
+            {
+                print("Right null");
+            }
+            if (leftEnd != null)
+            {
+                print("Playing Left End GAS.");
+                leftEnd.PlayDelayed(leftEndDelay);
+                leftEnd_rightEnd.PlayDelayed(leftEnd_rightEndDelay);
+                //UnityEngine.Debug.Log("Left End is " + stepsize + " blocks away!");
+            }
+            if (leftEnd == null)
+            {
+                print("Left End null");
+            }
+            if (rightEnd != null)
+            {
+                print("Playing Right End GAS.");
+                rightEnd.PlayDelayed(rightEndDelay);
+                rightEnd_leftEnd.PlayDelayed(rightEnd_leftEndDelay);
+                //UnityEngine.Debug.Log("Right End is " + stepsize + " blocks away!");
+            }
+            if (rightEnd == null)
+            {
+                print("Right End null");
+            }
+            if (front != null)
+            {
+                print("Playing Front GAS.");
+                front.PlayDelayed(frontDelay);
+                //UnityEngine.Debug.Log("frontwall palyed!");
+            }
+            if (front == null)
+            {
+                print("Front null");
+            }
+        }, 0, volumes, true);  
+        
+        // SoundManager.instance.PlaySingle(attenuatedClick);
+        
+        float waitTime = 0.0f;
+        float[] delayTimes = { leftDelay, left_rightDelay, rightDelay, right_leftDelay, leftEndDelay, leftEnd_rightEndDelay, rightEndDelay, rightEnd_leftEndDelay, frontDelay };
+
+        waitTime = delayTimes.Max();
+        print("Wait Time: " + waitTime.ToString());
+
+        yield return new WaitForSeconds(waitTime + 0.8f);
+
+        if ((intercepted == true) && (curLevel == 3) && (finishedCornerInstruction == true) && (hasTappedAtCorner == false) && (BoardManager.player_idx.x == 9) && (BoardManager.player_idx.y == 9))
+        {
+            hasTappedAtCorner = true;
+        }
+
+        if ((intercepted == true) && (curLevel == 3) && (finishedCornerInstruction == false) && (hasTappedAtCorner == false) && (BoardManager.player_idx.x == 9) && (BoardManager.player_idx.y == 9))
+        {
+            if (GM_title.isUsingTalkback == true)
+            {
+                clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.tutorialClips[23] };
+            }
+            else if (GM_title.isUsingTalkback == false)
+            {
+                clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.tutorialClips[22] };
+            }           
+            SoundManager.instance.PlayClips(clips, null, 0, () =>
+            {
+                debugPlayerInfo = "Finished corner instruction.";
+                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                finishedCornerInstruction = true; // We have finished the corner instruction, so the player can tap.
+            }, 2, null, true); // Play the appropriate clip.                        
+        }       
+        else if ((intercepted == true) && (curLevel == 3) && (finishedCornerInstruction == true) && (hasTappedAtCorner == true))
+        {
+            if (GM_title.isUsingTalkback == true)
+            {
+                clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.tutorialClips[25], Database.soundEffectClips[0], Database.soundEffectClips[6], Database.soundEffectClips[0], Database.tutorialClips[26], Database.tutorialClips[27] };
+                SoundManager.instance.PlayClips(clips, null, 0, () =>
+                {
+                    debugPlayerInfo = "Finished turning instruction.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.             
+                    finishedTurningInstruction = true; // We have finished the turning instruction, so the player can rotate.
+                }, 7, null, true); // If they are using Talkback, play the correct instructions.                
+            }
+            else if (GM_title.isUsingTalkback == false)
+            {
+                clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.tutorialClips[24], Database.soundEffectClips[0], Database.soundEffectClips[6], Database.soundEffectClips[0], Database.tutorialClips[26], Database.tutorialClips[27] };
+                SoundManager.instance.PlayClips(clips, null, 0, () =>
+                {
+                    debugPlayerInfo = "Finished turning instruction.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.             
+                    finishedTurningInstruction = true; // We have finished the turning instruction, so the player can rotate.
+                }, 7, null, true); // If they are not using Talkback, play the correct instructions.                
+            }
+        }
     }
 
     string post_act = "";
@@ -1402,9 +1585,9 @@ public class Player : MovingObject
 
             if ((readingConsentForm == true) && (answeredQuestion1 == false) && (answeredQuestion2 == false) && (answeredQuestion3 == false))
             {
-                if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
+                if ((canRepeat == true) || (SoundManager.instance.finishedAllClips == true))
                 {
-                    if ((canRepeat == false) && (SoundManager.instance.finishedAllClips == true))
+                    if ((canRepeat == false) && (SoundManager.instance.finishedAllClips == true) && (can_display_window == false))
                     {
                         can_display_window = true;
                     }
@@ -1503,7 +1686,7 @@ public class Player : MovingObject
                                 SoundManager.instance.PlayClips(clips, null, 0, () => PlayEcho(), 1, null, true); // Play the appropriate clips.
                             }
                             // If the player has reached the exit at level 1.
-                            else if ((canPlayClip[0, 2] == true) && (intercepted == false) && (BoardManager.finishedTutorialLevel1 == true) && (playerPos.x == exitPos.x) && (playerPos.y == exitPos.y))
+                            else if ((canPlayClip[0, 2] == false) && (intercepted == false) && (BoardManager.finishedTutorialLevel1 == true) && (playerPos.x == exitPos.x) && (playerPos.y == exitPos.y))
                             {
                                 // Keep this check in, but do nothing.
                             }
@@ -1530,7 +1713,7 @@ public class Player : MovingObject
                                 SoundManager.instance.PlayClips(clips, null, 0, () => PlayEcho(), 1, null, true); // Play the appropriate clips.
                             }
                             // If the player has reached the exit at level 2.
-                            else if ((canPlayClip[1, 2] == true) && (playerPos.x == exitPos.x) && (playerPos.y == exitPos.y))
+                            else if ((canPlayClip[1, 2] == false) && (playerPos.x == exitPos.x) && (playerPos.y == exitPos.y))
                             {
                                 // Keep this check in, but do nothing
                             }
@@ -1586,7 +1769,7 @@ public class Player : MovingObject
                                 SoundManager.instance.PlayClips(clips, null, 0, () => PlayEcho(), 1, null, true); // Play the appropriate clips.
                             }
                             // If the player has reached the exit at level 3.
-                            else if ((canPlayClip[2, 2] == true) && (intercepted == false) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x == exitPos.x) && (playerPos.y == exitPos.y))
+                            else if ((canPlayClip[2, 2] == false) && (intercepted == false) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x == exitPos.x) && (playerPos.y == exitPos.y))
                             {
                                 // Keep this check in, but do nothing.
                             }
@@ -1640,7 +1823,7 @@ public class Player : MovingObject
                                 SoundManager.instance.PlayClips(clips, null, 0, () => PlayEcho(), 1, null, true); // Play the appropriate clips.
                             }
                             // If the player has reached the exit at level 5.
-                            else if ((canPlayClip[4, 2] == true) && (playerPos.x == exitPos.x) && (playerPos.y == exitPos.y))
+                            else if ((canPlayClip[4, 2] == false) && (playerPos.x == exitPos.x) && (playerPos.y == exitPos.y))
                             {
                                 // Keep this check in, but do nothing.
                             }
@@ -1724,7 +1907,7 @@ public class Player : MovingObject
                                 SoundManager.instance.PlayClips(clips, null, 0, () => PlayEcho(), 1, null, true); // Play the appropriate clips.
                             }
                             // If the player has reached the exit at level 11.
-                            else if ((canPlayClip[10, 2] == true) && (playerPos.x == exitPos.x) && (playerPos.y == exitPos.y))
+                            else if ((canPlayClip[10, 2] == false) && (playerPos.x == exitPos.x) && (playerPos.y == exitPos.y))
                             {
                                 // Keep this check in, but do nothing.
                             }
@@ -1745,7 +1928,7 @@ public class Player : MovingObject
                                 SoundManager.instance.PlayClips(clips, null, 0, () => PlayEcho(), 1, null, true); // Play the appropriate clip.
                             }
                             // If the player has reached the exit on another level.
-                            else if ((canPlayClip[(curLevel - 1), 2] == true) && (playerPos.x == exitPos.x) && (playerPos.y == exitPos.y))
+                            else if ((canPlayClip[(curLevel - 1), 2] == false) && (playerPos.x == exitPos.x) && (playerPos.y == exitPos.y))
                             {
                                 // Keep this check in, but do nothing.
                             }
@@ -3277,19 +3460,6 @@ public class Player : MovingObject
                     ad.clearflag();
                 }
 #endif
-            }
-
-            if ((intercepted == true) && (finishedCornerInstruction == false) && (level3_remaining_turns == 4) && (SoundManager.instance.finishedAllClips == true))
-            {
-                debugPlayerInfo = "Finished corner instruction.";
-                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                finishedCornerInstruction = true; // We have finished the corner instruction, so the player can tap.
-            }
-            if ((hasTappedAtCorner == true) && (finishedTurningInstruction == false) && (level3_remaining_turns == 4) && (SoundManager.instance.finishedAllClips == true))
-            {
-                debugPlayerInfo = "Finished turning instruction.";
-                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                finishedTurningInstruction = true; // We have finished the turning instruction, so the player can rotate.
             }
 
             if (!InterceptMission(eh.getEventData()))
@@ -5056,17 +5226,7 @@ public class Player : MovingObject
                 debugPlayerInfo = "Playing tutorial level 3 clips.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 finishedCornerInstruction = false; // Reset if the player is going through this tutorial level again.
-                finishedTurningInstruction = false; // Reset if the player is going through this tutorial level again.
-                if (GM_title.isUsingTalkback == true)
-                {
-                    clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.attenuatedClick, Database.soundEffectClips[0], Database.tutorialClips[23] };
-                }
-                else if (GM_title.isUsingTalkback == false)
-                {
-                    clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.attenuatedClick, Database.soundEffectClips[0], Database.tutorialClips[22] };
-
-                }
-                SoundManager.instance.PlayClips(clips, null, 0, () => PlayEcho(), 2, null, true); // Play the appropriate clip.
+                finishedTurningInstruction = false; // Reset if the player is going through this tutorial level again.             
                 level3_remaining_turns = 4; // Set the remaining rotations for the tutorial to 4.
                 break;
             default:
@@ -5904,18 +6064,8 @@ public class Player : MovingObject
                     if ((action == InterceptAction.TAP) && (finishedCornerInstruction == true) && (hasTappedAtCorner == false) && (finishedTurningInstruction == false))
                     {
                         debugPlayerInfo = "Tapped at corner. Played echo.";
-                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                        hasTappedAtCorner = true;
-                        if (GM_title.isUsingTalkback == true)
-                        {
-                            clips = new List<AudioClip>() { Database.soundEffectClips[1], Database.tutorialClips[25], Database.soundEffectClips[0], Database.soundEffectClips[6], Database.soundEffectClips[0], Database.tutorialClips[26], Database.tutorialClips[27] };
-                            SoundManager.instance.PlayClips(clips, null, 0, () => PlayEcho(), 0, null, true); // If they are using Talkback, play the correct instructions.
-                        }
-                        else if (GM_title.isUsingTalkback == false)
-                        {
-                            clips = new List<AudioClip>() { Database.soundEffectClips[1], Database.tutorialClips[24], Database.soundEffectClips[0], Database.soundEffectClips[6], Database.soundEffectClips[0], Database.tutorialClips[26], Database.tutorialClips[27] };
-                            SoundManager.instance.PlayClips(clips, null, 0, () => PlayEcho(), 0, null, true); // If they are not using Talkback, play the correct instructions.
-                        }
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.                        
+                        PlayEcho();                        
                     }
                     // If the player has not tapped at the corner yet and the gesture was not a tap.
                     else if (((action == InterceptAction.MENU) || (action == InterceptAction.UP) || (action == InterceptAction.DOWN) || (action == InterceptAction.LEFTSWIPE) || (action == InterceptAction.RIGHTSWIPE) || (action == InterceptAction.LEFTROTATE) || (action == InterceptAction.RIGHTROTATE) || (ie.isUnrecognized == true)) && (finishedCornerInstruction == true) && (hasTappedAtCorner == false) && (finishedTurningInstruction == false))

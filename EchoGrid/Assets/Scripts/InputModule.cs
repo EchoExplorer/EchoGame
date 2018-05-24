@@ -221,7 +221,7 @@ public class InputModule : MonoBehaviour
                 debugInputInfo = "Right arrow key pressed " + totalRightTimes + " times.";
             }
             // For right rotations.
-            else if (activeScene.name.Equals("Main") && (Player.want_exit == false) && (Player.hasFinishedConsentForm == true))
+            else if (activeScene.name.Equals("Main") && (Player.want_exit == false) && (((Player.instance.curLevel != 1) && (Player.instance.curLevel != 12) && (Player.hasFinishedConsentForm == false)) || (((Player.instance.curLevel == 1) || (Player.instance.curLevel == 12)) && (Player.hasFinishedConsentForm == true))))
             {
                 ievent.isRotate = true; // A rotation was registered.
                 ievent.isRight = true; // Register a right rotation.
@@ -244,7 +244,7 @@ public class InputModule : MonoBehaviour
                 debugInputInfo = "Left arrow key pressed " + totalLeftTimes + " times.";
             }
             // For left rotations.
-            else if (activeScene.name.Equals("Main") && (Player.want_exit == false) && (Player.hasFinishedConsentForm == true))
+            else if (activeScene.name.Equals("Main") && (Player.want_exit == false) && (((Player.instance.curLevel != 1) && (Player.instance.curLevel != 12) && (Player.hasFinishedConsentForm == false)) || (((Player.instance.curLevel == 1) || (Player.instance.curLevel == 12)) && (Player.hasFinishedConsentForm == true))))
             {
                 ievent.isRotate = true; // A rotation was registered.
                 ievent.isLeft = true; // Register a left rotation.
@@ -323,6 +323,9 @@ public class InputModule : MonoBehaviour
             // If the touch is stationary.
             else if ((touch0.phase == TouchPhase.Stationary) && (hasRegistered[0] == true))
             {
+                vecEnd0 = touch0.position; // Update the end position vector of this touch.
+                totalX0 = vecEnd0.x - vecStart0.x; // Update the total x distance covered by this touch.
+                totalY0 = vecEnd0.y - vecStart0.y; // Update the total y distance covered by this touch.
                 debugTouch0Info = "XStart: " + vecStart0.x.ToString() + "\nYStart: " + vecStart0.y.ToString() + "\nXEnd: " + vecEnd0.x.ToString() + "\nYEnd: " + vecEnd0.y.ToString();
                 DebugTouch0.instance.ChangeDebugTouch0Text(debugTouch0Info); // Update the debug textbox. 
             }
@@ -352,9 +355,15 @@ public class InputModule : MonoBehaviour
                 debugTouch0Info = "Touch0 canceled";
                 DebugTouch0.instance.ChangeDebugTouch0Text(debugTouch0Info); // Update the debug textbox.
             }
+            // If the finger has been lifted but some fingers are still on the screen.
+            else if (((touch0.phase == TouchPhase.Stationary) || (touch0.phase == TouchPhase.Moved) || (touch0.phase == TouchPhase.Ended)) && (hasRegistered[0] == false))
+            {              
+                debugTouch0Info = "XStart: " + vecStart0.x.ToString() + "\nYStart: " + vecStart0.y.ToString() + "\nXEnd: " + vecEnd0.x.ToString() + "\nYEnd: " + vecEnd0.y.ToString();
+                DebugTouch0.instance.ChangeDebugTouch0Text(debugTouch0Info); // Update the debug textbox. 
+            }
             // If something else happened.
             else
-            {
+            {               
                 debugTouch0Info = "Cannot compute";
                 print("Touch0.phase: " + touch0.phase.ToString() + ", hasRegistered: " + hasRegistered[0].ToString());
                 DebugTouch0.instance.ChangeDebugTouch0Text(debugTouch0Info); // Update the debug textbox.
@@ -413,6 +422,12 @@ public class InputModule : MonoBehaviour
             {
                 debugTouch1Info = "Touch1 canceled";
                 DebugTouch1.instance.ChangeDebugTouch1Text(debugTouch1Info); // Update the debug textbox.
+            }
+            // If the finger has been lifted but some fingers are still on the screen.
+            else if (((touch1.phase == TouchPhase.Stationary) || (touch1.phase == TouchPhase.Moved) || (touch1.phase == TouchPhase.Ended)) && (hasRegistered[1] == false))
+            {             
+                debugTouch1Info = "XStart: " + vecStart1.x.ToString() + "\nYStart: " + vecStart1.y.ToString() + "\nXEnd: " + vecEnd1.x.ToString() + "\nYEnd: " + vecEnd1.y.ToString();
+                DebugTouch1.instance.ChangeDebugTouch1Text(debugTouch1Info); // Update the debug textbox. 
             }
             // If something else happened.
             else
@@ -513,6 +528,12 @@ public class InputModule : MonoBehaviour
                 debugTouch2Info = "Touch2 canceled";
                 DebugTouch2.instance.ChangeDebugTouch2Text(debugTouch2Info); // Update the debug textbox.
             }
+            // If the finger has been lifted but some fingers are still on the screen.
+            else if (((touch2.phase == TouchPhase.Stationary) || (touch2.phase == TouchPhase.Moved) || (touch2.phase == TouchPhase.Ended)) && (hasRegistered[2] == false))
+            {
+                debugTouch2Info = "XStart: " + vecStart2.x.ToString() + "\nYStart: " + vecStart2.y.ToString() + "\nXEnd: " + vecEnd2.x.ToString() + "\nYEnd: " + vecEnd2.y.ToString();
+                DebugTouch2.instance.ChangeDebugTouch2Text(debugTouch2Info); // Update the debug textbox. 
+            }        
             // If something else happened.
             else
             {
