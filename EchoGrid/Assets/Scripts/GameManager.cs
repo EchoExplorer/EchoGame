@@ -53,13 +53,11 @@ public class GameManager : MonoBehaviour
         // choose save for tutorial and normal game
         if ((current == GameMode.Game_Mode.RESTART) || (current == GameMode.Game_Mode.CONTINUE))
         {
-            print("In post-tutorial pregame menu.");
             filename = Application.persistentDataPath + "echosaved";
         }
         // load specific save for tutorial
         else if ((current == GameMode.Game_Mode.TUTORIAL_RESTART) || (current == GameMode.Game_Mode.TUTORIAL))
         {
-            print("In tutorial pregame menu.");
             filename = Application.persistentDataPath + "echosaved_tutorial";
         }
 

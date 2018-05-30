@@ -10,12 +10,6 @@ using System.Collections.Generic;
 /// </summary>
 public class GM_title : MonoBehaviour
 {
-    int cur_clip = 0;
-    int orti_clip = 0;
-    int cmd_cur_clip = 0;
-
-    float time_interval = 2.0f;
-    bool reset_audio = false;
     bool listenToCmd = false;
     public bool toMainflag = false;
 
@@ -649,7 +643,6 @@ public class GM_title : MonoBehaviour
                     repeatInterruptedClips = false;
                     madeUnrecognizedGesture = false;
                     repeatSetupClip = false;
-                    reset_audio = true;
                     canRepeat = true;
                 }
                 // If the player's game environment is set up properly, let them go to the main menu.
@@ -660,7 +653,6 @@ public class GM_title : MonoBehaviour
                     repeatInterruptedClips = false;
                     madeUnrecognizedGesture = false;
                     repeatSetupClip = false;
-                    reset_audio = true;
                     canRepeat = true;
                 }
                 // If the player has made a tap when they were asked to swipe left or right.
@@ -1007,7 +999,6 @@ public class GM_title : MonoBehaviour
                         repeatInterruptedClips = false;
                         madeUnrecognizedGesture = false;
                         repeatSetupClip = false;
-                        reset_audio = true;
                         canRepeat = true;
                     }
                     // If the swipe was right, the user is not using Talkback.
@@ -1019,7 +1010,6 @@ public class GM_title : MonoBehaviour
                         repeatInterruptedClips = false;
                         madeUnrecognizedGesture = false;
                         repeatSetupClip = false;
-                        reset_audio = true;
                         canRepeat = true;
                     }
                     // If the swipe was up, that was not the gesture asked for.
@@ -1135,7 +1125,6 @@ public class GM_title : MonoBehaviour
                     repeatInterruptedClips = false;
                     madeUnrecognizedGesture = false;
                     repeatSetupClip = false;
-                    reset_audio = true;
                     canRepeat = true;
                 }
                 // If a hold is registered.
@@ -1241,7 +1230,6 @@ public class GM_title : MonoBehaviour
                     repeatInterruptedClips = false;
                     madeUnrecognizedGesture = false;
                     repeatSetupClip = false;
-                    reset_audio = true;
                     canRepeat = true;
                 }
                 // If a hold is registered.
@@ -1613,7 +1601,6 @@ public class GM_title : MonoBehaviour
                     if (!listenToCmd)
                     {
                         listenToCmd = true;
-                        reset_audio = false;
                         canRepeat = true;
                     }
                 }

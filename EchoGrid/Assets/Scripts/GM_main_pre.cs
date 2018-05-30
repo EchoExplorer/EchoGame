@@ -12,7 +12,6 @@ using System.Collections.Generic;
 public class GM_main_pre : MonoBehaviour
 {
     bool at_confirm = false;
-    bool reset_audio = false;
 
     enum SelectMode { NONE, CONTINUE, NEW, CONFIRM, BACK, SPECIFIC }
 
@@ -171,7 +170,6 @@ public class GM_main_pre : MonoBehaviour
         }
         Screen.orientation = ScreenOrientation.Landscape;
         at_confirm = false;
-        reset_audio = false;
         hasGoneThroughSetup = true;
         eh = new eventHandler(InputModule.instance);
         TriggerStartNewGame = new CDTimer(1f, InputModule.instance);

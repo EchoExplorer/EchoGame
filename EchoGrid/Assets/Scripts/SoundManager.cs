@@ -9,15 +9,10 @@ using System;
 /// </summary>
 public class SoundManager : MonoBehaviour
 {
-
-    public AudioSource[] efxSource; // Drag a reference to the audio source which will play the sound effects.
     public AudioSource voiceSource;
     public AudioSource clipSource;
     public AudioSource echoSource;
-    public AudioSource crashSource;
-    public AudioSource singleSource;
     public static SoundManager instance = null; // Allows other scripts to call functions from SoundManager.				
-    int max_sfx_playing = 5;
     bool voice_adjusted = false;
 
     public bool finishedClip = true; // Determines if we have finished the clip we wanted to play.
@@ -36,20 +31,13 @@ public class SoundManager : MonoBehaviour
         {            
             instance = this;
         }
-        // If instance already exists:
+        // If instance already exists.
         else if (instance != this)
         {            
             Destroy(gameObject); // Destroy this, this enforces our singleton pattern so there can only be one instance of SoundManager.
         }
 
         // Set SoundManager to DontDestroyOnLoad so that it won't be destroyed when reloading our scene.
-        // efxSource = new AudioSource[max_sfx_playing];
-        // for (int i = 0; i < max_sfx_playing; ++i)
-        // {
-        //	 efxSource[i] = new AudioSource();
-        // }
-        // voiceSource = new AudioSource();
-        // voiceSource = GetComponent<AudioSource>();
         DontDestroyOnLoad(gameObject);
     }
 
@@ -61,23 +49,9 @@ public class SoundManager : MonoBehaviour
     {
         if (!voice_adjusted)
         {
-            for (int i = 0; i < efxSource.Length; ++i)
-            {
-                if (efxSource[i] != null)
-                {
-                    efxSource[i].volume = 1f;
-                    voice_adjusted = true;
-                }
-                else
-                {
-                    voice_adjusted = false;
-                    return;
-                }
-            }
             if (voiceSource != null)
             {
                 voiceSource.volume = 1f;
-                // voiceSource.pitch = 0.9f;
                 voice_adjusted = true;
             }
             else
@@ -94,51 +68,12 @@ public class SoundManager : MonoBehaviour
             {
                 voice_adjusted = false;
             }
-
-            if (crashSource != null)
-            {
-                crashSource.volume = 1f;
-                voice_adjusted = true;
-            }
-            else
-            {
-                voice_adjusted = false;
-            }
         }
 
         if (finishedAllClips == true)
         {
             clipsCurrentlyPlaying.Clear();
         }
-    }
-
-    /// <summary>
-    /// Plays an arbitrary audio clip.
-    /// </summary>
-	public void PlaySingle(AudioClip clip)
-    {
-        singleSource.clip = clip;
-        singleSource.Play();
-        return;
-        // Set the clip of our efxSource audio source to the clip passed in as a parameter.
-        for (int i = 0; i < max_sfx_playing; ++i)
-        {
-            if (!efxSource[i].isPlaying)
-            {
-                efxSource[i].clip = clip;
-                // Play the clip.
-                efxSource[i].Play();
-            }
-        }
-    }
-
-    /// <summary>
-    /// Plays the crash sound effect.
-    /// </summary>
-	public void playcrash(AudioClip clip)
-    {
-        crashSource.clip = clip;
-        crashSource.Play();
     }
 
     /// <summary>
