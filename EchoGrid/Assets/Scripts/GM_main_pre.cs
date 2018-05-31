@@ -16,7 +16,6 @@ public class GM_main_pre : MonoBehaviour
     enum SelectMode { NONE, CONTINUE, NEW, CONFIRM, BACK, SPECIFIC }
 
     eventHandler eh;
-    CDTimer TriggerStartNewGame;
 
     public static int skippingTutorial = 0;
 
@@ -172,8 +171,6 @@ public class GM_main_pre : MonoBehaviour
         at_confirm = false;
         hasGoneThroughSetup = true;
         eh = new eventHandler(InputModule.instance);
-        TriggerStartNewGame = new CDTimer(1f, InputModule.instance);
-        TriggerStartNewGame.TakeDownTime();
     }
 
     /// <summary>
@@ -446,7 +443,7 @@ public class GM_main_pre : MonoBehaviour
             if (ie.isTap == true)
             {
                 // We have swiped left to start a new game and confirmed that this is the action we want, so set mode to Confirm.
-                if ((at_confirm == true) && TriggerStartNewGame.CDfinish())
+                if (at_confirm == true)
                 {
                     canRepeat = true;
                     repeatInterruptedClips = false;
@@ -900,7 +897,7 @@ public class GM_main_pre : MonoBehaviour
             else if (ie.isTap == true)
             {
                 // We have swiped left to start a new game and confirmed that this is the action we want, so set mode to Confirm.
-                if ((at_confirm == true) && TriggerStartNewGame.CDfinish())
+                if (at_confirm == true)
                 {
                     canRepeat = true;
                     repeatInterruptedClips = false;
@@ -1127,11 +1124,9 @@ public class GM_main_pre : MonoBehaviour
                 {
                     canRepeat = false;
                     firstConfirm = true;
-                    //BoardManager.write_save(1, BoardManager.finishedTutorialLevel1, BoardManager.finishedTutorialLevel3);
-                    //gameManager.write_save_mode(1, GameMode.instance.gamemode);
                     skippingTutorial = 0;
                     clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[17] };
-                    balances = new float[] { 0, 0, 0 };
+                    balances = new float[] { 0, 0, 0 };                   
                     SoundManager.instance.PlayClips(clips, balances, 0, () => SceneManager.LoadScene("Main"), 3, null); // Play the appropriate clips.                  
                 }
                 break;
@@ -1146,12 +1141,6 @@ public class GM_main_pre : MonoBehaviour
                     firstConfirm = true;
                     SceneManager.LoadScene("Title_Screen"); // Move back to the main menu.
                 }
-
-#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
-#endif
-#if UNITY_IOS || UNITY_ANDROID
-                TriggerStartNewGame.reset();
-#endif
                 break;
             // If the mode is set to Specific, load a specific that the user selects.
             case SelectMode.SPECIFIC:

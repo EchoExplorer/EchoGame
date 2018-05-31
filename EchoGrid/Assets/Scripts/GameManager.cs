@@ -32,9 +32,13 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         if (instance == null)
+        {
             instance = this;
+        }
         else if (instance != this)
+        {
             Destroy(gameObject);
+        }
 
         DontDestroyOnLoad(gameObject);
 
@@ -202,15 +206,19 @@ public class GameManager : MonoBehaviour
         boardScript.SetupScene(level, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.instance.gamemode);       
     }
 
-    //Hides black image used between levels
+    // Hides black image used between levels
     void StartGame()
     {
-        //Disable the levelImage gameObject.
+        // Disable the levelImage gameObject.
         if (!levelImageActive)
+        {
             HideLevelImage();
+        }
         else
+        {
             UnHideLevelImage();
-        //Set doingSetup to false allowing player to move again.
+        }
+        // Set doingSetup to false allowing player to move again.
         doingSetup = false;
         playersTurn = true;
         Player.loadingScene = false;    
@@ -243,7 +251,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void HideLevelImage()
     {
-        //Disable the levelImage gameObject.
+        // Disable the levelImage gameObject.
         levelImage.SetActive(false);
         levelImageActive = false;
     }

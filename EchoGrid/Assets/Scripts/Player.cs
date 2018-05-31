@@ -230,7 +230,6 @@ public class Player : MovingObject
         at_pause_menu = false;
         tapped = false;
         reportSent = false;
-        echoLock = false;
         ad = GetComponent<AndroidDialogue>();
 
         endingLevel = false;
@@ -240,6 +239,8 @@ public class Player : MovingObject
         rotatedRight = false;
         playedExitClip = false;
         canGoToNextLevel = false;
+
+        canCheckForConsent = false;
 
         wantLevelRestart = false;
         wantMainMenu = false;
@@ -254,12 +255,6 @@ public class Player : MovingObject
 
         // score = 1000;
         eh = new eventHandler(InputModule.instance);
-        TriggerechoTimer = new CDTimer(Const.echoCD, InputModule.instance);
-        TriggermenuTimer = new CDTimer(Const.menuUpdateCD, InputModule.instance);
-        TriggerrotateTimer = new CDTimer(Const.rotateGestCD, InputModule.instance);
-        TriggerechoTimer.TakeDownTime();
-        TriggermenuTimer.TakeDownTime();
-        TriggerrotateTimer.TakeDownTime();
         base.Start();
     }
 
@@ -1039,7 +1034,7 @@ public class Player : MovingObject
     /// Plays an instruction voice related to the menu.
     /// </summary>
 	void play_audio()
-    {       
+    {
         if ((madeUnrecognizedGesture == true) && (SoundManager.instance.finishedClip == true))
         {
             madeUnrecognizedGesture = false;
@@ -1060,7 +1055,7 @@ public class Player : MovingObject
             }
         }
 
-        if ((((curLevel == 1) && (finishedExitingInstruction == true) && (BoardManager.finishedTutorialLevel1 == true)) || (curLevel == 12)) && (hasFinishedConsentForm == false))
+        if (((curLevel == 1) && (finishedExitingInstruction == true) && (BoardManager.finishedTutorialLevel1 == true)) || ((hasCheckedForConsent == true) && (hasFinishedConsentForm == false)))
         {
             if ((hearingConsentForm == false) && (readingConsentForm == false) && (noConsent == false) && (finished_reading == false) && (hasFinishedConsentForm == false) && (hasStartedConsent == false))
             {
@@ -1069,11 +1064,25 @@ public class Player : MovingObject
                     canRepeat = false;
                     if (GM_title.isUsingTalkback == true)
                     {
-                        clips = new List<AudioClip>() { Database.soundEffectClips[9], Database.consentClips[1] };
+                        if ((curLevel == 1) && (finishedExitingInstruction == true) && (BoardManager.finishedTutorialLevel1 == true))
+                        {
+                            clips = new List<AudioClip>() { Database.soundEffectClips[9], Database.consentClips[1] };
+                        }
+                        else
+                        {
+                            clips = new List<AudioClip>() { Database.consentClips[1] };
+                        }
                     }
                     else if (GM_title.isUsingTalkback == false)
                     {
-                        clips = new List<AudioClip>() { Database.soundEffectClips[9], Database.consentClips[0] };
+                        if ((curLevel == 1) && (finishedExitingInstruction == true) && (BoardManager.finishedTutorialLevel1 == true))
+                        {
+                            clips = new List<AudioClip>() { Database.soundEffectClips[9], Database.consentClips[0] };
+                        }
+                        else
+                        {
+                            clips = new List<AudioClip>() { Database.consentClips[0] };
+                        }
                     }
                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                     hasStartedConsent = true;
@@ -1190,27 +1199,13 @@ public class Player : MovingObject
                 if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
                 {
                     canRepeat = false;
-                    if (curLevel == 1)
+                    if (GM_title.isUsingTalkback == true)
                     {
-                        if (GM_title.isUsingTalkback == true)
-                        {
-                            clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[12] };
-                        }
-                        else if (GM_title.isUsingTalkback == false)
-                        {
-                            clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[11] };
-                        }
+                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[13], Database.levelStartClips[curLevel], Database.consentClips[14] };
                     }
-                    else if (curLevel == 12)
+                    else if (GM_title.isUsingTalkback == false)
                     {
-                        if (GM_title.isUsingTalkback == true)
-                        {
-                            clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[14] };
-                        }
-                        else if (GM_title.isUsingTalkback == false)
-                        {
-                            clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[13] };
-                        }
+                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[11], Database.levelStartClips[curLevel], Database.consentClips[12] };
                     }
                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                 }
@@ -1252,27 +1247,13 @@ public class Player : MovingObject
                 if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
                 {
                     canRepeat = false;
-                    if (curLevel == 1)
+                    if (GM_title.isUsingTalkback == true)
                     {
-                        if (GM_title.isUsingTalkback == true)
-                        {
-                            clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[16] };
-                        }
-                        else if (GM_title.isUsingTalkback == false)
-                        {
-                            clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[15] };
-                        }
+                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[17], Database.levelStartClips[curLevel], Database.consentClips[18] };
                     }
-                    else if (curLevel == 12)
+                    else if (GM_title.isUsingTalkback == false)
                     {
-                        if (GM_title.isUsingTalkback == true)
-                        {
-                            clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[18] };
-                        }
-                        else if (GM_title.isUsingTalkback == false)
-                        {
-                            clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[17] };
-                        }
+                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[15], Database.levelStartClips[curLevel], Database.consentClips[16] };
                     }
                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                 }
@@ -1283,7 +1264,7 @@ public class Player : MovingObject
         Vector2 startPos = BoardManager.start_idx;
         Vector2 exitPos = BoardManager.exit_idx;
 
-        if ((curLevel != 12) || ((curLevel == 12) && (hasFinishedConsentForm == true)))
+        if (hasFinishedConsentForm == true)
         {
             if (swipedUp == true)
             {
@@ -1718,9 +1699,9 @@ public class Player : MovingObject
                         debugPlayerInfo = "Playing level 1 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                         clips = new List<AudioClip>() { Database.levelStartClips[1], Database.levelStartClips[0] };
-                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
-
-                        canCheckForConsent = true;
+                        SoundManager.instance.PlayClips(clips, null, 0, () => {
+                            canCheckForConsent = true;
+                        }, 2, null, true); // Play the appropriate clips.
                     }
                     else if ((hasFinishedConsentForm == true) && (SoundManager.instance.finishedAllClips == true) && (hasCheckedForConsent == true))
                     {
@@ -1729,7 +1710,6 @@ public class Player : MovingObject
 
                         debugPlayerInfo = "Playing level 1 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-
                         clips = new List<AudioClip>() { Database.soundEffectClips[2], Database.mainGameClips[0], Database.soundEffectClips[0], Database.mainGameClips[1], Database.soundEffectClips[0], Database.mainGameClips[2], Database.soundEffectClips[0], Database.mainGameClips[3], Database.soundEffectClips[0], Database.mainGameClips[4], Database.soundEffectClips[0], Database.soundEffectClips[8], Database.soundEffectClips[0], Database.mainGameClips[5], Database.soundEffectClips[0], Database.mainGameClips[6], Database.soundEffectClips[0], Database.mainGameClips[7] };
                         SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
                     }
@@ -1752,11 +1732,26 @@ public class Player : MovingObject
                 // Play level 2 beginning clips.
                 if (canPlayClip[1, 0] == true)
                 {
-                    canPlayClip[1, 0] = false;
-                    debugPlayerInfo = "Playing level 2 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
-                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                    clips = new List<AudioClip>() { Database.levelStartClips[2], Database.levelStartClips[0], Database.soundEffectClips[2], Database.mainGameClips[9], Database.soundEffectClips[0], Database.mainGameClips[3], Database.soundEffectClips[0], Database.mainGameClips[7] };
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
+                    if (((SoundManager.instance.finishedAllClips == true) || (canRepeat == true)) && (canCheckForConsent == false) && (hasCheckedForConsent == false))
+                    {
+                        canRepeat = false;
+                        debugPlayerInfo = "Playing level 2 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                        clips = new List<AudioClip>() { Database.levelStartClips[2], Database.levelStartClips[0] };
+                        SoundManager.instance.PlayClips(clips, null, 0, () => {
+                            canCheckForConsent = true;
+                        }, 2, null, true); // Play the appropriate clips.
+                    }
+                    else if ((hasFinishedConsentForm == true) && (SoundManager.instance.finishedAllClips == true) && (hasCheckedForConsent == true))
+                    {
+                        canPlayClip[1, 0] = false;
+                        hasCheckedForConsent = false;
+
+                        debugPlayerInfo = "Playing level 2 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                        clips = new List<AudioClip>() { Database.soundEffectClips[2], Database.mainGameClips[9], Database.soundEffectClips[0], Database.mainGameClips[3], Database.soundEffectClips[0], Database.mainGameClips[7] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
+                    }
                 }
                 // If the player is not at the exit and swiped down.
                 if ((canPlayClip[1, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
@@ -1776,11 +1771,26 @@ public class Player : MovingObject
                 // Play level 3 beginning clips.
                 if ((canPlayClip[2, 0] == true) && (canDoGestureTutorial == false))
                 {
-                    canPlayClip[2, 0] = false;
-                    debugPlayerInfo = "Playing level 3 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
-                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                    clips = new List<AudioClip>() { Database.levelStartClips[3], Database.levelStartClips[0], Database.soundEffectClips[2], Database.mainGameClips[10], Database.soundEffectClips[0], Database.mainGameClips[11], Database.soundEffectClips[0], Database.mainGameClips[7] };
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
+                    if (((SoundManager.instance.finishedAllClips == true) || (canRepeat == true)) && (canCheckForConsent == false) && (hasCheckedForConsent == false))
+                    {
+                        canRepeat = false;
+                        debugPlayerInfo = "Playing level 3 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                        clips = new List<AudioClip>() { Database.levelStartClips[3], Database.levelStartClips[0] };
+                        SoundManager.instance.PlayClips(clips, null, 0, () => {
+                            canCheckForConsent = true;
+                        }, 2, null, true); // Play the appropriate clips.
+                    }
+                    else if ((hasFinishedConsentForm == true) && (SoundManager.instance.finishedAllClips == true) && (hasCheckedForConsent == true))
+                    {
+                        canPlayClip[2, 0] = false;
+                        hasCheckedForConsent = false;
+
+                        debugPlayerInfo = "Playing level 3 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                        clips = new List<AudioClip>() { Database.soundEffectClips[2], Database.mainGameClips[10], Database.soundEffectClips[0], Database.mainGameClips[11], Database.soundEffectClips[0], Database.mainGameClips[7] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
+                    }
                 }
                 // If the player is not at the exit and swiped down.
                 if ((canPlayClip[2, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
@@ -1800,11 +1810,26 @@ public class Player : MovingObject
                 // Play level 4 beginning clips.
                 if (canPlayClip[3, 0] == true)
                 {
-                    canPlayClip[3, 0] = false;
-                    debugPlayerInfo = "Playing level 4 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
-                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                    clips = new List<AudioClip>() { Database.levelStartClips[4], Database.levelStartClips[0], Database.soundEffectClips[2], Database.mainGameClips[17], Database.soundEffectClips[0], Database.mainGameClips[7] };
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
+                    if (((SoundManager.instance.finishedAllClips == true) || (canRepeat == true)) && (canCheckForConsent == false) && (hasCheckedForConsent == false))
+                    {
+                        canRepeat = false;
+                        debugPlayerInfo = "Playing level 4 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                        clips = new List<AudioClip>() { Database.levelStartClips[4], Database.levelStartClips[0] };
+                        SoundManager.instance.PlayClips(clips, null, 0, () => {
+                            canCheckForConsent = true;
+                        }, 2, null, true); // Play the appropriate clips.
+                    }
+                    else if ((hasFinishedConsentForm == true) && (SoundManager.instance.finishedAllClips == true) && (hasCheckedForConsent == true))
+                    {
+                        canPlayClip[3, 0] = false;
+                        hasCheckedForConsent = false;
+
+                        debugPlayerInfo = "Playing level 4 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                        clips = new List<AudioClip>() { Database.soundEffectClips[2], Database.mainGameClips[17], Database.soundEffectClips[0], Database.mainGameClips[7] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
+                    }
                 }
                 // If the player is not at the exit and swiped down.
                 if ((canPlayClip[3, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
@@ -1823,12 +1848,27 @@ public class Player : MovingObject
             {
                 // Play level 5 beginning clips.
                 if (canPlayClip[4, 0] == true)
-                {
-                    canPlayClip[4, 0] = false;
-                    debugPlayerInfo = "Playing level 5 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
-                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                    clips = new List<AudioClip>() { Database.levelStartClips[5], Database.levelStartClips[0], Database.soundEffectClips[2], Database.mainGameClips[19], Database.soundEffectClips[0], Database.mainGameClips[7] };
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
+                {              
+                    if (((SoundManager.instance.finishedAllClips == true) || (canRepeat == true)) && (canCheckForConsent == false) && (hasCheckedForConsent == false))
+                    {
+                        canRepeat = false;
+                        debugPlayerInfo = "Playing level 5 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                        clips = new List<AudioClip>() { Database.levelStartClips[5], Database.levelStartClips[0] };
+                        SoundManager.instance.PlayClips(clips, null, 0, () => {
+                            canCheckForConsent = true;
+                        }, 2, null, true); // Play the appropriate clips.
+                    }
+                    else if ((hasFinishedConsentForm == true) && (SoundManager.instance.finishedAllClips == true) && (hasCheckedForConsent == true))
+                    {
+                        canPlayClip[4, 0] = false;
+                        hasCheckedForConsent = false;
+
+                        debugPlayerInfo = "Playing level 5 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);                  
+                        clips = new List<AudioClip>() { Database.soundEffectClips[2], Database.mainGameClips[19], Database.soundEffectClips[0], Database.mainGameClips[7] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
+                    }
                 }
                 // If the player is not at the exit and swiped down.
                 if ((canPlayClip[4, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
@@ -1847,12 +1887,27 @@ public class Player : MovingObject
             {
                 // Play level 6 beginning clips.
                 if (canPlayClip[5, 0] == true)
-                {
-                    canPlayClip[5, 0] = false;
-                    debugPlayerInfo = "Playing level 6 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
-                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                    clips = new List<AudioClip>() { Database.levelStartClips[6], Database.levelStartClips[0], Database.soundEffectClips[2], Database.mainGameClips[21], Database.soundEffectClips[0], Database.mainGameClips[7] };
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
+                {       
+                    if (((SoundManager.instance.finishedAllClips == true) || (canRepeat == true)) && (canCheckForConsent == false) && (hasCheckedForConsent == false))
+                    {
+                        canRepeat = false;
+                        debugPlayerInfo = "Playing level 6 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                        clips = new List<AudioClip>() { Database.levelStartClips[6], Database.levelStartClips[0] };
+                        SoundManager.instance.PlayClips(clips, null, 0, () => {
+                            canCheckForConsent = true;
+                        }, 2, null, true); // Play the appropriate clips.
+                    }
+                    else if ((hasFinishedConsentForm == true) && (SoundManager.instance.finishedAllClips == true) && (hasCheckedForConsent == true))
+                    {
+                        canPlayClip[5, 0] = false;
+                        hasCheckedForConsent = false;
+
+                        debugPlayerInfo = "Playing level 6 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                        clips = new List<AudioClip>() { Database.soundEffectClips[2], Database.mainGameClips[21], Database.soundEffectClips[0], Database.mainGameClips[7] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
+                    }
                 }
                 // If the player is not at the exit and swiped down.
                 if ((canPlayClip[5, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
@@ -1871,12 +1926,27 @@ public class Player : MovingObject
             {
                 // Play level 7 beginning clips.
                 if (canPlayClip[6, 0] == true)
-                {
-                    canPlayClip[6, 0] = false;
-                    debugPlayerInfo = "Playing level 7 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
-                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                    clips = new List<AudioClip>() { Database.levelStartClips[7], Database.levelStartClips[0], Database.soundEffectClips[2], Database.mainGameClips[22], Database.soundEffectClips[0], Database.mainGameClips[23], Database.soundEffectClips[0], Database.mainGameClips[7] };
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
+                { 
+                    if (((SoundManager.instance.finishedAllClips == true) || (canRepeat == true)) && (canCheckForConsent == false) && (hasCheckedForConsent == false))
+                    {
+                        canRepeat = false;
+                        debugPlayerInfo = "Playing level 7 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                        clips = new List<AudioClip>() { Database.levelStartClips[7], Database.levelStartClips[0] };
+                        SoundManager.instance.PlayClips(clips, null, 0, () => {
+                            canCheckForConsent = true;
+                        }, 2, null, true); // Play the appropriate clips.
+                    }
+                    else if ((hasFinishedConsentForm == true) && (SoundManager.instance.finishedAllClips == true) && (hasCheckedForConsent == true))
+                    {
+                        canPlayClip[6, 0] = false;
+                        hasCheckedForConsent = false;
+
+                        debugPlayerInfo = "Playing level 7 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                        clips = new List<AudioClip>() { Database.soundEffectClips[2], Database.mainGameClips[22], Database.soundEffectClips[0], Database.mainGameClips[23], Database.soundEffectClips[0], Database.mainGameClips[7] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
+                    }
                 }
                 // If the player is not at the exit and swiped down.
                 if ((canPlayClip[6, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
@@ -1896,11 +1966,26 @@ public class Player : MovingObject
                 // Play level 8 beginning clips.
                 if (canPlayClip[7, 0] == true)
                 {
-                    canPlayClip[7, 0] = false;
-                    debugPlayerInfo = "Playing level 8 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
-                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                    clips = new List<AudioClip>() { Database.levelStartClips[8], Database.levelStartClips[0], Database.soundEffectClips[2], Database.mainGameClips[7] };
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
+                    if (((SoundManager.instance.finishedAllClips == true) || (canRepeat == true)) && (canCheckForConsent == false) && (hasCheckedForConsent == false))
+                    {
+                        canRepeat = false;
+                        debugPlayerInfo = "Playing level 8 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                        clips = new List<AudioClip>() { Database.levelStartClips[8], Database.levelStartClips[0] };
+                        SoundManager.instance.PlayClips(clips, null, 0, () => {
+                            canCheckForConsent = true;
+                        }, 2, null, true); // Play the appropriate clips.
+                    }
+                    else if ((hasFinishedConsentForm == true) && (SoundManager.instance.finishedAllClips == true) && (hasCheckedForConsent == true))
+                    {
+                        canPlayClip[7, 0] = false;
+                        hasCheckedForConsent = false;
+
+                        debugPlayerInfo = "Playing level 8 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                        clips = new List<AudioClip>() { Database.soundEffectClips[2], Database.mainGameClips[7] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
+                    }
                 }
                 // If the player is not at the exit and swiped down.
                 if ((canPlayClip[7, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
@@ -1920,11 +2005,26 @@ public class Player : MovingObject
                 // Play level 9 beginning clips.
                 if (canPlayClip[8, 0] == true)
                 {
-                    canPlayClip[8, 0] = false;
-                    debugPlayerInfo = "Playing level 9 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
-                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                    clips = new List<AudioClip>() { Database.levelStartClips[9], Database.levelStartClips[0], Database.soundEffectClips[2], Database.mainGameClips[7] };
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
+                    if (((SoundManager.instance.finishedAllClips == true) || (canRepeat == true)) && (canCheckForConsent == false) && (hasCheckedForConsent == false))
+                    {
+                        canRepeat = false;
+                        debugPlayerInfo = "Playing level 9 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                        clips = new List<AudioClip>() { Database.levelStartClips[9], Database.levelStartClips[0] };
+                        SoundManager.instance.PlayClips(clips, null, 0, () => {
+                            canCheckForConsent = true;
+                        }, 2, null, true); // Play the appropriate clips.
+                    }
+                    else if ((hasFinishedConsentForm == true) && (SoundManager.instance.finishedAllClips == true) && (hasCheckedForConsent == true))
+                    {
+                        canPlayClip[8, 0] = false;
+                        hasCheckedForConsent = false;
+
+                        debugPlayerInfo = "Playing level 9 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                        clips = new List<AudioClip>() { Database.soundEffectClips[2], Database.mainGameClips[7] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
+                    }
                 }
                 // If the player is not at the exit and swiped down.
                 if ((canPlayClip[8, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
@@ -1944,11 +2044,26 @@ public class Player : MovingObject
                 // Play level 10 beginning clips.
                 if (canPlayClip[9, 0] == true)
                 {
-                    canPlayClip[9, 0] = false;
-                    debugPlayerInfo = "Playing level 10 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
-                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                    clips = new List<AudioClip>() { Database.levelStartClips[10], Database.levelStartClips[0], Database.soundEffectClips[2], Database.mainGameClips[7] };
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
+                    if (((SoundManager.instance.finishedAllClips == true) || (canRepeat == true)) && (canCheckForConsent == false) && (hasCheckedForConsent == false))
+                    {
+                        canRepeat = false;
+                        debugPlayerInfo = "Playing level 10 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                        clips = new List<AudioClip>() { Database.levelStartClips[10], Database.levelStartClips[0] };
+                        SoundManager.instance.PlayClips(clips, null, 0, () => {
+                            canCheckForConsent = true;
+                        }, 2, null, true); // Play the appropriate clips.
+                    }
+                    else if ((hasFinishedConsentForm == true) && (SoundManager.instance.finishedAllClips == true) && (hasCheckedForConsent == true))
+                    {
+                        canPlayClip[9, 0] = false;
+                        hasCheckedForConsent = false;
+
+                        debugPlayerInfo = "Playing level 10 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                        clips = new List<AudioClip>() { Database.soundEffectClips[2], Database.mainGameClips[7] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
+                    }
                 }
                 // If the player is not at the exit and swiped down.
                 if ((canPlayClip[9, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
@@ -1968,11 +2083,26 @@ public class Player : MovingObject
                 // Play level 11 beginning clips.
                 if (canPlayClip[10, 0] == true)
                 {
-                    canPlayClip[10, 0] = false;
-                    debugPlayerInfo = "Playing level 11 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
-                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                    clips = new List<AudioClip>() { Database.levelStartClips[11], Database.levelStartClips[0], Database.soundEffectClips[2], Database.mainGameClips[24], Database.soundEffectClips[0], Database.mainGameClips[25], Database.soundEffectClips[0], Database.mainGameClips[26], Database.soundEffectClips[0], Database.mainGameClips[7] };
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
+                    if (((SoundManager.instance.finishedAllClips == true) || (canRepeat == true)) && (canCheckForConsent == false) && (hasCheckedForConsent == false))
+                    {
+                        canRepeat = false;
+                        debugPlayerInfo = "Playing level 11 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                        clips = new List<AudioClip>() { Database.levelStartClips[11], Database.levelStartClips[0] };
+                        SoundManager.instance.PlayClips(clips, null, 0, () => {
+                            canCheckForConsent = true;
+                        }, 2, null, true); // Play the appropriate clips.
+                    }
+                    else if ((hasFinishedConsentForm == true) && (SoundManager.instance.finishedAllClips == true) && (hasCheckedForConsent == true))
+                    {
+                        canPlayClip[10, 0] = false;
+                        hasCheckedForConsent = false;                              
+
+                        debugPlayerInfo = "Playing level 11 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                        clips = new List<AudioClip>() { Database.soundEffectClips[2], Database.mainGameClips[24], Database.soundEffectClips[0], Database.mainGameClips[25], Database.soundEffectClips[0], Database.mainGameClips[26], Database.soundEffectClips[0], Database.mainGameClips[7] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
+                    }
                 }
                 // If the player is not at the exit and swiped down.
                 if ((canPlayClip[10, 2] == true) && (endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
@@ -1994,12 +2124,9 @@ public class Player : MovingObject
                 debugPlayerInfo = "Playing level " + curLevel + " beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                 clips = new List<AudioClip>() { Database.levelStartClips[curLevel], Database.levelStartClips[0] };
-                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
-
-                if (curLevel == 12)
-                {
+                SoundManager.instance.PlayClips(clips, null, 0, () => {
                     canCheckForConsent = true;
-                }
+                }, 2, null, true); // Play the appropriate clips.
             }
             if ((canPlayClip[11, 0] == false) && (hasCheckedForConsent == true))
             {
@@ -2016,12 +2143,6 @@ public class Player : MovingObject
             }
         }
     }
-
-    //control
-    bool echoLock = false;
-    CDTimer TriggerechoTimer;
-    CDTimer TriggermenuTimer;
-    CDTimer TriggerrotateTimer;
 
     void Update()
     {
@@ -2336,22 +2457,7 @@ public class Player : MovingObject
             if ((curLevel <= 11) && (canPlayClip[(curLevel - 1), 3] == true))
             {
                 canPlayClip[(curLevel - 1), 3] = false;
-                if (get_player_dir("BACK") == BoardManager.startDir)
-                {
-                    debugPlayerInfo = "Returned to start position. Turn around, then continue by moving forward.";
-                }
-                else if (get_player_dir("FRONT") == BoardManager.startDir)
-                {
-                    debugPlayerInfo = "Returned to start position. Continue by moving forward.";
-                }
-                else if (get_player_dir("LEFT") == BoardManager.startDir)
-                {
-                    debugPlayerInfo = "Returned to start position. Turn left, then continue by moving forward.";
-                }
-                else if (get_player_dir("RIGHT") == BoardManager.startDir)
-                {
-                    debugPlayerInfo = "Returned to start position. Turn right, then continue by moving forward.";
-                }
+                debugPlayerInfo = "Returned to start position. Turn around by rotating twice, then continue by moving forward.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[29] };
                 SoundManager.instance.PlayClips(clips, null, 0, () => PlayEcho(leftGAS, rightGAS, leftGAS_right, rightGAS_left, leftEndGAS, rightEndGAS, leftEndGAS_rightend, rightEndGAS_leftend, frontGAS, stepsize, blocksToFrontWall), 1, null, true); // Play the appropriate clip.
@@ -2480,87 +2586,47 @@ public class Player : MovingObject
                 canPlayClip[11, 2] = true;
             }
         }
-
-        if ((curLevel == 1) || (curLevel == 12))
+     
+        if (canCheckForConsent == true)
         {
-            if (curLevel == 1)
+            canCheckForConsent = false;
+
+            string filename = Application.persistentDataPath + "consentRecord";
+            string[] svdata_split;
+
+            if (System.IO.File.Exists(filename))
             {
-                if (canCheckForConsent == true)
+                svdata_split = System.IO.File.ReadAllLines(filename);
+                int hasConsented = Int32.Parse(svdata_split[0]);
+
+                if (hasConsented == 1)
                 {
-                    canCheckForConsent = false;
-
-                    string filename = Application.persistentDataPath + "consentRecord";
-                    string[] svdata_split;
-
-                    if (System.IO.File.Exists(filename))
-                    {
-                        svdata_split = System.IO.File.ReadAllLines(filename);
-                        int hasConsented = Int32.Parse(svdata_split[0]);
-
-                        if (hasConsented == 1)
-                        {
-                            hasFinishedConsentForm = true;
-                        }
-                        else if (hasConsented == 0)
-                        {
-                            hasFinishedConsentForm = true;
-                        }
-                    }
-                    else
-                    {
-                        debugPlayerInfo = "Has not gone through consent form.";
-                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                        hasFinishedConsentForm = false;
-                        canRepeat = true;
-                    }
-
-                    hasCheckedForConsent = true;
+                    debugPlayerInfo = "Previously consented to having their data collected. Can continue with level " + curLevel.ToString() + ".";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    hasFinishedConsentForm = true;
+                }
+                else if (hasConsented == 0)
+                {
+                    debugPlayerInfo = "Previously not consented to having their data collected. Can continue with level " + curLevel.ToString() + ".";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    hasFinishedConsentForm = true;
                 }
             }
-            else if ((curLevel == 12) && (canPlayClip[11, 0] == false) && (SoundManager.instance.finishedAllClips == true))
+            else
             {
-                if (canCheckForConsent == true)
-                {
-                    canCheckForConsent = false;
-
-                    string filename = Application.persistentDataPath + "consentRecord";
-                    string[] svdata_split;
-
-                    if (System.IO.File.Exists(filename))
-                    {
-                        svdata_split = System.IO.File.ReadAllLines(filename);
-                        int hasConsented = Int32.Parse(svdata_split[0]);
-
-                        if (hasConsented == 1)
-                        {
-                            debugPlayerInfo = "Previously consented to having their data collected. Can continue with level " + curLevel.ToString() + ".";
-                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                            hasFinishedConsentForm = true;
-                        }
-                        else if (hasConsented == 0)
-                        {
-                            debugPlayerInfo = "Previously not consented to having their data collected. Can continue with level " + curLevel.ToString() + ".";
-                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                            hasFinishedConsentForm = true;
-                        }
-                    }
-                    else
-                    {
-                        debugPlayerInfo = "Has not gone through consent form.";
-                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                        hasFinishedConsentForm = false;
-                        canRepeat = true;
-                    }
-
-                    hasCheckedForConsent = true;
-                }
+                debugPlayerInfo = "Has not gone through consent form.";
+                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                hasFinishedConsentForm = false;
+                canRepeat = true;
             }
-        }
+
+            hasCheckedForConsent = true;             
+        }   
 
         play_audio();
 
 #if (UNITY_IOS || UNITY_ANDROID) && (!UNITY_STANDALONE || !UNITY_WEBPLAYER)
-        if ((curLevel == 12) && (hasFinishedConsentForm == false))
+        if (((curLevel == 1) && (finishedExitingInstruction == true) && (BoardManager.finishedTutorialLevel1 == true) && (hasFinishedConsentForm == false)) || ((hasCheckedForConsent == true) && (hasFinishedConsentForm == false)))
         {
             if ((readingConsentForm == true) && (android_window_displayed == false) && (can_display_window == true))
             {
@@ -2964,369 +3030,6 @@ public class Player : MovingObject
                 finishedExitingInstruction = true; // We have finished the exiting instruction, so the player can swipe down.
             }
 
-            if ((finishedExitingInstruction == true) && (BoardManager.finishedTutorialLevel1 == true) && (hasStartedConsent == true))
-            {
-#if (UNITY_IOS || UNITY_ANDROID) && (!UNITY_STANDALONE || !UNITY_WEBPLAYER)
-                if ((readingConsentForm == true) && (android_window_displayed == false) && (can_display_window == true))
-                {
-                    android_window_displayed = true;
-                    finished_reading = false;
-                }
-
-                if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readConsent == false) && (consentFlag == false))
-                {
-                    consentFlag = true;
-
-                    string title = "Echolocation Consent";
-                    string message = "This game is part of a research study conducted by Laurie Heller and Pulkit Grover at Carnegie Mellon " +
-                        "University and is partially funded by Google. The purpose of the research is to understand how " +
-                        "people can use sounds (such as echoes) to figure out aspects of their physical environment, such " +
-                        "as whether or not a wall is nearby. The game will use virtual sounds and virtual walls to teach " +
-                        "people how to use sound to virtually move around in the game. This current release of the app is " +
-                        "designed to provide user feedback on the app itself.";
-                    AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.YESONLY;
-                    ad.DisplayAndroidWindow(title, message, dialogueType, "Next");
-                }
-
-                if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readConsent == false) && (consentFlag == true) && (ad.yesclicked() == true))
-                {
-                    readConsent = true;
-                    clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
-                    ad.clearflag();
-                }
-
-                if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readConsent == true) && (readProcedures == false) && (proceduresFlag == false))
-                {
-                    proceduresFlag = true;
-
-                    string title = "Procedures";
-                    string message = "App users will install a free app on their phone named EchoGrid. Launching the app for the first " +
-                        "time will direct users to a consent form. If the user taps the screen to indicate that they are " +
-                        "providing informed consent to participate in the research supported by this app, they will be able " +
-                        "to begin playing the game.Users will first go through a tutorial that will provide spoken " +
-                        "instructions regarding the gestures needed to play the game, such as swiping or tapping on the " +
-                        "phone’s screen. Users will need to put on headphones correctly because the game’s sounds will differ " +
-                        "between the two ears. Users will play the game for as long as they want to. The game will increase in " +
-                        "difficulty as the levels increase. After a certain number of levels have been played, a survey regarding " +
-                        "the user experience will appear. The user will be asked to answer up to 18 questions regarding their " +
-                        "experience with the app and whether or not they have normal vision. This survey will only happen once.";
-                    AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
-                    ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
-                }
-
-                if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readProcedures == false) && (proceduresFlag == true) && (ad.yesclicked() == true))
-                {
-                    readProcedures = true;
-                    clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
-                    ad.clearflag();
-                }
-
-                if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readProcedures == false) && (proceduresFlag == true) && (ad.noclicked() == true))
-                {
-                    proceduresFlag = false;
-                    readConsent = false;
-                    consentFlag = false;
-                    clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
-                    ad.clearflag();
-                }
-
-                if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readProcedures == true) && (readRequirements == false) && (requirementsFlag == false))
-                {
-                    requirementsFlag = true;
-
-                    string title = "Participant Requirements";
-                    string message = "Participation in this study is limited to individuals age 18 and older. Participants with or without vision " +
-                        "may play this game. Participants need to have normal hearing because the game relies on detecting subtle " +
-                        "differences between sounds. Participants must have access to an Android smartphone to play this game.";
-                    AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
-                    ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
-                }
-
-                if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRequirements == false) && (requirementsFlag == true) && (ad.yesclicked() == true))
-                {
-                    readRequirements = true;
-                    clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
-                    ad.clearflag();
-                }
-
-                if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRequirements == false) && (requirementsFlag == true) && (ad.noclicked() == true))
-                {
-                    requirementsFlag = false;
-                    readProcedures = false;
-                    proceduresFlag = false;
-                    clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
-                    ad.clearflag();
-                }
-
-                if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRequirements == true) && (readRisks == false) && (risksFlag == false))
-                {
-                    risksFlag = true;
-
-                    string title = "Risks";
-                    string message = "The risks and discomfort associated with participation in this study are no greater than those " +
-                        "ordinarily encountered in daily life or during other online activities. Participants will not provide " +
-                        "confidential personal information or financial information.";
-                    AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
-                    ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
-                }
-
-                if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRisks == false) && (risksFlag == true) && (ad.yesclicked() == true))
-                {
-                    readRisks = true;
-                    clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
-                    ad.clearflag();
-                }
-
-                if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRisks == false) && (risksFlag == true) && (ad.noclicked() == true))
-                {
-                    risksFlag = false;
-                    readRequirements = false;
-                    requirementsFlag = false;
-                    clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
-                    ad.clearflag();
-                }
-
-                if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRisks == true) && (readBenefits == false) && (benefitsFlag == false))
-                {
-                    benefitsFlag = true;
-
-                    string title = "Benefits";
-                    string message = "There may be no personal benefit from your participation in the study but the knowledge received may be " +
-                        "of value to humanity. In theory, it is possible that you could become better at discriminating echoes in the real world " +
-                        "by playing this game, but the likelihood of this possibility is not known.";
-                    AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
-                    ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
-                }
-
-                if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readBenefits == false) && (benefitsFlag == true) && (ad.yesclicked() == true))
-                {
-                    readBenefits = true;
-                    clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
-                    ad.clearflag();
-                }
-
-                if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readBenefits == false) && (benefitsFlag == true) && (ad.noclicked() == true))
-                {
-                    benefitsFlag = false;
-                    readRisks = false;
-                    risksFlag = false;
-                    clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
-                    ad.clearflag();
-                }
-
-                if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readBenefits == true) && (readCompCost == false) && (compCostFlag == false))
-                {
-                    compCostFlag = true;
-
-                    string title = "Compensation and Costs";
-                    string message = "There is no compensation for participation in this study. There will be no cost to you if you " +
-                        "participate in this study.";
-                    AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
-                    ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
-                }
-
-                if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readCompCost == false) && (compCostFlag == true) && (ad.yesclicked() == true))
-                {
-                    readCompCost = true;
-                    clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
-                    ad.clearflag();
-                }
-
-                if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readCompCost == false) && (readCompCost == true) && (ad.noclicked() == true))
-                {
-                    compCostFlag = false;
-                    readBenefits = false;
-                    benefitsFlag = false;
-                    clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
-                    ad.clearflag();
-                }
-
-                if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readCompCost == true) && (readConfidentiality == false) && (confidentialityFlag == false))
-                {
-                    confidentialityFlag = true;
-
-                    string title = "Confidentiality";
-                    string message = "The data captured for the research does not include any personally identifiable information about you. " +
-                        "Your phone’s device ID will be captured, which is customary for all apps that you install on a phone. " +
-                        "You will indicate whether or not you have a visual impairment, but that is not considered to be private " +
-                        "health information. The moves you make while playing the game will be captured and your app satisfaction " +
-                        "survey responses will be captured.\n\n" +
-                        "By participating in this research, you understand and agree that Carnegie Mellon may be required to " +
-                        "disclose your consent form, data and other personally identifiable information as required by law, regulation, " +
-                        "subpoena or court order. Otherwise, your confidentiality will be maintained in the following manner:\n\n" +
-                        "Your data and consent form will be kept separate. Your response to the consent form will be stored electronically " +
-                        "in a secure location on Carnegie Mellon property and will not be disclosed to third parties. Sharing of data with " +
-                        "other researchers will only be done in such a manner that you will not be identified. This research was sponsored " +
-                        "by Google and the app survey data may be shared with them as part of the development process. By participating, you " +
-                        "understand and agree that the data and information gathered during this study may be used by Carnegie Mellon and " +
-                        "published and/or disclosed by Carnegie Mellon to others outside of Carnegie Mellon. However, your name, address, " +
-                        "contact information and other direct personal identifiers will not be gathered. Note that per regulation all research " +
-                        "data must be kept for a minimum of 3 years.";
-                    AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
-                    ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
-                }
-
-                if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readConfidentiality == false) && (confidentialityFlag == true) && (ad.yesclicked() == true))
-                {
-                    readConfidentiality = true;
-                    clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
-                    ad.clearflag();
-                }
-
-                if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readConfidentiality == false) && (confidentialityFlag == true) && (ad.noclicked() == true))
-                {
-                    confidentialityFlag = false;
-                    readCompCost = false;
-                    compCostFlag = false;
-                    clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
-                    ad.clearflag();
-                }
-
-                if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readConfidentiality == true) && (readQuestionsContact == false) && (questionsContactFlag == false))
-                {
-                    questionsContactFlag = true;
-
-                    string title = "Right to Ask Questions and Contact Information";
-                    string message = "If you have any questions about this study, you should feel free to ask them by contacting the " +
-                        "Principal Investigator now at: Laurie Heller, Department of Psychology, Carnegie Mellon University, " +
-                        "Pittsburgh, PA, 15213, 412-268-8669, auditory@andrew.cmu.edu.\n\n" +
-                        "If you have questions later, desire additional information, or wish to withdraw your participation " +
-                        "please contact the Principal Investigator by mail, phone or e-mail in accordance with the contact " +
-                        "information listed above.\n\n" +
-                        "If you have questions pertaining to your rights as a research participant, or to report concerns to " +
-                        "this study, you should contact the Office of Research Integrity and Compliance at Carnegie Mellon " +
-                        "University.\n" +
-                        "Email: irb-review@andrew.cmu.edu.\n" +
-                        "Phone: 412-268-1901 or 412-268-5460.";
-                    AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
-                    ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
-                }
-
-                if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readQuestionsContact == false) && (questionsContactFlag == true) && (ad.yesclicked() == true))
-                {
-                    readQuestionsContact = true;
-                    clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
-                    ad.clearflag();
-                }
-
-                if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readQuestionsContact == false) && (questionsContactFlag == true) && (ad.noclicked() == true))
-                {
-                    questionsContactFlag = false;
-                    readConfidentiality = false;
-                    confidentialityFlag = false;
-                    clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
-                    ad.clearflag();
-                }
-
-                if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readQuestionsContact == true) && (readEighteenPlus == false) && (eighteenPlusFlag == false))
-                {
-                    eighteenPlusFlag = true;
-
-                    string title = "Age Limitation";
-                    string message = "I am age 18 or older.";
-                    AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
-                    ad.DisplayAndroidWindow(title, message, dialogueType, "Yes", "No");
-                }
-
-                if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readEighteenPlus == false) && (eighteenPlusFlag == true) && (ad.yesclicked() == true))
-                {
-                    readEighteenPlus = true;
-                    answeredQuestion1 = true;
-                    question1 = true;
-                    clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
-                    ad.clearflag();
-                }
-
-                if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readEighteenPlus == false) && (eighteenPlusFlag == true) && (ad.noclicked() == true))
-                {
-                    readEighteenPlus = true;
-                    answeredQuestion1 = true;
-                    question1 = false;
-                    clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
-                    ad.clearflag();
-                }
-
-                if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readEighteenPlus == true) && (readUnderstand == false) && (understandFlag == false))
-                {
-                    understandFlag = true;
-
-                    string title = "Read Information";
-                    string message = "I have read and understand the information above.";
-                    AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
-                    ad.DisplayAndroidWindow(title, message, dialogueType, "Yes", "No");
-                }
-
-                if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readUnderstand == false) && (understandFlag == true) && (ad.yesclicked() == true))
-                {
-                    readUnderstand = true;
-                    answeredQuestion2 = true;
-                    question2 = true;
-                    clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
-                    ad.clearflag();
-                }
-
-                if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readUnderstand == false) && (understandFlag == true) && (ad.noclicked() == true))
-                {
-                    readUnderstand = true;
-                    answeredQuestion2 = true;
-                    question2 = false;
-                    clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
-                    ad.clearflag();
-                }
-
-                if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readUnderstand == true) && (readParticipate == false) && (participateFlag == false))
-                {
-                    participateFlag = true;
-
-                    string title = "Participation";
-                    string message = "I want to participate in this research and continue with the game and survey.";
-                    AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
-                    ad.DisplayAndroidWindow(title, message, dialogueType, "Yes", "No");
-                }
-
-                if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readParticipate == false) && (participateFlag == true) && (ad.yesclicked() == true))
-                {
-                    readParticipate = true;
-                    answeredQuestion3 = true;
-                    question3 = true;
-                    android_window_displayed = false;
-                    finished_reading = true;
-                    canRepeat = true;
-                    ad.clearflag();
-                }
-
-                if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readParticipate == false) && (participateFlag == true) && (ad.noclicked() == true))
-                {
-                    readParticipate = true;
-                    answeredQuestion3 = true;
-                    question3 = false;
-                    android_window_displayed = false;
-                    finished_reading = true;
-                    canRepeat = true;
-                    ad.clearflag();
-                }
-#endif
-            }
-
             if ((curLevel == 3) && (finishedCornerInstruction == true) && (hasTappedAtCorner == false) && (BoardManager.player_idx.x == 9) && (BoardManager.player_idx.y == 9) && (finishedEcho == true))
             {
                 hasTappedAtCorner = true;
@@ -3546,43 +3249,27 @@ public class Player : MovingObject
                     SoundManager.instance.PlayVoice(Database.errorClips[22], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
 
-                if (((curLevel == 1) || (curLevel == 12)) && (hasFinishedConsentForm == false) && (hasStartedConsent == true))
-                {
-                    print("Tapped to consent.");
-                    print("No consent = " + noConsent.ToString() + ", Hearing consent: " + hearingConsentForm.ToString() + ", Reading consent: " + readingConsentForm.ToString());
+                if ((hasFinishedConsentForm == false) && (hasStartedConsent == true))
+                { 
                     if (noConsent == true)
                     {
                         Utilities.writefile("consentRecord", "0");
-                        debugPlayerInfo = "Tap registered. Did not consent to having data collected. Can continue with level 12.";
+                        debugPlayerInfo = "Tap registered. Did not consent to having data collected. Can continue with level " + curLevel.ToString() + ".";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         hasFinishedConsentForm = true;
                         canRepeat = true;
-                        if (curLevel == 1)
-                        {
-                            clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[24] };
-                        }
-                        else if (curLevel == 12)
-                        {
-                            clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[25] };
-                        }
+                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[23], Database.levelStartClips[curLevel], Database.consentClips[24], Database.levelStartClips[curLevel] };                      
                         SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                     }
 
                     else if (((hearingConsentForm == true) || (readingConsentForm == true)) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (question1 == true) && (question2 == true) && (question3 == true))
                     {
                         Utilities.writefile("consentRecord", "1");
-                        debugPlayerInfo = "Tap registered. Consented to having data collected. Can continue with level 12.";
+                        debugPlayerInfo = "Tap registered. Consented to having data collected. Can continue with level " + curLevel.ToString() + ".";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         hasFinishedConsentForm = true;
                         canRepeat = true;
-                        if (curLevel == 1)
-                        {
-                            clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[22] };
-                        }
-                        else if (curLevel == 12)
-                        {
-                            clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[23] };
-                        }
+                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[22], Database.levelStartClips[curLevel], Database.consentClips[24], Database.levelStartClips[curLevel] };
                         SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                     }
 
@@ -3593,7 +3280,7 @@ public class Player : MovingObject
                     }
                 }
 
-                if (((curLevel != 12) && (canDoGestureTutorial == false)) || ((curLevel == 12) && (hasFinishedConsentForm == true) && (canDoGestureTutorial == false)))
+                if ((hasFinishedConsentForm == true) && (canDoGestureTutorial == false))
                 {
                     // If the player is not in the pause menu, play an echo.
                     if ((want_exit == false) && (loadingScene == false))
@@ -3742,7 +3429,7 @@ public class Player : MovingObject
                         SoundManager.instance.PlayVoice(Database.errorClips[22], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
                     
-                    if (((curLevel == 1) || (curLevel == 12)) && (hasFinishedConsentForm == false) && (hasStartedConsent == true))
+                    if ((hasFinishedConsentForm == false) && (hasStartedConsent == true))
                     {
                         if ((hearingConsentForm == false) && (readingConsentForm == false) && (noConsent == false))
                         {
@@ -3831,7 +3518,7 @@ public class Player : MovingObject
                             canRepeat = true;
                         }
                     }
-                    if (((curLevel != 12) && (canDoGestureTutorial == false)) || ((curLevel == 12) && (hasFinishedConsentForm == true) && (canDoGestureTutorial == false)))
+                    if ((hasFinishedConsentForm == true) && (canDoGestureTutorial == false))
                     {
                         // If the player is in the pause menu, they have told us they want to restart the level.
                         if ((want_exit == true) && (loadingScene == false))
@@ -3946,7 +3633,7 @@ public class Player : MovingObject
                         SoundManager.instance.PlayVoice(Database.errorClips[22], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
 
-                    if (((curLevel == 1) || (curLevel == 12)) && (hasFinishedConsentForm == false) && (hasStartedConsent == true))
+                    if ((hasFinishedConsentForm == false) && (hasStartedConsent == true))
                     {
                         if ((readingConsentForm == false) && (hearingConsentForm == false) && (noConsent == false))
                         {
@@ -4110,7 +3797,7 @@ public class Player : MovingObject
                         }
                     }
 
-                    if (((curLevel != 12) && (canDoGestureTutorial == false)) || ((curLevel == 12) && (hasFinishedConsentForm == true) && (canDoGestureTutorial == false)))
+                    if ((hasFinishedConsentForm == true) && (canDoGestureTutorial == false))
                     {
                         // If the player is in the pause menu, they have told us they want to go back to the main menu.
                         if ((want_exit == true) && (loadingScene == false))
@@ -4255,13 +3942,13 @@ public class Player : MovingObject
                         SoundManager.instance.PlayVoice(Database.errorClips[22], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
                     
-                    if (((curLevel == 1) || (curLevel == 12)) && (hasFinishedConsentForm == false) && (hasStartedConsent == true))
+                    if ((hasFinishedConsentForm == false) && (hasStartedConsent == true))
                     {
                         debugPlayerInfo = "Swipe up registered. Does nothing here.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     }
 
-                    if (((curLevel != 12) && (canDoGestureTutorial == false)) || ((curLevel == 12) && (hasFinishedConsentForm == true) && (canDoGestureTutorial == false)))
+                    if ((hasFinishedConsentForm == true) && (canDoGestureTutorial == false))
                     {
                         // If the player is not in the pause menu, move them forward.
                         if ((want_exit == false) && (loadingScene == false))
@@ -4402,7 +4089,7 @@ public class Player : MovingObject
                         SoundManager.instance.PlayVoice(Database.errorClips[22], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
                   
-                    if (((curLevel == 1) || (curLevel == 12)) && (hasFinishedConsentForm == false) && (hasStartedConsent == true))
+                    if ((hasFinishedConsentForm == false) && (hasStartedConsent == true))
                     {
                         if ((hearingConsentForm == false) && (readingConsentForm == false) && (noConsent == false))
                         {
@@ -4442,7 +4129,7 @@ public class Player : MovingObject
                         }
                     }
 
-                    if (((curLevel != 12) && (canDoGestureTutorial == false)) || ((curLevel == 12) && (hasFinishedConsentForm == true) && (canDoGestureTutorial == false)))
+                    if ((hasFinishedConsentForm == true) && (canDoGestureTutorial == false))
                     {
                         if ((want_exit == false) && (loadingScene == false))
                         {
@@ -4567,13 +4254,13 @@ public class Player : MovingObject
                         SoundManager.instance.PlayVoice(Database.errorClips[22], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
 
-                    if (((curLevel == 1) || (curLevel == 12)) && (hasFinishedConsentForm == false) && (hasStartedConsent == true))
+                    if ((hasFinishedConsentForm == false) && (hasStartedConsent == true))
                     {
                         debugPlayerInfo = "Left rotation registered. Does nothing here.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     }
 
-                    if (((curLevel != 12) && (canDoGestureTutorial == false)) || ((curLevel == 12) && (hasFinishedConsentForm == true) && (canDoGestureTutorial == false)))
+                    if ((hasFinishedConsentForm == true) && (canDoGestureTutorial == false))
                     {
                         // If the player is not in the pause menu, rotate them 90 degrees to the left.
                         if ((want_exit == false) && (loadingScene == false))
@@ -4720,13 +4407,13 @@ public class Player : MovingObject
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     }
 
-                    if (((curLevel == 1) || (curLevel == 12)) && (hasFinishedConsentForm == false) && (hasStartedConsent == true))
+                    if ((hasFinishedConsentForm == false) && (hasStartedConsent == true))
                     {
                         debugPlayerInfo = "Right rotation registered. Does nothing here.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     }
 
-                    if (((curLevel != 12) && (canDoGestureTutorial == false)) || ((curLevel == 12) && (hasFinishedConsentForm == true) && (canDoGestureTutorial == false)))
+                    if ((hasFinishedConsentForm == true) && (canDoGestureTutorial == false))
                     {
                         // If the player is not in the pause menu, rotate them 90 degrees to the right.
                         if ((want_exit == false) && (loadingScene == false))
@@ -4877,13 +4564,13 @@ public class Player : MovingObject
                     SoundManager.instance.PlayVoice(Database.errorClips[22], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
 
-                if (((curLevel == 1) || (curLevel == 12)) && (hasFinishedConsentForm == false) && (hasStartedConsent == true))
+                if ((hasFinishedConsentForm == false) && (hasStartedConsent == true))
                 {
                     debugPlayerInfo = "Hold registered. Does not do anything here.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 }
 
-                if (((curLevel != 12) && (canDoGestureTutorial == false)) || ((curLevel == 12) && (hasFinishedConsentForm == true) && (canDoGestureTutorial == false)))
+                if ((hasFinishedConsentForm == true) && (canDoGestureTutorial == false))
                 {
                     // If the player is not in the pause menu, open the pause menu.
                     if ((want_exit == false) && (loadingScene == false))
@@ -5125,41 +4812,27 @@ public class Player : MovingObject
                     SoundManager.instance.PlayVoice(Database.errorClips[22], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
 
-                if (((curLevel == 1) || (curLevel == 12)) && (hasFinishedConsentForm == false) && (hasStartedConsent == true))
+                if ((hasFinishedConsentForm == false) && (hasStartedConsent == true))
                 {
                     if (noConsent == true)
                     {
                         Utilities.writefile("consentRecord", "0");
-                        debugPlayerInfo = "Tap registered. Did not consent to having data collected. Can continue with level 12.";
+                        debugPlayerInfo = "Tap registered. Did not consent to having data collected. Can continue with level " + curLevel.ToString() + ".";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         hasFinishedConsentForm = true;
                         canRepeat = true;
-                        if (curLevel == 1)
-                        {
-                            clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[24] };
-                        }
-                        else if (curLevel == 12)
-                        {
-                            clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[25] };
-                        }
+                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[23], Database.levelStartClips[curLevel], Database.consentClips[24], Database.levelStartClips[curLevel] };
                         SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                     }
 
                     else if (((hearingConsentForm == true) || (readingConsentForm == true)) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (question1 == true) && (question2 == true) && (question3 == true))
                     {
                         Utilities.writefile("consentRecord", "1");
-                        debugPlayerInfo = "Tap registered. Consented to having data collected. Can continue with level 12.";
+                        debugPlayerInfo = "Tap registered. Consented to having data collected. Can continue with level " + curLevel.ToString() + ".";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         hasFinishedConsentForm = true;
                         canRepeat = true;
-                        if (curLevel == 1)
-                        {
-                            clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[22] };
-                        }
-                        else if (curLevel == 12)
-                        {
-                            clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[23] };
-                        }
+                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[22], Database.levelStartClips[curLevel], Database.consentClips[24], Database.levelStartClips[curLevel] };
                         SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                     }
 
@@ -5170,7 +4843,7 @@ public class Player : MovingObject
                     }
                 }
 
-                if (((curLevel != 12) && (canDoGestureTutorial == false)) || ((curLevel == 12) && (hasFinishedConsentForm == true) && (canDoGestureTutorial == false)))
+                if ((hasFinishedConsentForm == true) && (canDoGestureTutorial == false))
                 {
                     // If the player is not in the pause menu, play an echo.
                     if ((want_exit == false) && (loadingScene == false))
@@ -5317,7 +4990,7 @@ public class Player : MovingObject
                         SoundManager.instance.PlayVoice(Database.errorClips[22], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }                    
 
-                    if (((curLevel == 1) || (curLevel == 12)) && (hasFinishedConsentForm == false) && (hasStartedConsent == true))
+                    if ((hasFinishedConsentForm == false) && (hasStartedConsent == true))
                     {
                         if ((hearingConsentForm == false) && (readingConsentForm == false) && (noConsent == false))
                         {
@@ -5407,9 +5080,8 @@ public class Player : MovingObject
                         }
                     }
 
-                    if (((curLevel != 12) && (canDoGestureTutorial == false)) || ((curLevel == 12) && (hasFinishedConsentForm == true) && (canDoGestureTutorial == false)))
+                    if ((hasFinishedConsentForm == true) && (canDoGestureTutorial == false))
                     {
-                        flipEchoLock(true);
                         // If the player is not in the pause menu.
                         if ((at_pause_menu == false) && (loadingScene == false))
                         {
@@ -5531,7 +5203,7 @@ public class Player : MovingObject
                         SoundManager.instance.PlayVoice(Database.errorClips[22], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
                    
-                    if (((curLevel == 1) || (curLevel == 12)) && (hasFinishedConsentForm == false) && (hasStartedConsent == true))
+                    if ((hasFinishedConsentForm == false) && (hasStartedConsent == true))
                     {
                         if ((readingConsentForm == false) && (hearingConsentForm == false) && (noConsent == false))
                         {
@@ -5687,9 +5359,8 @@ public class Player : MovingObject
                         }
                     }
 
-                    if (((curLevel != 12) && (canDoGestureTutorial == false)) || ((curLevel == 12) && (hasFinishedConsentForm == true) && (canDoGestureTutorial == false)))
+                    if ((hasFinishedConsentForm == true) && (canDoGestureTutorial == false))
                     {
-                        flipEchoLock(true);
                         // If the player is not in the pause menu.
                         if ((at_pause_menu == false) && (loadingScene == false))
                         {
@@ -5843,15 +5514,14 @@ public class Player : MovingObject
                         SoundManager.instance.PlayVoice(Database.errorClips[22], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
 
-                    if (((curLevel == 1) || (curLevel == 12)) && (hasFinishedConsentForm == false) && (hasStartedConsent == true))
+                    if ((hasFinishedConsentForm == false) && (hasStartedConsent == true))
                     {
                         debugPlayerInfo = "Swipe up registered. Does nothing here.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.                    
                     }
 
-                    if (((curLevel != 12) && (canDoGestureTutorial == false)) || ((curLevel == 12) && (hasFinishedConsentForm == true) && (canDoGestureTutorial == false)))
+                    if ((hasFinishedConsentForm == true) && (canDoGestureTutorial == false))
                     {
-                        flipEchoLock(true);
                         // If the player is not in the pause menu.
                         if ((at_pause_menu == false) && (loadingScene == false))
                         {
@@ -5993,7 +5663,7 @@ public class Player : MovingObject
                         SoundManager.instance.PlayVoice(Database.errorClips[22], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }                    
 
-                    if (((curLevel == 1) || (curLevel == 12)) && (hasFinishedConsentForm == false) && (hasStartedConsent == true))
+                    if ((hasFinishedConsentForm == false) && (hasStartedConsent == true))
                     {
                         if ((hearingConsentForm == false) && (readingConsentForm == false) && (noConsent == false))
                         {
@@ -6034,9 +5704,8 @@ public class Player : MovingObject
                         }
                     }
 
-                    if (((curLevel != 12) && (canDoGestureTutorial == false)) || ((curLevel == 12) && (hasFinishedConsentForm == true) && (canDoGestureTutorial == false)))
+                    if ((hasFinishedConsentForm == true) && (canDoGestureTutorial == false))
                     {
-                        flipEchoLock(true);
                         // If the player is not in the pause menu.
                         if ((at_pause_menu == false) && (loadingScene == false))
                         {
@@ -6161,15 +5830,14 @@ public class Player : MovingObject
                         SoundManager.instance.PlayVoice(Database.errorClips[22], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
                     
-                    if (((curLevel == 1) || (curLevel == 12)) && (hasFinishedConsentForm == false) && (hasStartedConsent == true))
+                    if ((hasFinishedConsentForm == false) && (hasStartedConsent == true))
                     {
                         debugPlayerInfo = "Left rotation registered. Does nothing here.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.                    
                     }
 
-                    if (((curLevel != 12) && (canDoGestureTutorial == false)) || ((curLevel == 12) && (hasFinishedConsentForm == true) && (canDoGestureTutorial == false)))
+                    if ((hasFinishedConsentForm == true) && (canDoGestureTutorial == false))
                     {
-                        flipEchoLock(true);
                         // If the player is not in the pause menu.
                         if ((at_pause_menu == false) && (loadingScene == false))
                         {
@@ -6316,15 +5984,14 @@ public class Player : MovingObject
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     }
 
-                    if (((curLevel == 1) || (curLevel == 12)) && (hasFinishedConsentForm == false) && (hasStartedConsent == true))
+                    if ((hasFinishedConsentForm == false) && (hasStartedConsent == true))
                     {
                         debugPlayerInfo = "Right rotation registered. Does nothing here.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     }
 
-                    if (((curLevel != 12) && (canDoGestureTutorial == false)) || ((curLevel == 12) && (hasFinishedConsentForm == true) && (canDoGestureTutorial == false)))
+                    if ((hasFinishedConsentForm == true) && (canDoGestureTutorial == false))
                     {
-                        flipEchoLock(true);
                         // If the player is not in the pause menu.
                         if ((at_pause_menu == false) && (loadingScene == false))
                         {
@@ -6475,15 +6142,14 @@ public class Player : MovingObject
                     SoundManager.instance.PlayVoice(Database.errorClips[22], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }               
 
-                if (((curLevel == 1) || (curLevel == 12)) && (hasFinishedConsentForm == false) && (hasStartedConsent == true))
+                if ((hasFinishedConsentForm == false) && (hasStartedConsent == true))
                 {
                     debugPlayerInfo = "Hold registered. Does nothing here.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 }
 
-                if (((curLevel != 12) && (canDoGestureTutorial == false)) || ((curLevel == 12) && (hasFinishedConsentForm == true) && (canDoGestureTutorial == false)))
+                if ((hasFinishedConsentForm == true) && (canDoGestureTutorial == false))
                 {
-                    flipEchoLock(true);
                     // If the player is not in the pause menu, open the pause menu.
                     if ((at_pause_menu == false) && (loadingScene == false))
                     {
@@ -6902,26 +6568,9 @@ public class Player : MovingObject
                 }               
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
             }
-
-            flipEchoLock(false);
         }
 #endif // End of mobile platform dependendent compilation section started above with #elif
         calculateMove(dir);
-    }
-
-    private float lockStartTime;
-    private void flipEchoLock(bool flg)
-    {
-        if (flg)
-        {
-            echoLock = flg;
-            lockStartTime = Time.time;
-        }
-        else if (Time.time - lockStartTime > Const.opsToEchoCD)
-        {
-            echoLock = flg;
-            lockStartTime = Time.time;
-        }
     }
 
     protected override void OnCantMove<T>(T component)

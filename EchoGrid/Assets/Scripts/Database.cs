@@ -139,20 +139,19 @@ public class Database : MonoBehaviour
         consentClips[9] = Resources.Load("instructions/consent/reading_consent_as_text") as AudioClip;
         consentClips[10] = Resources.Load("instructions/consent/reading_consent_as_text_options") as AudioClip;
         consentClips[11] = Resources.Load("instructions/consent/are_you_sure_you_consent_normal_1") as AudioClip;
-        consentClips[12] = Resources.Load("instructions/consent/are_you_sure_you_consent_talkback_1") as AudioClip;
-        consentClips[13] = Resources.Load("instructions/consent/are_you_sure_you_consent_normal_12") as AudioClip;
-        consentClips[14] = Resources.Load("instructions/consent/are_you_sure_you_consent_talkback_12") as AudioClip;
+        consentClips[12] = Resources.Load("instructions/consent/are_you_sure_you_consent_normal_2") as AudioClip;
+        consentClips[13] = Resources.Load("instructions/consent/are_you_sure_you_consent_talkback_1") as AudioClip;
+        consentClips[14] = Resources.Load("instructions/consent/are_you_sure_you_consent_talkback_2") as AudioClip;
         consentClips[15] = Resources.Load("instructions/consent/are_you_sure_no_consent_normal_1") as AudioClip;
-        consentClips[16] = Resources.Load("instructions/consent/are_you_sure_no_consent_talkback_1") as AudioClip;
-        consentClips[17] = Resources.Load("instructions/consent/are_you_sure_no_consent_normal_12") as AudioClip;
-        consentClips[18] = Resources.Load("instructions/consent/are_you_sure_no_consent_talkback_12") as AudioClip;
+        consentClips[16] = Resources.Load("instructions/consent/are_you_sure_no_consent_normal_2") as AudioClip;
+        consentClips[17] = Resources.Load("instructions/consent/are_you_sure_no_consent_talkback_1") as AudioClip;
+        consentClips[18] = Resources.Load("instructions/consent/are_you_sure_no_consent_talkback_2") as AudioClip;
         consentClips[19] = Resources.Load("instructions/consent/not_eighteen_plus") as AudioClip;
         consentClips[20] = Resources.Load("instructions/consent/did_not_understand_consent") as AudioClip;
         consentClips[21] = Resources.Load("instructions/consent/does_not_want_to_participate") as AudioClip;
-        consentClips[22] = Resources.Load("instructions/consent/thank_you_for_consenting_1") as AudioClip;
-        consentClips[23] = Resources.Load("instructions/consent/thank_you_for_consenting_12") as AudioClip;
-        consentClips[24] = Resources.Load("instructions/consent/did_not_consent_1") as AudioClip;
-        consentClips[25] = Resources.Load("instructions/consent/did_not_consent_12") as AudioClip;
+        consentClips[22] = Resources.Load("instructions/consent/thank_you_for_consenting") as AudioClip;
+        consentClips[23] = Resources.Load("instructions/consent/did_not_consent") as AudioClip;
+        consentClips[24] = Resources.Load("instructions/consent/change_consent_status") as AudioClip;
 
         // Game environment setting clips
         settingsClips[0] = Resources.Load("instructions/settings/orient_phone") as AudioClip;
@@ -243,7 +242,7 @@ public class Database : MonoBehaviour
         tutorialClips[7] = Resources.Load("instructions/tutorial/finished_tap_section") as AudioClip;
         tutorialClips[8] = Resources.Load("instructions/tutorial/swipe_instruction_normal") as AudioClip;
         tutorialClips[9] = Resources.Load("instructions/tutorial/swipe_instruction_talkback") as AudioClip;
-        tutorialClips[10] = Resources.Load("instructions/tutorial/swipe_three_times") as AudioClip;
+        tutorialClips[10] = Resources.Load("instructions/tutorial/swipe_up_three_times") as AudioClip;
         tutorialClips[11] = Resources.Load("instructions/tutorial/swipe_correct_2_more") as AudioClip;
         tutorialClips[12] = Resources.Load("instructions/tutorial/swipe_correct_1_more") as AudioClip;
         tutorialClips[13] = Resources.Load("instructions/tutorial/finished_swipe_section") as AudioClip;
@@ -260,7 +259,7 @@ public class Database : MonoBehaviour
         tutorialClips[24] = Resources.Load("instructions/tutorial/rotate_instruction_normal") as AudioClip;
         tutorialClips[25] = Resources.Load("instructions/tutorial/rotate_instruction_talkback") as AudioClip;
         tutorialClips[26] = Resources.Load("instructions/tutorial/tap_after_rotating") as AudioClip;
-        tutorialClips[27] = Resources.Load("instructions/tutorial/rotate_four_times") as AudioClip;
+        tutorialClips[27] = Resources.Load("instructions/tutorial/rotate_right_four_times") as AudioClip;
         tutorialClips[28] = Resources.Load("instructions/tutorial/rotation_correct_3_more") as AudioClip;
         tutorialClips[29] = Resources.Load("instructions/tutorial/rotation_correct_2_more") as AudioClip;
         tutorialClips[30] = Resources.Load("instructions/tutorial/rotation_correct_1_more") as AudioClip;
