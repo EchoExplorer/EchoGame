@@ -122,15 +122,15 @@ public class InputModule : MonoBehaviour
     int touchRegister = 0; // Used to determine how many fingers have left the screen after initial touches have been made. Gestures are only recognized if this is equal to 3.
     bool[] hasRegistered = { false, false, false }; // For some reason TouchPhase.Began does not seem to be recognized. This fills a similar purpose, determining if the touch has been on the screen during a frame or not.
 
-    bool gestureIsTap = false;
-    bool gestureIsSwipeLeft = false;
-    bool gestureIsSwipeRight = false;
-    bool gestureIsSwipeUp = false;
-    bool gestureIsSwipeDown = false;
-    bool gestureIsRotateLeft = false;
-    bool gestureIsRotateRight = false;
-    bool gestureIsHold = false;
-    string gestureErrorString = "";
+    bool gestureIsTap = false; // If the gesture is a tap.
+    bool gestureIsSwipeLeft = false; // If the gesture is a swipe left. 
+    bool gestureIsSwipeRight = false; // If the gesture is a swipe right. 
+    bool gestureIsSwipeUp = false; // If the gesture is a swipe up.
+    bool gestureIsSwipeDown = false; // If the gesture is a swipe down.
+    bool gestureIsRotateLeft = false; // If the gesture is a left rotation.
+    bool gestureIsRotateRight = false; // If the gesture is a right rotation.
+    bool gestureIsHold = false; // If the gesture is a hold.
+    string gestureErrorString = ""; // If the gesture counts as a gesture error.
 
     int tapTimes = 0; // Number of times the player has made a single tap. Helpful for debugging if multiple single taps are made in a row.
     int holdTimes = 0; // Number of times the player has made a hold. Helpful for debugging if multiple holds are made in a row.
@@ -178,16 +178,6 @@ public class InputModule : MonoBehaviour
     void Update()
     {
         GetInput();
-    }
-
-    /// <summary>
-    /// Checks for new physics data.
-    /// </summary>
-    void FixedUpdate()
-    {
-#if UNITY_IOS || UNITY_ANDROID
-
-#endif
     }
 
     /// <summary>
@@ -1972,7 +1962,6 @@ public class InputModule : MonoBehaviour
                 gestureError = "rotation_angle_error";
             }
 
-            // If some other gesture error was recognized.
             else
             {
                 gestureError = "other_gesture_error";

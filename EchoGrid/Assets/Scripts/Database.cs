@@ -27,29 +27,26 @@ public class Database : MonoBehaviour
     // audios
     // Single click echo
     [HideInInspector]
-    public static AudioClip attenuatedClick;
-    public static AudioClip attenuatedaround;
+    public static AudioClip attenuatedClickHRTF;
 	public static AudioClip hrtf_front;
-    public static AudioClip hrtf_front_leftspeaker;
-    public static AudioClip hrtf_front_rightspeaker;
+    // public static AudioClip hrtf_left;
+    // public static AudioClip hrtf_right;
     public static AudioClip hrtf_left_leftspeaker;
 	public static AudioClip hrtf_left_rightspeaker;
     public static AudioClip hrtf_right_leftspeaker;
     public static AudioClip hrtf_right_rightspeaker;
+    // public static AudioClip hrtf_leftfront;
     public static AudioClip hrtf_leftfront_leftspeaker;
     public static AudioClip hrtf_leftfront_rightspeaker;
+    // public static AudioClip hrtf_rightfront;
     public static AudioClip hrtf_rightfront_leftspeaker;
     public static AudioClip hrtf_rightfront_rightspeaker;
-    public static AudioClip hrtf_left;
-    public static AudioClip hrtf_right;
-    public static AudioClip hrtf_leftfront;
-	public static AudioClip hrtf_rightfront;
-	public static AudioClip odeon_left_leftspeaker;
+    public static AudioClip attenuatedClickOdeon;
+    // public static AudioClip odeon_front;
+    public static AudioClip odeon_left_leftspeaker;
 	public static AudioClip odeon_left_rightspeaker;
 	public static AudioClip odeon_right_leftspeaker;
 	public static AudioClip odeon_right_rightspeaker;
-    public static AudioClip attenuatedaround_odeon;
-    public static AudioClip attenuatedClickfront_odeon;
 
     // Consent menu clips
     [HideInInspector]
@@ -101,30 +98,24 @@ public class Database : MonoBehaviour
 
     void LoadData()
     {
-        //Option1:
-        //attenuatedClickfront_odeon = Resources.Load("fx/00-0_F-6.75-D_B-w-D_L-w-D_R-w-D_fadeout") as AudioClip;
-		attenuatedClick = Resources.Load("fx/TomClick_norm") as AudioClip;
-        //attenuatedaround_odeon = Resources.Load("fx/00-0_F-0.75-D_B-w-D_L-w-D_R-w-D_fadeout") as AudioClip;
-		odeon_left_leftspeaker = Resources.Load ("fx/odeon_left_leftspeaker") as AudioClip;
-		odeon_left_rightspeaker = Resources.Load ("fx/odeon_left_rightspeaker") as AudioClip;
-		odeon_right_leftspeaker = Resources.Load ("fx/odeon_right_leftspeaker") as AudioClip;
-		odeon_right_rightspeaker = Resources.Load ("fx/odeon_right_rightspeaker") as AudioClip;
-			//Option1:
-		hrtf_front = Resources.Load("fx/kemar_front_norm") as AudioClip;
-        //hrtf_front_leftspeaker = Resources.Load("fx/kemar_front_leftspeaker") as AudioClip;
-        //hrtf_front_rightspeaker = Resources.Load("fx/kemar_front_rightspeaker") as AudioClip;
-		hrtf_left_leftspeaker = Resources.Load("fx/kemar_left_leftspeaker") as AudioClip;
-		hrtf_left_rightspeaker = Resources.Load("fx/kemar_left_rightspeaker") as AudioClip;
+        // Echo Option 1:
+        attenuatedClickHRTF = Resources.Load("fx/TomClick_norm") as AudioClip;
+        hrtf_front = Resources.Load("fx/kemar_front_norm") as AudioClip;
+        hrtf_left_leftspeaker = Resources.Load("fx/kemar_left_leftspeaker") as AudioClip;
+        hrtf_left_rightspeaker = Resources.Load("fx/kemar_left_rightspeaker") as AudioClip;
         hrtf_right_leftspeaker = Resources.Load("fx/kemar_right_leftspeaker") as AudioClip;
         hrtf_right_rightspeaker = Resources.Load("fx/kemar_right_rightspeaker") as AudioClip;
         hrtf_leftfront_leftspeaker = Resources.Load("fx/kemar_leftfront_leftspeaker") as AudioClip;
         hrtf_leftfront_rightspeaker = Resources.Load("fx/kemar_leftfront_rightspeaker") as AudioClip;
         hrtf_rightfront_leftspeaker = Resources.Load("fx/kemar_rightfront_leftspeaker") as AudioClip;
         hrtf_rightfront_rightspeaker = Resources.Load("fx/kemar_rightfront_rightspeaker") as AudioClip;
-        hrtf_left = Resources.Load("fx/kemar_left") as AudioClip;
-        hrtf_right = Resources.Load("fx/kemar_right") as AudioClip;
-		hrtf_leftfront = Resources.Load("fx/kemar_leftfront") as AudioClip;
-		hrtf_rightfront = Resources.Load("fx/kemar_rightfront") as AudioClip;
+
+        // Echo Option 2:              
+        attenuatedClickOdeon = Resources.Load("fx/00-0_F-0.75-D_B-w-D_L-w-D_R-w-D_fadeout") as AudioClip;
+        odeon_left_leftspeaker = Resources.Load ("fx/odeon_left_leftspeaker") as AudioClip;
+		odeon_left_rightspeaker = Resources.Load ("fx/odeon_left_rightspeaker") as AudioClip;
+		odeon_right_leftspeaker = Resources.Load ("fx/odeon_right_leftspeaker") as AudioClip;
+		odeon_right_rightspeaker = Resources.Load ("fx/odeon_right_rightspeaker") as AudioClip;		        
 
         // Consent menu clips
         consentClips[0] = Resources.Load("instructions/consent/consent_intro_normal") as AudioClip;

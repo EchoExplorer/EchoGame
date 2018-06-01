@@ -25,10 +25,12 @@ public class GM_title : MonoBehaviour
     bool inOptionsMenu = false;
     bool onEchoSetting = true;
     bool onConsentSetting = false;
-    public static bool switch_click_toggle = false; // If switch_click_toggle is false, then play the odeon click, which is option 1 in database.
+    public static bool usingHRTFEchoes = true; // If this is true, use the HRTF echoes, which is option 1 in database.
+    public static bool usingOdeonEchoes = false; // If this is true, use the Odeon echoes, which is option 2 in database.
 
     AndroidDialogue ad;
     bool android_window_displayed = false;
+    bool can_display_window = false;
     bool finished_reading = false;
 
     bool hearingConsentForm = false;
@@ -311,7 +313,7 @@ public class GM_title : MonoBehaviour
                 }
             }
 
-            if (((GM_main_pre.hasGoneThroughSetup == true) || (environment_setup == true)) && (inOptionsMenu == true) && (android_window_displayed == false))
+            if (((GM_main_pre.hasGoneThroughSetup == true) || (environment_setup == true)) && (inOptionsMenu == true) && (android_window_displayed == false) && (hearingConsentForm == false) && (readingConsentForm == false))
             {
                 if (SoundManager.instance.finishedAllClips == true)
                 {
@@ -325,7 +327,16 @@ public class GM_title : MonoBehaviour
                         else if (onConsentSetting == true)
                         {
                             repeatInterruptedClips = true;
-                            clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.mainMenuClips[25] };
+                            if (finished_reading == true)
+                            {
+                                finished_reading = false;
+                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.mainMenuClips[25] };
+
+                            }
+                            else if (finished_reading == false)
+                            {
+                                clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.mainMenuClips[25] };
+                            }                           
                         }
                     }
                     else if (isUsingTalkback == false)
@@ -338,7 +349,16 @@ public class GM_title : MonoBehaviour
                         else if (onConsentSetting == true)
                         {
                             repeatInterruptedClips = true;
-                            clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.mainMenuClips[24] };
+                            if (finished_reading == true)
+                            {
+                                finished_reading = false;
+                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.mainMenuClips[24] };
+
+                            }
+                            else if (finished_reading == false)
+                            {
+                                clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.mainMenuClips[24] };
+                            }
                         }
                     }
                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
@@ -385,7 +405,7 @@ public class GM_title : MonoBehaviour
 
         play_audio();
 
-        if ((readingConsentForm == true) && (android_window_displayed == false))
+        if ((readingConsentForm == true) && (android_window_displayed == false) && (can_display_window == true))
         {
             android_window_displayed = true;
             finished_reading = false;
@@ -409,6 +429,8 @@ public class GM_title : MonoBehaviour
         if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readConsent == false) && (consentFlag == true) && (ad.yesclicked() == true))
         {
             readConsent = true;
+            clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
             ad.clearflag();
         }
 
@@ -434,6 +456,8 @@ public class GM_title : MonoBehaviour
         if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readProcedures == false) && (proceduresFlag == true) && (ad.yesclicked() == true))
         {
             readProcedures = true;
+            clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
             ad.clearflag();
         }
 
@@ -442,6 +466,8 @@ public class GM_title : MonoBehaviour
             proceduresFlag = false;
             readConsent = false;
             consentFlag = false;
+            clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
             ad.clearflag();
         }
 
@@ -460,14 +486,19 @@ public class GM_title : MonoBehaviour
         if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRequirements == false) && (requirementsFlag == true) && (ad.yesclicked() == true))
         {
             readRequirements = true;
+            clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
             ad.clearflag();
         }
 
         if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRequirements == false) && (requirementsFlag == true) && (ad.noclicked() == true))
         {
             requirementsFlag = false;
+            readConsent = true;
             readProcedures = false;
             proceduresFlag = false;
+            clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
             ad.clearflag();
         }
 
@@ -486,14 +517,19 @@ public class GM_title : MonoBehaviour
         if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRisks == false) && (risksFlag == true) && (ad.yesclicked() == true))
         {
             readRisks = true;
+            clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
             ad.clearflag();
         }
 
         if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRisks == false) && (risksFlag == true) && (ad.noclicked() == true))
         {
             risksFlag = false;
+            readProcedures = true;
             readRequirements = false;
             requirementsFlag = false;
+            clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
             ad.clearflag();
         }
 
@@ -512,14 +548,19 @@ public class GM_title : MonoBehaviour
         if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readBenefits == false) && (benefitsFlag == true) && (ad.yesclicked() == true))
         {
             readBenefits = true;
+            clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
             ad.clearflag();
         }
 
         if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readBenefits == false) && (benefitsFlag == true) && (ad.noclicked() == true))
         {
             benefitsFlag = false;
+            readRequirements = true;
             readRisks = false;
             risksFlag = false;
+            clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
             ad.clearflag();
         }
 
@@ -537,14 +578,19 @@ public class GM_title : MonoBehaviour
         if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readCompCost == false) && (compCostFlag == true) && (ad.yesclicked() == true))
         {
             readCompCost = true;
+            clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
             ad.clearflag();
         }
 
-        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readCompCost == false) && (readCompCost == true) && (ad.noclicked() == true))
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readCompCost == false) && (compCostFlag == true) && (ad.noclicked() == true))
         {
             compCostFlag = false;
+            readRisks = true;
             readBenefits = false;
             benefitsFlag = false;
+            clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
             ad.clearflag();
         }
 
@@ -576,14 +622,19 @@ public class GM_title : MonoBehaviour
         if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readConfidentiality == false) && (confidentialityFlag == true) && (ad.yesclicked() == true))
         {
             readConfidentiality = true;
+            clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
             ad.clearflag();
         }
 
         if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readConfidentiality == false) && (confidentialityFlag == true) && (ad.noclicked() == true))
         {
             confidentialityFlag = false;
+            readBenefits = true;
             readCompCost = false;
             compCostFlag = false;
+            clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
             ad.clearflag();
         }
 
@@ -609,17 +660,23 @@ public class GM_title : MonoBehaviour
 
         if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readQuestionsContact == false) && (questionsContactFlag == true) && (ad.yesclicked() == true))
         {
-            readQuestionsContact = true;
+            readQuestionsContact = true;            
             android_window_displayed = false;
+            can_display_window = false;
             finished_reading = true;
+            hearingConsentForm = false;
+            readingConsentForm = false;
             ad.clearflag();
         }
 
         if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readQuestionsContact == false) && (questionsContactFlag == true) && (ad.noclicked() == true))
         {
             questionsContactFlag = false;
+            readCompCost = true;
             readConfidentiality = false;
             confidentialityFlag = false;
+            clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
             ad.clearflag();
         }
 
@@ -1528,7 +1585,8 @@ public class GM_title : MonoBehaviour
                 {
                     if (onEchoSetting == true)
                     {
-                        switch_click_toggle = false;
+                        usingOdeonEchoes = true;
+                        usingHRTFEchoes = false;
                         debugPlayerInfo = "Swiped left. Switched to using Odeon echoes.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.mainMenuClips[23] };
@@ -1538,8 +1596,26 @@ public class GM_title : MonoBehaviour
                     {
                         readingConsentForm = true;
                         hearingConsentForm = false;
+                        readConsent = false;
+                        consentFlag = false;
+                        readProcedures = false;
+                        proceduresFlag = false;
+                        readRequirements = false;
+                        requirementsFlag = false;
+                        readRisks = false;
+                        risksFlag = false;
+                        readBenefits = false;
+                        benefitsFlag = false;
+                        readCompCost = false;
+                        compCostFlag = false;
+                        readConfidentiality = false;
+                        confidentialityFlag = false;
+                        readQuestionsContact = false;
+                        questionsContactFlag = false;
                         clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[10] };
-                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                        SoundManager.instance.PlayClips(clips, null, 0, () => {
+                            can_display_window = true;
+                        }, 3, null, true);
                     }
                 }
                 else if (inOptionsMenu == false)
@@ -1557,7 +1633,8 @@ public class GM_title : MonoBehaviour
                 {
                     if (onEchoSetting == true)
                     {
-                        switch_click_toggle = true;
+                        usingHRTFEchoes = true;
+                        usingOdeonEchoes = false;
                         debugPlayerInfo = "Swiped left. Switched to using HRTF echoes.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.mainMenuClips[22] };
@@ -1570,7 +1647,10 @@ public class GM_title : MonoBehaviour
                         if (hearingConsentForm == true)
                         {
                             clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[2] };
-                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            SoundManager.instance.PlayClips(clips, null, 0, () => {
+                                hearingConsentForm = false;
+                                readingConsentForm = false;
+                            }, 3, null, true);
                         }
                     }
                 }
