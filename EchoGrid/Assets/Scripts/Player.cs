@@ -165,7 +165,8 @@ public class Player : MovingObject
 
     public static bool hasStartedConsent = false;
 
-    bool canPlayLevel = true;
+    bool canPlayLevel = false;
+    bool canMakeGestures = false;
 
     bool finished_reading = false;
     bool finished_listening = false;
@@ -3113,12 +3114,16 @@ public class Player : MovingObject
             canPlayLevel = true;
         }
 
+        if (canPlayLevel == true)
+        {
+            canMakeGestures = true;
+        }
 
         Vector3 dir = Vector3.zero;
         // Check if we are running either in the Unity editor or in a standalone build.
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
         // Get input from the input manager, round it to an integer and store in horizontal to set x axis move direction.
-        if (eh.isActivate() && ((hasFinishedConsentForm == false) || ((hasFinishedConsentForm == true) && (canPlayLevel == true))))
+        if (eh.isActivate() && ((hasFinishedConsentForm == false) || ((hasFinishedConsentForm == true) && (canMakeGestures == true))))
         {            
             InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
 
@@ -3330,6 +3335,10 @@ public class Player : MovingObject
                         SoundManager.instance.PlayClips(clips, null, 0, () => {
                             hasCheckedForConsent = true;
                             canRepeat = true;
+                            if (curLevel == 1)
+                            {
+                                BoardManager.finishedTutorialLevel1 = true;
+                            }
                         }, 6, null, true);
                     }
 
@@ -3344,6 +3353,10 @@ public class Player : MovingObject
                         SoundManager.instance.PlayClips(clips, null, 0, () => {
                             hasCheckedForConsent = true;                            
                             canRepeat = true;
+                            if (curLevel == 1)
+                            {
+                                BoardManager.finishedTutorialLevel1 = true;
+                            }
                         }, 6, null, true);
                     }
 
@@ -4783,7 +4796,7 @@ public class Player : MovingObject
         // Check if we are running on iOS or Android
 #if UNITY_IOS || UNITY_ANDROID
         // process input
-        if (eh.isActivate() && ((hasFinishedConsentForm == false) || ((hasFinishedConsentForm == true) && (canPlayLevel == true))))
+        if (eh.isActivate() && ((hasFinishedConsentForm == false) || ((hasFinishedConsentForm == true) && (canMakeGestures == true))))
         {
             InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
 
@@ -4996,6 +5009,10 @@ public class Player : MovingObject
                         SoundManager.instance.PlayClips(clips, null, 0, () => {                            
                             hasCheckedForConsent = true;
                             canRepeat = true;
+                            if (curLevel == 1)
+                            {
+                                BoardManager.finishedTutorialLevel1 = true;
+                            }
                         }, 6, null, true);
                     }
 
@@ -5010,6 +5027,10 @@ public class Player : MovingObject
                         SoundManager.instance.PlayClips(clips, null, 0, () => {                            
                             hasCheckedForConsent = true;
                             canRepeat = true;
+                            if (curLevel == 1)
+                            {
+                                BoardManager.finishedTutorialLevel1 = true;
+                            }
                         }, 6, null, true);
                     }
 
