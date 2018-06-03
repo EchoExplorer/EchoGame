@@ -310,6 +310,12 @@ public class Player : MovingObject
         gas.Play();
     }
 
+    private IEnumerator DelayedPlayEcho(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        PlayEcho();
+    }
+
     // A breakdown of short, medium and long distances
     string[] frontDistS = { "2.25", "3.75" };
     string[] frontDistM = { "5.25", "6.75" };
@@ -3766,6 +3772,7 @@ public class Player : MovingObject
                             {
                                 dir = transform.right; // Move the player forward.
                                 swipedUp = true;
+                                StartCoroutine(DelayedPlayEcho(0.5f));
                             }
                         }
                         // If the player is in the pause menu, give them a hint.
@@ -3861,6 +3868,7 @@ public class Player : MovingObject
                                 {
                                     rotatedLeft = true;
                                 }
+                                StartCoroutine(DelayedPlayEcho(0.5f));
                             }
                         }
                     }
@@ -3890,6 +3898,7 @@ public class Player : MovingObject
                                 {
                                     rotatedRight = true;
                                 }
+                                StartCoroutine(DelayedPlayEcho(0.5f));
                             }
                         }
                     }
