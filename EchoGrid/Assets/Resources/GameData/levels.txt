@@ -36,7 +36,7 @@ wwwwwwwww
 wwwwwwwww
 wwwwwwwww
 wwwwwwwww
---ss-----
+s--------
 wwwwwwww-
 wwwwwwww-
 wwwwwwww-
@@ -58,7 +58,7 @@ wwwwwwwww
 wwwwwwwww
 wwwwwwwww
 wwwwwwwww
-------ss-
+--------s
 -wwwwwwww
 -wwwwwwww
 -wwwwwwww
@@ -73,7 +73,7 @@ ewwwwwwww
 wwww-wwww
 wwww-wwww
 wwww-wwww
-ssss-wwww
+s----wwww
 END
 LEVEL_8_C3_D2
 wwwwwwwww
@@ -87,7 +87,7 @@ ww-wwwwww
 ww------s
 END
 LEVEL_9_C8_D2
-----ssss-
+--------s
 -wwwwwwww
 ---------
 wwwwwwww-
@@ -106,7 +106,7 @@ wwww-----
 wwww-wwww
 wwww-wwww
 wwww-wwww
-ssss-wwww
+s----wwww
 END
 LEVEL_11_C1_D3
 wwwwwwwww

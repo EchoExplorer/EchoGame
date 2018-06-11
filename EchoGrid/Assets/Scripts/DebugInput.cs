@@ -35,7 +35,6 @@ public class DebugInput : MonoBehaviour
         debugInputText.text = inputText;
 	}
 
-    // Change the text of DebugInput's textbox.
     public void ChangeDebugInputText(string textToChangeTo)
     {
         inputText = textToChangeTo;

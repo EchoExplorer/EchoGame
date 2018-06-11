@@ -189,7 +189,7 @@ public class AndroidDialogue : MonoBehaviour
             alertDialogBuilder.Call<AndroidJavaObject>("setMessage", message);
 
             //You must answer it before proceed
-            alertDialogBuilder.Call<AndroidJavaObject>("setCancelable", false);    
+            alertDialogBuilder.Call<AndroidJavaObject>("setCancelable", false);
 
             // Call setPositiveButton and set the message along with the listner
             // Listner is a proxy class
@@ -198,7 +198,7 @@ public class AndroidDialogue : MonoBehaviour
                 case DialogueType.NORMAL:
                     alertDialogBuilder.Call<AndroidJavaObject>("setPositiveButton", yesText, new PositiveButtonListner(this));
                     alertDialogBuilder.Call<AndroidJavaObject>("setNegativeButton", noText, new NegativeButtonListner(this));
-                    break;                
+                    break;
                 case DialogueType.YESONLY:
                     alertDialogBuilder.Call<AndroidJavaObject>("setPositiveButton", yesText, new PositiveButtonListner(this));
                     break;

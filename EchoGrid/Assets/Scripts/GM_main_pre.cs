@@ -1126,7 +1126,7 @@ public class GM_main_pre : MonoBehaviour
                     firstConfirm = true;
                     skippingTutorial = 0;
                     clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[17] };
-                    balances = new float[] { 0, 0, 0 };                   
+                    balances = new float[] { 0, 0, 0 };
                     SoundManager.instance.PlayClips(clips, balances, 0, () => SceneManager.LoadScene("Main"), 3, null); // Play the appropriate clips.                  
                 }
                 break;

@@ -8,6 +8,7 @@ using UnityEngine;
 /// </summary>
 public class Logging
 {
+
     /// <summary>
     /// An enum of logging priority levels that can be used.
     /// </summary>

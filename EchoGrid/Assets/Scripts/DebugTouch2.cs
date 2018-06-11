@@ -35,7 +35,6 @@ public class DebugTouch2 : MonoBehaviour
         debugTouch2Text.text = touch2Text;
     }
 
-    // Change the text of DebugTouch2's textbox.
     public void ChangeDebugTouch2Text(string textToChangeTo)
     {
         touch2Text = textToChangeTo;

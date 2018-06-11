@@ -10,6 +10,7 @@ public class UICanvas : MonoBehaviour
 {
     public static UICanvas instance;
 
+    // Use this for initialization
     void Awake()
     {
         if (instance == null)
@@ -24,7 +25,6 @@ public class UICanvas : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    // Use this for initialization
     void Start()
     {
 

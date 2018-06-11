@@ -35,7 +35,6 @@ public class DebugTouchDuration : MonoBehaviour
         debugTouchDurationText.text = touchDurationText;
     }
 
-    // Change the text of DebugTouchDuration's textbox.
     public void ChangeDebugTouchDurationText(string textToChangeTo)
     {
         touchDurationText = textToChangeTo;

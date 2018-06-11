@@ -9,6 +9,7 @@ using System;
 /// </summary>
 public class SoundManager : MonoBehaviour
 {
+    public AudioSource singleSource;
     public AudioSource voiceSource;
     public AudioSource clipSource;
     public AudioSource echoSource;
@@ -28,12 +29,12 @@ public class SoundManager : MonoBehaviour
     {
         // If instance does not already exist, set it to this.
         if (instance == null)
-        {            
+        {
             instance = this;
         }
         // If instance already exists.
         else if (instance != this)
-        {            
+        {
             Destroy(gameObject); // Destroy this, this enforces our singleton pattern so there can only be one instance of SoundManager.
         }
 
@@ -99,6 +100,16 @@ public class SoundManager : MonoBehaviour
         {
             callback();
         }
+    }
+
+    /// <summary>
+    /// Plays an arbitrary audio clip.
+    /// </summary>
+	public void PlaySingle(AudioClip clip)
+    {
+        singleSource.clip = clip;
+        singleSource.Play();
+        return;
     }
 
     /// <summary>

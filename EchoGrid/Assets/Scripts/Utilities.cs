@@ -148,13 +148,9 @@ public class Utilities : MonoBehaviour
         string filename = "";
 
         if (GameMode.instance.get_mode() == GameMode.Game_Mode.RESTART || GameMode.instance.get_mode() == GameMode.Game_Mode.CONTINUE)
-        {
             filename = Application.persistentDataPath + "echosaved";
-        }
-        else // load specific save for tutorial
-        {
+        else//load specific save for tutorial
             filename = Application.persistentDataPath + "echosaved_tutorial";
-        }
 
         System.IO.File.WriteAllText(filename, lv.ToString());
         return true;

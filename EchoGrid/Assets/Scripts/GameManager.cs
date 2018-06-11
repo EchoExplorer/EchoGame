@@ -112,11 +112,11 @@ public class GameManager : MonoBehaviour
                 }
                 else if (level >= 12)
                 {
-                    level = 11; 
+                    level = 11;
                     GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
                     GameMode.write_save_mode(level, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.Game_Mode.TUTORIAL);
                 }
-            }           
+            }
         }
         else
         {
@@ -135,11 +135,11 @@ public class GameManager : MonoBehaviour
                 GameMode.finishedLevel3Tutorial = false;
                 GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL;
                 GameMode.write_save_mode(level, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.Game_Mode.TUTORIAL);
-            }                      
+            }
         }
-               
+
         return true;
-    }    
+    }
 
     //Initializes the game for each level.
     //TODO(agotsis) Analyze database
@@ -203,7 +203,7 @@ public class GameManager : MonoBehaviour
             }
         }
         levelText.text = "Loading level " + level.ToString();
-        boardScript.SetupScene(level, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.instance.gamemode);       
+        boardScript.SetupScene(level, GameMode.finishedLevel1Tutorial, GameMode.finishedLevel3Tutorial, GameMode.instance.gamemode);
     }
 
     // Hides black image used between levels
@@ -221,7 +221,7 @@ public class GameManager : MonoBehaviour
         // Set doingSetup to false allowing player to move again.
         doingSetup = false;
         playersTurn = true;
-        Player.loadingScene = false;    
+        Player.loadingScene = false;
     }
 
     /// <summary>
@@ -241,7 +241,7 @@ public class GameManager : MonoBehaviour
         {
             levelText.text += "Hold two/three fingers down for \n";
             levelText.text += "one second to open the pause menu.";
-        }              
+        }
         levelImage.SetActive(true);
         levelImageActive = true;
     }

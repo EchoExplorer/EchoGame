@@ -35,7 +35,6 @@ public class DebugPlayer : MonoBehaviour
         debugPlayerText.text = playerText;
     }
 
-    // Change the text of DebugPlayer's textbox.
     public void ChangeDebugPlayerText(string textToChangeTo)
     {
         playerText = textToChangeTo;

@@ -336,7 +336,7 @@ public class GM_title : MonoBehaviour
                             else if (finished_reading == false)
                             {
                                 clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.mainMenuClips[25] };
-                            }                           
+                            }
                         }
                     }
                     else if (isUsingTalkback == false)
@@ -660,7 +660,7 @@ public class GM_title : MonoBehaviour
 
         if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readQuestionsContact == false) && (questionsContactFlag == true) && (ad.yesclicked() == true))
         {
-            readQuestionsContact = true;            
+            readQuestionsContact = true;
             android_window_displayed = false;
             can_display_window = false;
             finished_reading = true;

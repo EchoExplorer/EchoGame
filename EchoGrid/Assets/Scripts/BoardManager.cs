@@ -72,14 +72,14 @@ public class BoardManager : MonoBehaviour
     public static bool finishedTutorialLevel3 = false;
 
     static bool tutorial1Finished;
-    static bool tutorial3Finished; 
+    static bool tutorial3Finished;
 
     public static bool reachedExit = false;
     public static bool gotBackToStart = false;
 
     private void Start()
     {
-        eh = new eventHandler(InputModule.instance);        
+        eh = new eventHandler(InputModule.instance);
     }
 
     // Clears our list gridPositions and prepares it to generate a new board.
@@ -121,8 +121,8 @@ public class BoardManager : MonoBehaviour
         tutorial3Finished = finishedTutorialLevel3;
 
         if ((player_idx.x == start_idx.x) && (player_idx.y == start_idx.y) && (left_start_pt == true))
-        {                   
-            gotBackToStart = true;       
+        {
+            gotBackToStart = true;
         }
 
         else if ((player_idx.x > start_idx.x) || (player_idx.x < start_idx.x) || (player_idx.y > start_idx.y) || (player_idx.y < start_idx.y))
@@ -133,13 +133,13 @@ public class BoardManager : MonoBehaviour
 
         if ((player_idx.x == exit_idx.x) && (player_idx.y == exit_idx.y))
         {
-            reachedExit = true;         
+            reachedExit = true;
         }
 
         else if ((player_idx.x != exit_idx.x) && (player_idx.y != exit_idx.y))
         {
             reachedExit = false;
-        }          
+        }
     }
     /// <summary>
     /// Gets the player's direction in the grid space.
@@ -193,7 +193,7 @@ public class BoardManager : MonoBehaviour
 
         return Direction.OTHER;
     }
-    
+
     // Sets up the outer walls and floor (background) of the game board.
     void BoardSetup()
     {
@@ -206,23 +206,12 @@ public class BoardManager : MonoBehaviour
 
         float scale = (float)Utilities.SCALE_REF / (float)Utilities.MAZE_SIZE;
 
-        // Floating Sounders
-        String[] sounder_names = { "Front", "Left", "Left_Right", "Right", "Right_Left", "LeftEnd", "LeftEnd_Right", "RightEnd", "RightEnd_Left", "LeftFront", "LeftFront_Right", "RightFront", "RightFront_Left" };
-        Transform sounders = transform.Find("Sounders");
-        foreach (String name in sounder_names)
-        {
-            GameObject nbSounder = Instantiate(Resources.Load("Sounder"), gridPositions[0], Quaternion.identity) as GameObject;
-            nbSounder.name = "Sounder_" + name;
-            nbSounder.transform.localScale = nbSounder.transform.localScale * scale;
-            nbSounder.transform.SetParent(sounders);
-        }
-
         // Loop along x axis, starting from -1 (to fill corner) with floor or outerwall edge tiles.
         for (int x = 0; x <= (columns + 1); x++)
         {
             // Loop along y axis, starting from -1 to place floor or outerwall tiles.
             for (int y = 0; y <= (rows + 1); y++)
-            {                
+            {
                 GameObject toInstantiate = floorTiles[Random.Range(0, floorTiles.Length)]; // Choose a random tile from our array of floor tile prefabs and prepare to instantiate it.
 
                 // Check if we current position is at board edge, if so choose a random outer wall prefab from our array of outer wall tiles.
@@ -230,11 +219,11 @@ public class BoardManager : MonoBehaviour
                 {
                     toInstantiate = wallTiles[0];
                 }
-                
+
                 GameObject instance = Instantiate(toInstantiate, gridPositions[(y * 11) + x], Quaternion.identity) as GameObject; // Instantiate the GameObject instance using the prefab chosen for toInstantiate at the Vector3 corresponding to current grid position in loop, cast it to GameObject.
                 if ((x == 0) || (x == (columns + 1)) || (y == 0) || (y == (rows + 1)))
                 {
-                    instance.name = "Wall_" + gridPositions[(y * 11) + x].x + "_" + gridPositions[(y * 11) + x].y;
+                    instance.name = "Wall_" + (gridPositions[(y * 11) + x].x + 1) + "_" + (gridPositions[(y * 11) + x].y + 1);
                 }
 
                 // Set the parent of our newly instantiated object instance to boardHolder, this is just organizational to avoid cluttering hierarchy.
@@ -304,10 +293,10 @@ public class BoardManager : MonoBehaviour
 
         for (int i = 0; i < wallPositions.Count; i++)
         {
-            Vector3 position = wallPositions[i];            
-            GameObject tileChoice = wallTiles[0];            
+            Vector3 position = wallPositions[i];
+            GameObject tileChoice = wallTiles[0];
             GameObject new_wall = Instantiate(tileChoice, position, Quaternion.identity) as GameObject; // Instantiate tileChoice at the position returned by RandomPosition with no change in rotation
-            new_wall.name = "Wall_" + position.x + "_" + position.y;
+            new_wall.name = "Wall_" + (position.x + 1) + "_" + (position.y + 1);
             Vector3 new_scale = new_wall.transform.localScale;
             new_scale *= scale;
             new_wall.transform.localScale = new_scale;
@@ -315,7 +304,7 @@ public class BoardManager : MonoBehaviour
         }
         exit_idx = get_idx_from_pos(exitPos);
         print("Exit position: X = " + exit_idx.x.ToString() + ", Y = " + exit_idx.y.ToString());
-        GameObject new_exit = Instantiate(exit, exitPos, Quaternion.identity) as GameObject;       
+        GameObject new_exit = Instantiate(exit, exitPos, Quaternion.identity) as GameObject;
         new_exit.transform.SetParent(wall_parent.transform);
 
         mazeSolution = "";
@@ -356,7 +345,7 @@ public class BoardManager : MonoBehaviour
                 print("Player start direction set to Right.");
             }
         }
-        startDir = player_script.get_player_dir("FRONT");        
+        startDir = player_script.get_player_dir("FRONT");
     }
 
     // private help function to replace list.contain()
@@ -439,16 +428,16 @@ public class BoardManager : MonoBehaviour
     /// Sets up the game board (grid positions), sound clips and save data as an initialization step. 
     /// </summary>
     public void SetupScene(int level, bool finishedLevel1Tutorial, bool finishedLevel3Tutorial, GameMode.Game_Mode mode)
-    {        
+    {
         player_ref = GameObject.Find("Player"); // Find Player object.
         player_script = player_ref.GetComponent<Player>(); // Get the Player script.
-       
+
         InitialiseList(); // Reset our list of gridpositions.
         BoardSetup(); // Creates the outer walls and floor.
         LoadLocalStats();
-        setup_level(level, finishedLevel1Tutorial, finishedLevel3Tutorial);  
+        setup_level(level, finishedLevel1Tutorial, finishedLevel3Tutorial);
     }
-   
+
     /// <summary>
     /// Converts a 'True' or 'False' string to the appropriate boolean.
     /// </summary>
@@ -625,7 +614,7 @@ public class BoardManager : MonoBehaviour
                     }
 
                     if ((currentLevelString != "DEFAULT") && (currentLevelString != "0"))
-                    {                        
+                    {
                         // Find the number of corners in the level
                         string cornerString = "";
                         int deadendInfoStart = 0;
@@ -653,7 +642,7 @@ public class BoardManager : MonoBehaviour
                                     deadendInfoStart = (cornerInfoStart + j) + 2;
                                 }
                             }
-                        }                        
+                        }
 
                         string deadendString = "";
 
@@ -672,7 +661,7 @@ public class BoardManager : MonoBehaviour
                             {
                                 print("Level Searched: Too many deadend characters.");
                             }
-                        }                                                
+                        }
 
                         int level_reading = Convert.ToInt32(currentLevelString);
                         if (level_reading == level_wanted)
@@ -729,7 +718,7 @@ public class BoardManager : MonoBehaviour
             if (line.Length >= 7)
             {
                 if (line.Substring(0, 6) == "LEVEL_")
-                {                    
+                {
                     level_count += 1; // get the current level we are reading
                 }
             }
@@ -750,7 +739,7 @@ public class BoardManager : MonoBehaviour
         }
 
         if (searched[(int)(((columns + 1) * idx.y) + idx.x)])
-        {        
+        {
             return false;
         }
 
