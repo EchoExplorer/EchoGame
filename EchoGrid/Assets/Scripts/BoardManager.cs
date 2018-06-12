@@ -133,7 +133,7 @@ public class BoardManager : MonoBehaviour
 
         if ((player_idx.x == exit_idx.x) && (player_idx.y == exit_idx.y))
         {
-            reachedExit = true;
+            reachedExit = true;     
         }
 
         else if ((player_idx.x != exit_idx.x) && (player_idx.y != exit_idx.y))

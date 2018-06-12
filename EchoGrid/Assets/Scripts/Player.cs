@@ -76,8 +76,8 @@ public class Player : MovingObject
 
     string debugPlayerInfo; // String for debugging the effects of the player's actions (Tells you they rotated, swiped, etc.).
 
-#if UNITY_ANDROID && !UNITY_EDITOR
     bool survey_activated = false;
+#if UNITY_ANDROID && !UNITY_EDITOR
     bool code_entered = false;
     bool URL_shown = false;
     bool survey_shown = false;
@@ -115,6 +115,7 @@ public class Player : MovingObject
     bool canPlayHalfwayClip = false;
     bool canPlayApproachClip = false;
     bool canPlayTurnClip = false;
+    bool canPlayForkClip = false;
     static bool playedExitClip;
     static bool canGoToNextLevel;
 
@@ -191,6 +192,8 @@ public class Player : MovingObject
     bool readConfidentiality = false;
     bool questionsContactFlag = false;
     bool readQuestionsContact = false;
+    bool voluntaryFlag = false;
+    bool readVoluntary = false;
     bool eighteenPlusFlag = false;
     bool readEighteenPlus = false;
     bool understandFlag = false;
@@ -1666,24 +1669,16 @@ public class Player : MovingObject
                         // If we are in level 11.
                         else if (curLevel == 11)
                         {
-                            if ((canPlayClip[10, 4] == false) && (playerPos.x == 5) && (playerPos.y == 6) && (GameManager.instance.boardScript.get_player_dir_world() == BoardManager.Direction.FRONT))
-                            {
+                            // Play clips for when player hits the T intersection in level 11.
+                            if ((canPlayClip[10, 4] == true) && (playerPos.x == 5) && (playerPos.y == 6) && (GameManager.instance.boardScript.get_player_dir_world() == BoardManager.Direction.FRONT))
+                            {                                
+                                canPlayClip[10, 4] = false;
+                                canPlayClip[10, 1] = false;
+                                canPlayForkClip = true;
+                                canPlayHalfwayClip = true;
+                                finishedEcho = false;
                                 clips = new List<AudioClip>() { Database.soundEffectClips[4] };
                                 SoundManager.instance.PlayClips(clips, null, 0, () => StartCoroutine(DelayedPlayEcho(0.25f)), 1, null, true); // Play the appropriate clip.
-                            }
-                            else if ((canPlayClip[10, 4] == false) && (playerPos.x >= 2) && (playerPos.y <= 6))
-                            {
-                                clips = new List<AudioClip>() { Database.soundEffectClips[4] };
-                                SoundManager.instance.PlayClips(clips, null, 0, () => StartCoroutine(DelayedPlayEcho(0.25f)), 1, null, true); // Play the appropriate clip.
-
-                                if ((ratio > 0.5f) || (ratio < 0.4665f))
-                                {
-                                    canPlayClip[10, 1] = true;
-                                }
-                                if ((playerPos.x != startPos.x) && (playerPos.y != startPos.y) && (BoardManager.left_start_pt == true))
-                                {
-                                    canPlayClip[10, 3] = true;
-                                }
                             }
                             // If the player has reached halfway and they have not gone into an arm of the T hallway or went back into the start hallway.
                             else if ((canPlayClip[10, 1] == false) && (ratio <= 0.5f) && (ratio >= 0.4665f) && (GameManager.instance.boardScript.get_player_dir_world() == BoardManager.Direction.FRONT))
@@ -1693,34 +1688,7 @@ public class Player : MovingObject
                                 clips = new List<AudioClip>() { Database.soundEffectClips[4] };
                                 SoundManager.instance.PlayClips(clips, null, 0, () => StartCoroutine(DelayedPlayEcho(0.25f)), 1, null, true); // Play the appropriate clips.
                             }
-                            // Play clips for when player hits the T intersection in level 11.
-                            else if ((canPlayClip[10, 4] == true) && (playerPos.x == 5) && (playerPos.y == 6) && (GameManager.instance.boardScript.get_player_dir_world() == BoardManager.Direction.FRONT))
-                            {
-                                if (canPlayClip[10, 1] == true)
-                                {
-                                    canPlayClip[10, 1] = false;
-                                }
-                                canPlayClip[10, 4] = false;
-                                canPlayHalfwayClip = true;
-                                finishedEcho = false;
-                                clips = new List<AudioClip>() { Database.soundEffectClips[4] };
-                                SoundManager.instance.PlayClips(clips, null, 0, () => StartCoroutine(DelayedPlayEcho(0.25f)), 1, null, true); // Play the appropriate clip.
-                            }
-                            else if ((canPlayClip[10, 4] == true) && (playerPos.x >= 2) && (playerPos.y <= 6))
-                            {
-                                clips = new List<AudioClip>() { Database.soundEffectClips[4] };
-                                SoundManager.instance.PlayClips(clips, null, 0, () => StartCoroutine(DelayedPlayEcho(0.25f)), 1, null, true); // Play the appropriate clip.
-
-                                if ((ratio > 0.5f) || (ratio < 0.4665f))
-                                {
-                                    canPlayClip[10, 1] = true;
-                                }
-                                if ((playerPos.x != startPos.x) && (playerPos.y != startPos.y) && (BoardManager.left_start_pt == true))
-                                {
-                                    canPlayClip[10, 3] = true;
-                                }
-                            }
-                            // If the player has reached halfway and they have gone into an arm of the T hallway.
+                            // If the player has reached halfway and they have not gone into an arm of the T hallway or went back into the start hallway.
                             else if ((canPlayClip[10, 1] == false) && (ratio <= 0.5f) && (ratio >= 0.4665f) && (GameManager.instance.boardScript.get_player_dir_world() != BoardManager.Direction.FRONT))
                             {
                                 canPlayHalfwayClip = true;
@@ -1729,7 +1697,7 @@ public class Player : MovingObject
                                 SoundManager.instance.PlayClips(clips, null, 0, () => StartCoroutine(DelayedPlayEcho(0.25f)), 1, null, true); // Play the appropriate clips.
                             }
                             // If the player has reached the exit at level 11.
-                            else if ((canPlayClip[10, 2] == false) && (playerPos.x == exitPos.x) && (playerPos.y == exitPos.y))
+                            else if ((canPlayClip[10, 2] == true) && (playerPos.x == exitPos.x) && (playerPos.y == exitPos.y))
                             {
                                 canPlayClip[10, 2] = false;
                                 finishedEcho = false;
@@ -1740,6 +1708,25 @@ public class Player : MovingObject
                             else if ((canPlayClip[10, 3] == true) && (playerPos.x == startPos.x) && (playerPos.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
                             {
                                 // Keep this check in, but do nothing.
+                            }
+                            // Otherwise play a normal swipe up.
+                            else
+                            {
+                                clips = new List<AudioClip>() { Database.soundEffectClips[4] };
+                                SoundManager.instance.PlayClips(clips, null, 0, () => StartCoroutine(DelayedPlayEcho(0.25f)), 1, null, true); // Play the appropriate clip.
+
+                                if ((ratio > 0.5f) || (ratio < 0.4665f))
+                                {
+                                    canPlayClip[10, 1] = true;
+                                }
+                                if ((playerPos.x == exitPos.x) && (playerPos.y == exitPos.y))
+                                {
+                                    canPlayClip[10, 2] = true;
+                                }
+                                if ((playerPos.x != startPos.x) && (playerPos.y != startPos.y) && (BoardManager.left_start_pt == true))
+                                {
+                                    canPlayClip[10, 3] = true;
+                                }
                             }
                         }
                         // If we are in another tutorial level
@@ -2504,7 +2491,7 @@ public class Player : MovingObject
                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
                 }
 
-                if ((curLevel == 11) && (canPlayClip[10, 1] == false) && (finishedEcho == true))
+                if ((curLevel == 11) && (canPlayClip[10, 1] == false) && (finishedEcho == true) && (canPlayForkClip == false))
                 {
                     finishedEcho = false;
                     canPlayHalfwayClip = false;
@@ -2567,6 +2554,18 @@ public class Player : MovingObject
             }
         }
 
+        if (canPlayForkClip == true)
+        {
+            if ((curLevel == 11) && (canPlayClip[10, 4] == false) && (BoardManager.player_idx.x == 5) && (BoardManager.player_idx.y == 6) && (finishedEcho == true))
+            {
+                finishedEcho = false;
+                canPlayForkClip = false;
+                canPlayHalfwayClip = false;
+                clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.mainGameClips[30], Database.soundEffectClips[0], Database.mainGameClips[27] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clip.
+            }
+        }
+
         if (BoardManager.reachedExit == true)
         {
             // If the player has reached the exit and not swiped down, play the appropriate exit clip.
@@ -2574,7 +2573,6 @@ public class Player : MovingObject
             {
                 if ((curLevel <= 11) && (canPlayClip[(curLevel - 1), 2] == false) && (finishedEcho == true))
                 {
-                    print("Playing exit clip.");
                     if (curLevel == 1)
                     {
                         finishedEcho = false;
@@ -2640,18 +2638,87 @@ public class Player : MovingObject
                 debugPlayerInfo = "Exiting level clip has finished.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                 canGoToNextLevel = true;
+#if UNITY_ANDROID && !UNITY_EDITOR
+                if (curLevel == 11)
+                {
+                    survey_activated = true;
+                }
+#endif 
             }
 
             // If the player is at the exit and the exit level sound has played.
             if ((playedExitClip == true) && (canGoToNextLevel == true) && (SoundManager.instance.finishedAllClips == true))
             {
-                playedExitClip = false;
-                canGoToNextLevel = false;
-                debugPlayerInfo = "Swiped down. Exiting level.";
-                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                GameManager.instance.boardScript.gamerecord += "X"; // Record the attempt.
-                changingLevel = true;
-                attemptExitFromLevel(); // Attempt to exit the level.
+#if UNITY_ANDROID && !UNITY_EDITOR
+                // pop up the survey at the end of tutorial        
+                if ((GameManager.instance.level == 11) && (survey_activated == true))
+                {
+                    print("At survey");
+                    if (survey_shown == false)
+                    {
+                        ad.clearflag();
+                        ad.DisplayAndroidWindow("Survey", "Would you like to take \n a short survey about the game?", AndroidDialogue.DialogueType.NORMAL);
+                        survey_shown = true;
+                        debugPlayerInfo = "Showing survey.";
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    }
+
+                    if ((survey_shown == true) && (URL_shown == false) && ad.noclicked() && (code_entered == false))
+                    {
+                        ad.clearflag();
+                        survey_activated = false;
+                        debugPlayerInfo = "Does not want to do survey.";
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    }
+                    if ((survey_shown == true) && (URL_shown == false) && ad.yesclicked() && (code_entered == false))
+                    {
+                        // display a code, and submit it reportSurvey()
+                        // Please enter code (first six digits of UDID) on the survey page
+                        code_entered = true;
+
+                        if (SystemInfo.deviceUniqueIdentifier.Length <= 6)
+                        {
+                            surveyCode = SystemInfo.deviceUniqueIdentifier;
+                        }
+                        else
+                        {
+                            surveyCode = SystemInfo.deviceUniqueIdentifier.Substring(0, 6);
+                        }
+                        string codemsg = "Your survey code is: \n" + surveyCode + "\n please enter this in the survey.";
+                        debugPlayerInfo = "Displaying code.";
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                        ad.clearflag();
+                        ad.DisplayAndroidWindow("Survey Code", codemsg, AndroidDialogue.DialogueType.YESONLY);
+                    }                    
+                    if ((survey_shown == true) && (URL_shown == false) && ad.yesclicked() && (code_entered == true))
+                    {
+                        debugPlayerInfo = "Opening URL.";
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                        URL_shown = true;
+                        Application.OpenURL("https://echolock.andrew.cmu.edu/survey/"); // "http://echolock.andrew.cmu.edu/survey/?"
+                    }
+                    if ((survey_shown == true) && (URL_shown == true))
+                    {
+                        debugPlayerInfo = "Reporting survey.";
+                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                        ad.clearflag();
+                        ad.DisplayAndroidWindow("Thank You", "Thank you for taking the survey!", AndroidDialogue.DialogueType.YESONLY);
+                        reportsurvey(surveyCode);
+                        survey_activated = false;
+                    }                    
+                }
+#endif
+
+                if (survey_activated == false)
+                {
+                    playedExitClip = false;
+                    canGoToNextLevel = false;
+                    debugPlayerInfo = "Swiped down. Exiting level.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    GameManager.instance.boardScript.gamerecord += "X"; // Record the attempt.
+                    changingLevel = true;
+                    attemptExitFromLevel(); // Attempt to exit the level.
+                }
             }
         }
 
@@ -2720,11 +2787,10 @@ public class Player : MovingObject
 
                 string title = "Echolocation Consent";
                 string message = "This game is part of a research study conducted by Laurie Heller and Pulkit Grover at Carnegie Mellon " +
-                    "University and is partially funded by Google. The purpose of the research is to understand how " +
-                    "people can use sounds (such as echoes) to figure out aspects of their physical environment, such " +
-                    "as whether or not a wall is nearby. The game will use virtual sounds and virtual walls to teach " +
-                    "people how to use sound to virtually move around in the game. This current release of the app is " +
-                    "designed to provide user feedback on the app itself.";
+                    "University and is partially funded by Google. The purpose is to understand how people can use " +
+                    "sounds to figure out aspects of their physical environment. The game will use virtual sounds " +
+                    "and virtual walls to teach people how to use sound to virtually move around in the game.";
+
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.YESONLY;
                 ad.DisplayAndroidWindow(title, message, dialogueType, "Next");
             }
@@ -2742,16 +2808,12 @@ public class Player : MovingObject
                 proceduresFlag = true;
 
                 string title = "Procedures";
-                string message = "App users will install a free app on their phone named EchoGrid. Launching the app for the first " +
-                    "time will direct users to a consent form. If the user taps the screen to indicate that they are " +
-                    "providing informed consent to participate in the research supported by this app, they will be able " +
-                    "to begin playing the game.Users will first go through a tutorial that will provide spoken " +
-                    "instructions regarding the gestures needed to play the game, such as swiping or tapping on the " +
-                    "phone’s screen. Users will need to put on headphones correctly because the game’s sounds will differ " +
-                    "between the two ears. Users will play the game for as long as they want to. The game will increase in " +
-                    "difficulty as the levels increase. After a certain number of levels have been played, a survey regarding " +
-                    "the user experience will appear. The user will be asked to answer up to 18 questions regarding their " +
-                    "experience with the app and whether or not they have normal vision. This survey will only happen once.";
+                string message = "App users will install a free app on their phone named EchoAdventure. Launching the app for the " +
+                    "first time will direct users to a consent form. This consent process will only happen once. Users will " +                   
+                    "first go through a tutorial. Users will need to wear headphones in both ears. After a certain number of " +
+                    "levels have been played, an 18-question survey regarding the user experience and visual acuity will " +
+                    "appear. This survey will only happen once.";
+
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
                 ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
             }
@@ -2779,9 +2841,9 @@ public class Player : MovingObject
                 requirementsFlag = true;
 
                 string title = "Participant Requirements";
-                string message = "Participation in this study is limited to individuals age 18 and older. Participants with or without vision " +
-                    "may play this game. Participants need to have normal hearing because the game relies on detecting subtle " +
-                    "differences between sounds. Participants must have access to an Android smartphone to play this game.";
+                string message = "You must be 18 or older and have normal hearing, because the game relies on detecting subtle differences " + 
+                    "between sounds. You must have access to a smartphone.";
+
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
                 ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
             }
@@ -2810,9 +2872,9 @@ public class Player : MovingObject
                 risksFlag = true;
 
                 string title = "Risks";
-                string message = "The risks and discomfort associated with participation in this study are no greater than those " +
-                    "ordinarily encountered in daily life or during other online activities. Participants will not provide " +
-                    "confidential personal information or financial information.";
+                string message = "The risks associated with participation in this study are no greater than those ordinarily " +
+                    "encountered in daily life or other online activities.";
+
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
                 ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
             }
@@ -2841,9 +2903,9 @@ public class Player : MovingObject
                 benefitsFlag = true;
 
                 string title = "Benefits";
-                string message = "There may be no personal benefit from your participation in the study but the knowledge received may be " +
-                    "of value to humanity. In theory, it is possible that you could become better at discriminating echoes in the real world " +
-                    "by playing this game, but the likelihood of this possibility is not known.";
+                string message = "There may be no personal benefit from your participation, but the knowledge received may be of value " +
+                    "to humanity.";
+
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
                 ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
             }
@@ -2872,8 +2934,8 @@ public class Player : MovingObject
                 compCostFlag = true;
 
                 string title = "Compensation and Costs";
-                string message = "There is no compensation for participation in this study. There will be no cost to you if you " +
-                    "participate in this study.";
+                string message = "There is no compensation or cost for participation in this study.";
+
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
                 ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
             }
@@ -2902,22 +2964,21 @@ public class Player : MovingObject
                 confidentialityFlag = true;
 
                 string title = "Confidentiality";
-                string message = "The data captured for the research does not include any personally identifiable information about you. " +
-                    "Your phone’s device ID will be captured, which is customary for all apps that you install on a phone. " +
-                    "You will indicate whether or not you have a visual impairment, but that is not considered to be private " +
-                    "health information. The moves you make while playing the game will be captured and your app satisfaction " +
-                    "survey responses will be captured.\n\n" +
-                    "By participating in this research, you understand and agree that Carnegie Mellon may be required to " +
-                    "disclose your consent form, data and other personally identifiable information as required by law, regulation, " +
-                    "subpoena or court order. Otherwise, your confidentiality will be maintained in the following manner:\n\n" +
-                    "Your data and consent form will be kept separate. Your response to the consent form will be stored electronically " +
-                    "in a secure location on Carnegie Mellon property and will not be disclosed to third parties. Sharing of data with " +
-                    "other researchers will only be done in such a manner that you will not be identified. This research was sponsored " +
-                    "by Google and the app survey data may be shared with them as part of the development process. By participating, you " +
-                    "understand and agree that the data and information gathered during this study may be used by Carnegie Mellon and " +
-                    "published and/or disclosed by Carnegie Mellon to others outside of Carnegie Mellon. However, your name, address, " +
-                    "contact information and other direct personal identifiers will not be gathered. Note that per regulation all research " +
-                    "data must be kept for a minimum of 3 years.";
+                string message = "Data captured for the research does not include any personally identifiable information about you. Your phone’s " +
+                    "device ID will be captured, which is customary for all apps that you install on a phone. You will indicate whether " +
+                    "or not you have a visual impairment, but that is not considered to be private. The moves you make while playing " +
+                    "the game will be captured and your app satisfaction survey responses will be captured.\n\n" +
+                    "By participating, you understand and agree that Carnegie Mellon may be required to disclose your consent form, " +
+                    "data and other personally identifiable information as required by law, regulation, subpoena or court order. " +
+                    "Otherwise, your confidentiality will be maintained in the following manner:\n\n" +
+                    "Your consent form will be stored electronically in a secure location and will not be disclosed to third parties. " +
+                    "Sharing of data with other researchers will only be done in such a manner that you will not be identified. " +
+                    "This research was sponsored by Google and the app survey data may be shared with them.\n\n" +
+                    "By participating, you understand that the data and information gathered during this study may be used by Carnegie " +
+                    "Mellon and published and/or disclosed by Carnegie Mellon to others outside of Carnegie Mellon. However, your name " +
+                    "and other direct personal identifiers will not be shared. Note that per regulation all research data must be kept " +
+                    "for a minimum of 3 years.";
+
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
                 ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
             }
@@ -2946,17 +3007,14 @@ public class Player : MovingObject
                 questionsContactFlag = true;
 
                 string title = "Right to Ask Questions and Contact Information";
-                string message = "If you have any questions about this study, you should feel free to ask them by contacting the " +
-                    "Principal Investigator now at: Laurie Heller, Department of Psychology, Carnegie Mellon University, " +
-                    "Pittsburgh, PA, 15213, 412-268-8669, auditory@andrew.cmu.edu.\n\n" +
-                    "If you have questions later, desire additional information, or wish to withdraw your participation " +
-                    "please contact the Principal Investigator by mail, phone or e-mail in accordance with the contact " +
-                    "information listed above.\n\n" +
-                    "If you have questions pertaining to your rights as a research participant, or to report concerns to " +
-                    "this study, you should contact the Office of Research Integrity and Compliance at Carnegie Mellon " +
-                    "University.\n" +
-                    "Email: irb-review@andrew.cmu.edu.\n" +
-                    "Phone: 412-268-1901 or 412-268-5460.";
+                string message = "If you have any questions, please ask: Laurie Heller, Department of Psychology, " +
+                    "Carnegie Mellon University, Pittsburgh, PA, 15213, 412-268-8669, auditory@andrew.cmu.edu. " +
+                    "If you have questions later, or wish to withdraw your participation please contact the PI " +
+                    "by mail, phone, or e-mail using the contact information listed above.\n\n" +
+                    "If you have any questions pertaining to your rights as a research participant or to report " + 
+                    "concerns, contact the Office of Research Integrity and Compliance at Carnegie Mellon " +
+                    "University: irb-review@andrew.cmu.edu. Phone: 412-268-1901 or 412-268-5460.";
+
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
                 ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
             }
@@ -2980,12 +3038,42 @@ public class Player : MovingObject
                 ad.clearflag();
             }
 
-            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readQuestionsContact == true) && (readEighteenPlus == false) && (eighteenPlusFlag == false))
+            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readQuestionsContact == true) && (readVoluntary == false) && (voluntaryFlag == false))
+            {
+                voluntaryFlag = true;
+
+                string title = "Voluntary Participation";
+                string message = "Your participation is voluntary. You may discontinue at any time.";
+
+                AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
+                ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
+            }
+
+            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readVoluntary == false) && (voluntaryFlag == true) && (ad.yesclicked() == true))
+            {
+                readVoluntary = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+                ad.clearflag();
+            }
+
+            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readVoluntary == false) && (voluntaryFlag == true) && (ad.noclicked() == true))
+            {
+                voluntaryFlag = false;
+                readConfidentiality = true;
+                readQuestionsContact = false;
+                questionsContactFlag = false;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+                ad.clearflag();
+            }
+
+            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readVoluntary == true) && (readEighteenPlus == false) && (eighteenPlusFlag == false))
             {
                 eighteenPlusFlag = true;
 
                 string title = "Age Limitation";
-                string message = "I am age 18 or older.";
+                string message = "I am 18 or older.";
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
                 ad.DisplayAndroidWindow(title, message, dialogueType, "Yes", "No");
             }
@@ -3667,6 +3755,8 @@ public class Player : MovingObject
                             confidentialityFlag = false;
                             readQuestionsContact = false;
                             questionsContactFlag = false;
+                            readVoluntary = false;
+                            voluntaryFlag = false;
                             readEighteenPlus = false;
                             eighteenPlusFlag = false;
                             readUnderstand = false;
@@ -3709,6 +3799,8 @@ public class Player : MovingObject
                             confidentialityFlag = false;
                             readQuestionsContact = false;
                             questionsContactFlag = false;
+                            readVoluntary = false;
+                            voluntaryFlag = false;
                             readEighteenPlus = false;
                             eighteenPlusFlag = false;
                             readUnderstand = false;
@@ -3751,6 +3843,8 @@ public class Player : MovingObject
                             confidentialityFlag = false;
                             readQuestionsContact = false;
                             questionsContactFlag = false;
+                            readVoluntary = false;
+                            voluntaryFlag = false;
                             readEighteenPlus = false;
                             eighteenPlusFlag = false;
                             readUnderstand = false;
@@ -3959,6 +4053,8 @@ public class Player : MovingObject
                             confidentialityFlag = false;
                             readQuestionsContact = false;
                             questionsContactFlag = false;
+                            readVoluntary = false;
+                            voluntaryFlag = false;
                             readEighteenPlus = false;
                             eighteenPlusFlag = false;
                             readUnderstand = false;
@@ -4001,6 +4097,8 @@ public class Player : MovingObject
                             confidentialityFlag = false;
                             readQuestionsContact = false;
                             questionsContactFlag = false;
+                            readVoluntary = false;
+                            voluntaryFlag = false;
                             readEighteenPlus = false;
                             eighteenPlusFlag = false;
                             readUnderstand = false;
@@ -4043,6 +4141,8 @@ public class Player : MovingObject
                             confidentialityFlag = false;
                             readQuestionsContact = false;
                             questionsContactFlag = false;
+                            readVoluntary = false;
+                            voluntaryFlag = false;
                             readEighteenPlus = false;
                             eighteenPlusFlag = false;
                             readUnderstand = false;
@@ -4850,50 +4950,6 @@ public class Player : MovingObject
         }
 #endif
 
-#if UNITY_ANDROID && !UNITY_EDITOR
-    // pop up the survey at the end of tutorial        
-        if ((BoardManager.reachedExit == true) && survey_activated)
-        {
-			if ((GameManager.instance.level == 11) && !survey_shown)
-            {
-				ad.clearflag();
-				ad.DisplayAndroidWindow("Survey", "Would you like to take \n a short survey about the game?");
-				survey_shown = true;
-			}
-
-			if (survey_shown && !URL_shown && ad.yesclicked() && !code_entered)
-            {
-				// display a code, and submit it reportSurvey()
-				// Please enter code (first six digits of UDID) on the survey page
-				code_entered = true;
-
-                if (SystemInfo.deviceUniqueIdentifier.Length <= 6)
-                {
-                    surveyCode = SystemInfo.deviceUniqueIdentifier;
-                }
-                else
-                {
-                    surveyCode = SystemInfo.deviceUniqueIdentifier.Substring(0, 6);
-                }
-                string codemsg = "Your survey code is: \n" + surveyCode + "\n please enter this in the survey.";
-				ad.clearflag();
-				ad.DisplayAndroidWindow("Survey Code", codemsg, AndroidDialogue.DialogueType.YESONLY);
-			}
-            else if (!URL_shown && ad.yesclicked() && code_entered)
-            {
-				URL_shown = true;
-				Application.OpenURL("https://echolock.andrew.cmu.edu/survey/"); // "http://echolock.andrew.cmu.edu/survey/?"
-			}
-            else if (URL_shown)
-            {
-				ad.clearflag();
-				ad.DisplayAndroidWindow("Thank You", "Thank you for taking the survey!", AndroidDialogue.DialogueType.YESONLY);
-				reportsurvey(surveyCode);
-				survey_activated = false;
-			}
-		}
-#endif
-
         // Check if we are running on iOS or Android
 #if UNITY_IOS || UNITY_ANDROID
         // process input
@@ -5035,7 +5091,7 @@ public class Player : MovingObject
                 if ((hasFinishedConsentForm == true) && (canDoGestureTutorial == false))
                 {
                     // If the player is not in the pause menu, play an echo.
-                    if ((want_exit == false) && (loadingScene == false))
+                    if ((at_pause_menu == false) && (loadingScene == false))
                     {
                         if ((curLevel == 3) && (finishedCornerInstruction == false) && (playerPos.x == 9) && (playerPos.y == 9))
                         {
@@ -5060,7 +5116,7 @@ public class Player : MovingObject
                             GameManager.instance.boardScript.gamerecord += "}";
                         }
                     }
-                    else if ((want_exit == true) && (loadingScene == false))
+                    else if ((at_pause_menu == true) && (loadingScene == false))
                     {
                         // If the player has told us they want to restart the level, then restart the level.
                         if (wantLevelRestart == true)
@@ -5350,6 +5406,8 @@ public class Player : MovingObject
                             confidentialityFlag = false;
                             readQuestionsContact = false;
                             questionsContactFlag = false;
+                            readVoluntary = false;
+                            voluntaryFlag = false;
                             readEighteenPlus = false;
                             eighteenPlusFlag = false;
                             readUnderstand = false;
@@ -5392,6 +5450,8 @@ public class Player : MovingObject
                             confidentialityFlag = false;
                             readQuestionsContact = false;
                             questionsContactFlag = false;
+                            readVoluntary = false;
+                            voluntaryFlag = false;
                             readEighteenPlus = false;
                             eighteenPlusFlag = false;
                             readUnderstand = false;
@@ -5434,6 +5494,8 @@ public class Player : MovingObject
                             confidentialityFlag = false;
                             readQuestionsContact = false;
                             questionsContactFlag = false;
+                            readVoluntary = false;
+                            voluntaryFlag = false;
                             readEighteenPlus = false;
                             eighteenPlusFlag = false;
                             readUnderstand = false;
@@ -5641,6 +5703,8 @@ public class Player : MovingObject
                             confidentialityFlag = false;
                             readQuestionsContact = false;
                             questionsContactFlag = false;
+                            readVoluntary = false;
+                            voluntaryFlag = false;
                             readEighteenPlus = false;
                             eighteenPlusFlag = false;
                             readUnderstand = false;
@@ -5683,6 +5747,8 @@ public class Player : MovingObject
                             confidentialityFlag = false;
                             readQuestionsContact = false;
                             questionsContactFlag = false;
+                            readVoluntary = false;
+                            voluntaryFlag = false;
                             readEighteenPlus = false;
                             eighteenPlusFlag = false;
                             readUnderstand = false;
@@ -5725,6 +5791,8 @@ public class Player : MovingObject
                             confidentialityFlag = false;
                             readQuestionsContact = false;
                             questionsContactFlag = false;
+                            readVoluntary = false;
+                            voluntaryFlag = false;
                             readEighteenPlus = false;
                             eighteenPlusFlag = false;
                             readUnderstand = false;

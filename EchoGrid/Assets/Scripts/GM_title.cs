@@ -52,6 +52,8 @@ public class GM_title : MonoBehaviour
     bool readConfidentiality = false;
     bool questionsContactFlag = false;
     bool readQuestionsContact = false;
+    bool voluntaryFlag = false;
+    bool readVoluntary = false;
 
     string debugPlayerInfo; // String for debugging the effects of the player's actions (Tells you they rotated, swiped, etc.).
 
@@ -417,11 +419,10 @@ public class GM_title : MonoBehaviour
 
             string title = "Echolocation Consent";
             string message = "This game is part of a research study conducted by Laurie Heller and Pulkit Grover at Carnegie Mellon " +
-                "University and is partially funded by Google. The purpose of the research is to understand how " +
-                "people can use sounds (such as echoes) to figure out aspects of their physical environment, such " +
-                "as whether or not a wall is nearby. The game will use virtual sounds and virtual walls to teach " +
-                "people how to use sound to virtually move around in the game. This current release of the app is " +
-                "designed to provide user feedback on the app itself.";
+                "University and is partially funded by Google. The purpose is to understand how people can use " +
+                "sounds to figure out aspects of their physical environment. The game will use virtual sounds " +
+                "and virtual walls to teach people how to use sound to virtually move around in the game.";
+
             AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.YESONLY;
             ad.DisplayAndroidWindow(title, message, dialogueType, "Next");
         }
@@ -439,16 +440,12 @@ public class GM_title : MonoBehaviour
             proceduresFlag = true;
 
             string title = "Procedures";
-            string message = "App users will install a free app on their phone named EchoGrid. Launching the app for the first " +
-                "time will direct users to a consent form. If the user taps the screen to indicate that they are " +
-                "providing informed consent to participate in the research supported by this app, they will be able " +
-                "to begin playing the game.Users will first go through a tutorial that will provide spoken " +
-                "instructions regarding the gestures needed to play the game, such as swiping or tapping on the " +
-                "phone’s screen. Users will need to put on headphones correctly because the game’s sounds will differ " +
-                "between the two ears. Users will play the game for as long as they want to. The game will increase in " +
-                "difficulty as the levels increase. After a certain number of levels have been played, a survey regarding " +
-                "the user experience will appear. The user will be asked to answer up to 18 questions regarding their " +
-                "experience with the app and whether or not they have normal vision. This survey will only happen once.";
+            string message = "App users will install a free app on their phone named EchoAdventure. Launching the app for the " +
+                "first time will direct users to a consent form. This consent process will only happen once. Users will " +
+                "first go through a tutorial. Users will need to wear headphones in both ears. After a certain number of " +
+                "levels have been played, an 18-question survey regarding the user experience and visual acuity will " +
+                "appear. This survey will only happen once.";
+
             AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
             ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
         }
@@ -476,9 +473,9 @@ public class GM_title : MonoBehaviour
             requirementsFlag = true;
 
             string title = "Participant Requirements";
-            string message = "Participation in this study is limited to individuals age 18 and older. Participants with or without vision " +
-                "may play this game. Participants need to have normal hearing because the game relies on detecting subtle " +
-                "differences between sounds. Participants must have access to an Android smartphone to play this game.";
+            string message = "You must be 18 or older and have normal hearing, because the game relies on detecting subtle differences " +
+                "between sounds. You must have access to a smartphone.";
+
             AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
             ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
         }
@@ -507,9 +504,9 @@ public class GM_title : MonoBehaviour
             risksFlag = true;
 
             string title = "Risks";
-            string message = "The risks and discomfort associated with participation in this study are no greater than those " +
-                "ordinarily encountered in daily life or during other online activities. Participants will not provide " +
-                "confidential personal information or financial information.";
+            string message = "The risks associated with participation in this study are no greater than those ordinarily " +
+                "encountered in daily life or other online activities.";
+
             AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
             ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
         }
@@ -538,9 +535,9 @@ public class GM_title : MonoBehaviour
             benefitsFlag = true;
 
             string title = "Benefits";
-            string message = "There may be no personal benefit from your participation in the study but the knowledge received may be " +
-                "of value to humanity. In theory, it is possible that you could become better at discriminating echoes in the real world " +
-                "by playing this game, but the likelihood of this possibility is not known.";
+            string message = "There may be no personal benefit from your participation, but the knowledge received may be of value " +
+                "to humanity.";
+
             AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
             ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
         }
@@ -569,8 +566,8 @@ public class GM_title : MonoBehaviour
             compCostFlag = true;
 
             string title = "Compensation and Costs";
-            string message = "There is no compensation for participation in this study. There will be no cost to you if you " +
-                "participate in this study.";
+            string message = "There is no compensation or cost for participation in this study.";
+
             AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
             ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
         }
@@ -599,22 +596,21 @@ public class GM_title : MonoBehaviour
             confidentialityFlag = true;
 
             string title = "Confidentiality";
-            string message = "The data captured for the research does not include any personally identifiable information about you. " +
-                "Your phone’s device ID will be captured, which is customary for all apps that you install on a phone. " +
-                "You will indicate whether or not you have a visual impairment, but that is not considered to be private " +
-                "health information. The moves you make while playing the game will be captured and your app satisfaction " +
-                "survey responses will be captured.\n\n" +
-                "By participating in this research, you understand and agree that Carnegie Mellon may be required to " +
-                "disclose your consent form, data and other personally identifiable information as required by law, regulation, " +
-                "subpoena or court order. Otherwise, your confidentiality will be maintained in the following manner:\n\n" +
-                "Your data and consent form will be kept separate. Your response to the consent form will be stored electronically " +
-                "in a secure location on Carnegie Mellon property and will not be disclosed to third parties. Sharing of data with " +
-                "other researchers will only be done in such a manner that you will not be identified. This research was sponsored " +
-                "by Google and the app survey data may be shared with them as part of the development process. By participating, you " +
-                "understand and agree that the data and information gathered during this study may be used by Carnegie Mellon and " +
-                "published and/or disclosed by Carnegie Mellon to others outside of Carnegie Mellon. However, your name, address, " +
-                "contact information and other direct personal identifiers will not be gathered. Note that per regulation all research " +
-                "data must be kept for a minimum of 3 years.";
+            string message = "Data captured for the research does not include any personally identifiable information about you. Your phone’s " +
+                "device ID will be captured, which is customary for all apps that you install on a phone. You will indicate whether " +
+                "or not you have a visual impairment, but that is not considered to be private. The moves you make while playing " +
+                "the game will be captured and your app satisfaction survey responses will be captured.\n\n" +
+                "By participating, you understand and agree that Carnegie Mellon may be required to disclose your consent form, " +
+                "data and other personally identifiable information as required by law, regulation, subpoena or court order. " +
+                "Otherwise, your confidentiality will be maintained in the following manner:\n\n" +
+                "Your consent form will be stored electronically in a secure location and will not be disclosed to third parties. " +
+                "Sharing of data with other researchers will only be done in such a manner that you will not be identified. " +
+                "This research was sponsored by Google and the app survey data may be shared with them.\n\n" +
+                "By participating, you understand that the data and information gathered during this study may be used by Carnegie " +
+                "Mellon and published and/or disclosed by Carnegie Mellon to others outside of Carnegie Mellon. However, your name " +
+                "and other direct personal identifiers will not be shared. Note that per regulation all research data must be kept " +
+                "for a minimum of 3 years.";
+
             AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
             ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
         }
@@ -643,17 +639,14 @@ public class GM_title : MonoBehaviour
             questionsContactFlag = true;
 
             string title = "Right to Ask Questions and Contact Information";
-            string message = "If you have any questions about this study, you should feel free to ask them by contacting the " +
-                "Principal Investigator now at: Laurie Heller, Department of Psychology, Carnegie Mellon University, " +
-                "Pittsburgh, PA, 15213, 412-268-8669, auditory@andrew.cmu.edu.\n\n" +
-                "If you have questions later, desire additional information, or wish to withdraw your participation " +
-                "please contact the Principal Investigator by mail, phone or e-mail in accordance with the contact " +
-                "information listed above.\n\n" +
-                "If you have questions pertaining to your rights as a research participant, or to report concerns to " +
-                "this study, you should contact the Office of Research Integrity and Compliance at Carnegie Mellon " +
-                "University.\n" +
-                "Email: irb-review@andrew.cmu.edu.\n" +
-                "Phone: 412-268-1901 or 412-268-5460.";
+            string message = "If you have any questions, please ask: Laurie Heller, Department of Psychology, " +
+                "Carnegie Mellon University, Pittsburgh, PA, 15213, 412-268-8669, auditory@andrew.cmu.edu. " +
+                "If you have questions later, or wish to withdraw your participation please contact the PI " +
+                "by mail, phone, or e-mail using the contact information listed above.\n\n" +
+                "If you have any questions pertaining to your rights as a research participant or to report " +
+                "concerns, contact the Office of Research Integrity and Compliance at Carnegie Mellon " +
+                "University: irb-review@andrew.cmu.edu. Phone: 412-268-1901 or 412-268-5460.";
+
             AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
             ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
         }
@@ -661,11 +654,8 @@ public class GM_title : MonoBehaviour
         if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readQuestionsContact == false) && (questionsContactFlag == true) && (ad.yesclicked() == true))
         {
             readQuestionsContact = true;
-            android_window_displayed = false;
-            can_display_window = false;
-            finished_reading = true;
-            hearingConsentForm = false;
-            readingConsentForm = false;
+            clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
             ad.clearflag();
         }
 
@@ -675,6 +665,39 @@ public class GM_title : MonoBehaviour
             readCompCost = true;
             readConfidentiality = false;
             confidentialityFlag = false;
+            clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+            ad.clearflag();
+        }
+
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readQuestionsContact == true) && (readVoluntary == false) && (voluntaryFlag == false))
+        {
+            voluntaryFlag = true;
+
+            string title = "Voluntary Participation";
+            string message = "Your participation is voluntary. You may discontinue at any time.";
+
+            AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
+            ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
+        }
+
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readVoluntary == false) && (voluntaryFlag == true) && (ad.yesclicked() == true))
+        {
+            readVoluntary = true;
+            android_window_displayed = false;
+            can_display_window = false;
+            finished_reading = true;
+            hearingConsentForm = false;
+            readingConsentForm = false;
+            ad.clearflag();
+        }
+
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readVoluntary == false) && (voluntaryFlag == true) && (ad.noclicked() == true))
+        {
+            voluntaryFlag = false;
+            readConfidentiality = true;
+            readQuestionsContact = false;
+            questionsContactFlag = false;
             clips = new List<AudioClip>() { Database.soundEffectClips[7] };
             SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
             ad.clearflag();
@@ -1612,6 +1635,8 @@ public class GM_title : MonoBehaviour
                         confidentialityFlag = false;
                         readQuestionsContact = false;
                         questionsContactFlag = false;
+                        readVoluntary = false;
+                        voluntaryFlag = false;
                         clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[10] };
                         SoundManager.instance.PlayClips(clips, null, 0, () => {
                             can_display_window = true;
