@@ -57,12 +57,12 @@ public class GM_main_pre : MonoBehaviour
         // choose save for tutorial and normal game
         if ((current == GameMode.Game_Mode.RESTART) || (current == GameMode.Game_Mode.CONTINUE))
         {
-            filename = Application.persistentDataPath + "echosaved";
+            filename = System.IO.Path.Combine(Application.persistentDataPath, "echosaved");
         }
         // load specific save for tutorial
         else if ((current == GameMode.Game_Mode.TUTORIAL_RESTART) || (current == GameMode.Game_Mode.TUTORIAL))
         {
-            filename = Application.persistentDataPath + "echosaved_tutorial";
+            filename = System.IO.Path.Combine(Application.persistentDataPath, "echosaved_tutorial");
         }
 
         if (System.IO.File.Exists(filename))

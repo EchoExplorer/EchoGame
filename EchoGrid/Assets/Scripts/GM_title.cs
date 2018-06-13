@@ -29,6 +29,18 @@ public class GM_title : MonoBehaviour
     public static bool usingOdeonEchoes = false; // If this is true, use the Odeon echoes, which is option 2 in database.
 
     AndroidDialogue ad;
+    bool yesPressed = false;
+    bool noPressed = false;
+
+    public void switchYes(string yes)
+    {
+        yesPressed = true;
+    }
+
+    public void switchNo(string no)
+    {
+        noPressed = true;
+    }
     bool android_window_displayed = false;
     bool can_display_window = false;
     bool finished_reading = false;
@@ -422,17 +434,26 @@ public class GM_title : MonoBehaviour
                 "University and is partially funded by Google. The purpose is to understand how people can use " +
                 "sounds to figure out aspects of their physical environment. The game will use virtual sounds " +
                 "and virtual walls to teach people how to use sound to virtually move around in the game.";
-
+#if UNITY_IOS
+            IOSNative.ShowOneG(title, message, "Next");
+#endif
+#if UNITY_ANDROID
             AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.YESONLY;
             ad.DisplayAndroidWindow(title, message, dialogueType, "Next");
+#endif
         }
 
-        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readConsent == false) && (consentFlag == true) && (ad.yesclicked() == true))
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readConsent == false) && (consentFlag == true) && (ad.yesclicked() == true || yesPressed == true))
         {
             readConsent = true;
             clips = new List<AudioClip>() { Database.soundEffectClips[7] };
             SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+            yesPressed = false;
+#endif
+#if UNITY_ANDROID
             ad.clearflag();
+#endif
         }
 
         if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readConsent == true) && (readProcedures == false) && (proceduresFlag == false))
@@ -446,26 +467,41 @@ public class GM_title : MonoBehaviour
                 "levels have been played, an 18-question survey regarding the user experience and visual acuity will " +
                 "appear. This survey will only happen once.";
 
+#if UNITY_IOS
+            IOSNative.ShowTwoG(title, message, "Next", "Back");
+#endif
+#if UNITY_ANDROID
             AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
             ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
+#endif
         }
 
-        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readProcedures == false) && (proceduresFlag == true) && (ad.yesclicked() == true))
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readProcedures == false) && (proceduresFlag == true) && (ad.yesclicked() == true || yesPressed == true))
         {
             readProcedures = true;
             clips = new List<AudioClip>() { Database.soundEffectClips[7] };
             SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+            yesPressed = false;
+#endif
+#if UNITY_ANDROID
             ad.clearflag();
+#endif
         }
 
-        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readProcedures == false) && (proceduresFlag == true) && (ad.noclicked() == true))
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readProcedures == false) && (proceduresFlag == true) && (ad.noclicked() == true || noPressed == true))
         {
             proceduresFlag = false;
             readConsent = false;
             consentFlag = false;
             clips = new List<AudioClip>() { Database.soundEffectClips[7] };
             SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+            noPressed = false;
+#endif
+#if UNITY_ANDROID
             ad.clearflag();
+#endif
         }
 
         if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readProcedures == true) && (readRequirements == false) && (requirementsFlag == false))
@@ -476,19 +512,29 @@ public class GM_title : MonoBehaviour
             string message = "You must be 18 or older and have normal hearing, because the game relies on detecting subtle differences " +
                 "between sounds. You must have access to a smartphone.";
 
+#if UNITY_IOS
+            IOSNative.ShowTwoG(title, message, "Next", "Back");
+#endif
+#if UNITY_ANDROID
             AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
             ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
+#endif
         }
 
-        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRequirements == false) && (requirementsFlag == true) && (ad.yesclicked() == true))
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRequirements == false) && (requirementsFlag == true) && (ad.yesclicked() == true || yesPressed == true))
         {
             readRequirements = true;
             clips = new List<AudioClip>() { Database.soundEffectClips[7] };
             SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+            yesPressed = false;
+#endif
+#if UNITY_ANDROID
             ad.clearflag();
+#endif
         }
 
-        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRequirements == false) && (requirementsFlag == true) && (ad.noclicked() == true))
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRequirements == false) && (requirementsFlag == true) && (ad.noclicked() == true || noPressed == true))
         {
             requirementsFlag = false;
             readConsent = true;
@@ -496,7 +542,12 @@ public class GM_title : MonoBehaviour
             proceduresFlag = false;
             clips = new List<AudioClip>() { Database.soundEffectClips[7] };
             SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+            noPressed = false;
+#endif
+#if UNITY_ANDROID
             ad.clearflag();
+#endif
         }
 
         if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRequirements == true) && (readRisks == false) && (risksFlag == false))
@@ -507,19 +558,29 @@ public class GM_title : MonoBehaviour
             string message = "The risks associated with participation in this study are no greater than those ordinarily " +
                 "encountered in daily life or other online activities.";
 
+#if UNITY_IOS
+            IOSNative.ShowTwoG(title, message, "Next", "Back");
+#endif
+#if UNITY_ANDROID
             AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
             ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
+#endif
         }
 
-        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRisks == false) && (risksFlag == true) && (ad.yesclicked() == true))
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRisks == false) && (risksFlag == true) && (ad.yesclicked() == true || yesPressed == true))
         {
             readRisks = true;
             clips = new List<AudioClip>() { Database.soundEffectClips[7] };
             SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+            yesPressed = false;
+#endif
+#if UNITY_ANDROID
             ad.clearflag();
+#endif
         }
 
-        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRisks == false) && (risksFlag == true) && (ad.noclicked() == true))
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRisks == false) && (risksFlag == true) && (ad.noclicked() == true || noPressed == true))
         {
             risksFlag = false;
             readProcedures = true;
@@ -527,7 +588,12 @@ public class GM_title : MonoBehaviour
             requirementsFlag = false;
             clips = new List<AudioClip>() { Database.soundEffectClips[7] };
             SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+            noPressed = false;
+#endif
+#if UNITY_ANDROID
             ad.clearflag();
+#endif
         }
 
         if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRisks == true) && (readBenefits == false) && (benefitsFlag == false))
@@ -538,19 +604,29 @@ public class GM_title : MonoBehaviour
             string message = "There may be no personal benefit from your participation, but the knowledge received may be of value " +
                 "to humanity.";
 
+#if UNITY_IOS
+            IOSNative.ShowTwoG(title, message, "Next", "Back");
+#endif
+#if UNITY_ANDROID
             AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
             ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
+#endif
         }
 
-        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readBenefits == false) && (benefitsFlag == true) && (ad.yesclicked() == true))
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readBenefits == false) && (benefitsFlag == true) && (ad.yesclicked() == true || yesPressed == true))
         {
             readBenefits = true;
             clips = new List<AudioClip>() { Database.soundEffectClips[7] };
             SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+            yesPressed = false;
+#endif
+#if UNITY_ANDROID
             ad.clearflag();
+#endif
         }
 
-        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readBenefits == false) && (benefitsFlag == true) && (ad.noclicked() == true))
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readBenefits == false) && (benefitsFlag == true) && (ad.noclicked() == true || noPressed == true))
         {
             benefitsFlag = false;
             readRequirements = true;
@@ -558,7 +634,12 @@ public class GM_title : MonoBehaviour
             risksFlag = false;
             clips = new List<AudioClip>() { Database.soundEffectClips[7] };
             SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+            noPressed = false;
+#endif
+#if UNITY_ANDROID
             ad.clearflag();
+#endif
         }
 
         if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readBenefits == true) && (readCompCost == false) && (compCostFlag == false))
@@ -568,19 +649,29 @@ public class GM_title : MonoBehaviour
             string title = "Compensation and Costs";
             string message = "There is no compensation or cost for participation in this study.";
 
+#if UNITY_IOS
+            IOSNative.ShowTwoG(title, message, "Next", "Back");
+#endif
+#if UNITY_ANDROID
             AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
             ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
+#endif
         }
 
-        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readCompCost == false) && (compCostFlag == true) && (ad.yesclicked() == true))
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readCompCost == false) && (compCostFlag == true) && (ad.yesclicked() == true || yesPressed == true))
         {
             readCompCost = true;
             clips = new List<AudioClip>() { Database.soundEffectClips[7] };
             SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+            yesPressed = false;
+#endif
+#if UNITY_ANDROID
             ad.clearflag();
+#endif
         }
 
-        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readCompCost == false) && (compCostFlag == true) && (ad.noclicked() == true))
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readCompCost == false) && (compCostFlag == true) && (ad.noclicked() == true || noPressed == true))
         {
             compCostFlag = false;
             readRisks = true;
@@ -588,7 +679,12 @@ public class GM_title : MonoBehaviour
             benefitsFlag = false;
             clips = new List<AudioClip>() { Database.soundEffectClips[7] };
             SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+            noPressed = false;
+#endif
+#if UNITY_ANDROID
             ad.clearflag();
+#endif
         }
 
         if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readCompCost == true) && (readConfidentiality == false) && (confidentialityFlag == false))
@@ -611,19 +707,29 @@ public class GM_title : MonoBehaviour
                 "and other direct personal identifiers will not be shared. Note that per regulation all research data must be kept " +
                 "for a minimum of 3 years.";
 
+#if UNITY_IOS
+            IOSNative.ShowTwoG(title, message, "Next", "Back");
+#endif
+#if UNITY_ANDROID
             AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
             ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
+#endif
         }
 
-        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readConfidentiality == false) && (confidentialityFlag == true) && (ad.yesclicked() == true))
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readConfidentiality == false) && (confidentialityFlag == true) && (ad.yesclicked() == true || yesPressed == true))
         {
             readConfidentiality = true;
             clips = new List<AudioClip>() { Database.soundEffectClips[7] };
             SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+            yesPressed = false;
+#endif
+#if UNITY_ANDROID
             ad.clearflag();
+#endif
         }
 
-        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readConfidentiality == false) && (confidentialityFlag == true) && (ad.noclicked() == true))
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readConfidentiality == false) && (confidentialityFlag == true) && (ad.noclicked() == true || noPressed == true))
         {
             confidentialityFlag = false;
             readBenefits = true;
@@ -631,7 +737,12 @@ public class GM_title : MonoBehaviour
             compCostFlag = false;
             clips = new List<AudioClip>() { Database.soundEffectClips[7] };
             SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+            noPressed = false;
+#endif
+#if UNITY_ANDROID
             ad.clearflag();
+#endif
         }
 
         if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readConfidentiality == true) && (readQuestionsContact == false) && (questionsContactFlag == false))
@@ -647,19 +758,29 @@ public class GM_title : MonoBehaviour
                 "concerns, contact the Office of Research Integrity and Compliance at Carnegie Mellon " +
                 "University: irb-review@andrew.cmu.edu. Phone: 412-268-1901 or 412-268-5460.";
 
+#if UNITY_IOS
+            IOSNative.ShowTwoG(title, message, "Next", "Back");
+#endif
+#if UNITY_ANDROID
             AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
             ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
+#endif
         }
 
-        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readQuestionsContact == false) && (questionsContactFlag == true) && (ad.yesclicked() == true))
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readQuestionsContact == false) && (questionsContactFlag == true) && (ad.yesclicked() == true || yesPressed == true))
         {
             readQuestionsContact = true;
             clips = new List<AudioClip>() { Database.soundEffectClips[7] };
             SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+            yesPressed = false;
+#endif
+#if UNITY_ANDROID
             ad.clearflag();
+#endif
         }
 
-        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readQuestionsContact == false) && (questionsContactFlag == true) && (ad.noclicked() == true))
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readQuestionsContact == false) && (questionsContactFlag == true) && (ad.noclicked() == true || noPressed == true))
         {
             questionsContactFlag = false;
             readCompCost = true;
@@ -667,7 +788,12 @@ public class GM_title : MonoBehaviour
             confidentialityFlag = false;
             clips = new List<AudioClip>() { Database.soundEffectClips[7] };
             SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+            noPressed = false;
+#endif
+#if UNITY_ANDROID
             ad.clearflag();
+#endif
         }
 
         if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readQuestionsContact == true) && (readVoluntary == false) && (voluntaryFlag == false))
@@ -677,11 +803,16 @@ public class GM_title : MonoBehaviour
             string title = "Voluntary Participation";
             string message = "Your participation is voluntary. You may discontinue at any time.";
 
+#if UNITY_IOS
+            IOSNative.ShowTwoG(title, message, "Next", "Back");
+#endif
+#if UNITY_ANDROID
             AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
             ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
+#endif
         }
 
-        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readVoluntary == false) && (voluntaryFlag == true) && (ad.yesclicked() == true))
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readVoluntary == false) && (voluntaryFlag == true) && (ad.yesclicked() == true || yesPressed == true))
         {
             readVoluntary = true;
             android_window_displayed = false;
@@ -689,10 +820,15 @@ public class GM_title : MonoBehaviour
             finished_reading = true;
             hearingConsentForm = false;
             readingConsentForm = false;
+#if UNITY_IOS
+            yesPressed = false;
+#endif
+#if UNITY_ANDROID
             ad.clearflag();
+#endif
         }
 
-        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readVoluntary == false) && (voluntaryFlag == true) && (ad.noclicked() == true))
+        if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readVoluntary == false) && (voluntaryFlag == true) && (ad.noclicked() == true || noPressed == true))
         {
             voluntaryFlag = false;
             readConfidentiality = true;
@@ -700,7 +836,12 @@ public class GM_title : MonoBehaviour
             questionsContactFlag = false;
             clips = new List<AudioClip>() { Database.soundEffectClips[7] };
             SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+            noPressed = false;
+#endif
+#if UNITY_ANDROID
             ad.clearflag();
+#endif
         }
 
         Direction inputDirection = Direction.NONE;

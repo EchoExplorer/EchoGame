@@ -67,6 +67,19 @@ public class Player : MovingObject
     private DateTime endTime;
     AndroidDialogue ad;
 
+    bool yesPressed = false;
+    bool noPressed = false;
+
+    public void switchYes(string yes)
+    {
+        yesPressed = true;
+    }
+
+    public void switchNo(string no)
+    {
+        noPressed = true;
+    }
+
     // Usage data to keep track of
     public static bool want_exit = false;
     bool at_pause_menu = false; // indicating if the player activated pause menu
@@ -77,7 +90,7 @@ public class Player : MovingObject
     string debugPlayerInfo; // String for debugging the effects of the player's actions (Tells you they rotated, swiped, etc.).
 
     bool survey_activated = false;
-#if UNITY_ANDROID && !UNITY_EDITOR
+#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
     bool code_entered = false;
     bool URL_shown = false;
     bool survey_shown = false;
@@ -142,7 +155,7 @@ public class Player : MovingObject
 
     AudioClip attenuatedClick = Database.attenuatedClick;
     AudioClip echofront = Database.hrtf_front;
-	AudioClip echoleft = Database.hrtf_left_leftspeaker;
+    AudioClip echoleft = Database.hrtf_left_leftspeaker;
     AudioClip echoleft_right = Database.hrtf_left_rightspeaker;
     AudioClip echoright = Database.hrtf_right_rightspeaker;
     AudioClip echoright_left = Database.hrtf_right_leftspeaker;
@@ -435,7 +448,7 @@ public class Player : MovingObject
             }
 
             if ((dir_x == 0) && (dir_y < 0))
-            {           
+            {
                 frontWall = GameObject.Find("Wall_" + x + "_" + (y - (stepsToFrontWall + 1)));
             }
             stepsToFrontWall += 1;
@@ -467,15 +480,15 @@ public class Player : MovingObject
             {
                 // print("Front Wall = " + frontWall.name);
                 // print("Steps to Front Wall = " + stepsToFrontWall.ToString());
-            }                                   
-        }       
+            }
+        }
 
         AudioSource[] frontAudios = null, leftAudios = null, rightAudios = null, leftEndAudios = null, rightEndAudios = null;
         AudioSource frontAudioSource = null, leftAudioSource = null, rightAudioSource = null, leftEndAudioSource = null, rightEndAudioSource = null;
 
         frontAudios = frontWall.GetComponents<AudioSource>();
         if (frontAudios.Length == 0)
-        {         
+        {
             frontWall.AddComponent<AudioSource>();
             frontWall.AddComponent<AudioSource>();
             frontAudios = frontWall.GetComponents<AudioSource>();
@@ -483,7 +496,7 @@ public class Player : MovingObject
         if (frontAudios.Length == 2)
         {
             frontAudioSource = frontAudios[0];
-            frontAudioSource.clip = echofront;    
+            frontAudioSource.clip = echofront;
         }
 
         if (leftWall != null)
@@ -505,7 +518,7 @@ public class Player : MovingObject
         {
             leftEndAudios = leftEndWall.GetComponents<AudioSource>();
             if (leftEndAudios.Length == 0)
-            {              
+            {
                 leftEndWall.AddComponent<AudioSource>();
                 leftEndWall.AddComponent<AudioSource>();
                 leftEndAudios = leftEndWall.GetComponents<AudioSource>();
@@ -550,7 +563,7 @@ public class Player : MovingObject
                 rightEndAudioSource.volume = getEndEchoVolume(stepsToRightEnd);
             }
         }
-    
+
         if (real == false)
         {
             return;
@@ -602,7 +615,7 @@ public class Player : MovingObject
         StartCoroutine(FinishedEchoClip(waitTime, delayTimes));
 
         return;
-    }   
+    }
 
     float getEndEchoVolume(int stepsAway)
     {
@@ -1632,7 +1645,7 @@ public class Player : MovingObject
                             // If the player has reached halfway.
                             else if ((canPlayClip[4, 1] == true) && (ratio <= 0.5f) && (ratio >= 0.4465f))
                             {
-                                canPlayClip[4, 1] = false;                          
+                                canPlayClip[4, 1] = false;
                                 canPlayHalfwayClip = true;
                                 finishedEcho = false;
                                 clips = new List<AudioClip>() { Database.soundEffectClips[4] };
@@ -1671,7 +1684,7 @@ public class Player : MovingObject
                         {
                             // Play clips for when player hits the T intersection in level 11.
                             if ((canPlayClip[10, 4] == true) && (playerPos.x == 5) && (playerPos.y == 6) && (GameManager.instance.boardScript.get_player_dir_world() == BoardManager.Direction.FRONT))
-                            {                                
+                            {
                                 canPlayClip[10, 4] = false;
                                 canPlayClip[10, 1] = false;
                                 canPlayForkClip = true;
@@ -1791,7 +1804,7 @@ public class Player : MovingObject
                             // Keep this check in, but do nothing.
                             canPlayClip[10, 1] = true;
                             canPlayClip[11, 2] = false;
-                            canPlayClip[10, 3] = true;                            
+                            canPlayClip[10, 3] = true;
                             clips = new List<AudioClip>() { Database.soundEffectClips[4] };
                             SoundManager.instance.PlayClips(clips, null, 0, () => StartCoroutine(DelayedPlayEcho(0.25f)), 1, null, true); // Play the appropriate clip.
                         }
@@ -1920,7 +1933,8 @@ public class Player : MovingObject
                         debugPlayerInfo = "Playing level 1 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                         clips = new List<AudioClip>() { Database.levelStartClips[1], Database.levelStartClips[0] };
-                        SoundManager.instance.PlayClips(clips, null, 0, () => {
+                        SoundManager.instance.PlayClips(clips, null, 0, () =>
+                        {
                             canCheckForConsent = true;
                         }, 2, null, true); // Play the appropriate clips.
                     }
@@ -1959,7 +1973,8 @@ public class Player : MovingObject
                         debugPlayerInfo = "Playing level 2 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                         clips = new List<AudioClip>() { Database.levelStartClips[2], Database.levelStartClips[0] };
-                        SoundManager.instance.PlayClips(clips, null, 0, () => {
+                        SoundManager.instance.PlayClips(clips, null, 0, () =>
+                        {
                             canCheckForConsent = true;
                         }, 2, null, true); // Play the appropriate clips.
                     }
@@ -1998,7 +2013,8 @@ public class Player : MovingObject
                         debugPlayerInfo = "Playing level 3 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                         clips = new List<AudioClip>() { Database.levelStartClips[3], Database.levelStartClips[0] };
-                        SoundManager.instance.PlayClips(clips, null, 0, () => {
+                        SoundManager.instance.PlayClips(clips, null, 0, () =>
+                        {
                             canCheckForConsent = true;
                         }, 2, null, true); // Play the appropriate clips.
                     }
@@ -2037,7 +2053,8 @@ public class Player : MovingObject
                         debugPlayerInfo = "Playing level 4 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                         clips = new List<AudioClip>() { Database.levelStartClips[4], Database.levelStartClips[0] };
-                        SoundManager.instance.PlayClips(clips, null, 0, () => {
+                        SoundManager.instance.PlayClips(clips, null, 0, () =>
+                        {
                             canCheckForConsent = true;
                         }, 2, null, true); // Play the appropriate clips.
                     }
@@ -2076,7 +2093,8 @@ public class Player : MovingObject
                         debugPlayerInfo = "Playing level 5 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                         clips = new List<AudioClip>() { Database.levelStartClips[5], Database.levelStartClips[0] };
-                        SoundManager.instance.PlayClips(clips, null, 0, () => {
+                        SoundManager.instance.PlayClips(clips, null, 0, () =>
+                        {
                             canCheckForConsent = true;
                         }, 2, null, true); // Play the appropriate clips.
                     }
@@ -2115,7 +2133,8 @@ public class Player : MovingObject
                         debugPlayerInfo = "Playing level 6 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                         clips = new List<AudioClip>() { Database.levelStartClips[6], Database.levelStartClips[0] };
-                        SoundManager.instance.PlayClips(clips, null, 0, () => {
+                        SoundManager.instance.PlayClips(clips, null, 0, () =>
+                        {
                             canCheckForConsent = true;
                         }, 2, null, true); // Play the appropriate clips.
                     }
@@ -2154,7 +2173,8 @@ public class Player : MovingObject
                         debugPlayerInfo = "Playing level 7 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                         clips = new List<AudioClip>() { Database.levelStartClips[7], Database.levelStartClips[0] };
-                        SoundManager.instance.PlayClips(clips, null, 0, () => {
+                        SoundManager.instance.PlayClips(clips, null, 0, () =>
+                        {
                             canCheckForConsent = true;
                         }, 2, null, true); // Play the appropriate clips.
                     }
@@ -2193,7 +2213,8 @@ public class Player : MovingObject
                         debugPlayerInfo = "Playing level 8 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                         clips = new List<AudioClip>() { Database.levelStartClips[8], Database.levelStartClips[0] };
-                        SoundManager.instance.PlayClips(clips, null, 0, () => {
+                        SoundManager.instance.PlayClips(clips, null, 0, () =>
+                        {
                             canCheckForConsent = true;
                         }, 2, null, true); // Play the appropriate clips.
                     }
@@ -2232,7 +2253,8 @@ public class Player : MovingObject
                         debugPlayerInfo = "Playing level 9 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                         clips = new List<AudioClip>() { Database.levelStartClips[9], Database.levelStartClips[0] };
-                        SoundManager.instance.PlayClips(clips, null, 0, () => {
+                        SoundManager.instance.PlayClips(clips, null, 0, () =>
+                        {
                             canCheckForConsent = true;
                         }, 2, null, true); // Play the appropriate clips.
                     }
@@ -2271,7 +2293,8 @@ public class Player : MovingObject
                         debugPlayerInfo = "Playing level 10 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                         clips = new List<AudioClip>() { Database.levelStartClips[10], Database.levelStartClips[0] };
-                        SoundManager.instance.PlayClips(clips, null, 0, () => {
+                        SoundManager.instance.PlayClips(clips, null, 0, () =>
+                        {
                             canCheckForConsent = true;
                         }, 2, null, true); // Play the appropriate clips.
                     }
@@ -2310,7 +2333,8 @@ public class Player : MovingObject
                         debugPlayerInfo = "Playing level 11 beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                         clips = new List<AudioClip>() { Database.levelStartClips[11], Database.levelStartClips[0] };
-                        SoundManager.instance.PlayClips(clips, null, 0, () => {
+                        SoundManager.instance.PlayClips(clips, null, 0, () =>
+                        {
                             canCheckForConsent = true;
                         }, 2, null, true); // Play the appropriate clips.
                     }
@@ -2341,17 +2365,22 @@ public class Player : MovingObject
             // Play level 12+ beginning clips.
             if (canPlayClip[11, 0] == true)
             {
-                canPlayClip[11, 0] = false;
-                debugPlayerInfo = "Playing level " + curLevel + " beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
-                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
-                clips = new List<AudioClip>() { Database.levelStartClips[curLevel], Database.levelStartClips[0] };
-                SoundManager.instance.PlayClips(clips, null, 0, () => {
+                if (((SoundManager.instance.finishedAllClips == true) || (canRepeat == true)) && (canCheckForConsent == false) && (hasCheckedForConsent == false))
+                {
+                    canPlayClip[11, 0] = false;
+                    debugPlayerInfo = "Playing level " + curLevel + " beginning clips. XPos = " + playerPos.x.ToString() + ", YPos = " + playerPos.y.ToString();
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
+                    clips = new List<AudioClip>() { Database.levelStartClips[curLevel], Database.levelStartClips[0] };
+                    SoundManager.instance.PlayClips(clips, null, 0, () =>
+                    {
                     canCheckForConsent = true;
-                }, 2, null, true); // Play the appropriate clips.
-            }
-            if ((canPlayClip[11, 0] == false) && (hasCheckedForConsent == true))
-            {
-                hasCheckedForConsent = false;
+                    }, 2, null, true); // Play the appropriate clips.
+                }
+                else if ((hasFinishedConsentForm == true) && (SoundManager.instance.finishedAllClips == true) && (hasCheckedForConsent == true))
+                {
+                    canPlayClip[11, 0] = false;
+                    hasCheckedForConsent = false;
+                }
             }
             // If the player is not at the exit and swiped down.
             if ((endingLevel == true) && ((SoundManager.instance.finishedAllClips == true) || ((playerPos.x == startPos.x) && (playerPos.y == startPos.y))))
@@ -2392,7 +2421,7 @@ public class Player : MovingObject
             level1_remaining_taps = 3; // Set the remaining taps for the tutorial to 3.
             level1_remaining_swipe_ups = 3; // Set the remaining swipes up for the tutorial to 3.
             level1_remaining_menus = 2; // Set the remaining holds for the tutorial to 2.
-        }       
+        }
 
         if ((restartLevel == true) && (SoundManager.instance.finishedAllClips == true))
         {
@@ -2638,7 +2667,7 @@ public class Player : MovingObject
                 debugPlayerInfo = "Exiting level clip has finished.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                 canGoToNextLevel = true;
-#if UNITY_ANDROID && !UNITY_EDITOR
+#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
                 if (curLevel == 11)
                 {
                     survey_activated = true;
@@ -2649,28 +2678,42 @@ public class Player : MovingObject
             // If the player is at the exit and the exit level sound has played.
             if ((playedExitClip == true) && (canGoToNextLevel == true) && (SoundManager.instance.finishedAllClips == true))
             {
-#if UNITY_ANDROID && !UNITY_EDITOR
+#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
                 // pop up the survey at the end of tutorial        
                 if ((GameManager.instance.level == 11) && (survey_activated == true))
                 {
                     print("At survey");
                     if (survey_shown == false)
                     {
-                        ad.clearflag();
-                        ad.DisplayAndroidWindow("Survey", "Would you like to take \n a short survey about the game?", AndroidDialogue.DialogueType.NORMAL);
+#if (UNITY_IOS)
+                    yesPressed = false;
+                    noPressed = false;
+                    IOSNative.ShowTwo("Survey", "Would you like to take \n a short survey about the game?", "Yes", "No");
+#endif
+#if (UNITY_ANDROID)
+                    ad.clearflag();
+                    ad.DisplayAndroidWindow("Survey", "Would you like to take \n a short survey about the game?", AndroidDialogue.DialogueType.NORMAL);
+#endif
+
+                        
                         survey_shown = true;
                         debugPlayerInfo = "Showing survey.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     }
 
-                    if ((survey_shown == true) && (URL_shown == false) && ad.noclicked() && (code_entered == false))
+                    if ((survey_shown == true) && (URL_shown == false) && (ad.noclicked() || noPressed == true) && (code_entered == false))
                     {
+#if (UNITY_IOS)
+                        noPressed = false;
+#endif
+#if (UNITY_ANDROID)
                         ad.clearflag();
+#endif
                         survey_activated = false;
                         debugPlayerInfo = "Does not want to do survey.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     }
-                    if ((survey_shown == true) && (URL_shown == false) && ad.yesclicked() && (code_entered == false))
+                    if ((survey_shown == true) && (URL_shown == false) && (ad.yesclicked() || yesPressed == true) && (code_entered == false))
                     {
                         // display a code, and submit it reportSurvey()
                         // Please enter code (first six digits of UDID) on the survey page
@@ -2687,10 +2730,17 @@ public class Player : MovingObject
                         string codemsg = "Your survey code is: \n" + surveyCode + "\n please enter this in the survey.";
                         debugPlayerInfo = "Displaying code.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+#if (UNITY_IOS)
+                        yesPressed = false;
+                        IOSNative.ShowOne("Survey Code", codemsg, "Yes");
+#endif
+#if (UNITY_ANDROID)
                         ad.clearflag();
                         ad.DisplayAndroidWindow("Survey Code", codemsg, AndroidDialogue.DialogueType.YESONLY);
+#endif
+                        
                     }                    
-                    if ((survey_shown == true) && (URL_shown == false) && ad.yesclicked() && (code_entered == true))
+                    if ((survey_shown == true) && (URL_shown == false) && (ad.yesclicked() || yesPressed == true) && (code_entered == true))
                     {
                         debugPlayerInfo = "Opening URL.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
@@ -2701,8 +2751,14 @@ public class Player : MovingObject
                     {
                         debugPlayerInfo = "Reporting survey.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+#if (UNITY_IOS)
+                        yesPressed = false;
+                        IOSNative.ShowOne("Thank You", "Thank you for taking the survey!", "Done");
+#endif
+#if (UNITY_ANDROID)
                         ad.clearflag();
                         ad.DisplayAndroidWindow("Thank You", "Thank you for taking the survey!", AndroidDialogue.DialogueType.YESONLY);
+#endif     
                         reportsurvey(surveyCode);
                         survey_activated = false;
                     }                    
@@ -2738,7 +2794,7 @@ public class Player : MovingObject
         {
             canCheckForConsent = false;
 
-            string filename = Application.persistentDataPath + "consentRecord";
+            string filename = Path.Combine(Application.persistentDataPath, "consentRecord");
             string[] svdata_split;
 
             if (System.IO.File.Exists(filename))
@@ -2772,7 +2828,6 @@ public class Player : MovingObject
 
         play_audio();
 
-#if (UNITY_IOS || UNITY_ANDROID) && (!UNITY_STANDALONE || !UNITY_WEBPLAYER)
         if (((curLevel == 1) && (finishedExitingInstruction == true) && (BoardManager.finishedTutorialLevel1 == true) && (hasFinishedConsentForm == false)) || ((hasCheckedForConsent == true) && (hasFinishedConsentForm == false)))
         {
             if ((readingConsentForm == true) && (android_window_displayed == false) && (can_display_window == true))
@@ -2790,17 +2845,26 @@ public class Player : MovingObject
                     "University and is partially funded by Google. The purpose is to understand how people can use " +
                     "sounds to figure out aspects of their physical environment. The game will use virtual sounds " +
                     "and virtual walls to teach people how to use sound to virtually move around in the game.";
-
+#if UNITY_IOS
+                IOSNative.ShowOne(title, message, "Next");   
+#endif
+#if UNITY_ANDROID
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.YESONLY;
                 ad.DisplayAndroidWindow(title, message, dialogueType, "Next");
+#endif
             }
 
-            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readConsent == false) && (consentFlag == true) && (ad.yesclicked() == true))
+            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readConsent == false) && (consentFlag == true) && (ad.yesclicked() == true || yesPressed == true))
             {
                 readConsent = true;
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                yesPressed = false;
+#endif
+#if UNITY_ANDROID
                 ad.clearflag();
+#endif
             }
 
             if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readConsent == true) && (readProcedures == false) && (proceduresFlag == false))
@@ -2814,26 +2878,42 @@ public class Player : MovingObject
                     "levels have been played, an 18-question survey regarding the user experience and visual acuity will " +
                     "appear. This survey will only happen once.";
 
+#if UNITY_IOS
+                IOSNative.ShowTwo(title, message, "Next", "Back");
+#endif
+#if UNITY_ANDROID
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
                 ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
+#endif
+                
             }
 
-            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readProcedures == false) && (proceduresFlag == true) && (ad.yesclicked() == true))
+            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readProcedures == false) && (proceduresFlag == true) && (ad.yesclicked() == true || yesPressed == true))
             {
                 readProcedures = true;
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                yesPressed = false;
+#endif
+#if UNITY_ANDROID
                 ad.clearflag();
+#endif
             }
 
-            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readProcedures == false) && (proceduresFlag == true) && (ad.noclicked() == true))
+            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readProcedures == false) && (proceduresFlag == true) && (ad.noclicked() == true || noPressed == true))
             {
                 proceduresFlag = false;
                 readConsent = false;
                 consentFlag = false;
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                noPressed = false;
+#endif
+#if UNITY_ANDROID
                 ad.clearflag();
+#endif
             }
 
             if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readProcedures == true) && (readRequirements == false) && (requirementsFlag == false))
@@ -2844,19 +2924,29 @@ public class Player : MovingObject
                 string message = "You must be 18 or older and have normal hearing, because the game relies on detecting subtle differences " + 
                     "between sounds. You must have access to a smartphone.";
 
+#if UNITY_IOS
+                IOSNative.ShowTwo(title, message, "Next", "Back");
+#endif
+#if UNITY_ANDROID
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
                 ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
+#endif
             }
 
-            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRequirements == false) && (requirementsFlag == true) && (ad.yesclicked() == true))
+            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRequirements == false) && (requirementsFlag == true) && (ad.yesclicked() == true || yesPressed == true))
             {
                 readRequirements = true;
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                yesPressed = false;
+#endif
+#if UNITY_ANDROID
                 ad.clearflag();
+#endif
             }
 
-            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRequirements == false) && (requirementsFlag == true) && (ad.noclicked() == true))
+            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRequirements == false) && (requirementsFlag == true) && (ad.noclicked() == true || noPressed == true))
             {
                 requirementsFlag = false;
                 readConsent = true;
@@ -2864,7 +2954,12 @@ public class Player : MovingObject
                 proceduresFlag = false;
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                noPressed = false;
+#endif
+#if UNITY_ANDROID
                 ad.clearflag();
+#endif
             }
 
             if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRequirements == true) && (readRisks == false) && (risksFlag == false))
@@ -2875,19 +2970,29 @@ public class Player : MovingObject
                 string message = "The risks associated with participation in this study are no greater than those ordinarily " +
                     "encountered in daily life or other online activities.";
 
+#if UNITY_IOS
+                IOSNative.ShowTwo(title, message, "Next", "Back");
+#endif
+#if UNITY_ANDROID
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
                 ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
+#endif
             }
 
-            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRisks == false) && (risksFlag == true) && (ad.yesclicked() == true))
+            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRisks == false) && (risksFlag == true) && (ad.yesclicked() == true || yesPressed == true))
             {
                 readRisks = true;
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                yesPressed = false;
+#endif
+#if UNITY_ANDROID
                 ad.clearflag();
+#endif
             }
 
-            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRisks == false) && (risksFlag == true) && (ad.noclicked() == true))
+            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRisks == false) && (risksFlag == true) && (ad.noclicked() == true || noPressed == true))
             {
                 risksFlag = false;
                 readProcedures = true;
@@ -2895,7 +3000,12 @@ public class Player : MovingObject
                 requirementsFlag = false;
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                noPressed = false;
+#endif
+#if UNITY_ANDROID
                 ad.clearflag();
+#endif
             }
 
             if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readRisks == true) && (readBenefits == false) && (benefitsFlag == false))
@@ -2906,19 +3016,29 @@ public class Player : MovingObject
                 string message = "There may be no personal benefit from your participation, but the knowledge received may be of value " +
                     "to humanity.";
 
+#if UNITY_IOS
+                IOSNative.ShowTwo(title, message, "Next", "Back");
+#endif
+#if UNITY_ANDROID
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
                 ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
+#endif
             }
 
-            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readBenefits == false) && (benefitsFlag == true) && (ad.yesclicked() == true))
+            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readBenefits == false) && (benefitsFlag == true) && (ad.yesclicked() == true || yesPressed == true))
             {
                 readBenefits = true;
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                yesPressed = false;
+#endif
+#if UNITY_ANDROID
                 ad.clearflag();
+#endif
             }
 
-            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readBenefits == false) && (benefitsFlag == true) && (ad.noclicked() == true))
+            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readBenefits == false) && (benefitsFlag == true) && (ad.noclicked() == true || noPressed == true))
             {
                 benefitsFlag = false;
                 readRequirements = true;
@@ -2926,7 +3046,12 @@ public class Player : MovingObject
                 risksFlag = false;
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                noPressed = false;
+#endif
+#if UNITY_ANDROID
                 ad.clearflag();
+#endif
             }
 
             if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readBenefits == true) && (readCompCost == false) && (compCostFlag == false))
@@ -2936,19 +3061,29 @@ public class Player : MovingObject
                 string title = "Compensation and Costs";
                 string message = "There is no compensation or cost for participation in this study.";
 
+#if UNITY_IOS
+                IOSNative.ShowTwo(title, message, "Next", "Back");
+#endif
+#if UNITY_ANDROID
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
                 ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
+#endif
             }
 
-            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readCompCost == false) && (compCostFlag == true) && (ad.yesclicked() == true))
+            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readCompCost == false) && (compCostFlag == true) && (ad.yesclicked() == true || yesPressed == true))
             {
                 readCompCost = true;
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                yesPressed = false;
+#endif
+#if UNITY_ANDROID
                 ad.clearflag();
+#endif
             }
 
-            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readCompCost == false) && (compCostFlag == true) && (ad.noclicked() == true))
+            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readCompCost == false) && (compCostFlag == true) && (ad.noclicked() == true || noPressed == true))
             {
                 compCostFlag = false;
                 readRisks = true;
@@ -2956,7 +3091,12 @@ public class Player : MovingObject
                 benefitsFlag = false;
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                noPressed = false;
+#endif
+#if UNITY_ANDROID
                 ad.clearflag();
+#endif
             }
 
             if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readCompCost == true) && (readConfidentiality == false) && (confidentialityFlag == false))
@@ -2979,19 +3119,29 @@ public class Player : MovingObject
                     "and other direct personal identifiers will not be shared. Note that per regulation all research data must be kept " +
                     "for a minimum of 3 years.";
 
+#if UNITY_IOS
+                IOSNative.ShowTwo(title, message, "Next", "Back");
+#endif
+#if UNITY_ANDROID
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
                 ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
+#endif
             }
 
-            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readConfidentiality == false) && (confidentialityFlag == true) && (ad.yesclicked() == true))
+            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readConfidentiality == false) && (confidentialityFlag == true) && (ad.yesclicked() == true || yesPressed == true))
             {
                 readConfidentiality = true;
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                yesPressed = false;
+#endif
+#if UNITY_ANDROID
                 ad.clearflag();
+#endif
             }
 
-            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readConfidentiality == false) && (confidentialityFlag == true) && (ad.noclicked() == true))
+            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readConfidentiality == false) && (confidentialityFlag == true) && (ad.noclicked() == true || noPressed == true))
             {
                 confidentialityFlag = false;
                 readBenefits = true;
@@ -2999,7 +3149,12 @@ public class Player : MovingObject
                 compCostFlag = false;
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                noPressed = false;
+#endif
+#if UNITY_ANDROID
                 ad.clearflag();
+#endif
             }
 
             if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readConfidentiality == true) && (readQuestionsContact == false) && (questionsContactFlag == false))
@@ -3015,19 +3170,29 @@ public class Player : MovingObject
                     "concerns, contact the Office of Research Integrity and Compliance at Carnegie Mellon " +
                     "University: irb-review@andrew.cmu.edu. Phone: 412-268-1901 or 412-268-5460.";
 
+#if UNITY_IOS
+                IOSNative.ShowTwo(title, message, "Next", "Back");
+#endif
+#if UNITY_ANDROID
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
                 ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
+#endif
             }
 
-            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readQuestionsContact == false) && (questionsContactFlag == true) && (ad.yesclicked() == true))
+            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readQuestionsContact == false) && (questionsContactFlag == true) && (ad.yesclicked() == true || yesPressed == true))
             {
                 readQuestionsContact = true;
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                yesPressed = false;
+#endif
+#if UNITY_ANDROID
                 ad.clearflag();
+#endif
             }
 
-            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readQuestionsContact == false) && (questionsContactFlag == true) && (ad.noclicked() == true))
+            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readQuestionsContact == false) && (questionsContactFlag == true) && (ad.noclicked() == true || noPressed == true))
             {
                 questionsContactFlag = false;
                 readCompCost = true;
@@ -3035,7 +3200,12 @@ public class Player : MovingObject
                 confidentialityFlag = false;
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                noPressed = false;
+#endif
+#if UNITY_ANDROID
                 ad.clearflag();
+#endif
             }
 
             if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readQuestionsContact == true) && (readVoluntary == false) && (voluntaryFlag == false))
@@ -3045,19 +3215,29 @@ public class Player : MovingObject
                 string title = "Voluntary Participation";
                 string message = "Your participation is voluntary. You may discontinue at any time.";
 
+#if UNITY_IOS
+                IOSNative.ShowTwo(title, message, "Next", "Back");
+#endif
+#if UNITY_ANDROID
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
                 ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
+#endif
             }
 
-            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readVoluntary == false) && (voluntaryFlag == true) && (ad.yesclicked() == true))
+            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readVoluntary == false) && (voluntaryFlag == true) && (ad.yesclicked() == true || yesPressed == true))
             {
                 readVoluntary = true;
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                yesPressed = false;
+#endif
+#if UNITY_ANDROID
                 ad.clearflag();
+#endif
             }
 
-            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readVoluntary == false) && (voluntaryFlag == true) && (ad.noclicked() == true))
+            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readVoluntary == false) && (voluntaryFlag == true) && (ad.noclicked() == true || noPressed == true))
             {
                 voluntaryFlag = false;
                 readConfidentiality = true;
@@ -3065,7 +3245,12 @@ public class Player : MovingObject
                 questionsContactFlag = false;
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                noPressed = false;
+#endif
+#if UNITY_ANDROID
                 ad.clearflag();
+#endif
             }
 
             if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readVoluntary == true) && (readEighteenPlus == false) && (eighteenPlusFlag == false))
@@ -3074,28 +3259,43 @@ public class Player : MovingObject
 
                 string title = "Age Limitation";
                 string message = "I am 18 or older.";
+#if UNITY_IOS
+                IOSNative.ShowTwo(title, message, "Yes", "No");
+#endif
+#if UNITY_ANDROID
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
                 ad.DisplayAndroidWindow(title, message, dialogueType, "Yes", "No");
+#endif
             }
 
-            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readEighteenPlus == false) && (eighteenPlusFlag == true) && (ad.yesclicked() == true))
+            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readEighteenPlus == false) && (eighteenPlusFlag == true) && (ad.yesclicked() == true || yesPressed == true))
             {
                 readEighteenPlus = true;
                 answeredQuestion1 = true;
                 question1 = true;
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                yesPressed = false;
+#endif
+#if UNITY_ANDROID
                 ad.clearflag();
+#endif
             }
 
-            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readEighteenPlus == false) && (eighteenPlusFlag == true) && (ad.noclicked() == true))
+            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readEighteenPlus == false) && (eighteenPlusFlag == true) && (ad.noclicked() == true || noPressed == true))
             {
                 readEighteenPlus = true;
                 answeredQuestion1 = true;
                 question1 = false;
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                noPressed = false;
+#endif
+#if UNITY_ANDROID
                 ad.clearflag();
+#endif
             }
 
             if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readEighteenPlus == true) && (readUnderstand == false) && (understandFlag == false))
@@ -3104,28 +3304,43 @@ public class Player : MovingObject
 
                 string title = "Read Information";
                 string message = "I have read and understand the information above.";
+#if UNITY_IOS
+                IOSNative.ShowTwo(title, message, "Yes", "No");
+#endif
+#if UNITY_ANDROID
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
                 ad.DisplayAndroidWindow(title, message, dialogueType, "Yes", "No");
+#endif
             }
 
-            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readUnderstand == false) && (understandFlag == true) && (ad.yesclicked() == true))
+            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readUnderstand == false) && (understandFlag == true) && (ad.yesclicked() == true || yesPressed == true))
             {
                 readUnderstand = true;
                 answeredQuestion2 = true;
                 question2 = true;
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                yesPressed = false;
+#endif
+#if UNITY_ANDROID
                 ad.clearflag();
+#endif
             }
 
-            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readUnderstand == false) && (understandFlag == true) && (ad.noclicked() == true))
+            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readUnderstand == false) && (understandFlag == true) && (ad.noclicked() == true || noPressed == true))
             {
                 readUnderstand = true;
                 answeredQuestion2 = true;
                 question2 = false;
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                noPressed = false;
+#endif
+#if UNITY_ANDROID
                 ad.clearflag();
+#endif
             }
 
             if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readUnderstand == true) && (readParticipate == false) && (participateFlag == false))
@@ -3134,11 +3349,16 @@ public class Player : MovingObject
 
                 string title = "Participation";
                 string message = "I want to participate in this research and continue with the game and survey.";
+#if UNITY_IOS
+                IOSNative.ShowTwo(title, message, "Yes", "No");
+#endif
+#if UNITY_ANDROID
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.NORMAL;
-                ad.DisplayAndroidWindow(title, message, dialogueType, "Yes", "No");
+                ad.DisplayAndroidWindow(title, message, dialogueType, "Next", "Back");
+#endif
             }
 
-            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readParticipate == false) && (participateFlag == true) && (ad.yesclicked() == true))
+            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readParticipate == false) && (participateFlag == true) && (ad.yesclicked() == true || yesPressed == true))
             {
                 readParticipate = true;
                 answeredQuestion3 = true;
@@ -3150,10 +3370,15 @@ public class Player : MovingObject
                 SoundManager.instance.PlayClips(clips, null, 0, () => {
                     canRepeat = true;
                 }, 1, null, true);
+#if UNITY_IOS
+                yesPressed = false;
+#endif
+#if UNITY_ANDROID
                 ad.clearflag();
+#endif
             }
 
-            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readParticipate == false) && (participateFlag == true) && (ad.noclicked() == true))
+            if ((readingConsentForm == true) && (android_window_displayed == true) && (finished_reading == false) && (readParticipate == false) && (participateFlag == true) && (ad.noclicked() == true || noPressed == true))
             {
                 readParticipate = true;
                 answeredQuestion3 = true;
@@ -3165,10 +3390,14 @@ public class Player : MovingObject
                 SoundManager.instance.PlayClips(clips, null, 0, () => {
                     canRepeat = true;
                 }, 1, null, true);
+#if UNITY_IOS
+                noPressed = false;
+#endif
+#if UNITY_ANDROID
                 ad.clearflag();
+#endif
             }
         }
-#endif
 
 
         if ((curLevel == 3) && (BoardManager.finishedTutorialLevel3 == false) && (canDoGestureTutorial == false) && (finishedCornerInstruction == true) && (hasTappedAtCorner == false) && (BoardManager.player_idx.x == 9) && (BoardManager.player_idx.y == 9) && (finishedEcho == true))
@@ -7058,7 +7287,7 @@ public class Player : MovingObject
             yield return false;
         }
 
-        string filename = Application.persistentDataPath + "consentRecord";
+        string filename = Path.Combine(Application.persistentDataPath, "consentRecord");
         string[] svdata_split;
 
         if (System.IO.File.Exists(filename))
@@ -7077,14 +7306,18 @@ public class Player : MovingObject
                     print("Error: " + www.error);
                     print("Could not connect to the Internet.");
 
-                    string storedFilepath = Application.persistentDataPath + "storeddata" + curLevel;
+                    //string storedFilepath = Application.persistentDataPath + "storeddata" + curLevel;
+                    string storedFilepath = Path.Combine(Application.persistentDataPath, (Application.productName + "storeddata" + curLevel.ToString()));
 
                     int directoryEnd = 0;
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
                     directoryEnd = Application.persistentDataPath.IndexOf("AuditoryLab") + 10;
 #endif
-#if UNITY_IOS || UNITY_ANDROID
+#if UNITY_ANDROID
                     directoryEnd = Application.persistentDataPath.IndexOf("AuditoryLab.Echoadventure") + 24;
+#endif
+#if UNITY_IOS
+                    directoryEnd = Application.persistentDataPath.IndexOf("Documents") + 8;
 #endif
 
                     string searchPath = Application.persistentDataPath.Substring(0, (directoryEnd + 1));
@@ -7194,16 +7427,19 @@ public class Player : MovingObject
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         print("Connected to the Internet, but got redirected to another page.");
 
-                        string storedFilepath = Application.persistentDataPath + "storeddata" + curLevel;
+                        //string storedFilepath = Application.persistentDataPath + "storeddata" + curLevel;
+                        string storedFilepath = Path.Combine(Application.persistentDataPath, (Application.productName + "storeddata" + curLevel.ToString()));
 
                         int directoryEnd = 0;
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
                         directoryEnd = Application.persistentDataPath.IndexOf("AuditoryLab") + 10;
 #endif
-#if UNITY_IOS || UNITY_ANDROID
+#if UNITY_ANDROID
                         directoryEnd = Application.persistentDataPath.IndexOf("AuditoryLab.Echoadventure") + 24;
 #endif
-
+#if UNITY_IOS
+                        directoryEnd = Application.persistentDataPath.IndexOf("Documents") + 8;
+#endif
                         string searchPath = Application.persistentDataPath.Substring(0, (directoryEnd + 1));
                         print("Search Path: " + searchPath);
                         string searchPattern = Application.productName + "storeddata";
@@ -7280,8 +7516,11 @@ public class Player : MovingObject
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
         directoryEnd = Application.persistentDataPath.IndexOf("AuditoryLab") + 10;
 #endif
-#if UNITY_IOS || UNITY_ANDROID
+#if UNITY_ANDROID
         directoryEnd = Application.persistentDataPath.IndexOf("AuditoryLab.Echoadventure") + 24;
+#endif
+#if UNITY_IOS
+        directoryEnd = Application.persistentDataPath.IndexOf("Documents") + 8;
 #endif
 
         string searchPath = Application.persistentDataPath.Substring(0, (directoryEnd + 1));

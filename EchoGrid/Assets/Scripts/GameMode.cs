@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 /// <summary>
 /// A singleton instance whose sole purpose is to hold one aspect of the current game state
@@ -52,11 +53,11 @@ public class GameMode : MonoBehaviour
 
         if ((mode == GameMode.Game_Mode.RESTART) || (mode == GameMode.Game_Mode.CONTINUE))
         {
-            filename = Application.persistentDataPath + "echosaved";
+            filename = System.IO.Path.Combine(Application.persistentDataPath, "echosaved");
         }
         else
         {
-            filename = Application.persistentDataPath + "echosaved_tutorial";
+            filename = System.IO.Path.Combine(Application.persistentDataPath, "echosaved_tutorial");
         }        
 
         fileLines[0] = lv.ToString();
