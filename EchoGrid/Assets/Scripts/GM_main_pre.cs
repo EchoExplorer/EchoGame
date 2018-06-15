@@ -57,11 +57,13 @@ public class GM_main_pre : MonoBehaviour
         // choose save for tutorial and normal game
         if ((current == GameMode.Game_Mode.RESTART) || (current == GameMode.Game_Mode.CONTINUE))
         {
+            // filename = Application.persistentDataPath + "echosaved";
             filename = System.IO.Path.Combine(Application.persistentDataPath, "echosaved");
         }
         // load specific save for tutorial
         else if ((current == GameMode.Game_Mode.TUTORIAL_RESTART) || (current == GameMode.Game_Mode.TUTORIAL))
         {
+            // filename = Application.persistentDataPath + "echosaved_tutorial";
             filename = System.IO.Path.Combine(Application.persistentDataPath, "echosaved_tutorial");
         }
 
@@ -1082,33 +1084,32 @@ public class GM_main_pre : MonoBehaviour
         switch (selectMode)
         {
             // If mode is set to Continue, we have swiped right, so continue from where we left off.
-            case SelectMode.CONTINUE:
-                selectMode = SelectMode.NONE;
+            case SelectMode.CONTINUE:                
                 debugPlayerInfo = "Swiped right. Continuing from where you left off.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
                 {
                     canRepeat = false;
                     firstConfirm = true;
-                    //BoardManager.write_save(1, BoardManager.finishedTutorialLevel1, BoardManager.finishedTutorialLevel3);
-                    //gameManager.write_save_mode(1, GameMode.instance.gamemode);
                     skippingTutorial = 1;
                     clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[18] };
                     balances = new float[] { 0, 0, 0 };
-                    SoundManager.instance.PlayClips(clips, balances, 0, () => SceneManager.LoadScene("Main"), 3, null); // Play the appropriate clips.
+                    SoundManager.instance.PlayClips(clips, balances, 0, () => {
+                        selectMode = SelectMode.NONE;
+                        SceneManager.LoadScene("Main");
+                    }, 3, null); // Play the appropriate clips.
                 }
                 break;
             // If mode is set to New, we have confirmed and swiped left, so start a new game from either the tutorial or the first non-tutorial level.
-            case SelectMode.NEW:
-                selectMode = SelectMode.NONE;
+            case SelectMode.NEW:                
                 debugPlayerInfo = "Swiped left. Going to confirm we want to start a new game.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.                
                 at_confirm = true;
                 canRepeat = true;
+                selectMode = SelectMode.NONE;
                 break;
             // If mode is set to Confirm, we have tapped to confirm we want to start a new game, so let the player swipe left to start.
             case SelectMode.CONFIRM:
-                selectMode = SelectMode.NONE;
                 debugPlayerInfo = "Tap registered. Confirmed we want to start a new game.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.                               
                 if (GameMode.instance.gamemode == GameMode.Game_Mode.TUTORIAL)
@@ -1127,12 +1128,14 @@ public class GM_main_pre : MonoBehaviour
                     skippingTutorial = 0;
                     clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[17] };
                     balances = new float[] { 0, 0, 0 };
-                    SoundManager.instance.PlayClips(clips, balances, 0, () => SceneManager.LoadScene("Main"), 3, null); // Play the appropriate clips.                  
+                    SoundManager.instance.PlayClips(clips, balances, 0, () => {
+                        selectMode = SelectMode.NONE;
+                        SceneManager.LoadScene("Main");
+                    }, 3, null); // Play the appropriate clips.                          
                 }
                 break;
             // If mode is set to Back, go back to the main menu.
             case SelectMode.BACK:
-                selectMode = SelectMode.NONE;
                 debugPlayerInfo = "Swiped down. Going back to main menu.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.     
                 if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
@@ -1140,6 +1143,7 @@ public class GM_main_pre : MonoBehaviour
                     canRepeat = false;
                     firstConfirm = true;
                     SceneManager.LoadScene("Title_Screen"); // Move back to the main menu.
+                    selectMode = SelectMode.NONE;
                 }
                 break;
             // If the mode is set to Specific, load a specific that the user selects.
@@ -1150,7 +1154,9 @@ public class GM_main_pre : MonoBehaviour
                     skippingTutorial = 2;
                     clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[30], Database.soundEffectClips[0] };
                     balances = new float[] { 0, 0, 0, 0 };
-                    SoundManager.instance.PlayClips(clips, balances, 0, () => SceneManager.LoadScene("Main"), 4, null); // Play the appropriate clips.
+                    SoundManager.instance.PlayClips(clips, balances, 0, () => {                        
+                        SceneManager.LoadScene("Main");
+                    }, 4, null); // Play the appropriate clips.
                 }
                 break;
             default:

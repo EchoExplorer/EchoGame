@@ -26,9 +26,13 @@ public class GameMode : MonoBehaviour
     void Awake()
     {
         if (instance == null)
+        {
             instance = this;
+        }
         else if (instance != this)
+        {
             Destroy(gameObject);
+        }
 
         DontDestroyOnLoad(gameObject);
     }
@@ -53,10 +57,12 @@ public class GameMode : MonoBehaviour
 
         if ((mode == GameMode.Game_Mode.RESTART) || (mode == GameMode.Game_Mode.CONTINUE))
         {
+            // filename = Application.persistentDataPath + "echosaved";
             filename = System.IO.Path.Combine(Application.persistentDataPath, "echosaved");
         }
         else
         {
+            // filename = Application.persistentDataPath + "echosaved_tutorial";
             filename = System.IO.Path.Combine(Application.persistentDataPath, "echosaved_tutorial");
         }        
 

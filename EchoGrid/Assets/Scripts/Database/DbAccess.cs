@@ -3,6 +3,8 @@ using System;
 using System.Collections;
 using System.Text;
 using Mono.Data.Sqlite;
+using System.Data;
+using System.Data.Common;
 
 /// <summary>
 /// Class that manages a connection to an SQL database.

@@ -57,11 +57,13 @@ public class GameManager : MonoBehaviour
         // choose save for tutorial and normal game
         if ((current == GameMode.Game_Mode.RESTART) || (current == GameMode.Game_Mode.CONTINUE))
         {
+            // filename = Application.persistentDataPath + "echosaved";
             filename = Path.Combine(Application.persistentDataPath, "echosaved");
         }
         // load specific save for tutorial
         else if ((current == GameMode.Game_Mode.TUTORIAL_RESTART) || (current == GameMode.Game_Mode.TUTORIAL))
         {
+            // filename = Application.persistentDataPath + "echosaved_tutorial";
             filename = Path.Combine(Application.persistentDataPath, "echosaved_tutorial");
         }
 
@@ -302,12 +304,14 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         //HACK: this should not run once per frame.
-#if UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
+#if UNITY_IOS || UNITY_ANDROID
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
 #endif
 
         //FIXME: Dead code
         if (playersTurn || doingSetup)
+        {
             return;
+        }
     }
 }

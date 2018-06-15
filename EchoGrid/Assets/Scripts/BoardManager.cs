@@ -474,6 +474,7 @@ public class BoardManager : MonoBehaviour
     /// </summary>
     public bool write_local_stats()
     {
+        // string filename = Application.persistentDataPath + "echostats";
         string filename = Path.Combine(Application.persistentDataPath, "echostats");
         string[] toWrite = Array.ConvertAll<int, string>(local_stats, _InttoString);
         string final = "";
@@ -492,6 +493,7 @@ public class BoardManager : MonoBehaviour
     /// <returns></returns>
     bool LoadLocalStats()
     {
+        // string filename = Application.persistentDataPath + "echostats";
         string filename = Path.Combine(Application.persistentDataPath, "echostats");
         local_stats = new int[max_total_level + 1];
 

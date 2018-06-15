@@ -70,6 +70,7 @@ public class Utilities : MonoBehaviour
     /// </summary>
     public static string[] Loadfile(string fname)
     {
+        // filename = Application.persistentDataPath + fname;
         string filename = System.IO.Path.Combine(Application.persistentDataPath, fname);
         string[] svdata_split = new string[1];
         if (System.IO.File.Exists(filename))
@@ -87,6 +88,7 @@ public class Utilities : MonoBehaviour
     /// </summary>
 	public static bool writefile(string fname, string toWrite)
     {
+        // string filename = Application.persistentDataPath + fname;
         string filename = System.IO.Path.Combine(Application.persistentDataPath, fname);
         //it is possible to meet exceptions
         try
@@ -148,9 +150,15 @@ public class Utilities : MonoBehaviour
         string filename = "";
 
         if (GameMode.instance.get_mode() == GameMode.Game_Mode.RESTART || GameMode.instance.get_mode() == GameMode.Game_Mode.CONTINUE)
+        {
+            // filename = Application.persistentDataPath + "echosaved";
             filename = System.IO.Path.Combine(Application.persistentDataPath, "echosaved");
-        else//load specific save for tutorial
+        }
+        else // load specific save for tutorial
+        {
+            // filename = Application.persistentDataPath + "echosaved_tutorial";
             filename = System.IO.Path.Combine(Application.persistentDataPath, "echosaved_tutorial");
+        }
 
         System.IO.File.WriteAllText(filename, lv.ToString());
         return true;
@@ -183,8 +191,4 @@ public class Utilities : MonoBehaviour
 #endif
         return isLandscape;
     }
-
-// Platform specific Utility
-#if UNITY_IOS || UNITY_ANDROID
-#endif
 }

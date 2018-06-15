@@ -36,11 +36,6 @@ public class GM_title : MonoBehaviour
     {
         yesPressed = true;
     }
-
-    public void switchNo(string no)
-    {
-        noPressed = true;
-    }
     bool android_window_displayed = false;
     bool can_display_window = false;
     bool finished_reading = false;
@@ -434,6 +429,7 @@ public class GM_title : MonoBehaviour
                 "University and is partially funded by Google. The purpose is to understand how people can use " +
                 "sounds to figure out aspects of their physical environment. The game will use virtual sounds " +
                 "and virtual walls to teach people how to use sound to virtually move around in the game.";
+
 #if UNITY_IOS
             IOSNative.ShowOneG(title, message, "Next");
 #endif
