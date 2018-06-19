@@ -1399,8 +1399,15 @@ public class Player : MovingObject
         string levelDataEndpoint = "http://echolock.andrew.cmu.edu/cgi-bin/acceptLevelData.py";
         int temp = GameManager.instance.boardScript.local_stats[curLevel];
 
-        // Check if we are connected to the internet.
-        CheckInternetConnection(temp, accurateElapsed, score, levelDataEndpoint);
+        int timePlayed = PlayerPrefs.GetInt("TotalTime");
+
+        if (timePlayed < 180000)
+        {
+            // Check if we are connected to the internet.
+            CheckInternetConnection(temp, accurateElapsed, score, levelDataEndpoint);
+            timePlayed = timePlayed + timeElapsed;
+            PlayerPrefs.SetInt("TotalTime", timePlayed);
+        }
 
         // display score
 #if UNITY_ANDROID
