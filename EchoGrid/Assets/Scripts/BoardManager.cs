@@ -120,23 +120,23 @@ public class BoardManager : MonoBehaviour
         tutorial1Finished = finishedTutorialLevel1;
         tutorial3Finished = finishedTutorialLevel3;
 
-        if ((player_idx.x == start_idx.x) && (player_idx.y == start_idx.y) && (left_start_pt == true))
+        if ((player_idx == start_idx) && (left_start_pt == true))
         {
             gotBackToStart = true;
         }
 
-        else if ((player_idx.x > start_idx.x) || (player_idx.x < start_idx.x) || (player_idx.y > start_idx.y) || (player_idx.y < start_idx.y))
+        else if (player_idx != start_idx)
         {
             left_start_pt = true;
             gotBackToStart = false;
         }
 
-        if ((player_idx.x == exit_idx.x) && (player_idx.y == exit_idx.y))
+        if (player_idx == exit_idx)
         {
             reachedExit = true;     
         }
 
-        else if ((player_idx.x != exit_idx.x) && (player_idx.y != exit_idx.y))
+        else if (player_idx != exit_idx)
         {
             reachedExit = false;
         }

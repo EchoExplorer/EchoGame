@@ -17,7 +17,7 @@ public class GM_main_pre : MonoBehaviour
 
     eventHandler eh;
 
-    public static int skippingTutorial = 0;
+    public static int skippingTutorial = -1;
 
     string debugPlayerInfo; // String for debugging the effects of the player's actions (Tells you they rotated, swiped, etc.).
 
@@ -442,7 +442,7 @@ public class GM_main_pre : MonoBehaviour
 
             // Do something based on this event info.
             // If a tap was registered.
-            if (ie.isTap == true)
+            if ((ie.isTap == true) && (skippingTutorial == -1))
             {
                 // We have swiped left to start a new game and confirmed that this is the action we want, so set mode to Confirm.
                 if (at_confirm == true)
@@ -464,7 +464,7 @@ public class GM_main_pre : MonoBehaviour
                 }
             }
             // If a swipe was registered.
-            else if (ie.isSwipe == true)
+            else if ((ie.isSwipe == true) && (skippingTutorial == -1))
             {
                 // If the swipe was left.
                 if (ie.isLeft == true)
@@ -595,7 +595,7 @@ public class GM_main_pre : MonoBehaviour
                 }
             }
             // If a rotation was registered.
-            else if (ie.isRotate == true)
+            else if ((ie.isRotate == true) && (skippingTutorial == -1))
             {
                 if (ie.isLeft == true)
                 {
@@ -608,7 +608,7 @@ public class GM_main_pre : MonoBehaviour
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
             }
             // If a hold was registered.
-            else if (ie.isHold == true)
+            else if ((ie.isHold == true) && (skippingTutorial == -1))
             {
                 if (selectMode == SelectMode.SPECIFIC)
                 {
@@ -623,7 +623,7 @@ public class GM_main_pre : MonoBehaviour
             }
 
             // If an unrecognized gesture was registered.
-            else if (ie.isUnrecognized == true)
+            else if ((ie.isUnrecognized == true) && (skippingTutorial == -1))
             {
                 madeUnrecognizedGesture = true;
 
@@ -764,7 +764,7 @@ public class GM_main_pre : MonoBehaviour
             InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
 
             // If a swipe was recognized.
-            if (ie.isSwipe == true)
+            if ((ie.isSwipe == true) && (skippingTutorial == -1))
             {
                 // If the swipe was left.
                 if (ie.isLeft == true)
@@ -896,7 +896,7 @@ public class GM_main_pre : MonoBehaviour
             }
 
             // If a tap was registered and we are able to start a new game, set mode to Confirm.
-            else if (ie.isTap == true)
+            else if ((ie.isTap == true) && (skippingTutorial == -1))
             {
                 // We have swiped left to start a new game and confirmed that this is the action we want, so set mode to Confirm.
                 if (at_confirm == true)
@@ -919,7 +919,7 @@ public class GM_main_pre : MonoBehaviour
             }
 
             // If a rotation was registered.
-            else if (ie.isRotate == true)
+            else if ((ie.isRotate) == true && (skippingTutorial == -1))
             {
                 if (ie.isLeft == true)
                 {
@@ -933,7 +933,7 @@ public class GM_main_pre : MonoBehaviour
             }
 
             // If a hold was registered.
-            else if (ie.isHold == true)
+            else if ((ie.isHold == true) && (skippingTutorial == -1))
             {
                 if (selectMode == SelectMode.SPECIFIC)
                 {
@@ -948,7 +948,7 @@ public class GM_main_pre : MonoBehaviour
             }
 
             // If there was an unrecognized gesture made.
-            else if (ie.isUnrecognized == true)
+            else if ((ie.isUnrecognized == true) && (skippingTutorial == -1))
             {
                 madeUnrecognizedGesture = true;
 

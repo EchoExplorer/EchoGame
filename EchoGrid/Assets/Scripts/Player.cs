@@ -169,6 +169,7 @@ public class Player : MovingObject
     AudioClip echoleftend_right = Database.odeon_left_rightspeaker;
     AudioClip echorightend = Database.odeon_right_rightspeaker;
     AudioClip echorightend_left = Database.odeon_right_leftspeaker;
+    AudioClip pulse = Database.testPulse;
 
     bool canCheckForConsent = false;
     bool hasCheckedForConsent = false;
@@ -343,6 +344,7 @@ public class Player : MovingObject
         echoleftend_right = Database.odeon_left_rightspeaker;
         echorightend = Database.odeon_right_rightspeaker;
         echorightend_left = Database.odeon_right_leftspeaker;
+        pulse = Database.testPulse;
 
         Vector3 dir = transform.right;
         int dir_x = (int)Math.Round(dir.x);
@@ -350,30 +352,38 @@ public class Player : MovingObject
         int x = (int)BoardManager.player_idx.x;
         int y = (int)BoardManager.player_idx.y;
 
-        GameObject frontWall = null, leftWall = null, rightWall = null, leftEndWall = null, rightEndWall = null;
+        GameObject frontWall = null, leftWall = null, rightWall = null, leftFrontWall = null, rightFrontWall = null, leftEndWall = null, rightEndWall = null;
 
         if ((dir_x > 0) && (dir_y == 0))
         {
             leftWall = GameObject.Find("Wall_" + x + "_" + (y + 1));
             rightWall = GameObject.Find("Wall_" + x + "_" + (y - 1));
+            leftFrontWall = GameObject.Find("Wall_" + (x + 1) + "_" + (y + 1));
+            rightFrontWall = GameObject.Find("Wall_" + (x + 1) + "_" + (y - 1));
         }
 
         if ((dir_x < 0) && (dir_y == 0))
         {
             leftWall = GameObject.Find("Wall_" + x + "_" + (y - 1));
             rightWall = GameObject.Find("Wall_" + x + "_" + (y + 1));
+            leftFrontWall = GameObject.Find("Wall_" + (x - 1) + "_" + (y - 1));
+            rightFrontWall = GameObject.Find("Wall_" + (x - 1) + "_" + (y + 1));
         }
 
         if ((dir_x == 0) && (dir_y > 0))
         {
             leftWall = GameObject.Find("Wall_" + (x - 1) + "_" + y);
             rightWall = GameObject.Find("Wall_" + (x + 1) + "_" + y);
+            leftFrontWall = GameObject.Find("Wall_" + (x - 1) + "_" + (y + 1));
+            rightFrontWall = GameObject.Find("Wall_" + (x + 1) + "_" + (y + 1));
         }
 
         if ((dir_x == 0) && (dir_y < 0))
         {
             leftWall = GameObject.Find("Wall_" + (x + 1) + "_" + y);
             rightWall = GameObject.Find("Wall_" + (x - 1) + "_" + y);
+            leftFrontWall = GameObject.Find("Wall_" + (x + 1) + "_" + (y - 1));
+            rightFrontWall = GameObject.Find("Wall_" + (x - 1) + "_" + (y - 1));
         }
 
         int stepsToFrontWall = 0;
@@ -470,6 +480,14 @@ public class Player : MovingObject
             {
                 // print("Right Wall = " + rightWall.name);
             }
+            if (leftFrontWall != null)
+            {
+                // print("Left Front Wall = " + leftFrontWall.name);
+            }
+            if (rightFrontWall != null)
+            {
+                // print("Right Front Wall = " + rightFrontWall.name);
+            }
             if (leftEndWall != null)
             {
                 // print("Left End Wall = " + leftEndWall.name);
@@ -487,8 +505,18 @@ public class Player : MovingObject
             }                                   
         }       
 
-        AudioSource[] frontAudios = null, leftAudios = null, left_rightAudios = null, rightAudios = null, right_leftAudios = null, leftEndAudios = null, leftEnd_rightAudios = null, rightEndAudios = null, rightEnd_leftAudios = null, leftFrontAudios = null, leftFront_rightAudios = null, rightFrontAudios = null, rightFront_leftAudios = null;
-        AudioSource frontAudioSource = null, leftAudioSource = null, left_rightAudioSource = null, rightAudioSource = null, right_leftAudioSource = null, leftEndAudioSource = null, leftEnd_rightAudioSource = null, rightEndAudioSource = null, rightEnd_leftAudioSource = null, leftFrontAudioSource = null, leftFront_rightAudioSource = null, rightFrontAudioSource = null, rightFront_leftAudioSource = null;
+        AudioSource[] frontAudios = null, leftAudios = null, left_rightAudios = null, rightAudios = null, right_leftAudios = null, leftFrontAudios = null, leftFront_rightAudios = null, rightFrontAudios = null, rightFront_leftAudios = null, leftEndAudios = null, leftEnd_rightAudios = null, rightEndAudios = null, rightEnd_leftAudios = null;
+        AudioSource frontAudioSource = null, leftAudioSource = null, left_rightAudioSource = null, rightAudioSource = null, right_leftAudioSource = null, leftFrontAudioSource = null, leftFront_rightAudioSource = null, rightFrontAudioSource = null, rightFront_leftAudioSource = null, leftEndAudioSource = null, leftEnd_rightAudioSource = null, rightEndAudioSource = null, rightEnd_leftAudioSource = null;
+        AnimationCurve dbCurve = new AnimationCurve();
+        dbCurve.AddKey(1.0f, 1.000f);
+        dbCurve.AddKey(2.0f, 0.472f);
+        dbCurve.AddKey(3.0f, 0.325f);
+        dbCurve.AddKey(4.0f, 0.265f);
+        dbCurve.AddKey(5.0f, 0.227f);
+        dbCurve.AddKey(6.0f, 0.200f);
+        dbCurve.AddKey(7.0f, 0.177f);
+        dbCurve.AddKey(8.0f, 0.160f);
+        dbCurve.AddKey(9.0f, 0.149f);
 
         frontAudios = frontWall.GetComponents<AudioSource>();
         if (frontAudios.Length == 0)
@@ -503,21 +531,13 @@ public class Player : MovingObject
             frontAudioSource = frontAudios[0];
             frontAudioSource.clip = echofront;
             frontAudioSource.rolloffMode = AudioRolloffMode.Custom;
-            AnimationCurve frontCurve = new AnimationCurve();
-            frontAudioSource.outputAudioMixerGroup = mixerGroup;
-            frontCurve.AddKey(1.0f, 1.0f);
-            frontCurve.AddKey(2.0f, 0.59f);
-            frontCurve.AddKey(3.0f, 0.42f);
-            frontCurve.AddKey(4.0f, 0.34f);
-            frontCurve.AddKey(5.0f, 0.29f);
-            frontCurve.AddKey(6.0f, 0.25f);
-            frontCurve.AddKey(7.0f, 0.22f);
-            frontCurve.AddKey(8.0f, 0.20f);
-            frontAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, frontCurve);
+            frontAudioSource.outputAudioMixerGroup = mixerGroup;            
+            frontAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
+            frontAudioSource.panStereo = 0.0f;
             frontAudioSource.spatialBlend = 1.0f;
-            frontAudioSource.dopplerLevel = 0.0f;
+            // frontAudioSource.dopplerLevel = 0.0f;
             frontAudioSource.minDistance = 1;
-            frontAudioSource.maxDistance = 8;
+            frontAudioSource.maxDistance = 9;
         }
 
         if (leftWall != null)
@@ -537,30 +557,61 @@ public class Player : MovingObject
                 leftAudioSource = leftAudios[1];
                 leftAudioSource.clip = echoleft;
                 leftAudioSource.rolloffMode = AudioRolloffMode.Custom;
+                leftAudioSource.outputAudioMixerGroup = mixerGroup;
+                leftAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
+                leftAudioSource.panStereo = -1.0f;
+                leftAudioSource.spatialBlend = 1.0f;
+                // leftAudioSource.dopplerLevel = 0.0f;
+                leftAudioSource.minDistance = 1;
+                leftAudioSource.maxDistance = 9;
+
                 left_rightAudioSource = left_rightAudios[2];
                 left_rightAudioSource.clip = echoleft_right;
                 left_rightAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                AnimationCurve leftCurve = new AnimationCurve();
-                leftAudioSource.outputAudioMixerGroup = mixerGroup;
                 left_rightAudioSource.outputAudioMixerGroup = mixerGroup;
-                leftCurve.AddKey(1.0f, 1.0f);
-                leftCurve.AddKey(2.0f, 0.59f);
-                leftCurve.AddKey(3.0f, 0.42f);
-                leftCurve.AddKey(4.0f, 0.34f);
-                leftCurve.AddKey(5.0f, 0.29f);
-                leftCurve.AddKey(6.0f, 0.25f);
-                leftCurve.AddKey(7.0f, 0.22f);
-                leftCurve.AddKey(8.0f, 0.20f);
-                leftAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, leftCurve);
-                leftAudioSource.spatialBlend = 1.0f;
-                leftAudioSource.dopplerLevel = 0.0f;
-                leftAudioSource.minDistance = 1;
-                leftAudioSource.maxDistance = 8;
-                left_rightAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, leftCurve);
+                left_rightAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
+                left_rightAudioSource.panStereo = 1.0f;
                 left_rightAudioSource.spatialBlend = 1.0f;
-                left_rightAudioSource.dopplerLevel = 0.0f;
+                // left_rightAudioSource.dopplerLevel = 0.0f;
                 left_rightAudioSource.minDistance = 1;
-                left_rightAudioSource.maxDistance = 8;
+                left_rightAudioSource.maxDistance = 9;
+            }
+        }
+        if (leftFrontWall != null)
+        {
+            leftFrontAudios = leftFrontWall.GetComponents<AudioSource>();
+            leftFront_rightAudios = leftFrontWall.GetComponents<AudioSource>();
+            if ((leftFrontAudios.Length == 0) && (leftFront_rightAudios.Length == 0))
+            {
+                leftFrontWall.AddComponent<AudioSource>();
+                leftFrontWall.AddComponent<AudioSource>();
+                leftFrontWall.AddComponent<AudioSource>();
+                leftFrontAudios = leftFrontWall.GetComponents<AudioSource>();
+                leftFront_rightAudios = leftFrontWall.GetComponents<AudioSource>();
+            }
+            if ((leftFrontAudios.Length == 3) && (leftFront_rightAudios.Length == 3))
+            {
+                leftFrontAudioSource = leftFrontAudios[1];
+                leftFrontAudioSource.clip = echoleftfront;
+                leftFrontAudioSource.rolloffMode = AudioRolloffMode.Custom;
+                leftFrontAudioSource.outputAudioMixerGroup = mixerGroup;
+                leftFrontAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
+                leftFrontAudioSource.panStereo = -1.0f;
+                leftFrontAudioSource.spatialBlend = 1.0f;
+                // leftFrontAudioSource.dopplerLevel = 0.0f;
+                leftFrontAudioSource.minDistance = 1;
+                leftFrontAudioSource.maxDistance = 9;
+
+                leftFront_rightAudioSource = leftFront_rightAudios[2];
+                leftFront_rightAudioSource.clip = echoleftfront_right;
+                leftFront_rightAudioSource.rolloffMode = AudioRolloffMode.Custom;
+                leftFront_rightAudioSource.outputAudioMixerGroup = mixerGroup;
+                leftFront_rightAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
+                leftFront_rightAudioSource.panStereo = 1.0f;
+                leftFront_rightAudioSource.spatialBlend = 1.0f;
+                // leftFront_rightAudioSource.dopplerLevel = 0.0f;
+                leftFront_rightAudioSource.minDistance = 1;
+                leftFront_rightAudioSource.maxDistance = 9;
             }
         }
         if ((leftEndWall != null) && (leftWall == null))
@@ -580,32 +631,24 @@ public class Player : MovingObject
                 leftEndAudioSource = leftEndAudios[1];
                 leftEndAudioSource.clip = echoleftend;
                 leftEndAudioSource.rolloffMode = AudioRolloffMode.Custom;
+                leftEndAudioSource.outputAudioMixerGroup = mixerGroup;
+                leftEndAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
+                leftEndAudioSource.panStereo = -1.0f;
+                leftEndAudioSource.spatialBlend = 1.0f;
+                // leftEndAudioSource.dopplerLevel = 0.0f;
+                leftEndAudioSource.minDistance = 1;
+                leftEndAudioSource.maxDistance = 9;
+
                 leftEnd_rightAudioSource = leftEnd_rightAudios[2];
                 leftEnd_rightAudioSource.clip = echoleftend_right;
                 leftEnd_rightAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                AnimationCurve leftEndCurve = new AnimationCurve();
-                leftEndAudioSource.outputAudioMixerGroup = mixerGroup;
                 leftEnd_rightAudioSource.outputAudioMixerGroup = mixerGroup;
-                leftEndCurve.AddKey(1.0f, 1.0f);
-                leftEndCurve.AddKey(2.0f, 0.59f);
-                leftEndCurve.AddKey(3.0f, 0.42f);
-                leftEndCurve.AddKey(4.0f, 0.34f);
-                leftEndCurve.AddKey(5.0f, 0.29f);
-                leftEndCurve.AddKey(6.0f, 0.25f);
-                leftEndCurve.AddKey(7.0f, 0.22f);
-                leftEndCurve.AddKey(8.0f, 0.20f);
-                leftEndAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, leftEndCurve);
-                leftEndAudioSource.spatialBlend = 1.0f;
-                leftEndAudioSource.dopplerLevel = 0.0f;
-                leftEndAudioSource.minDistance = 1;
-                leftEndAudioSource.maxDistance = 8;
-                leftEnd_rightAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, leftEndCurve);
+                leftEnd_rightAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
+                leftEnd_rightAudioSource.panStereo = 1.0f;
                 leftEnd_rightAudioSource.spatialBlend = 1.0f;
-                leftEnd_rightAudioSource.dopplerLevel = 0.0f;
+                // leftEnd_rightAudioSource.dopplerLevel = 0.0f;
                 leftEnd_rightAudioSource.minDistance = 1;
-                leftEnd_rightAudioSource.maxDistance = 8;
-                // leftEndAudioSource.volume = getEndEchoVolume(stepsToLeftEnd);
-                // leftEnd_rightAudioSource.volume = getEndEchoVolume(stepsToLeftEnd);
+                leftEnd_rightAudioSource.maxDistance = 9;
             }
         }
         if (rightWall != null)
@@ -625,30 +668,61 @@ public class Player : MovingObject
                 rightAudioSource = rightAudios[1];
                 rightAudioSource.clip = echoright;
                 rightAudioSource.rolloffMode = AudioRolloffMode.Custom;
+                rightAudioSource.outputAudioMixerGroup = mixerGroup;
+                rightAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
+                rightAudioSource.panStereo = 1.0f;
+                rightAudioSource.spatialBlend = 1.0f;
+                // rightAudioSource.dopplerLevel = 0.0f;
+                rightAudioSource.minDistance = 1;
+                rightAudioSource.maxDistance = 9;
+
                 right_leftAudioSource = right_leftAudios[2];
                 right_leftAudioSource.clip = echoright_left;
                 right_leftAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                AnimationCurve rightCurve = new AnimationCurve();
-                rightAudioSource.outputAudioMixerGroup = mixerGroup;
                 right_leftAudioSource.outputAudioMixerGroup = mixerGroup;
-                rightCurve.AddKey(1.0f, 1.0f);
-                rightCurve.AddKey(2.0f, 0.59f);
-                rightCurve.AddKey(3.0f, 0.42f);
-                rightCurve.AddKey(4.0f, 0.34f);
-                rightCurve.AddKey(5.0f, 0.29f);
-                rightCurve.AddKey(6.0f, 0.25f);
-                rightCurve.AddKey(7.0f, 0.22f);
-                rightCurve.AddKey(8.0f, 0.20f);
-                rightAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, rightCurve);
-                rightAudioSource.spatialBlend = 1.0f;
-                rightAudioSource.dopplerLevel = 0.0f;
-                rightAudioSource.minDistance = 1;
-                rightAudioSource.maxDistance = 8;
-                right_leftAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, rightCurve);
+                right_leftAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
+                right_leftAudioSource.panStereo = -1.0f;
                 right_leftAudioSource.spatialBlend = 1.0f;
-                right_leftAudioSource.dopplerLevel = 0.0f;
+                // right_leftAudioSource.dopplerLevel = 0.0f;
                 right_leftAudioSource.minDistance = 1;
-                right_leftAudioSource.maxDistance = 8;
+                right_leftAudioSource.maxDistance = 9;
+            }
+        }
+        if (rightFrontWall != null)
+        {
+            rightFrontAudios = rightFrontWall.GetComponents<AudioSource>();
+            rightFront_leftAudios = rightFrontWall.GetComponents<AudioSource>();
+            if ((rightFrontAudios.Length == 0) && (rightFront_leftAudios.Length == 0))
+            {
+                rightFrontWall.AddComponent<AudioSource>();
+                rightFrontWall.AddComponent<AudioSource>();
+                rightFrontWall.AddComponent<AudioSource>();
+                rightFrontAudios = rightFrontWall.GetComponents<AudioSource>();
+                rightFront_leftAudios = rightFrontWall.GetComponents<AudioSource>();
+            }
+            if ((rightFrontAudios.Length == 3) && (rightFront_leftAudios.Length == 3))
+            {
+                rightFrontAudioSource = rightFrontAudios[1];
+                rightFrontAudioSource.clip = echorightfront;
+                rightFrontAudioSource.rolloffMode = AudioRolloffMode.Custom;
+                rightFrontAudioSource.outputAudioMixerGroup = mixerGroup;
+                rightFrontAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
+                rightFrontAudioSource.panStereo = 1.0f;
+                rightFrontAudioSource.spatialBlend = 1.0f;
+                rightFrontAudioSource.dopplerLevel = 0.0f;
+                rightFrontAudioSource.minDistance = 1;
+                rightFrontAudioSource.maxDistance = 9;
+
+                rightFront_leftAudioSource = rightFront_leftAudios[2];
+                rightFront_leftAudioSource.clip = echorightfront_left;
+                rightFront_leftAudioSource.rolloffMode = AudioRolloffMode.Custom;
+                rightFront_leftAudioSource.outputAudioMixerGroup = mixerGroup;
+                rightFront_leftAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
+                rightFront_leftAudioSource.panStereo = -1.0f;
+                rightFront_leftAudioSource.spatialBlend = 1.0f;
+                rightFront_leftAudioSource.dopplerLevel = 0.0f;
+                rightFront_leftAudioSource.minDistance = 1;
+                rightFront_leftAudioSource.maxDistance = 9;
             }
         }
         if ((rightEndWall != null) && (rightWall == null))
@@ -668,32 +742,24 @@ public class Player : MovingObject
                 rightEndAudioSource = rightEndAudios[1];
                 rightEndAudioSource.clip = echorightend;
                 rightEndAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                rightEnd_leftAudioSource = rightEnd_leftAudios[2];
-                rightEnd_leftAudioSource.clip = echorightend_left;
-                rightEnd_leftAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                AnimationCurve rightEndCurve = new AnimationCurve();
                 rightEndAudioSource.outputAudioMixerGroup = mixerGroup;
-                rightEnd_leftAudioSource.outputAudioMixerGroup = mixerGroup;
-                rightEndCurve.AddKey(1.0f, 1.0f);
-                rightEndCurve.AddKey(2.0f, 0.59f);
-                rightEndCurve.AddKey(3.0f, 0.42f);
-                rightEndCurve.AddKey(4.0f, 0.34f);
-                rightEndCurve.AddKey(5.0f, 0.29f);
-                rightEndCurve.AddKey(6.0f, 0.25f);
-                rightEndCurve.AddKey(7.0f, 0.22f);
-                rightEndCurve.AddKey(8.0f, 0.20f);
-                rightEndAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, rightEndCurve);
+                rightEndAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
+                rightEndAudioSource.panStereo = 1.0f;
                 rightEndAudioSource.spatialBlend = 1.0f;
                 rightEndAudioSource.dopplerLevel = 0.0f;
                 rightEndAudioSource.minDistance = 1;
-                rightEndAudioSource.maxDistance = 8;
-                rightEnd_leftAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, rightEndCurve);
+                rightEndAudioSource.maxDistance = 9;
+
+                rightEnd_leftAudioSource = rightEnd_leftAudios[2];
+                rightEnd_leftAudioSource.clip = echorightend_left;
+                rightEnd_leftAudioSource.rolloffMode = AudioRolloffMode.Custom;
+                rightEnd_leftAudioSource.outputAudioMixerGroup = mixerGroup;
+                rightEnd_leftAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
+                rightEnd_leftAudioSource.panStereo = -1.0f;
                 rightEnd_leftAudioSource.spatialBlend = 1.0f;
                 rightEnd_leftAudioSource.dopplerLevel = 0.0f;
                 rightEnd_leftAudioSource.minDistance = 1;
-                rightEnd_leftAudioSource.maxDistance = 8;
-                // rightEndAudioSource.volume = getEndEchoVolume(stepsToRightEnd);
-                // rightEnd_leftAudioSource.volume = getEndEchoVolume(stepsToRightEnd);
+                rightEnd_leftAudioSource.maxDistance = 9;
             }
         }
     
@@ -704,17 +770,20 @@ public class Player : MovingObject
 
         float leftDelay = 0.0f;
         float rightDelay = 0.0f;
+        float leftFrontDelay = 0.0f;
+        float rightFrontDelay = 0.0f;
         float leftEndDelay = 0.0f;
         float rightEndDelay = 0.0f;
         float frontDelay = 0.0f;
 
         SoundManager.instance.PlaySingle(attenuatedClick);
+        // SoundManager.instance.PlaySingle(pulse);
 
         if ((leftAudioSource != null) && (left_rightAudioSource != null))
         {
             leftDelay = 1.5f / 340;
             leftAudioSource.PlayDelayed(leftDelay);
-            leftEndAudioSource.PlayDelayed(leftDelay);
+            left_rightAudioSource.PlayDelayed(leftDelay);
             // print("Left played! Delay = " + leftDelay.ToString());
         }
         if ((rightAudioSource != null) && (right_leftAudioSource != null))
@@ -724,13 +793,26 @@ public class Player : MovingObject
             right_leftAudioSource.PlayDelayed(rightDelay);
             // print("Right played! Delay = " + rightDelay.ToString());
         }
+        if ((leftFrontAudioSource != null) && (leftFront_rightAudioSource != null))
+        {
+            leftFrontDelay = 2.12132f / 340;
+            leftFrontAudioSource.PlayDelayed(leftFrontDelay);
+            leftFront_rightAudioSource.PlayDelayed(leftFrontDelay);
+            // print("Left front played! Delay = " + leftFrontDelay.ToString());
+        }
+        if ((rightFrontAudioSource != null) && (rightFront_leftAudioSource != null))
+        {
+            rightFrontDelay = 2.12132f / 340;
+            rightFrontAudioSource.PlayDelayed(rightFrontDelay);
+            rightFront_leftAudioSource.PlayDelayed(rightFrontDelay);
+            // print("Right front played! Delay = " + rightFrontDelay.ToString());
+        }
         if ((leftEndAudioSource != null) && (leftEnd_rightAudioSource != null))
         {
             leftEndDelay = (1.5f * stepsToLeftEnd + 0.75f) * 2 / 340;
             leftEndAudioSource.PlayDelayed(leftEndDelay);
             leftEnd_rightAudioSource.PlayDelayed(leftEndDelay);
             // print("Left End is " + stepsToLeftEnd + " steps away! Delay = " + leftEndDelay.ToString());
-            // print("Left End Volume = " + leftEndAudioSource.volume);
         }
         if ((rightEndAudioSource != null) && (rightEnd_leftAudioSource != null))
         {
@@ -738,16 +820,14 @@ public class Player : MovingObject
             rightEndAudioSource.PlayDelayed(rightEndDelay);
             rightEnd_leftAudioSource.PlayDelayed(rightEndDelay);
             // print("Right End is " + stepsToRightEnd + " steps away! Delay = " + rightEndDelay.ToString());
-            // print("Right End Volume = " + rightEndAudioSource.volume);
         }
 
         frontDelay = (1.5f * stepsToFrontWall + 0.75f) * 2 / 340;
         frontAudioSource.PlayDelayed(frontDelay);
         // print("Front Wall is " + stepsToFrontWall + " steps away! Delay = " + frontDelay.ToString());
-        // print("Front Wall Volume = " + frontAudioSource.volume);
 
         float waitTime = 0.0f;
-        float[] delayTimes = { leftDelay, rightDelay, leftEndDelay, rightEndDelay, frontDelay };
+        float[] delayTimes = { leftDelay, rightDelay, leftFrontDelay, rightFrontDelay, leftEndDelay, rightEndDelay, frontDelay };
 
         StartCoroutine(FinishedEchoClip(waitTime, delayTimes));
 
