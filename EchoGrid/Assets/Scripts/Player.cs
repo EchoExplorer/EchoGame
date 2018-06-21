@@ -508,32 +508,24 @@ public class Player : MovingObject
         AudioSource[] frontAudios = null, leftAudios = null, left_rightAudios = null, rightAudios = null, right_leftAudios = null, leftFrontAudios = null, leftFront_rightAudios = null, rightFrontAudios = null, rightFront_leftAudios = null, leftEndAudios = null, leftEnd_rightAudios = null, rightEndAudios = null, rightEnd_leftAudios = null;
         AudioSource frontAudioSource = null, leftAudioSource = null, left_rightAudioSource = null, rightAudioSource = null, right_leftAudioSource = null, leftFrontAudioSource = null, leftFront_rightAudioSource = null, rightFrontAudioSource = null, rightFront_leftAudioSource = null, leftEndAudioSource = null, leftEnd_rightAudioSource = null, rightEndAudioSource = null, rightEnd_leftAudioSource = null;
         AnimationCurve dbCurve = new AnimationCurve();
-        dbCurve.AddKey(1.0f, 1.000f);
-        dbCurve.AddKey(2.0f, 0.472f);
-        dbCurve.AddKey(3.0f, 0.325f);
-        dbCurve.AddKey(4.0f, 0.265f);
-        dbCurve.AddKey(5.0f, 0.227f);
-        dbCurve.AddKey(6.0f, 0.200f);
-        dbCurve.AddKey(7.0f, 0.177f);
-        dbCurve.AddKey(8.0f, 0.160f);
-        dbCurve.AddKey(9.0f, 0.149f);
+        dbCurve.AddKey(1.0f, 1.0000f);
+        dbCurve.AddKey(2.0f, 0.3550f);
+        dbCurve.AddKey(3.0f, 0.2150f);
+        dbCurve.AddKey(4.0f, 0.1620f);
+        dbCurve.AddKey(5.0f, 0.1305f);
+        dbCurve.AddKey(6.0f, 0.0990f);
+        dbCurve.AddKey(7.0f, 0.0840f);
+        dbCurve.AddKey(8.0f, 0.0715f);
+        dbCurve.AddKey(9.0f, 0.0640f);
 
         frontAudios = frontWall.GetComponents<AudioSource>();
-        if (frontAudios.Length == 0)
-        {         
-            frontWall.AddComponent<AudioSource>();
-            frontWall.AddComponent<AudioSource>();
-            frontWall.AddComponent<AudioSource>();
-            frontAudios = frontWall.GetComponents<AudioSource>();
-        }
+
         if (frontAudios.Length == 3)
-        {
+        { 
             frontAudioSource = frontAudios[0];
             frontAudioSource.clip = echofront;
-            frontAudioSource.rolloffMode = AudioRolloffMode.Custom;
-            frontAudioSource.outputAudioMixerGroup = mixerGroup;            
+            frontAudioSource.rolloffMode = AudioRolloffMode.Custom;        
             frontAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
-            frontAudioSource.panStereo = 0.0f;
             frontAudioSource.spatialBlend = 1.0f;
             // frontAudioSource.dopplerLevel = 0.0f;
             frontAudioSource.minDistance = 1;
@@ -544,22 +536,13 @@ public class Player : MovingObject
         {
             leftAudios = leftWall.GetComponents<AudioSource>();
             left_rightAudios = leftWall.GetComponents<AudioSource>();
-            if ((leftAudios.Length == 0) && (left_rightAudios.Length == 0))
-            {
-                leftWall.AddComponent<AudioSource>();
-                leftWall.AddComponent<AudioSource>();
-                leftWall.AddComponent<AudioSource>();
-                leftAudios = leftWall.GetComponents<AudioSource>();
-                left_rightAudios = leftWall.GetComponents<AudioSource>();
-            }
+
             if ((leftAudios.Length == 3) && (left_rightAudios.Length == 3))
             {
                 leftAudioSource = leftAudios[1];
                 leftAudioSource.clip = echoleft;
                 leftAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                leftAudioSource.outputAudioMixerGroup = mixerGroup;
                 leftAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
-                leftAudioSource.panStereo = -1.0f;
                 leftAudioSource.spatialBlend = 1.0f;
                 // leftAudioSource.dopplerLevel = 0.0f;
                 leftAudioSource.minDistance = 1;
@@ -568,9 +551,7 @@ public class Player : MovingObject
                 left_rightAudioSource = left_rightAudios[2];
                 left_rightAudioSource.clip = echoleft_right;
                 left_rightAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                left_rightAudioSource.outputAudioMixerGroup = mixerGroup;
                 left_rightAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
-                left_rightAudioSource.panStereo = 1.0f;
                 left_rightAudioSource.spatialBlend = 1.0f;
                 // left_rightAudioSource.dopplerLevel = 0.0f;
                 left_rightAudioSource.minDistance = 1;
@@ -580,23 +561,14 @@ public class Player : MovingObject
         if (leftFrontWall != null)
         {
             leftFrontAudios = leftFrontWall.GetComponents<AudioSource>();
-            leftFront_rightAudios = leftFrontWall.GetComponents<AudioSource>();
-            if ((leftFrontAudios.Length == 0) && (leftFront_rightAudios.Length == 0))
-            {
-                leftFrontWall.AddComponent<AudioSource>();
-                leftFrontWall.AddComponent<AudioSource>();
-                leftFrontWall.AddComponent<AudioSource>();
-                leftFrontAudios = leftFrontWall.GetComponents<AudioSource>();
-                leftFront_rightAudios = leftFrontWall.GetComponents<AudioSource>();
-            }
+            leftFront_rightAudios = leftFrontWall.GetComponents<AudioSource>();  
+            
             if ((leftFrontAudios.Length == 3) && (leftFront_rightAudios.Length == 3))
             {
                 leftFrontAudioSource = leftFrontAudios[1];
                 leftFrontAudioSource.clip = echoleftfront;
                 leftFrontAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                leftFrontAudioSource.outputAudioMixerGroup = mixerGroup;
                 leftFrontAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
-                leftFrontAudioSource.panStereo = -1.0f;
                 leftFrontAudioSource.spatialBlend = 1.0f;
                 // leftFrontAudioSource.dopplerLevel = 0.0f;
                 leftFrontAudioSource.minDistance = 1;
@@ -605,9 +577,7 @@ public class Player : MovingObject
                 leftFront_rightAudioSource = leftFront_rightAudios[2];
                 leftFront_rightAudioSource.clip = echoleftfront_right;
                 leftFront_rightAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                leftFront_rightAudioSource.outputAudioMixerGroup = mixerGroup;
                 leftFront_rightAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
-                leftFront_rightAudioSource.panStereo = 1.0f;
                 leftFront_rightAudioSource.spatialBlend = 1.0f;
                 // leftFront_rightAudioSource.dopplerLevel = 0.0f;
                 leftFront_rightAudioSource.minDistance = 1;
@@ -618,22 +588,13 @@ public class Player : MovingObject
         {
             leftEndAudios = leftEndWall.GetComponents<AudioSource>();
             leftEnd_rightAudios = leftEndWall.GetComponents<AudioSource>();
-            if ((leftEndAudios.Length == 0) && (leftEnd_rightAudios.Length == 0))
-            {
-                leftEndWall.AddComponent<AudioSource>();
-                leftEndWall.AddComponent<AudioSource>();
-                leftEndWall.AddComponent<AudioSource>();
-                leftEndAudios = leftEndWall.GetComponents<AudioSource>();
-                leftEnd_rightAudios = leftEndWall.GetComponents<AudioSource>();
-            }
+            
             if ((leftEndAudios.Length == 3) && (leftEnd_rightAudios.Length == 3))
             {
                 leftEndAudioSource = leftEndAudios[1];
                 leftEndAudioSource.clip = echoleftend;
                 leftEndAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                leftEndAudioSource.outputAudioMixerGroup = mixerGroup;
                 leftEndAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
-                leftEndAudioSource.panStereo = -1.0f;
                 leftEndAudioSource.spatialBlend = 1.0f;
                 // leftEndAudioSource.dopplerLevel = 0.0f;
                 leftEndAudioSource.minDistance = 1;
@@ -642,9 +603,7 @@ public class Player : MovingObject
                 leftEnd_rightAudioSource = leftEnd_rightAudios[2];
                 leftEnd_rightAudioSource.clip = echoleftend_right;
                 leftEnd_rightAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                leftEnd_rightAudioSource.outputAudioMixerGroup = mixerGroup;
                 leftEnd_rightAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
-                leftEnd_rightAudioSource.panStereo = 1.0f;
                 leftEnd_rightAudioSource.spatialBlend = 1.0f;
                 // leftEnd_rightAudioSource.dopplerLevel = 0.0f;
                 leftEnd_rightAudioSource.minDistance = 1;
@@ -655,22 +614,13 @@ public class Player : MovingObject
         {
             rightAudios = rightWall.GetComponents<AudioSource>();
             right_leftAudios = rightWall.GetComponents<AudioSource>();
-            if ((rightAudios.Length == 0) && (right_leftAudios.Length == 0))
-            {
-                rightWall.AddComponent<AudioSource>();
-                rightWall.AddComponent<AudioSource>();
-                rightWall.AddComponent<AudioSource>();
-                rightAudios = rightWall.GetComponents<AudioSource>();
-                right_leftAudios = rightWall.GetComponents<AudioSource>();
-            }
+
             if ((rightAudios.Length == 3) && (right_leftAudios.Length == 3))
             {
                 rightAudioSource = rightAudios[1];
                 rightAudioSource.clip = echoright;
                 rightAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                rightAudioSource.outputAudioMixerGroup = mixerGroup;
                 rightAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
-                rightAudioSource.panStereo = 1.0f;
                 rightAudioSource.spatialBlend = 1.0f;
                 // rightAudioSource.dopplerLevel = 0.0f;
                 rightAudioSource.minDistance = 1;
@@ -679,9 +629,7 @@ public class Player : MovingObject
                 right_leftAudioSource = right_leftAudios[2];
                 right_leftAudioSource.clip = echoright_left;
                 right_leftAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                right_leftAudioSource.outputAudioMixerGroup = mixerGroup;
                 right_leftAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
-                right_leftAudioSource.panStereo = -1.0f;
                 right_leftAudioSource.spatialBlend = 1.0f;
                 // right_leftAudioSource.dopplerLevel = 0.0f;
                 right_leftAudioSource.minDistance = 1;
@@ -692,35 +640,24 @@ public class Player : MovingObject
         {
             rightFrontAudios = rightFrontWall.GetComponents<AudioSource>();
             rightFront_leftAudios = rightFrontWall.GetComponents<AudioSource>();
-            if ((rightFrontAudios.Length == 0) && (rightFront_leftAudios.Length == 0))
-            {
-                rightFrontWall.AddComponent<AudioSource>();
-                rightFrontWall.AddComponent<AudioSource>();
-                rightFrontWall.AddComponent<AudioSource>();
-                rightFrontAudios = rightFrontWall.GetComponents<AudioSource>();
-                rightFront_leftAudios = rightFrontWall.GetComponents<AudioSource>();
-            }
+
             if ((rightFrontAudios.Length == 3) && (rightFront_leftAudios.Length == 3))
             {
                 rightFrontAudioSource = rightFrontAudios[1];
                 rightFrontAudioSource.clip = echorightfront;
                 rightFrontAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                rightFrontAudioSource.outputAudioMixerGroup = mixerGroup;
                 rightFrontAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
-                rightFrontAudioSource.panStereo = 1.0f;
                 rightFrontAudioSource.spatialBlend = 1.0f;
-                rightFrontAudioSource.dopplerLevel = 0.0f;
+                // rightFrontAudioSource.dopplerLevel = 0.0f;
                 rightFrontAudioSource.minDistance = 1;
                 rightFrontAudioSource.maxDistance = 9;
 
                 rightFront_leftAudioSource = rightFront_leftAudios[2];
                 rightFront_leftAudioSource.clip = echorightfront_left;
                 rightFront_leftAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                rightFront_leftAudioSource.outputAudioMixerGroup = mixerGroup;
                 rightFront_leftAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
-                rightFront_leftAudioSource.panStereo = -1.0f;
                 rightFront_leftAudioSource.spatialBlend = 1.0f;
-                rightFront_leftAudioSource.dopplerLevel = 0.0f;
+                // rightFront_leftAudioSource.dopplerLevel = 0.0f;
                 rightFront_leftAudioSource.minDistance = 1;
                 rightFront_leftAudioSource.maxDistance = 9;
             }
@@ -729,35 +666,24 @@ public class Player : MovingObject
         {
             rightEndAudios = rightEndWall.GetComponents<AudioSource>();
             rightEnd_leftAudios = rightEndWall.GetComponents<AudioSource>();
-            if ((rightEndAudios.Length == 0) && (rightEnd_leftAudios.Length == 0))
-            {
-                rightEndWall.AddComponent<AudioSource>();
-                rightEndWall.AddComponent<AudioSource>();
-                rightEndWall.AddComponent<AudioSource>();
-                rightEndAudios = rightEndWall.GetComponents<AudioSource>();
-                rightEnd_leftAudios = rightEndWall.GetComponents<AudioSource>();
-            }
+
             if ((rightEndAudios.Length == 3) && (rightEnd_leftAudios.Length == 3))
             {
                 rightEndAudioSource = rightEndAudios[1];
                 rightEndAudioSource.clip = echorightend;
                 rightEndAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                rightEndAudioSource.outputAudioMixerGroup = mixerGroup;
                 rightEndAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
-                rightEndAudioSource.panStereo = 1.0f;
                 rightEndAudioSource.spatialBlend = 1.0f;
-                rightEndAudioSource.dopplerLevel = 0.0f;
+                // rightEndAudioSource.dopplerLevel = 0.0f;
                 rightEndAudioSource.minDistance = 1;
                 rightEndAudioSource.maxDistance = 9;
 
                 rightEnd_leftAudioSource = rightEnd_leftAudios[2];
                 rightEnd_leftAudioSource.clip = echorightend_left;
                 rightEnd_leftAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                rightEnd_leftAudioSource.outputAudioMixerGroup = mixerGroup;
                 rightEnd_leftAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
-                rightEnd_leftAudioSource.panStereo = -1.0f;
                 rightEnd_leftAudioSource.spatialBlend = 1.0f;
-                rightEnd_leftAudioSource.dopplerLevel = 0.0f;
+                // rightEnd_leftAudioSource.dopplerLevel = 0.0f;
                 rightEnd_leftAudioSource.minDistance = 1;
                 rightEnd_leftAudioSource.maxDistance = 9;
             }
@@ -820,7 +746,7 @@ public class Player : MovingObject
             rightEndAudioSource.PlayDelayed(rightEndDelay);
             rightEnd_leftAudioSource.PlayDelayed(rightEndDelay);
             // print("Right End is " + stepsToRightEnd + " steps away! Delay = " + rightEndDelay.ToString());
-        }
+        }        
 
         frontDelay = (1.5f * stepsToFrontWall + 0.75f) * 2 / 340;
         frontAudioSource.PlayDelayed(frontDelay);
@@ -2916,16 +2842,14 @@ public class Player : MovingObject
                     if (survey_shown == false)
                     {
 #if UNITY_IOS
-                    yesPressed = false;
-                    noPressed = false;
-                    IOSNative.ShowTwo("Survey", "Would you like to take \n a short survey about the game?", "Yes", "No");
+                        yesPressed = false;
+                        noPressed = false;
+                        IOSNative.ShowTwo("Survey", "Would you like to take \n a short survey about the game?", "Yes", "No");
 #endif
 #if UNITY_ANDROID
-                    ad.clearflag();
-                    ad.DisplayAndroidWindow("Survey", "Would you like to take \n a short survey about the game?", AndroidDialogue.DialogueType.NORMAL);
-#endif
-
-                        
+                        ad.clearflag();
+                        ad.DisplayAndroidWindow("Survey", "Would you like to take \n a short survey about the game?", AndroidDialogue.DialogueType.NORMAL);
+#endif                        
                         survey_shown = true;
                         debugPlayerInfo = "Showing survey.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
@@ -2967,8 +2891,7 @@ public class Player : MovingObject
 #if UNITY_ANDROID
                         ad.clearflag();
                         ad.DisplayAndroidWindow("Survey Code", codemsg, AndroidDialogue.DialogueType.YESONLY);
-#endif
-                        
+#endif                        
                     }                    
                     if ((survey_shown == true) && (URL_shown == false) && (ad.yesclicked() || yesPressed == true) && (code_entered == true))
                     {
@@ -3109,7 +3032,8 @@ public class Player : MovingObject
                     "first time will direct users to a consent form. This consent process will only happen once. Users will " +                   
                     "first go through a tutorial. Users will need to wear headphones in both ears. After a certain number of " +
                     "levels have been played, an 18-question survey regarding the user experience and visual acuity will " +
-                    "appear. This survey will only happen once.";
+                    "appear. This survey will only happen once. sers will play the game for as long as they want to but " +
+                    "data collection will end after 50 hours of game play.";
 
 #if UNITY_IOS
                 IOSNative.ShowTwo(title, message, "Next", "Back");
@@ -3604,46 +3528,7 @@ public class Player : MovingObject
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, () => {
                     canRepeat = true;
-
-                    /*
-                    string filename = Application.persistentDataPath + "consentIDs";
-
-                    if (consentSurveyCode == "")
-                    {
-                        int[] consentIDs = new int[1000000];
-                        bool foundCode = false;
-                        int code;
-                        System.Random rand = new System.Random();
-
-                        if (System.IO.File.Exists(filename))
-                        {
-                            string[] svdata_split = System.IO.File.ReadAllLines(filename);
-                            consentIDs = Array.ConvertAll<string, int>(svdata_split, int.Parse);
-                        }
-
-                        while (foundCode == false)
-                        {
-                            code = rand.Next(100000, 1000000);
-                            bool codeUsed = false;
-                            foreach (int id in consentIDs)
-                            {
-                                if ((id == code) && (id != 432371) && (id != 954737) && (id != 715952) && (id != 143220) && (id != 679984) && (id != 567502) && (id != 963907) && (id != 582651) && (id != 726257) && (id != 367892) && (id != 886456) && (id != 726564) && (id != 796933) && (id != 813614) && (id != 384017) && (id != 818727) && (id != 581639) && (id != 419523) && (id != 664476) && (id != 457282) && (id != 360863))
-                                {
-                                    print("Code " + code.ToString() + " already used.");
-                                    codeUsed = true;
-                                }
-                            }
-                            if (codeUsed == false)
-                            {
-                                print("Code Found: " + code.ToString());
-                                System.IO.File.WriteAllText(filename, code.ToString());
-                                consentSurveyCode = code.ToString();
-                                reportConsent(consentSurveyCode);
-                                foundCode = true;
-                            }
-                        }
-                    }
-                    */
+                    reportConsent(SystemInfo.deviceUniqueIdentifier);                   
                 }, 1, null, true);
 #if UNITY_IOS
                 yesPressed = false;
@@ -4509,43 +4394,7 @@ public class Player : MovingObject
                             question3 = true;
                             finished_questions = true;
 
-                            string filename = Application.persistentDataPath + "consentIDs";
-
-                            if (consentSurveyCode == "")
-                            {
-                                int[] consentIDs = new int[1000000];
-                                bool foundCode = false;
-                                int code;
-                                System.Random rand = new System.Random();
-
-                                if (System.IO.File.Exists(filename))
-                                {
-                                    string[] svdata_split = System.IO.File.ReadAllLines(filename);
-                                    consentIDs = Array.ConvertAll<string, int>(svdata_split, int.Parse);
-                                }
-
-                                while (foundCode == false)
-                                {
-                                    code = rand.Next(100000, 1000000);
-                                    bool codeUsed = false;
-                                    foreach (int id in consentIDs)
-                                    {
-                                        if ((id == code) && (id != 432371) && (id != 954737) && (id != 715952) && (id != 143220) && (id != 679984) && (id != 567502) && (id != 963907) && (id != 582651) && (id != 726257) && (id != 367892) && (id != 886456) && (id != 726564) && (id != 796933) && (id != 813614) && (id != 384017) && (id != 818727) && (id != 581639) && (id != 419523) && (id != 664476) && (id != 457282) && (id != 360863))
-                                        {
-                                            print("Code " + code.ToString() + " already used.");
-                                            codeUsed = true;
-                                        }
-                                    }
-                                    if (codeUsed == false)
-                                    {
-                                        print("Code Found: " + code.ToString());
-                                        System.IO.File.WriteAllText(filename, code.ToString());
-                                        consentSurveyCode = code.ToString();
-                                        reportConsent(consentSurveyCode);
-                                        foundCode = true;
-                                    }
-                                }
-                            }
+                            reportConsent(SystemInfo.deviceUniqueIdentifier);
                         }
                         else if ((hearingConsentForm == true) && (answeredQuestion1 == false))
                         {
@@ -4577,44 +4426,7 @@ public class Player : MovingObject
                             SoundManager.instance.PlayClips(clips, null, 0, () => {
                                 canRepeat = true;
                                 hasCheckedForConsent = true;
-
-                                string filename = Application.persistentDataPath + "consentIDs";
-
-                                if (consentSurveyCode == "")
-                                {
-                                    int[] consentIDs = new int[1000000];
-                                    bool foundCode = false;
-                                    int code;
-                                    System.Random rand = new System.Random();
-
-                                    if (System.IO.File.Exists(filename))
-                                    {
-                                        string[] svdata_split = System.IO.File.ReadAllLines(filename);
-                                        consentIDs = Array.ConvertAll<string, int>(svdata_split, int.Parse);
-                                    }
-
-                                    while (foundCode == false)
-                                    {
-                                        code = rand.Next(100000, 1000000);
-                                        bool codeUsed = false;
-                                        foreach (int id in consentIDs)
-                                        {
-                                            if ((id == code) && (id != 432371) && (id != 954737) && (id != 715952) && (id != 143220) && (id != 679984) && (id != 567502) && (id != 963907) && (id != 582651) && (id != 726257) && (id != 367892) && (id != 886456) && (id != 726564) && (id != 796933) && (id != 813614) && (id != 384017) && (id != 818727) && (id != 581639) && (id != 419523) && (id != 664476) && (id != 457282) && (id != 360863))
-                                            {
-                                                print("Code " + code.ToString() + " already used.");
-                                                codeUsed = true;
-                                            }
-                                        }
-                                        if (codeUsed == false)
-                                        {
-                                            print("Code Found: " + code.ToString());
-                                            System.IO.File.WriteAllText(filename, code.ToString());
-                                            consentSurveyCode = code.ToString();
-                                            reportConsent(consentSurveyCode);
-                                            foundCode = true;
-                                        }
-                                    }
-                                }
+                                reportConsent(SystemInfo.deviceUniqueIdentifier);
                             }, 1, null, true);
                         }
                         else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (finished_questions == true) && ((question1 == false) || (question2 == false) || (question3 == false)))
@@ -6282,44 +6094,7 @@ public class Player : MovingObject
                             SoundManager.instance.PlayClips(clips, null, 0, () => {
                                 canRepeat = true;
                                 hasCheckedForConsent = true;
-
-                                string filename = Application.persistentDataPath + "consentIDs";
-
-                                if (consentSurveyCode == "")
-                                {
-                                    int[] consentIDs = new int[1000000];
-                                    bool foundCode = false;
-                                    int code;
-                                    System.Random rand = new System.Random();
-
-                                    if (System.IO.File.Exists(filename))
-                                    {
-                                        string[] svdata_split = System.IO.File.ReadAllLines(filename);
-                                        consentIDs = Array.ConvertAll<string, int>(svdata_split, int.Parse);
-                                    }
-
-                                    while (foundCode == false)
-                                    {
-                                        code = rand.Next(100000, 1000000);
-                                        bool codeUsed = false;
-                                        foreach (int id in consentIDs)
-                                        {
-                                            if ((id == code) && (id != 432371) && (id != 954737) && (id != 715952) && (id != 143220) && (id != 679984) && (id != 567502) && (id != 963907) && (id != 582651) && (id != 726257) && (id != 367892) && (id != 886456) && (id != 726564) && (id != 796933) && (id != 813614) && (id != 384017) && (id != 818727) && (id != 581639) && (id != 419523) && (id != 664476) && (id != 457282) && (id != 360863))
-                                            {
-                                                print("Code " + code.ToString() + " already used.");
-                                                codeUsed = true;
-                                            }
-                                        }
-                                        if (codeUsed == false)
-                                        {
-                                            print("Code Found: " + code.ToString());
-                                            System.IO.File.WriteAllText(filename, code.ToString());
-                                            consentSurveyCode = code.ToString();
-                                            reportConsent(consentSurveyCode);
-                                            foundCode = true;
-                                        }
-                                    }
-                                }
+                                reportConsent(SystemInfo.deviceUniqueIdentifier);
                             }, 1, null, true);
                         }
                         else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (finished_questions == true) && ((question1 == false) || (question2 == false) || (question3 == false)))
