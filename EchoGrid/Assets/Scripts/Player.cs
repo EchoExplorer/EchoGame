@@ -507,16 +507,66 @@ public class Player : MovingObject
 
         AudioSource[] frontAudios = null, leftAudios = null, left_rightAudios = null, rightAudios = null, right_leftAudios = null, leftFrontAudios = null, leftFront_rightAudios = null, rightFrontAudios = null, rightFront_leftAudios = null, leftEndAudios = null, leftEnd_rightAudios = null, rightEndAudios = null, rightEnd_leftAudios = null;
         AudioSource frontAudioSource = null, leftAudioSource = null, left_rightAudioSource = null, rightAudioSource = null, right_leftAudioSource = null, leftFrontAudioSource = null, leftFront_rightAudioSource = null, rightFrontAudioSource = null, rightFront_leftAudioSource = null, leftEndAudioSource = null, leftEnd_rightAudioSource = null, rightEndAudioSource = null, rightEnd_leftAudioSource = null;
-        AnimationCurve dbCurve = new AnimationCurve();
-        dbCurve.AddKey(1.0f, 1.0000f);
-        dbCurve.AddKey(2.0f, 0.3550f);
-        dbCurve.AddKey(3.0f, 0.2150f);
-        dbCurve.AddKey(4.0f, 0.1620f);
-        dbCurve.AddKey(5.0f, 0.1305f);
-        dbCurve.AddKey(6.0f, 0.0990f);
-        dbCurve.AddKey(7.0f, 0.0840f);
-        dbCurve.AddKey(8.0f, 0.0715f);
-        dbCurve.AddKey(9.0f, 0.0640f);
+        AnimationCurve dbFrontCurve = new AnimationCurve();
+        // 4 dB loss per doubling of distance.       
+        dbFrontCurve.AddKey(1.0f, 1.0000f);
+        dbFrontCurve.AddKey(2.0f, 0.4940f);
+        dbFrontCurve.AddKey(3.0f, 0.3370f);
+        dbFrontCurve.AddKey(4.0f, 0.2700f);
+        dbFrontCurve.AddKey(5.0f, 0.2250f);
+        dbFrontCurve.AddKey(6.0f, 0.1970f);
+        dbFrontCurve.AddKey(7.0f, 0.1750f);
+        dbFrontCurve.AddKey(8.0f, 0.1560f);
+        dbFrontCurve.AddKey(9.0f, 0.1400f);
+
+        AnimationCurve dbHorizontalCurve = new AnimationCurve();
+        // 4 dB loss per doubling of distance.       
+        dbHorizontalCurve.AddKey(1.0f, 0.5000f);
+        dbHorizontalCurve.AddKey(2.0f, 0.5000f);
+        dbHorizontalCurve.AddKey(3.0f, 0.5000f);
+        dbHorizontalCurve.AddKey(4.0f, 0.5000f);
+        dbHorizontalCurve.AddKey(5.0f, 0.5000f);
+        dbHorizontalCurve.AddKey(6.0f, 0.5000f);
+        dbHorizontalCurve.AddKey(7.0f, 0.5000f);
+        dbHorizontalCurve.AddKey(8.0f, 0.5000f);
+        dbHorizontalCurve.AddKey(9.0f, 0.5000f);
+
+        AnimationCurve db45Curve = new AnimationCurve();
+        // 4 dB loss per doubling of distance.       
+        db45Curve.AddKey(1.0f, 0.5000f);
+        db45Curve.AddKey(2.0f, 0.5000f);
+        db45Curve.AddKey(3.0f, 0.5000f);
+        db45Curve.AddKey(4.0f, 0.5000f);
+        db45Curve.AddKey(5.0f, 0.5000f);
+        db45Curve.AddKey(6.0f, 0.5000f);
+        db45Curve.AddKey(7.0f, 0.5000f);
+        db45Curve.AddKey(8.0f, 0.5000f);
+        db45Curve.AddKey(9.0f, 0.5000f);
+
+        AnimationCurve dbEndCurve = new AnimationCurve();
+        // 4 dB loss per doubling of distance.       
+        dbEndCurve.AddKey(1.0f, 1.0000f);
+        dbEndCurve.AddKey(2.0f, 0.4940f);
+        dbEndCurve.AddKey(3.0f, 0.3370f);
+        dbEndCurve.AddKey(4.0f, 0.2700f);
+        dbEndCurve.AddKey(5.0f, 0.2250f);
+        dbEndCurve.AddKey(6.0f, 0.1970f);
+        dbEndCurve.AddKey(7.0f, 0.1750f);
+        dbEndCurve.AddKey(8.0f, 0.1560f);
+        dbEndCurve.AddKey(9.0f, 0.1400f);
+
+        /*
+        // 6 dB loss per doubling of distance.
+        dbFrontCurve.AddKey(1.0f, 1.0000f);
+        dbFrontCurve.AddKey(2.0f, 0.3550f);
+        dbFrontCurve.AddKey(3.0f, 0.2150f);
+        dbFrontCurve.AddKey(4.0f, 0.1620f);
+        dbFrontCurve.AddKey(5.0f, 0.1305f);
+        dbFrontCurve.AddKey(6.0f, 0.0990f);
+        dbFrontCurve.AddKey(7.0f, 0.0840f);
+        dbFrontCurve.AddKey(8.0f, 0.0715f);
+        dbFrontCurve.AddKey(9.0f, 0.0640f);        
+        */
 
         frontAudios = frontWall.GetComponents<AudioSource>();
 
@@ -525,7 +575,7 @@ public class Player : MovingObject
             frontAudioSource = frontAudios[0];
             frontAudioSource.clip = echofront;
             frontAudioSource.rolloffMode = AudioRolloffMode.Custom;        
-            frontAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
+            frontAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbFrontCurve);
             frontAudioSource.spatialBlend = 1.0f;
             // frontAudioSource.dopplerLevel = 0.0f;
             frontAudioSource.minDistance = 1;
@@ -542,7 +592,7 @@ public class Player : MovingObject
                 leftAudioSource = leftAudios[1];
                 leftAudioSource.clip = echoleft;
                 leftAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                leftAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
+                leftAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbHorizontalCurve);
                 leftAudioSource.spatialBlend = 1.0f;
                 // leftAudioSource.dopplerLevel = 0.0f;
                 leftAudioSource.minDistance = 1;
@@ -551,7 +601,7 @@ public class Player : MovingObject
                 left_rightAudioSource = left_rightAudios[2];
                 left_rightAudioSource.clip = echoleft_right;
                 left_rightAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                left_rightAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
+                left_rightAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbHorizontalCurve);
                 left_rightAudioSource.spatialBlend = 1.0f;
                 // left_rightAudioSource.dopplerLevel = 0.0f;
                 left_rightAudioSource.minDistance = 1;
@@ -568,7 +618,7 @@ public class Player : MovingObject
                 leftFrontAudioSource = leftFrontAudios[1];
                 leftFrontAudioSource.clip = echoleftfront;
                 leftFrontAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                leftFrontAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
+                leftFrontAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, db45Curve);
                 leftFrontAudioSource.spatialBlend = 1.0f;
                 // leftFrontAudioSource.dopplerLevel = 0.0f;
                 leftFrontAudioSource.minDistance = 1;
@@ -577,7 +627,7 @@ public class Player : MovingObject
                 leftFront_rightAudioSource = leftFront_rightAudios[2];
                 leftFront_rightAudioSource.clip = echoleftfront_right;
                 leftFront_rightAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                leftFront_rightAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
+                leftFront_rightAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, db45Curve);
                 leftFront_rightAudioSource.spatialBlend = 1.0f;
                 // leftFront_rightAudioSource.dopplerLevel = 0.0f;
                 leftFront_rightAudioSource.minDistance = 1;
@@ -594,7 +644,7 @@ public class Player : MovingObject
                 leftEndAudioSource = leftEndAudios[1];
                 leftEndAudioSource.clip = echoleftend;
                 leftEndAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                leftEndAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
+                leftEndAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbEndCurve);
                 leftEndAudioSource.spatialBlend = 1.0f;
                 // leftEndAudioSource.dopplerLevel = 0.0f;
                 leftEndAudioSource.minDistance = 1;
@@ -603,7 +653,7 @@ public class Player : MovingObject
                 leftEnd_rightAudioSource = leftEnd_rightAudios[2];
                 leftEnd_rightAudioSource.clip = echoleftend_right;
                 leftEnd_rightAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                leftEnd_rightAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
+                leftEnd_rightAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbEndCurve);
                 leftEnd_rightAudioSource.spatialBlend = 1.0f;
                 // leftEnd_rightAudioSource.dopplerLevel = 0.0f;
                 leftEnd_rightAudioSource.minDistance = 1;
@@ -620,7 +670,7 @@ public class Player : MovingObject
                 rightAudioSource = rightAudios[1];
                 rightAudioSource.clip = echoright;
                 rightAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                rightAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
+                rightAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbHorizontalCurve);
                 rightAudioSource.spatialBlend = 1.0f;
                 // rightAudioSource.dopplerLevel = 0.0f;
                 rightAudioSource.minDistance = 1;
@@ -629,7 +679,7 @@ public class Player : MovingObject
                 right_leftAudioSource = right_leftAudios[2];
                 right_leftAudioSource.clip = echoright_left;
                 right_leftAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                right_leftAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
+                right_leftAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbHorizontalCurve);
                 right_leftAudioSource.spatialBlend = 1.0f;
                 // right_leftAudioSource.dopplerLevel = 0.0f;
                 right_leftAudioSource.minDistance = 1;
@@ -646,7 +696,7 @@ public class Player : MovingObject
                 rightFrontAudioSource = rightFrontAudios[1];
                 rightFrontAudioSource.clip = echorightfront;
                 rightFrontAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                rightFrontAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
+                rightFrontAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, db45Curve);
                 rightFrontAudioSource.spatialBlend = 1.0f;
                 // rightFrontAudioSource.dopplerLevel = 0.0f;
                 rightFrontAudioSource.minDistance = 1;
@@ -655,7 +705,7 @@ public class Player : MovingObject
                 rightFront_leftAudioSource = rightFront_leftAudios[2];
                 rightFront_leftAudioSource.clip = echorightfront_left;
                 rightFront_leftAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                rightFront_leftAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
+                rightFront_leftAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, db45Curve);
                 rightFront_leftAudioSource.spatialBlend = 1.0f;
                 // rightFront_leftAudioSource.dopplerLevel = 0.0f;
                 rightFront_leftAudioSource.minDistance = 1;
@@ -672,7 +722,7 @@ public class Player : MovingObject
                 rightEndAudioSource = rightEndAudios[1];
                 rightEndAudioSource.clip = echorightend;
                 rightEndAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                rightEndAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
+                rightEndAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbEndCurve);
                 rightEndAudioSource.spatialBlend = 1.0f;
                 // rightEndAudioSource.dopplerLevel = 0.0f;
                 rightEndAudioSource.minDistance = 1;
@@ -681,7 +731,7 @@ public class Player : MovingObject
                 rightEnd_leftAudioSource = rightEnd_leftAudios[2];
                 rightEnd_leftAudioSource.clip = echorightend_left;
                 rightEnd_leftAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                rightEnd_leftAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbCurve);
+                rightEnd_leftAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbEndCurve);
                 rightEnd_leftAudioSource.spatialBlend = 1.0f;
                 // rightEnd_leftAudioSource.dopplerLevel = 0.0f;
                 rightEnd_leftAudioSource.minDistance = 1;
@@ -705,50 +755,50 @@ public class Player : MovingObject
         SoundManager.instance.PlaySingle(attenuatedClick);
         // SoundManager.instance.PlaySingle(pulse);
 
-        if ((leftAudioSource != null) && (left_rightAudioSource != null))
+        if ((leftAudioSource != null) && (left_rightAudioSource != null) && (leftWall != null))
         {
-            leftDelay = 1.5f / 340;
+            leftDelay = (1.5f / 340) + 0.5f;
             leftAudioSource.PlayDelayed(leftDelay);
             left_rightAudioSource.PlayDelayed(leftDelay);
             // print("Left played! Delay = " + leftDelay.ToString());
         }
-        if ((rightAudioSource != null) && (right_leftAudioSource != null))
+        if ((rightAudioSource != null) && (right_leftAudioSource != null) && (rightWall != null))
         {
-            rightDelay = 1.5f / 340;
+            rightDelay = (1.5f / 340);
             rightAudioSource.PlayDelayed(rightDelay);
             right_leftAudioSource.PlayDelayed(rightDelay);
             // print("Right played! Delay = " + rightDelay.ToString());
         }
-        if ((leftFrontAudioSource != null) && (leftFront_rightAudioSource != null))
+        if ((leftFrontAudioSource != null) && (leftFront_rightAudioSource != null) && (leftFrontWall != null) && (leftEndWall == null) && (rightEndWall == null))
         {
-            leftFrontDelay = 2.12132f / 340;
+            leftFrontDelay = (2.12132f / 34);
             leftFrontAudioSource.PlayDelayed(leftFrontDelay);
             leftFront_rightAudioSource.PlayDelayed(leftFrontDelay);
             // print("Left front played! Delay = " + leftFrontDelay.ToString());
         }
-        if ((rightFrontAudioSource != null) && (rightFront_leftAudioSource != null))
+        if ((rightFrontAudioSource != null) && (rightFront_leftAudioSource != null) && (rightFrontWall != null) && (leftEndWall == null) && (rightEndWall == null))
         {
-            rightFrontDelay = 2.12132f / 340;
+            rightFrontDelay = (2.12132f / 340);
             rightFrontAudioSource.PlayDelayed(rightFrontDelay);
             rightFront_leftAudioSource.PlayDelayed(rightFrontDelay);
             // print("Right front played! Delay = " + rightFrontDelay.ToString());
         }
-        if ((leftEndAudioSource != null) && (leftEnd_rightAudioSource != null))
+        if ((leftEndAudioSource != null) && (leftEnd_rightAudioSource != null) && (leftEndWall != null))
         {
-            leftEndDelay = (1.5f * stepsToLeftEnd + 0.75f) * 2 / 340;
+            leftEndDelay = ((1.5f * stepsToLeftEnd + 0.75f) * 2 / 340);
             leftEndAudioSource.PlayDelayed(leftEndDelay);
             leftEnd_rightAudioSource.PlayDelayed(leftEndDelay);
             // print("Left End is " + stepsToLeftEnd + " steps away! Delay = " + leftEndDelay.ToString());
         }
-        if ((rightEndAudioSource != null) && (rightEnd_leftAudioSource != null))
+        if ((rightEndAudioSource != null) && (rightEnd_leftAudioSource != null) && (rightEndWall != null))
         {
-            rightEndDelay = (1.5f * stepsToRightEnd + 0.75f) * 2 / 340;
+            rightEndDelay = ((1.5f * stepsToRightEnd + 0.75f) * 2 / 340);
             rightEndAudioSource.PlayDelayed(rightEndDelay);
             rightEnd_leftAudioSource.PlayDelayed(rightEndDelay);
             // print("Right End is " + stepsToRightEnd + " steps away! Delay = " + rightEndDelay.ToString());
-        }        
+        }
 
-        frontDelay = (1.5f * stepsToFrontWall + 0.75f) * 2 / 340;
+        frontDelay = ((1.5f * stepsToFrontWall + 0.75f) * 2 / 340);
         frontAudioSource.PlayDelayed(frontDelay);
         // print("Front Wall is " + stepsToFrontWall + " steps away! Delay = " + frontDelay.ToString());
 
@@ -810,7 +860,7 @@ public class Player : MovingObject
         yield return new WaitForSeconds(waitTime);
 
         finishedEcho = true;
-        print("Finished echo.");
+        print("Finished echo.");    
     }
 
     string post_act = "";
@@ -2838,7 +2888,6 @@ public class Player : MovingObject
                 // pop up the survey at the end of tutorial        
                 if ((GameManager.instance.level == 11) && (survey_activated == true))
                 {
-                    print("At survey");
                     if (survey_shown == false)
                     {
 #if UNITY_IOS
@@ -3032,7 +3081,7 @@ public class Player : MovingObject
                     "first time will direct users to a consent form. This consent process will only happen once. Users will " +                   
                     "first go through a tutorial. Users will need to wear headphones in both ears. After a certain number of " +
                     "levels have been played, an 18-question survey regarding the user experience and visual acuity will " +
-                    "appear. This survey will only happen once. sers will play the game for as long as they want to but " +
+                    "appear. This survey will only happen once. Users will play the game for as long as they want to but " +
                     "data collection will end after 50 hours of game play.";
 
 #if UNITY_IOS

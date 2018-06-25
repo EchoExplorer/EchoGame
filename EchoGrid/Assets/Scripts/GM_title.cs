@@ -458,10 +458,11 @@ public class GM_title : MonoBehaviour
 
             string title = "Procedures";
             string message = "App users will install a free app on their phone named EchoAdventure. Launching the app for the " +
-                "first time will direct users to a consent form. This consent process will only happen once. Users will " +
-                "first go through a tutorial. Users will need to wear headphones in both ears. After a certain number of " +
-                "levels have been played, an 18-question survey regarding the user experience and visual acuity will " +
-                "appear. This survey will only happen once.";
+                    "first time will direct users to a consent form. This consent process will only happen once. Users will " +
+                    "first go through a tutorial. Users will need to wear headphones in both ears. After a certain number of " +
+                    "levels have been played, an 18-question survey regarding the user experience and visual acuity will " +
+                    "appear. This survey will only happen once. Users will play the game for as long as they want to but " +
+                    "data collection will end after 50 hours of game play.";
 
 #if UNITY_IOS
             IOSNative.ShowTwoG(title, message, "Next", "Back");
