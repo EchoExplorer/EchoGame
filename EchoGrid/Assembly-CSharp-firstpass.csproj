@@ -54,10 +54,10 @@
      <Compile Include="Assets\Plugins\SimpleJSON.cs" />
      <None Include="Assets\Plugins\Android\AndroidManifest.xml" />
  <Reference Include="UnityEditor.StandardEvents">
- <HintPath>C:/Users/hellerlab/Desktop/Echo Adventure 6.4.2/EchoGame/EchoGrid/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
+ <HintPath>C:/Users/hellerlab/Desktop/Current Echo Adventure/EchoGame/EchoGrid/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
  </Reference>
  <Reference Include="Unity.PackageManagerUI.Editor">
- <HintPath>C:/Users/hellerlab/Desktop/Echo Adventure 6.4.2/EchoGame/EchoGrid/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
+ <HintPath>C:/Users/hellerlab/Desktop/Current Echo Adventure/EchoGame/EchoGrid/Library/ScriptAssemblies/Unity.PackageManagerUI.Editor.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.AIModule">
  <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>
@@ -249,10 +249,10 @@
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnitySpatialTracking/RuntimeEditor/UnityEngine.SpatialTracking.dll</HintPath>
  </Reference>
  <Reference Include="System.Data">
- <HintPath>C:/Users/hellerlab/Desktop/Echo Adventure 6.4.2/EchoGame/EchoGrid/Assets/Plugins/System.Data.dll</HintPath>
+ <HintPath>C:/Users/hellerlab/Desktop/Current Echo Adventure/EchoGame/EchoGrid/Assets/Plugins/System.Data.dll</HintPath>
  </Reference>
  <Reference Include="Mono.Data.Sqlite">
- <HintPath>C:/Users/hellerlab/Desktop/Echo Adventure 6.4.2/EchoGame/EchoGrid/Assets/Scripts/Database/Mono.Data.Sqlite.dll</HintPath>
+ <HintPath>C:/Users/hellerlab/Desktop/Current Echo Adventure/EchoGame/EchoGrid/Assets/Scripts/Database/Mono.Data.Sqlite.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.Analytics">
  <HintPath>C:/Users/hellerlab/AppData/Local/Unity/cache/packages/packages.unity.com/com.unity.analytics@2.0.16/UnityEngine.Analytics.dll</HintPath>

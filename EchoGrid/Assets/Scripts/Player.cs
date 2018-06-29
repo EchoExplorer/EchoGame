@@ -386,35 +386,35 @@ public class Player : MovingObject
             rightFrontWall = GameObject.Find("Wall_" + (x - 1) + "_" + (y - 1));
         }
 
-        int stepsToFrontWall = 0;
-        int stepsToLeftEnd = 0;
-        int stepsToRightEnd = 0;
+        float stepsToFrontWall = 0.0f;
+        float stepsToLeftEnd = 0.0f;
+        float stepsToRightEnd = 0.0f;
         if (leftWall == null)
         {
             while (leftEndWall == null)
             {
                 if ((dir_x > 0) && (dir_y == 0))
                 {
-                    leftEndWall = GameObject.Find("Wall_" + x + "_" + (y + (stepsToLeftEnd + 1)));
+                    leftEndWall = GameObject.Find("Wall_" + x + "_" + (y + (stepsToLeftEnd + 1.0f)));
                 }
 
                 if ((dir_x < 0) && (dir_y == 0))
                 {
-                    leftEndWall = GameObject.Find("Wall_" + x + "_" + (y - (stepsToLeftEnd + 1)));
+                    leftEndWall = GameObject.Find("Wall_" + x + "_" + (y - (stepsToLeftEnd + 1.0f)));
                 }
 
                 if ((dir_x == 0) && (dir_y > 0))
                 {
-                    leftEndWall = GameObject.Find("Wall_" + (x - (stepsToLeftEnd + 1)) + "_" + y);
+                    leftEndWall = GameObject.Find("Wall_" + (x - (stepsToLeftEnd + 1.0f)) + "_" + y);
                 }
 
                 if ((dir_x == 0) && (dir_y < 0))
                 {
-                    leftEndWall = GameObject.Find("Wall_" + (x + (stepsToLeftEnd + 1)) + "_" + y);
+                    leftEndWall = GameObject.Find("Wall_" + (x + (stepsToLeftEnd + 1.0f)) + "_" + y);
                 }
-                stepsToLeftEnd += 1;
+                stepsToLeftEnd += 1.0f;
             }
-            stepsToLeftEnd -= 1;
+            stepsToLeftEnd -= 1.0f;
         }
         if (rightWall == null)
         {
@@ -422,22 +422,22 @@ public class Player : MovingObject
             {
                 if ((dir_x > 0) && (dir_y == 0))
                 {
-                    rightEndWall = GameObject.Find("Wall_" + x + "_" + (y - (stepsToRightEnd + 1)));
+                    rightEndWall = GameObject.Find("Wall_" + x + "_" + (y - ((int)stepsToRightEnd + 1)));
                 }
 
                 if ((dir_x < 0) && (dir_y == 0))
                 {
-                    rightEndWall = GameObject.Find("Wall_" + x + "_" + (y + (stepsToRightEnd + 1)));
+                    rightEndWall = GameObject.Find("Wall_" + x + "_" + (y + ((int)stepsToRightEnd + 1)));
                 }
 
                 if ((dir_x == 0) && (dir_y > 0))
                 {
-                    rightEndWall = GameObject.Find("Wall_" + (x + (stepsToRightEnd + 1)) + "_" + y);
+                    rightEndWall = GameObject.Find("Wall_" + (x + ((int)stepsToRightEnd + 1)) + "_" + y);
                 }
 
                 if ((dir_x == 0) && (dir_y < 0))
                 {
-                    rightEndWall = GameObject.Find("Wall_" + (x - (stepsToRightEnd + 1)) + "_" + y);
+                    rightEndWall = GameObject.Find("Wall_" + (x - ((int)stepsToRightEnd + 1)) + "_" + y);
                 }
                 stepsToRightEnd += 1;
             }
@@ -448,22 +448,22 @@ public class Player : MovingObject
         {
             if ((dir_x > 0) && (dir_y == 0))
             {
-                frontWall = GameObject.Find("Wall_" + (x + (stepsToFrontWall + 1)) + "_" + y);
+                frontWall = GameObject.Find("Wall_" + (x + ((int)stepsToFrontWall + 1)) + "_" + y);
             }
 
             if ((dir_x < 0) && (dir_y == 0))
             {
-                frontWall = GameObject.Find("Wall_" + (x - (stepsToFrontWall + 1)) + "_" + y);
+                frontWall = GameObject.Find("Wall_" + (x - ((int)stepsToFrontWall + 1)) + "_" + y);
             }
 
             if ((dir_x == 0) && (dir_y > 0))
             {
-                frontWall = GameObject.Find("Wall_" + x + "_" + (y + (stepsToFrontWall + 1)));
+                frontWall = GameObject.Find("Wall_" + x + "_" + (y + ((int)stepsToFrontWall + 1)));
             }
 
             if ((dir_x == 0) && (dir_y < 0))
             {           
-                frontWall = GameObject.Find("Wall_" + x + "_" + (y - (stepsToFrontWall + 1)));
+                frontWall = GameObject.Find("Wall_" + x + "_" + (y - ((int)stepsToFrontWall + 1)));
             }
             stepsToFrontWall += 1;
         }
@@ -507,66 +507,6 @@ public class Player : MovingObject
 
         AudioSource[] frontAudios = null, leftAudios = null, left_rightAudios = null, rightAudios = null, right_leftAudios = null, leftFrontAudios = null, leftFront_rightAudios = null, rightFrontAudios = null, rightFront_leftAudios = null, leftEndAudios = null, leftEnd_rightAudios = null, rightEndAudios = null, rightEnd_leftAudios = null;
         AudioSource frontAudioSource = null, leftAudioSource = null, left_rightAudioSource = null, rightAudioSource = null, right_leftAudioSource = null, leftFrontAudioSource = null, leftFront_rightAudioSource = null, rightFrontAudioSource = null, rightFront_leftAudioSource = null, leftEndAudioSource = null, leftEnd_rightAudioSource = null, rightEndAudioSource = null, rightEnd_leftAudioSource = null;
-        AnimationCurve dbFrontCurve = new AnimationCurve();
-        // 4 dB loss per doubling of distance.       
-        dbFrontCurve.AddKey(1.0f, 1.0000f);
-        dbFrontCurve.AddKey(2.0f, 0.4940f);
-        dbFrontCurve.AddKey(3.0f, 0.3370f);
-        dbFrontCurve.AddKey(4.0f, 0.2700f);
-        dbFrontCurve.AddKey(5.0f, 0.2250f);
-        dbFrontCurve.AddKey(6.0f, 0.1970f);
-        dbFrontCurve.AddKey(7.0f, 0.1750f);
-        dbFrontCurve.AddKey(8.0f, 0.1560f);
-        dbFrontCurve.AddKey(9.0f, 0.1400f);
-
-        AnimationCurve dbHorizontalCurve = new AnimationCurve();
-        // 4 dB loss per doubling of distance.       
-        dbHorizontalCurve.AddKey(1.0f, 0.5000f);
-        dbHorizontalCurve.AddKey(2.0f, 0.5000f);
-        dbHorizontalCurve.AddKey(3.0f, 0.5000f);
-        dbHorizontalCurve.AddKey(4.0f, 0.5000f);
-        dbHorizontalCurve.AddKey(5.0f, 0.5000f);
-        dbHorizontalCurve.AddKey(6.0f, 0.5000f);
-        dbHorizontalCurve.AddKey(7.0f, 0.5000f);
-        dbHorizontalCurve.AddKey(8.0f, 0.5000f);
-        dbHorizontalCurve.AddKey(9.0f, 0.5000f);
-
-        AnimationCurve db45Curve = new AnimationCurve();
-        // 4 dB loss per doubling of distance.       
-        db45Curve.AddKey(1.0f, 0.5000f);
-        db45Curve.AddKey(2.0f, 0.5000f);
-        db45Curve.AddKey(3.0f, 0.5000f);
-        db45Curve.AddKey(4.0f, 0.5000f);
-        db45Curve.AddKey(5.0f, 0.5000f);
-        db45Curve.AddKey(6.0f, 0.5000f);
-        db45Curve.AddKey(7.0f, 0.5000f);
-        db45Curve.AddKey(8.0f, 0.5000f);
-        db45Curve.AddKey(9.0f, 0.5000f);
-
-        AnimationCurve dbEndCurve = new AnimationCurve();
-        // 4 dB loss per doubling of distance.       
-        dbEndCurve.AddKey(1.0f, 1.0000f);
-        dbEndCurve.AddKey(2.0f, 0.4940f);
-        dbEndCurve.AddKey(3.0f, 0.3370f);
-        dbEndCurve.AddKey(4.0f, 0.2700f);
-        dbEndCurve.AddKey(5.0f, 0.2250f);
-        dbEndCurve.AddKey(6.0f, 0.1970f);
-        dbEndCurve.AddKey(7.0f, 0.1750f);
-        dbEndCurve.AddKey(8.0f, 0.1560f);
-        dbEndCurve.AddKey(9.0f, 0.1400f);
-
-        /*
-        // 6 dB loss per doubling of distance.
-        dbFrontCurve.AddKey(1.0f, 1.0000f);
-        dbFrontCurve.AddKey(2.0f, 0.3550f);
-        dbFrontCurve.AddKey(3.0f, 0.2150f);
-        dbFrontCurve.AddKey(4.0f, 0.1620f);
-        dbFrontCurve.AddKey(5.0f, 0.1305f);
-        dbFrontCurve.AddKey(6.0f, 0.0990f);
-        dbFrontCurve.AddKey(7.0f, 0.0840f);
-        dbFrontCurve.AddKey(8.0f, 0.0715f);
-        dbFrontCurve.AddKey(9.0f, 0.0640f);        
-        */
 
         frontAudios = frontWall.GetComponents<AudioSource>();
 
@@ -574,12 +514,8 @@ public class Player : MovingObject
         { 
             frontAudioSource = frontAudios[0];
             frontAudioSource.clip = echofront;
-            frontAudioSource.rolloffMode = AudioRolloffMode.Custom;        
-            frontAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbFrontCurve);
-            frontAudioSource.spatialBlend = 1.0f;
-            // frontAudioSource.dopplerLevel = 0.0f;
-            frontAudioSource.minDistance = 1;
-            frontAudioSource.maxDistance = 9;
+            frontAudioSource.volume = getEchoVolume(stepsToFrontWall, "front");
+            frontAudioSource.panStereo = 0.0f;
         }
 
         if (leftWall != null)
@@ -591,21 +527,13 @@ public class Player : MovingObject
             {
                 leftAudioSource = leftAudios[1];
                 leftAudioSource.clip = echoleft;
-                leftAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                leftAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbHorizontalCurve);
-                leftAudioSource.spatialBlend = 1.0f;
-                // leftAudioSource.dopplerLevel = 0.0f;
-                leftAudioSource.minDistance = 1;
-                leftAudioSource.maxDistance = 9;
+                leftAudioSource.volume = getEchoVolume(0.0f, "left");
+                leftAudioSource.panStereo = -1.0f;
 
                 left_rightAudioSource = left_rightAudios[2];
                 left_rightAudioSource.clip = echoleft_right;
-                left_rightAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                left_rightAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbHorizontalCurve);
-                left_rightAudioSource.spatialBlend = 1.0f;
-                // left_rightAudioSource.dopplerLevel = 0.0f;
-                left_rightAudioSource.minDistance = 1;
-                left_rightAudioSource.maxDistance = 9;
+                left_rightAudioSource.volume = getEchoVolume(0.0f, "left_right");
+                left_rightAudioSource.panStereo = 1.0f;
             }
         }
         if (leftFrontWall != null)
@@ -617,21 +545,13 @@ public class Player : MovingObject
             {
                 leftFrontAudioSource = leftFrontAudios[1];
                 leftFrontAudioSource.clip = echoleftfront;
-                leftFrontAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                leftFrontAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, db45Curve);
-                leftFrontAudioSource.spatialBlend = 1.0f;
-                // leftFrontAudioSource.dopplerLevel = 0.0f;
-                leftFrontAudioSource.minDistance = 1;
-                leftFrontAudioSource.maxDistance = 9;
+                leftFrontAudioSource.volume = getEchoVolume(Mathf.Sqrt(2), "left_front");
+                leftFrontAudioSource.panStereo = -1.0f;
 
                 leftFront_rightAudioSource = leftFront_rightAudios[2];
                 leftFront_rightAudioSource.clip = echoleftfront_right;
-                leftFront_rightAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                leftFront_rightAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, db45Curve);
-                leftFront_rightAudioSource.spatialBlend = 1.0f;
-                // leftFront_rightAudioSource.dopplerLevel = 0.0f;
-                leftFront_rightAudioSource.minDistance = 1;
-                leftFront_rightAudioSource.maxDistance = 9;
+                leftFront_rightAudioSource.volume = getEchoVolume(Mathf.Sqrt(2), "left_front_right");
+                leftFront_rightAudioSource.panStereo = 1.0f;
             }
         }
         if ((leftEndWall != null) && (leftWall == null))
@@ -643,21 +563,13 @@ public class Player : MovingObject
             {
                 leftEndAudioSource = leftEndAudios[1];
                 leftEndAudioSource.clip = echoleftend;
-                leftEndAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                leftEndAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbEndCurve);
-                leftEndAudioSource.spatialBlend = 1.0f;
-                // leftEndAudioSource.dopplerLevel = 0.0f;
-                leftEndAudioSource.minDistance = 1;
-                leftEndAudioSource.maxDistance = 9;
+                leftEndAudioSource.volume = getEchoVolume(stepsToLeftEnd, "left_end");
+                leftEndAudioSource.panStereo = -1.0f;
 
                 leftEnd_rightAudioSource = leftEnd_rightAudios[2];
                 leftEnd_rightAudioSource.clip = echoleftend_right;
-                leftEnd_rightAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                leftEnd_rightAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbEndCurve);
-                leftEnd_rightAudioSource.spatialBlend = 1.0f;
-                // leftEnd_rightAudioSource.dopplerLevel = 0.0f;
-                leftEnd_rightAudioSource.minDistance = 1;
-                leftEnd_rightAudioSource.maxDistance = 9;
+                leftEnd_rightAudioSource.volume = getEchoVolume(stepsToLeftEnd, "left_end_right");
+                leftEnd_rightAudioSource.panStereo = 1.0f;
             }
         }
         if (rightWall != null)
@@ -669,21 +581,13 @@ public class Player : MovingObject
             {
                 rightAudioSource = rightAudios[1];
                 rightAudioSource.clip = echoright;
-                rightAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                rightAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbHorizontalCurve);
-                rightAudioSource.spatialBlend = 1.0f;
-                // rightAudioSource.dopplerLevel = 0.0f;
-                rightAudioSource.minDistance = 1;
-                rightAudioSource.maxDistance = 9;
+                rightAudioSource.volume = getEchoVolume(0.0f, "right");
+                rightAudioSource.panStereo = 1.0f;
 
                 right_leftAudioSource = right_leftAudios[2];
                 right_leftAudioSource.clip = echoright_left;
-                right_leftAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                right_leftAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbHorizontalCurve);
-                right_leftAudioSource.spatialBlend = 1.0f;
-                // right_leftAudioSource.dopplerLevel = 0.0f;
-                right_leftAudioSource.minDistance = 1;
-                right_leftAudioSource.maxDistance = 9;
+                right_leftAudioSource.volume = getEchoVolume(0.0f, "right_left");
+                right_leftAudioSource.panStereo = -1.0f;
             }
         }
         if (rightFrontWall != null)
@@ -695,21 +599,13 @@ public class Player : MovingObject
             {
                 rightFrontAudioSource = rightFrontAudios[1];
                 rightFrontAudioSource.clip = echorightfront;
-                rightFrontAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                rightFrontAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, db45Curve);
-                rightFrontAudioSource.spatialBlend = 1.0f;
-                // rightFrontAudioSource.dopplerLevel = 0.0f;
-                rightFrontAudioSource.minDistance = 1;
-                rightFrontAudioSource.maxDistance = 9;
+                rightFrontAudioSource.volume = getEchoVolume(Mathf.Sqrt(2), "right_front");
+                rightFrontAudioSource.panStereo = 1.0f;
 
                 rightFront_leftAudioSource = rightFront_leftAudios[2];
                 rightFront_leftAudioSource.clip = echorightfront_left;
-                rightFront_leftAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                rightFront_leftAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, db45Curve);
-                rightFront_leftAudioSource.spatialBlend = 1.0f;
-                // rightFront_leftAudioSource.dopplerLevel = 0.0f;
-                rightFront_leftAudioSource.minDistance = 1;
-                rightFront_leftAudioSource.maxDistance = 9;
+                rightFront_leftAudioSource.volume = getEchoVolume(Mathf.Sqrt(2), "right_front_left");
+                rightFront_leftAudioSource.panStereo = -1.0f;
             }
         }
         if ((rightEndWall != null) && (rightWall == null))
@@ -721,21 +617,13 @@ public class Player : MovingObject
             {
                 rightEndAudioSource = rightEndAudios[1];
                 rightEndAudioSource.clip = echorightend;
-                rightEndAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                rightEndAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbEndCurve);
-                rightEndAudioSource.spatialBlend = 1.0f;
-                // rightEndAudioSource.dopplerLevel = 0.0f;
-                rightEndAudioSource.minDistance = 1;
-                rightEndAudioSource.maxDistance = 9;
+                rightEndAudioSource.volume = getEchoVolume(stepsToRightEnd, "right_end");
+                rightEndAudioSource.panStereo = 1.0f;
 
                 rightEnd_leftAudioSource = rightEnd_leftAudios[2];
                 rightEnd_leftAudioSource.clip = echorightend_left;
-                rightEnd_leftAudioSource.rolloffMode = AudioRolloffMode.Custom;
-                rightEnd_leftAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, dbEndCurve);
-                rightEnd_leftAudioSource.spatialBlend = 1.0f;
-                // rightEnd_leftAudioSource.dopplerLevel = 0.0f;
-                rightEnd_leftAudioSource.minDistance = 1;
-                rightEnd_leftAudioSource.maxDistance = 9;
+                rightEnd_leftAudioSource.volume = getEchoVolume(stepsToRightEnd, "right_end_left");
+                rightEnd_leftAudioSource.panStereo = -1.0f;
             }
         }
     
@@ -755,50 +643,50 @@ public class Player : MovingObject
         SoundManager.instance.PlaySingle(attenuatedClick);
         // SoundManager.instance.PlaySingle(pulse);
 
-        if ((leftAudioSource != null) && (left_rightAudioSource != null) && (leftWall != null))
+        if ((leftAudioSource != null) && (left_rightAudioSource != null))
         {
-            leftDelay = (1.5f / 340) + 0.5f;
+            leftDelay = 1.5f / 340;
             leftAudioSource.PlayDelayed(leftDelay);
             left_rightAudioSource.PlayDelayed(leftDelay);
             // print("Left played! Delay = " + leftDelay.ToString());
         }
-        if ((rightAudioSource != null) && (right_leftAudioSource != null) && (rightWall != null))
+        if ((rightAudioSource != null) && (right_leftAudioSource != null))
         {
-            rightDelay = (1.5f / 340);
+            rightDelay = 1.5f / 340;
             rightAudioSource.PlayDelayed(rightDelay);
             right_leftAudioSource.PlayDelayed(rightDelay);
             // print("Right played! Delay = " + rightDelay.ToString());
         }
-        if ((leftFrontAudioSource != null) && (leftFront_rightAudioSource != null) && (leftFrontWall != null) && (leftEndWall == null) && (rightEndWall == null))
+        if ((leftFrontAudioSource != null) && (leftFront_rightAudioSource != null))
         {
-            leftFrontDelay = (2.12132f / 34);
+            leftFrontDelay = 2.12132f / 340;
             leftFrontAudioSource.PlayDelayed(leftFrontDelay);
             leftFront_rightAudioSource.PlayDelayed(leftFrontDelay);
             // print("Left front played! Delay = " + leftFrontDelay.ToString());
         }
-        if ((rightFrontAudioSource != null) && (rightFront_leftAudioSource != null) && (rightFrontWall != null) && (leftEndWall == null) && (rightEndWall == null))
+        if ((rightFrontAudioSource != null) && (rightFront_leftAudioSource != null))
         {
-            rightFrontDelay = (2.12132f / 340);
+            rightFrontDelay = 2.12132f / 340;
             rightFrontAudioSource.PlayDelayed(rightFrontDelay);
             rightFront_leftAudioSource.PlayDelayed(rightFrontDelay);
             // print("Right front played! Delay = " + rightFrontDelay.ToString());
         }
-        if ((leftEndAudioSource != null) && (leftEnd_rightAudioSource != null) && (leftEndWall != null))
+        if ((leftEndAudioSource != null) && (leftEnd_rightAudioSource != null))
         {
-            leftEndDelay = ((1.5f * stepsToLeftEnd + 0.75f) * 2 / 340);
+            leftEndDelay = (1.5f * stepsToLeftEnd + 0.75f) * 2 / 340;
             leftEndAudioSource.PlayDelayed(leftEndDelay);
             leftEnd_rightAudioSource.PlayDelayed(leftEndDelay);
             // print("Left End is " + stepsToLeftEnd + " steps away! Delay = " + leftEndDelay.ToString());
         }
-        if ((rightEndAudioSource != null) && (rightEnd_leftAudioSource != null) && (rightEndWall != null))
+        if ((rightEndAudioSource != null) && (rightEnd_leftAudioSource != null))
         {
-            rightEndDelay = ((1.5f * stepsToRightEnd + 0.75f) * 2 / 340);
+            rightEndDelay = (1.5f * stepsToRightEnd + 0.75f) * 2 / 340;
             rightEndAudioSource.PlayDelayed(rightEndDelay);
             rightEnd_leftAudioSource.PlayDelayed(rightEndDelay);
             // print("Right End is " + stepsToRightEnd + " steps away! Delay = " + rightEndDelay.ToString());
         }
 
-        frontDelay = ((1.5f * stepsToFrontWall + 0.75f) * 2 / 340);
+        frontDelay = (1.5f * stepsToFrontWall + 0.75f) * 2 / 340;
         frontAudioSource.PlayDelayed(frontDelay);
         // print("Front Wall is " + stepsToFrontWall + " steps away! Delay = " + frontDelay.ToString());
 
@@ -810,43 +698,1386 @@ public class Player : MovingObject
         return;
     }   
 
-    float getEndEchoVolume(int stepsAway)
+    float getEchoVolume(float stepsAway, string echoType)
     {
         if (stepsAway == 0)
         {
-            return 0.45f;
+            if (echoType == "front")
+            {
+                if (curLevel < 17)
+                {
+                    return 1.0000f;
+                }        
+                else if ((curLevel >= 17) && (curLevel <= 21))
+                {
+                    return 0.8750f;
+                }
+                else if ((curLevel >= 22) && (curLevel <= 26))
+                {
+                    return 0.7500f;
+                }
+                else if ((curLevel >= 27) && (curLevel <= 31))
+                {
+                    return 0.6250f;
+                }
+                else if ((curLevel >= 32) && (curLevel <= 36))
+                {
+                    return 0.4940f;
+                }
+                else if ((curLevel >= 37) && (curLevel <= 41))
+                {
+                    return 0.4250f;
+                }
+                else if ((curLevel >= 42) && (curLevel <= 46))
+                {
+                    return 0.3500f;
+                }
+                else if ((curLevel >= 47) && (curLevel <= 51))
+                {
+                    return 0.3100f;
+                }
+                else if ((curLevel >= 52) && (curLevel <= 56))
+                {
+                    return 0.2700f;
+                }
+                else if ((curLevel >= 57) && (curLevel <= 61))
+                {
+                    return 0.2350f;
+                }
+                else if ((curLevel >= 62) && (curLevel <= 66))
+                {
+                    return 0.2000f;
+                }
+                else if ((curLevel >= 67) && (curLevel <= 71))
+                {
+                    return 0.1800f;
+                }
+                else if ((curLevel >= 72) && (curLevel <= 76))
+                {
+                    return 0.1560f;
+                }
+                else if ((curLevel >= 77) && (curLevel <= 81))
+                {
+                    return 0.1380f;
+                }
+                else if ((curLevel >= 82) && (curLevel <= 86))
+                {
+                    return 0.1220f;
+                }
+                else if ((curLevel >= 87) && (curLevel <= 91))
+                {
+                    return 0.1075f;
+                }
+                else if (curLevel >= 92)
+                {
+                    return 0.0950f;
+                }                
+            }
+            if ((echoType == "left") || (echoType == "left_right") || (echoType == "right") || (echoType == "right_left"))
+            {
+                if (curLevel < 17)
+                {
+                    return 0.0980f;
+                }
+                else if ((curLevel >= 17) && (curLevel <= 21))
+                {
+                    return 0.0858f;
+                }
+                else if ((curLevel >= 22) && (curLevel <= 26))
+                {
+                    return 0.0735f;
+                }
+                else if ((curLevel >= 27) && (curLevel <= 31))
+                {
+                    return 0.0613f;
+                }
+                else if ((curLevel >= 32) && (curLevel <= 36))
+                {
+                    return 0.0484f;
+                }
+                else if ((curLevel >= 37) && (curLevel <= 41))
+                {
+                    return 0.0417f;
+                }
+                else if ((curLevel >= 42) && (curLevel <= 46))
+                {
+                    return 0.0343f;
+                }
+                else if ((curLevel >= 47) && (curLevel <= 51))
+                {
+                    return 0.0304f;
+                }
+                else if ((curLevel >= 52) && (curLevel <= 56))
+                {
+                    return 0.0265f;
+                }
+                else if ((curLevel >= 57) && (curLevel <= 61))
+                {
+                    return 0.0230f;
+                }
+                else if ((curLevel >= 62) && (curLevel <= 66))
+                {
+                    return 0.0196f;
+                }
+                else if ((curLevel >= 67) && (curLevel <= 71))
+                {
+                    return 0.0176f;
+                }
+                else if ((curLevel >= 72) && (curLevel <= 76))
+                {
+                    return 0.0153f;
+                }
+                else if ((curLevel >= 77) && (curLevel <= 81))
+                {
+                    return 0.0135f;
+                }
+                else if ((curLevel >= 82) && (curLevel <= 86))
+                {
+                    return 0.0120f;
+                }
+                else if ((curLevel >= 87) && (curLevel <= 91))
+                {
+                    return 0.0105f;
+                }
+                else if (curLevel >= 92)
+                {
+                    return 0.0093f;
+                }
+            }
+        }
+        if (stepsAway == Mathf.Sqrt(2))
+        {
+            if ((echoType == "left_front") || (echoType == "left_front_right") || (echoType == "right_front") || (echoType == "right_front_left"))
+            {
+                if (curLevel < 17)
+                {
+                    return 0.2700f;
+                }
+                else if ((curLevel >= 17) && (curLevel <= 21))
+                {
+                    return 0.2363f;
+                }
+                else if ((curLevel >= 22) && (curLevel <= 26))
+                {
+                    return 0.2025f;
+                }
+                else if ((curLevel >= 27) && (curLevel <= 31))
+                {
+                    return 0.1688f;
+                }
+                else if ((curLevel >= 32) && (curLevel <= 36))
+                {
+                    return 0.1334f;
+                }
+                else if ((curLevel >= 37) && (curLevel <= 41))
+                {
+                    return 0.1148f;
+                }
+                else if ((curLevel >= 42) && (curLevel <= 46))
+                {
+                    return 0.0945f;
+                }
+                else if ((curLevel >= 47) && (curLevel <= 51))
+                {
+                    return 0.0837f;
+                }
+                else if ((curLevel >= 52) && (curLevel <= 56))
+                {
+                    return 0.0729f;
+                }
+                else if ((curLevel >= 57) && (curLevel <= 61))
+                {
+                    return 0.0635f;
+                }
+                else if ((curLevel >= 62) && (curLevel <= 66))
+                {
+                    return 0.0540f;
+                }
+                else if ((curLevel >= 67) && (curLevel <= 71))
+                {
+                    return 0.0486f;
+                }
+                else if ((curLevel >= 72) && (curLevel <= 76))
+                {
+                    return 0.0421f;
+                }
+                else if ((curLevel >= 77) && (curLevel <= 81))
+                {
+                    return 0.0373f;
+                }
+                else if ((curLevel >= 82) && (curLevel <= 86))
+                {
+                    return 0.0329f;
+                }
+                else if ((curLevel >= 87) && (curLevel <= 91))
+                {
+                    return 0.0290f;
+                }
+                else if (curLevel >= 92)
+                {
+                    return 0.0257f;
+                }
+            }
         }
         if (stepsAway == 1)
         {
-            return 0.40f;
+            if (echoType == "front")
+            {
+                if (curLevel < 17)
+                {
+                    return 0.4940f;
+                }
+                else if ((curLevel >= 17) && (curLevel <= 21))
+                {
+                    return 0.4323f;
+                }
+                else if ((curLevel >= 22) && (curLevel <= 26))
+                {
+                    return 0.3705f;
+                }
+                else if ((curLevel >= 27) && (curLevel <= 31))
+                {
+                    return 0.3088f;
+                }
+                else if ((curLevel >= 32) && (curLevel <= 36))
+                {
+                    return 0.2440f;
+                }
+                else if ((curLevel >= 37) && (curLevel <= 41))
+                {
+                    return 0.2100f;
+                }
+                else if ((curLevel >= 42) && (curLevel <= 46))
+                {
+                    return 0.1729f;
+                }
+                else if ((curLevel >= 47) && (curLevel <= 51))
+                {
+                    return 0.1531f;
+                }
+                else if ((curLevel >= 52) && (curLevel <= 56))
+                {
+                    return 0.1334f;
+                }
+                else if ((curLevel >= 57) && (curLevel <= 61))
+                {
+                    return 0.1161f;
+                }
+                else if ((curLevel >= 62) && (curLevel <= 66))
+                {
+                    return 0.0988f;
+                }
+                else if ((curLevel >= 67) && (curLevel <= 71))
+                {
+                    return 0.0889f;
+                }
+                else if ((curLevel >= 72) && (curLevel <= 76))
+                {
+                    return 0.0771f;
+                }
+                else if ((curLevel >= 77) && (curLevel <= 81))
+                {
+                    return 0.0682f;
+                }
+                else if ((curLevel >= 82) && (curLevel <= 86))
+                {
+                    return 0.0603f;
+                }
+                else if ((curLevel >= 87) && (curLevel <= 91))
+                {
+                    return 0.0531f;
+                }
+                else if (curLevel >= 92)
+                {
+                    return 0.0469f;
+                }
+            }
+            if ((echoType == "left_end") || (echoType == "left_end_right") || (echoType == "right_end") || (echoType == "right_end_left"))
+            {
+                if (curLevel < 17)
+                {
+                    return 0.0484f;
+                }
+                else if ((curLevel >= 17) && (curLevel <= 21))
+                {
+                    return 0.0424f;
+                }
+                else if ((curLevel >= 22) && (curLevel <= 26))
+                {
+                    return 0.0363f;
+                }
+                else if ((curLevel >= 27) && (curLevel <= 31))
+                {
+                    return 0.0303f;
+                }
+                else if ((curLevel >= 32) && (curLevel <= 36))
+                {
+                    return 0.0239f;
+                }
+                else if ((curLevel >= 37) && (curLevel <= 41))
+                {
+                    return 0.0206f;
+                }
+                else if ((curLevel >= 42) && (curLevel <= 46))
+                {
+                    return 0.0169f;
+                }
+                else if ((curLevel >= 47) && (curLevel <= 51))
+                {
+                    return 0.0150f;
+                }
+                else if ((curLevel >= 52) && (curLevel <= 56))
+                {
+                    return 0.0131f;
+                }
+                else if ((curLevel >= 57) && (curLevel <= 61))
+                {
+                    return 0.0114f;
+                }
+                else if ((curLevel >= 62) && (curLevel <= 66))
+                {
+                    return 0.0097f;
+                }
+                else if ((curLevel >= 67) && (curLevel <= 71))
+                {
+                    return 0.0087f;
+                }
+                else if ((curLevel >= 72) && (curLevel <= 76))
+                {
+                    return 0.0076f;
+                }
+                else if ((curLevel >= 77) && (curLevel <= 81))
+                {
+                    return 0.0067f;
+                }
+                else if ((curLevel >= 82) && (curLevel <= 86))
+                {
+                    return 0.0059f;
+                }
+                else if ((curLevel >= 87) && (curLevel <= 91))
+                {
+                    return 0.0052f;
+                }
+                else if (curLevel >= 92)
+                {
+                    return 0.0046f;
+                }
+            }
         }
         if (stepsAway == 2)
         {
-            return 0.35f;
+            if (echoType == "front")
+            {
+                if (curLevel < 17)
+                {
+                    return 0.3370f;
+                }
+                else if ((curLevel >= 17) && (curLevel <= 21))
+                {
+                    return 0.2949f;
+                }
+                else if ((curLevel >= 22) && (curLevel <= 26))
+                {
+                    return 0.2528f;
+                }
+                else if ((curLevel >= 27) && (curLevel <= 31))
+                {
+                    return 0.2106f;
+                }
+                else if ((curLevel >= 32) && (curLevel <= 36))
+                {
+                    return 0.1665f;
+                }
+                else if ((curLevel >= 37) && (curLevel <= 41))
+                {
+                    return 0.1432f;
+                }
+                else if ((curLevel >= 42) && (curLevel <= 46))
+                {
+                    return 0.1180f;
+                }
+                else if ((curLevel >= 47) && (curLevel <= 51))
+                {
+                    return 0.1045f;
+                }
+                else if ((curLevel >= 52) && (curLevel <= 56))
+                {
+                    return 0.0910f;
+                }
+                else if ((curLevel >= 57) && (curLevel <= 61))
+                {
+                    return 0.0792f;
+                }
+                else if ((curLevel >= 62) && (curLevel <= 66))
+                {
+                    return 0.0674f;
+                }
+                else if ((curLevel >= 67) && (curLevel <= 71))
+                {
+                    return 0.0607f;
+                }
+                else if ((curLevel >= 72) && (curLevel <= 76))
+                {
+                    return 0.0526f;
+                }
+                else if ((curLevel >= 77) && (curLevel <= 81))
+                {
+                    return 0.0465f;
+                }
+                else if ((curLevel >= 82) && (curLevel <= 86))
+                {
+                    return 0.0411f;
+                }
+                else if ((curLevel >= 87) && (curLevel <= 91))
+                {
+                    return 0.0362f;
+                }
+                else if (curLevel >= 92)
+                {
+                    return 0.0320f;
+                }
+            }
+            if ((echoType == "left_end") || (echoType == "left_end_right") || (echoType == "right_end") || (echoType == "right_end_left"))
+            {
+                if (curLevel < 17)
+                {
+                    return 0.0330f;
+                }
+                else if ((curLevel >= 17) && (curLevel <= 21))
+                {
+                    return 0.0289f;
+                }
+                else if ((curLevel >= 22) && (curLevel <= 26))
+                {
+                    return 0.0248f;
+                }
+                else if ((curLevel >= 27) && (curLevel <= 31))
+                {
+                    return 0.0206f;
+                }
+                else if ((curLevel >= 32) && (curLevel <= 36))
+                {
+                    return 0.0163f;
+                }
+                else if ((curLevel >= 37) && (curLevel <= 41))
+                {
+                    return 0.0140f;
+                }
+                else if ((curLevel >= 42) && (curLevel <= 46))
+                {
+                    return 0.0116f;
+                }
+                else if ((curLevel >= 47) && (curLevel <= 51))
+                {
+                    return 0.0102f;
+                }
+                else if ((curLevel >= 52) && (curLevel <= 56))
+                {
+                    return 0.0089f;
+                }
+                else if ((curLevel >= 57) && (curLevel <= 61))
+                {
+                    return 0.0078f;
+                }
+                else if ((curLevel >= 62) && (curLevel <= 66))
+                {
+                    return 0.0066f;
+                }
+                else if ((curLevel >= 67) && (curLevel <= 71))
+                {
+                    return 0.0059f;
+                }
+                else if ((curLevel >= 72) && (curLevel <= 76))
+                {
+                    return 0.0051f;
+                }
+                else if ((curLevel >= 77) && (curLevel <= 81))
+                {
+                    return 0.0046f;
+                }
+                else if ((curLevel >= 82) && (curLevel <= 86))
+                {
+                    return 0.0040f;
+                }
+                else if ((curLevel >= 87) && (curLevel <= 91))
+                {
+                    return 0.0035f;
+                }
+                else if (curLevel >= 92)
+                {
+                    return 0.0031f;
+                }
+            }
         }
         if (stepsAway == 3)
         {
-            return 0.30f;
+            if (echoType == "front")
+            {
+                if (curLevel < 17)
+                {
+                    return 0.2700f;
+                }
+                else if ((curLevel >= 17) && (curLevel <= 21))
+                {
+                    return 0.2363f;
+                }
+                else if ((curLevel >= 22) && (curLevel <= 26))
+                {
+                    return 0.2025f;
+                }
+                else if ((curLevel >= 27) && (curLevel <= 31))
+                {
+                    return 0.1688f;
+                }
+                else if ((curLevel >= 32) && (curLevel <= 36))
+                {
+                    return 0.1334f;
+                }
+                else if ((curLevel >= 37) && (curLevel <= 41))
+                {
+                    return 0.1148f;
+                }
+                else if ((curLevel >= 42) && (curLevel <= 46))
+                {
+                    return 0.0945f;
+                }
+                else if ((curLevel >= 47) && (curLevel <= 51))
+                {
+                    return 0.0837f;
+                }
+                else if ((curLevel >= 52) && (curLevel <= 56))
+                {
+                    return 0.0729f;
+                }
+                else if ((curLevel >= 57) && (curLevel <= 61))
+                {
+                    return 0.0635f;
+                }
+                else if ((curLevel >= 62) && (curLevel <= 66))
+                {
+                    return 0.0540f;
+                }
+                else if ((curLevel >= 67) && (curLevel <= 71))
+                {
+                    return 0.0486f;
+                }
+                else if ((curLevel >= 72) && (curLevel <= 76))
+                {
+                    return 0.0421f;
+                }
+                else if ((curLevel >= 77) && (curLevel <= 81))
+                {
+                    return 0.0373f;
+                }
+                else if ((curLevel >= 82) && (curLevel <= 86))
+                {
+                    return 0.0329f;
+                }
+                else if ((curLevel >= 87) && (curLevel <= 91))
+                {
+                    return 0.0290f;
+                }
+                else if (curLevel >= 92)
+                {
+                    return 0.0257f;
+                }
+            }
+            if ((echoType == "left_end") || (echoType == "left_end_right") || (echoType == "right_end") || (echoType == "right_end_left"))
+            {
+                if (curLevel < 17)
+                {
+                    return 0.0264f;
+                }
+                else if ((curLevel >= 17) && (curLevel <= 21))
+                {
+                    return 0.0231f;
+                }
+                else if ((curLevel >= 22) && (curLevel <= 26))
+                {
+                    return 0.0198f;
+                }
+                else if ((curLevel >= 27) && (curLevel <= 31))
+                {
+                    return 0.0165f;
+                }
+                else if ((curLevel >= 32) && (curLevel <= 36))
+                {
+                    return 0.0130f;
+                }
+                else if ((curLevel >= 37) && (curLevel <= 41))
+                {
+                    return 0.0112f;
+                }
+                else if ((curLevel >= 42) && (curLevel <= 46))
+                {
+                    return 0.0092f;
+                }
+                else if ((curLevel >= 47) && (curLevel <= 51))
+                {
+                    return 0.0082f;
+                }
+                else if ((curLevel >= 52) && (curLevel <= 56))
+                {
+                    return 0.0071f;
+                }
+                else if ((curLevel >= 57) && (curLevel <= 61))
+                {
+                    return 0.0062f;
+                }
+                else if ((curLevel >= 62) && (curLevel <= 66))
+                {
+                    return 0.0053f;
+                }
+                else if ((curLevel >= 67) && (curLevel <= 71))
+                {
+                    return 0.0047f;
+                }
+                else if ((curLevel >= 72) && (curLevel <= 76))
+                {
+                    return 0.0041f;
+                }
+                else if ((curLevel >= 77) && (curLevel <= 81))
+                {
+                    return 0.0036f;
+                }
+                else if ((curLevel >= 82) && (curLevel <= 86))
+                {
+                    return 0.0032f;
+                }
+                else if ((curLevel >= 87) && (curLevel <= 91))
+                {
+                    return 0.0028f;
+                }
+                else if (curLevel >= 92)
+                {
+                    return 0.0025f;
+                }
+            }
         }
         if (stepsAway == 4)
         {
-            return 0.25f;
+            if (echoType == "front")
+            {
+                if (curLevel < 17)
+                {
+                    return 0.2250f;
+                }
+                else if ((curLevel >= 17) && (curLevel <= 21))
+                {
+                    return 0.1913f;
+                }
+                else if ((curLevel >= 22) && (curLevel <= 26))
+                {
+                    return 0.1688f;
+                }
+                else if ((curLevel >= 27) && (curLevel <= 31))
+                {
+                    return 0.1406f;
+                }
+                else if ((curLevel >= 32) && (curLevel <= 36))
+                {
+                    return 0.1112f;
+                }
+                else if ((curLevel >= 37) && (curLevel <= 41))
+                {
+                    return 0.0956f;
+                }
+                else if ((curLevel >= 42) && (curLevel <= 46))
+                {
+                    return 0.0788f;
+                }
+                else if ((curLevel >= 47) && (curLevel <= 51))
+                {
+                    return 0.0698f;
+                }
+                else if ((curLevel >= 52) && (curLevel <= 56))
+                {
+                    return 0.0608f;
+                }
+                else if ((curLevel >= 57) && (curLevel <= 61))
+                {
+                    return 0.0529f;
+                }
+                else if ((curLevel >= 62) && (curLevel <= 66))
+                {
+                    return 0.0450f;
+                }
+                else if ((curLevel >= 67) && (curLevel <= 71))
+                {
+                    return 0.0405f;
+                }
+                else if ((curLevel >= 72) && (curLevel <= 76))
+                {
+                    return 0.0351f;
+                }
+                else if ((curLevel >= 77) && (curLevel <= 81))
+                {
+                    return 0.0311f;
+                }
+                else if ((curLevel >= 82) && (curLevel <= 86))
+                {
+                    return 0.0275f;
+                }
+                else if ((curLevel >= 87) && (curLevel <= 91))
+                {
+                    return 0.0242f;
+                }
+                else if (curLevel >= 92)
+                {
+                    return 0.0214f;
+                }
+            }
+            if ((echoType == "left_end") || (echoType == "left_end_right") || (echoType == "right_end") || (echoType == "right_end_left"))
+            {
+                if (curLevel < 17)
+                {
+                    return 0.0220f;
+                }
+                else if ((curLevel >= 17) && (curLevel <= 21))
+                {
+                    return 0.0193f;
+                }
+                else if ((curLevel >= 22) && (curLevel <= 26))
+                {
+                    return 0.0165f;
+                }
+                else if ((curLevel >= 27) && (curLevel <= 31))
+                {
+                    return 0.0138f;
+                }
+                else if ((curLevel >= 32) && (curLevel <= 36))
+                {
+                    return 0.0109f;
+                }
+                else if ((curLevel >= 37) && (curLevel <= 41))
+                {
+                    return 0.0094f;
+                }
+                else if ((curLevel >= 42) && (curLevel <= 46))
+                {
+                    return 0.0077f;
+                }
+                else if ((curLevel >= 47) && (curLevel <= 51))
+                {
+                    return 0.0068f;
+                }
+                else if ((curLevel >= 52) && (curLevel <= 56))
+                {
+                    return 0.0059f;
+                }
+                else if ((curLevel >= 57) && (curLevel <= 61))
+                {
+                    return 0.0052f;
+                }
+                else if ((curLevel >= 62) && (curLevel <= 66))
+                {
+                    return 0.0044f;
+                }
+                else if ((curLevel >= 67) && (curLevel <= 71))
+                {
+                    return 0.0040f;
+                }
+                else if ((curLevel >= 72) && (curLevel <= 76))
+                {
+                    return 0.0034f;
+                }
+                else if ((curLevel >= 77) && (curLevel <= 81))
+                {
+                    return 0.0030f;
+                }
+                else if ((curLevel >= 82) && (curLevel <= 86))
+                {
+                    return 0.0027f;
+                }
+                else if ((curLevel >= 87) && (curLevel <= 91))
+                {
+                    return 0.0024f;
+                }
+                else if (curLevel >= 92)
+                {
+                    return 0.0021f;
+                }
+            }
         }
         if (stepsAway == 5)
         {
-            return 0.20f;
+            if (echoType == "front")
+            {
+                if (curLevel < 17)
+                {
+                    return 0.1970f;
+                }
+                else if ((curLevel >= 17) && (curLevel <= 21))
+                {
+                    return 0.1724f;
+                }
+                else if ((curLevel >= 22) && (curLevel <= 26))
+                {
+                    return 0.1478f;
+                }
+                else if ((curLevel >= 27) && (curLevel <= 31))
+                {
+                    return 0.1231f;
+                }
+                else if ((curLevel >= 32) && (curLevel <= 36))
+                {
+                    return 0.0973f;
+                }
+                else if ((curLevel >= 37) && (curLevel <= 41))
+                {
+                    return 0.0837f;
+                }
+                else if ((curLevel >= 42) && (curLevel <= 46))
+                {
+                    return 0.0690f;
+                }
+                else if ((curLevel >= 47) && (curLevel <= 51))
+                {
+                    return 0.0611f;
+                }
+                else if ((curLevel >= 52) && (curLevel <= 56))
+                {
+                    return 0.0532f;
+                }
+                else if ((curLevel >= 57) && (curLevel <= 61))
+                {
+                    return 0.0463f;
+                }
+                else if ((curLevel >= 62) && (curLevel <= 66))
+                {
+                    return 0.0394f;
+                }
+                else if ((curLevel >= 67) && (curLevel <= 71))
+                {
+                    return 0.0355f;
+                }
+                else if ((curLevel >= 72) && (curLevel <= 76))
+                {
+                    return 0.0307f;
+                }
+                else if ((curLevel >= 77) && (curLevel <= 81))
+                {
+                    return 0.0272f;
+                }
+                else if ((curLevel >= 82) && (curLevel <= 86))
+                {
+                    return 0.0240f;
+                }
+                else if ((curLevel >= 87) && (curLevel <= 91))
+                {
+                    return 0.0212f;
+                }
+                else if (curLevel >= 92)
+                {
+                    return 0.0187f;
+                }
+            }
+            if ((echoType == "left_end") || (echoType == "left_end_right") || (echoType == "right_end") || (echoType == "right_end_left"))
+            {
+                if (curLevel < 17)
+                {
+                    return 0.0193f;
+                }
+                else if ((curLevel >= 17) && (curLevel <= 21))
+                {
+                    return 0.0169f;
+                }
+                else if ((curLevel >= 22) && (curLevel <= 26))
+                {
+                    return 0.0145f;
+                }
+                else if ((curLevel >= 27) && (curLevel <= 31))
+                {
+                    return 0.0121f;
+                }
+                else if ((curLevel >= 32) && (curLevel <= 36))
+                {
+                    return 0.0095f;
+                }
+                else if ((curLevel >= 37) && (curLevel <= 41))
+                {
+                    return 0.0082f;
+                }
+                else if ((curLevel >= 42) && (curLevel <= 46))
+                {
+                    return 0.0068f;
+                }
+                else if ((curLevel >= 47) && (curLevel <= 51))
+                {
+                    return 0.0060f;
+                }
+                else if ((curLevel >= 52) && (curLevel <= 56))
+                {
+                    return 0.0052f;
+                }
+                else if ((curLevel >= 57) && (curLevel <= 61))
+                {
+                    return 0.0045f;
+                }
+                else if ((curLevel >= 62) && (curLevel <= 66))
+                {
+                    return 0.0039f;
+                }
+                else if ((curLevel >= 67) && (curLevel <= 71))
+                {
+                    return 0.0035f;
+                }
+                else if ((curLevel >= 72) && (curLevel <= 76))
+                {
+                    return 0.0030f;
+                }
+                else if ((curLevel >= 77) && (curLevel <= 81))
+                {
+                    return 0.0027f;
+                }
+                else if ((curLevel >= 82) && (curLevel <= 86))
+                {
+                    return 0.0024f;
+                }
+                else if ((curLevel >= 87) && (curLevel <= 91))
+                {
+                    return 0.0021f;
+                }
+                else if (curLevel >= 92)
+                {
+                    return 0.0018f;
+                }
+            }
         }
         if (stepsAway == 6)
         {
-            return 0.15f;
+            if (echoType == "front")
+            {
+                if (curLevel < 17)
+                {
+                    return 0.1750f;
+                }
+                else if ((curLevel >= 17) && (curLevel <= 21))
+                {
+                    return 0.1531f;
+                }
+                else if ((curLevel >= 22) && (curLevel <= 26))
+                {
+                    return 0.1313f;
+                }
+                else if ((curLevel >= 27) && (curLevel <= 31))
+                {
+                    return 0.1094f;
+                }
+                else if ((curLevel >= 32) && (curLevel <= 36))
+                {
+                    return 0.0865f;
+                }
+                else if ((curLevel >= 37) && (curLevel <= 41))
+                {
+                    return 0.0744f;
+                }
+                else if ((curLevel >= 42) && (curLevel <= 46))
+                {
+                    return 0.0613f;
+                }
+                else if ((curLevel >= 47) && (curLevel <= 51))
+                {
+                    return 0.0543f;
+                }
+                else if ((curLevel >= 52) && (curLevel <= 56))
+                {
+                    return 0.0473f;
+                }
+                else if ((curLevel >= 57) && (curLevel <= 61))
+                {
+                    return 0.0411f;
+                }
+                else if ((curLevel >= 62) && (curLevel <= 66))
+                {
+                    return 0.0350f;
+                }
+                else if ((curLevel >= 67) && (curLevel <= 71))
+                {
+                    return 0.0315f;
+                }
+                else if ((curLevel >= 72) && (curLevel <= 76))
+                {
+                    return 0.0273f;
+                }
+                else if ((curLevel >= 77) && (curLevel <= 81))
+                {
+                    return 0.0242f;
+                }
+                else if ((curLevel >= 82) && (curLevel <= 86))
+                {
+                    return 0.0214f;
+                }
+                else if ((curLevel >= 87) && (curLevel <= 91))
+                {
+                    return 0.0188f;
+                }
+                else if (curLevel >= 92)
+                {
+                    return 0.0166f;
+                }
+            }
+            if ((echoType == "left_end") || (echoType == "left_end_right") || (echoType == "right_end") || (echoType == "right_end_left"))
+            {
+                if (curLevel < 17)
+                {
+                    return 0.0171f;
+                }
+                else if ((curLevel >= 17) && (curLevel <= 21))
+                {
+                    return 0.0150f;
+                }
+                else if ((curLevel >= 22) && (curLevel <= 26))
+                {
+                    return 0.0128f;
+                }
+                else if ((curLevel >= 27) && (curLevel <= 31))
+                {
+                    return 0.0107f;
+                }
+                else if ((curLevel >= 32) && (curLevel <= 36))
+                {
+                    return 0.0084f;
+                }
+                else if ((curLevel >= 37) && (curLevel <= 41))
+                {
+                    return 0.0073f;
+                }
+                else if ((curLevel >= 42) && (curLevel <= 46))
+                {
+                    return 0.0060f;
+                }
+                else if ((curLevel >= 47) && (curLevel <= 51))
+                {
+                    return 0.0053f;
+                }
+                else if ((curLevel >= 52) && (curLevel <= 56))
+                {
+                    return 0.0046f;
+                }
+                else if ((curLevel >= 57) && (curLevel <= 61))
+                {
+                    return 0.0040f;
+                }
+                else if ((curLevel >= 62) && (curLevel <= 66))
+                {
+                    return 0.0034f;
+                }
+                else if ((curLevel >= 67) && (curLevel <= 71))
+                {
+                    return 0.0031f;
+                }
+                else if ((curLevel >= 72) && (curLevel <= 76))
+                {
+                    return 0.0027f;
+                }
+                else if ((curLevel >= 77) && (curLevel <= 81))
+                {
+                    return 0.0024f;
+                }
+                else if ((curLevel >= 82) && (curLevel <= 86))
+                {
+                    return 0.0021f;
+                }
+                else if ((curLevel >= 87) && (curLevel <= 91))
+                {
+                    return 0.0018f;
+                }
+                else if (curLevel >= 92)
+                {
+                    return 0.0016f;
+                }
+            }
         }
         if (stepsAway == 7)
         {
-            return 0.10f;
+            if (echoType == "front")
+            {
+                if (curLevel < 17)
+                {
+                    return 0.1560f;
+                }
+                else if ((curLevel >= 17) && (curLevel <= 21))
+                {
+                    return 0.1365f;
+                }
+                else if ((curLevel >= 22) && (curLevel <= 26))
+                {
+                    return 0.1170f;
+                }
+                else if ((curLevel >= 27) && (curLevel <= 31))
+                {
+                    return 0.0975f;
+                }
+                else if ((curLevel >= 32) && (curLevel <= 36))
+                {
+                    return 0.0771f;
+                }
+                else if ((curLevel >= 37) && (curLevel <= 41))
+                {
+                    return 0.0663f;
+                }
+                else if ((curLevel >= 42) && (curLevel <= 46))
+                {
+                    return 0.0546f;
+                }
+                else if ((curLevel >= 47) && (curLevel <= 51))
+                {
+                    return 0.0484f;
+                }
+                else if ((curLevel >= 52) && (curLevel <= 56))
+                {
+                    return 0.0421f;
+                }
+                else if ((curLevel >= 57) && (curLevel <= 61))
+                {
+                    return 0.0367f;
+                }
+                else if ((curLevel >= 62) && (curLevel <= 66))
+                {
+                    return 0.0312f;
+                }
+                else if ((curLevel >= 67) && (curLevel <= 71))
+                {
+                    return 0.0281f;
+                }
+                else if ((curLevel >= 72) && (curLevel <= 76))
+                {
+                    return 0.0243f;
+                }
+                else if ((curLevel >= 77) && (curLevel <= 81))
+                {
+                    return 0.0215f;
+                }
+                else if ((curLevel >= 82) && (curLevel <= 86))
+                {
+                    return 0.0190f;
+                }
+                else if ((curLevel >= 87) && (curLevel <= 91))
+                {
+                    return 0.0168f;
+                }
+                else if (curLevel >= 92)
+                {
+                    return 0.0148f;
+                }
+            }
+            if ((echoType == "left_end") || (echoType == "left_end_right") || (echoType == "right_end") || (echoType == "right_end_left"))
+            {
+                if (curLevel < 17)
+                {
+                    return 0.0153f;
+                }
+                else if ((curLevel >= 17) && (curLevel <= 21))
+                {
+                    return 0.0134f;
+                }
+                else if ((curLevel >= 22) && (curLevel <= 26))
+                {
+                    return 0.0115f;
+                }
+                else if ((curLevel >= 27) && (curLevel <= 31))
+                {
+                    return 0.0096f;
+                }
+                else if ((curLevel >= 32) && (curLevel <= 36))
+                {
+                    return 0.0076f;
+                }
+                else if ((curLevel >= 37) && (curLevel <= 41))
+                {
+                    return 0.0065f;
+                }
+                else if ((curLevel >= 42) && (curLevel <= 46))
+                {
+                    return 0.0053f;
+                }
+                else if ((curLevel >= 47) && (curLevel <= 51))
+                {
+                    return 0.0047f;
+                }
+                else if ((curLevel >= 52) && (curLevel <= 56))
+                {
+                    return 0.0041f;
+                }
+                else if ((curLevel >= 57) && (curLevel <= 61))
+                {
+                    return 0.0036f;
+                }
+                else if ((curLevel >= 62) && (curLevel <= 66))
+                {
+                    return 0.0031f;
+                }
+                else if ((curLevel >= 67) && (curLevel <= 71))
+                {
+                    return 0.0028f;
+                }
+                else if ((curLevel >= 72) && (curLevel <= 76))
+                {
+                    return 0.0024f;
+                }
+                else if ((curLevel >= 77) && (curLevel <= 81))
+                {
+                    return 0.0021f;
+                }
+                else if ((curLevel >= 82) && (curLevel <= 86))
+                {
+                    return 0.0019f;
+                }
+                else if ((curLevel >= 87) && (curLevel <= 91))
+                {
+                    return 0.0016f;
+                }
+                else if (curLevel >= 92)
+                {
+                    return 0.0015f;
+                }
+            }
         }
         if (stepsAway == 8)
         {
-            return 0.05f;
+            if (echoType == "front")
+            {
+                if (curLevel < 17)
+                {
+                    return 0.1400f;
+                }
+                else if ((curLevel >= 17) && (curLevel <= 21))
+                {
+                    return 0.1225f;
+                }
+                else if ((curLevel >= 22) && (curLevel <= 26))
+                {
+                    return 0.1050f;
+                }
+                else if ((curLevel >= 27) && (curLevel <= 31))
+                {
+                    return 0.0875f;
+                }
+                else if ((curLevel >= 32) && (curLevel <= 36))
+                {
+                    return 0.0692f;
+                }
+                else if ((curLevel >= 37) && (curLevel <= 41))
+                {
+                    return 0.0595f;
+                }
+                else if ((curLevel >= 42) && (curLevel <= 46))
+                {
+                    return 0.0490f;
+                }
+                else if ((curLevel >= 47) && (curLevel <= 51))
+                {
+                    return 0.0434f;
+                }
+                else if ((curLevel >= 52) && (curLevel <= 56))
+                {
+                    return 0.0378f;
+                }
+                else if ((curLevel >= 57) && (curLevel <= 61))
+                {
+                    return 0.0329f;
+                }
+                else if ((curLevel >= 62) && (curLevel <= 66))
+                {
+                    return 0.0280f;
+                }
+                else if ((curLevel >= 67) && (curLevel <= 71))
+                {
+                    return 0.0252f;
+                }
+                else if ((curLevel >= 72) && (curLevel <= 76))
+                {
+                    return 0.0218f;
+                }
+                else if ((curLevel >= 77) && (curLevel <= 81))
+                {
+                    return 0.0193f;
+                }
+                else if ((curLevel >= 82) && (curLevel <= 86))
+                {
+                    return 0.0171f;
+                }
+                else if ((curLevel >= 87) && (curLevel <= 91))
+                {
+                    return 0.0151f;
+                }
+                else if (curLevel >= 92)
+                {
+                    return 0.0133f;
+                }
+            }
+            if ((echoType == "left_end") || (echoType == "left_end_right") || (echoType == "right_end") || (echoType == "right_end_left"))
+            {
+                if (curLevel < 17)
+                {
+                    return 0.0138f;
+                }
+                else if ((curLevel >= 17) && (curLevel <= 21))
+                {
+                    return 0.0121f;
+                }
+                else if ((curLevel >= 22) && (curLevel <= 26))
+                {
+                    return 0.0104f;
+                }
+                else if ((curLevel >= 27) && (curLevel <= 31))
+                {
+                    return 0.0086f;
+                }
+                else if ((curLevel >= 32) && (curLevel <= 36))
+                {
+                    return 0.0068f;
+                }
+                else if ((curLevel >= 37) && (curLevel <= 41))
+                {
+                    return 0.0059f;
+                }
+                else if ((curLevel >= 42) && (curLevel <= 46))
+                {
+                    return 0.0048f;
+                }
+                else if ((curLevel >= 47) && (curLevel <= 51))
+                {
+                    return 0.0043f;
+                }
+                else if ((curLevel >= 52) && (curLevel <= 56))
+                {
+                    return 0.0037f;
+                }
+                else if ((curLevel >= 57) && (curLevel <= 61))
+                {
+                    return 0.0032f;
+                }
+                else if ((curLevel >= 62) && (curLevel <= 66))
+                {
+                    return 0.0028f;
+                }
+                else if ((curLevel >= 67) && (curLevel <= 71))
+                {
+                    return 0.0025f;
+                }
+                else if ((curLevel >= 72) && (curLevel <= 76))
+                {
+                    return 0.0022f;
+                }
+                else if ((curLevel >= 77) && (curLevel <= 81))
+                {
+                    return 0.0019f;
+                }
+                else if ((curLevel >= 82) && (curLevel <= 86))
+                {
+                    return 0.0017f;
+                }
+                else if ((curLevel >= 87) && (curLevel <= 91))
+                {
+                    return 0.0015f;
+                }
+                else if (curLevel >= 92)
+                {
+                    return 0.0013f;
+                }
+            }
         }
 
         return 0.0f;
@@ -860,7 +2091,7 @@ public class Player : MovingObject
         yield return new WaitForSeconds(waitTime);
 
         finishedEcho = true;
-        print("Finished echo.");    
+        print("Finished echo.");
     }
 
     string post_act = "";
@@ -2888,6 +4119,7 @@ public class Player : MovingObject
                 // pop up the survey at the end of tutorial        
                 if ((GameManager.instance.level == 11) && (survey_activated == true))
                 {
+                    print("At survey");
                     if (survey_shown == false)
                     {
 #if UNITY_IOS
