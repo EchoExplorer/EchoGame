@@ -2717,7 +2717,7 @@ public class Player : MovingObject
 
         if (((curLevel == 1) && (finishedExitingInstruction == true) && (BoardManager.finishedTutorialLevel1 == true)) || ((hasCheckedForConsent == true) && (hasFinishedConsentForm == false)))
         {
-            if ((hearingConsentForm == false) && (readingConsentForm == false) && (noConsent == false) && (finished_reading == false) && (hasFinishedConsentForm == false) && (hasStartedConsent == false))
+            if ((hearingConsentForm == false) && (readingConsentForm == false) && (noConsent == false) && (finished_reading == false) && (finished_listening == false) && (hasFinishedConsentForm == false) && (hasStartedConsent == false))
             {
                 if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
                 {
@@ -2748,13 +2748,12 @@ public class Player : MovingObject
                     hasStartedConsent = true;
                     hearingConsentForm = false;
                     readingConsentForm = false;
-                    noConsent = false;
-                    finished_listening = false;
+                    noConsent = false;                    
                     can_display_window = false;
                 }
             }
 
-            if ((hearingConsentForm == false) && (readingConsentForm == false) && (noConsent == false) && (finished_reading == false) && (hasFinishedConsentForm == false) && (hasStartedConsent == true))
+            if ((hearingConsentForm == false) && (readingConsentForm == false) && (noConsent == false) && (finished_reading == false) && (finished_listening == false) && (hasFinishedConsentForm == false) && (hasStartedConsent == true))
             {
                 if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
                 {
@@ -2771,7 +2770,6 @@ public class Player : MovingObject
                     hearingConsentForm = false;
                     readingConsentForm = false;
                     noConsent = false;
-                    finished_listening = false;
                     can_display_window = false;
                 }
             }
@@ -2784,75 +2782,8 @@ public class Player : MovingObject
                     debugPlayerInfo = "Finished listening to consent form and consent question 1.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 }
-            }
-
-            else if ((hearingConsentForm == true) && (answeredQuestion1 == false) && (finished_listening == true))
-            {
-                if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
-                {
-                    canRepeat = false;
-                    if (GM_title.isUsingTalkback == true)
-                    {
-                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[4] };
-                    }
-                    else if (GM_title.isUsingTalkback == false)
-                    {
-                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[3] };
-                    }
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                }
-            }
-
-            if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == false) && (finished_listening == true))
-            {
-                if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
-                {
-                    canRepeat = false;
-                    if (GM_title.isUsingTalkback == true)
-                    {
-                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[6] };
-                    }
-                    else if (GM_title.isUsingTalkback == false)
-                    {
-                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[5] };
-                    }
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                }
-            }
-
-            if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == false) && (finished_listening == true))
-            {
-                if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
-                {
-                    canRepeat = false;
-                    if (GM_title.isUsingTalkback == true)
-                    {
-                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[8] };
-                    }
-                    else if (GM_title.isUsingTalkback == false)
-                    {
-                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[7] };
-                    }
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                }
-            }
-
-            if ((readingConsentForm == true) && (answeredQuestion1 == false) && (answeredQuestion2 == false) && (answeredQuestion3 == false))
-            {
-                if ((canRepeat == true) || (SoundManager.instance.finishedAllClips == true))
-                {
-                    if (can_display_window == false)
-                    {
-                        canRepeat = false;
-                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[9] };
-                        SoundManager.instance.PlayClips(clips, null, 0, () =>
-                        {
-                            can_display_window = true;
-                        }, 3, null, true);
-                    }
-                }
-            }
-
+            } 
+            
             if (((hearingConsentForm == true) || (readingConsentForm == true)) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (question1 == true) && (question2 == true) && (question3 == true) && (hasFinishedConsentForm == false))
             {
                 if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
@@ -2870,7 +2801,7 @@ public class Player : MovingObject
                 }
             }
 
-            if (((hearingConsentForm == true) || (readingConsentForm == true)) && ((answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true)) && ((question1 == false) || (question2 == false) || (question3 == false)) && (hasFinishedConsentForm == false))
+            else if (((hearingConsentForm == true) || (readingConsentForm == true)) && ((answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true)) && ((question1 == false) || (question2 == false) || (question3 == false)) && (hasFinishedConsentForm == false))
             {
                 if (question1 == false)
                 {
@@ -2897,6 +2828,22 @@ public class Player : MovingObject
                         canRepeat = false;
                         clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.consentClips[21] };
                         SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                    }
+                }
+            }
+
+            if ((readingConsentForm == true) && (answeredQuestion1 == false) && (answeredQuestion2 == false) && (answeredQuestion3 == false))
+            {
+                if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
+                {
+                    if (can_display_window == false)
+                    {
+                        canRepeat = false;
+                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[9] };
+                        SoundManager.instance.PlayClips(clips, null, 0, () =>
+                        {
+                            can_display_window = true;
+                        }, 3, null, true);
                     }
                 }
             }
@@ -5363,38 +5310,50 @@ public class Player : MovingObject
                     }
 
                     if ((hasFinishedConsentForm == false) && (hasStartedConsent == true))
-                    {
-                        if ((hearingConsentForm == false) && (readingConsentForm == false) && (noConsent == false))
+                    {                                  
+                        if ((noConsent == true) || (((readingConsentForm == true) || (hearingConsentForm == true)) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (finished_questions == true) && ((question1 == false) || (question2 == false) || (question3 == false))))
                         {
                             hearingConsentForm = true;
-                            canRepeat = true;
-                            debugPlayerInfo = "Swipe left registered. Reading consent form through audio instructions.";
-                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                            if (GM_title.isUsingTalkback == true)
-                            {
-                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[2], Database.soundEffectClips[0], Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[4] };
-                            }
-                            else if (GM_title.isUsingTalkback == false)
-                            {
-                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[2], Database.soundEffectClips[0], Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[3] };
-                            }
-                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                        }
-                        else if ((hearingConsentForm == true) && (answeredQuestion1 == false))
-                        {
+                            readingConsentForm = false;
+                            noConsent = false;
+                            hasCheckedForConsent = true;
+                            hasFinishedConsentForm = false;
+                            finished_listening = false;
+                            finished_reading = false;
+                            android_window_displayed = false;
+                            can_display_window = false;
+                            finished_questions = false;
+                            answeredQuestion1 = false;
+                            answeredQuestion2 = false;
+                            answeredQuestion3 = false;
                             question1 = false;
-                            answeredQuestion1 = true;
-                            canRepeat = true;
-                            debugPlayerInfo = "Swipe left registered. Is not eighteen.";
-                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                        }
-                        else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == false))
-                        {
                             question2 = false;
-                            answeredQuestion2 = true;
+                            question3 = false;
+                            readConsent = false;
+                            consentFlag = false;
+                            readProcedures = false;
+                            proceduresFlag = false;
+                            readRequirements = false;
+                            requirementsFlag = false;
+                            readRisks = false;
+                            risksFlag = false;
+                            readBenefits = false;
+                            benefitsFlag = false;
+                            readCompCost = false;
+                            compCostFlag = false;
+                            readConfidentiality = false;
+                            confidentialityFlag = false;
+                            readQuestionsContact = false;
+                            questionsContactFlag = false;
+                            readVoluntary = false;
+                            voluntaryFlag = false;
+                            readEighteenPlus = false;
+                            eighteenPlusFlag = false;
+                            readUnderstand = false;
+                            understandFlag = false;
+                            readParticipate = false;
+                            participateFlag = false;
                             canRepeat = true;
-                            debugPlayerInfo = "Swipe left registered. Did not understand information.";
-                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         }
                         else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == false))
                         {
@@ -5409,138 +5368,66 @@ public class Player : MovingObject
                                 hasCheckedForConsent = true;
                             }, 1, null, true);
                         }
-                        else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (finished_questions == true) && ((question1 == false) || (question2 == false) || (question3 == false)))
+                        else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == false))
+                        {
+                            question2 = false;
+                            answeredQuestion2 = true;
+                            canRepeat = true;
+                            debugPlayerInfo = "Swipe left registered. Did not understand information.";
+                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+
+                            if ((answeredQuestion3 == false) && (finished_listening == true))
+                            {
+                                canRepeat = false;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[8] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[7] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                        }
+                        else if ((hearingConsentForm == true) && (answeredQuestion1 == false))
+                        {
+                            question1 = false;
+                            answeredQuestion1 = true;
+                            canRepeat = true;
+                            debugPlayerInfo = "Swipe left registered. Is not eighteen.";
+                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+
+                            if ((answeredQuestion2 == false) && (finished_listening == true))
+                            {
+                                canRepeat = false;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[6] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[5] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }                            
+                        }
+                        else if ((hearingConsentForm == false) && (readingConsentForm == false) && (noConsent == false))
                         {
                             hearingConsentForm = true;
-                            readingConsentForm = false;
-                            noConsent = false;
-                            hasCheckedForConsent = true;
-                            hasFinishedConsentForm = false;
-                            finished_listening = false;
-                            finished_reading = false;
-                            android_window_displayed = false;
-                            can_display_window = false;
-                            finished_questions = false;
-                            answeredQuestion1 = false;
-                            answeredQuestion2 = false;
-                            answeredQuestion3 = false;
-                            question1 = false;
-                            question2 = false;
-                            question3 = false;
-                            readConsent = false;
-                            consentFlag = false;
-                            readProcedures = false;
-                            proceduresFlag = false;
-                            readRequirements = false;
-                            requirementsFlag = false;
-                            readRisks = false;
-                            risksFlag = false;
-                            readBenefits = false;
-                            benefitsFlag = false;
-                            readCompCost = false;
-                            compCostFlag = false;
-                            readConfidentiality = false;
-                            confidentialityFlag = false;
-                            readQuestionsContact = false;
-                            questionsContactFlag = false;
-                            readVoluntary = false;
-                            voluntaryFlag = false;
-                            readEighteenPlus = false;
-                            eighteenPlusFlag = false;
-                            readUnderstand = false;
-                            understandFlag = false;
-                            readParticipate = false;
-                            participateFlag = false;
                             canRepeat = true;
-                        }
-                        else if ((readingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (finished_questions == true) && ((question1 == false) || (question2 == false) || (question3 == false)))
-                        {
-                            hearingConsentForm = true;
-                            readingConsentForm = false;
-                            noConsent = false;
-                            hasCheckedForConsent = true;
-                            hasFinishedConsentForm = false;
-                            finished_listening = false;
-                            finished_reading = false;
-                            android_window_displayed = false;
-                            can_display_window = false;
-                            finished_questions = false;
-                            answeredQuestion1 = false;
-                            answeredQuestion2 = false;
-                            answeredQuestion3 = false;
-                            question1 = false;
-                            question2 = false;
-                            question3 = false;
-                            readConsent = false;
-                            consentFlag = false;
-                            readProcedures = false;
-                            proceduresFlag = false;
-                            readRequirements = false;
-                            requirementsFlag = false;
-                            readRisks = false;
-                            risksFlag = false;
-                            readBenefits = false;
-                            benefitsFlag = false;
-                            readCompCost = false;
-                            compCostFlag = false;
-                            readConfidentiality = false;
-                            confidentialityFlag = false;
-                            readQuestionsContact = false;
-                            questionsContactFlag = false;
-                            readVoluntary = false;
-                            voluntaryFlag = false;
-                            readEighteenPlus = false;
-                            eighteenPlusFlag = false;
-                            readUnderstand = false;
-                            understandFlag = false;
-                            readParticipate = false;
-                            participateFlag = false;
-                            canRepeat = true;
-                        }
-                        else if (noConsent == true)
-                        {
-                            hearingConsentForm = true;
-                            readingConsentForm = false;
-                            noConsent = false;
-                            hasCheckedForConsent = true;
-                            hasFinishedConsentForm = false;
-                            finished_listening = false;
-                            finished_reading = false;
-                            android_window_displayed = false;
-                            can_display_window = false;
-                            finished_questions = false;
-                            answeredQuestion1 = false;
-                            answeredQuestion2 = false;
-                            answeredQuestion3 = false;
-                            question1 = false;
-                            question2 = false;
-                            question3 = false;
-                            readConsent = false;
-                            consentFlag = false;
-                            readProcedures = false;
-                            proceduresFlag = false;
-                            readRequirements = false;
-                            requirementsFlag = false;
-                            readRisks = false;
-                            risksFlag = false;
-                            readBenefits = false;
-                            benefitsFlag = false;
-                            readCompCost = false;
-                            compCostFlag = false;
-                            readConfidentiality = false;
-                            confidentialityFlag = false;
-                            readQuestionsContact = false;
-                            questionsContactFlag = false;
-                            readVoluntary = false;
-                            voluntaryFlag = false;
-                            readEighteenPlus = false;
-                            eighteenPlusFlag = false;
-                            readUnderstand = false;
-                            understandFlag = false;
-                            readParticipate = false;
-                            participateFlag = false;
-                            canRepeat = true;
-                        }
+                            debugPlayerInfo = "Swipe left registered. Reading consent form through audio instructions.";
+                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                            if (GM_title.isUsingTalkback == true)
+                            {
+                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[2], Database.soundEffectClips[0], Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[4] };
+                            }
+                            else if (GM_title.isUsingTalkback == false)
+                            {
+                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[2], Database.soundEffectClips[0], Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[3] };
+                            }
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                        }                                              
                     }
                 }
                 // If the right arrow key has been pressed.
@@ -5660,7 +5547,110 @@ public class Player : MovingObject
 
                     if ((hasFinishedConsentForm == false) && (hasStartedConsent == true))
                     {
-                        if ((readingConsentForm == false) && (hearingConsentForm == false) && (noConsent == false))
+                        if ((noConsent == true) || (((hearingConsentForm == true) || (readingConsentForm == true)) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (finished_questions == true) && ((question1 == false) || (question2 == false) || (question3 == false))))
+                        {
+                            hearingConsentForm = false;
+                            readingConsentForm = true;
+                            noConsent = false;
+                            hasCheckedForConsent = true;
+                            hasFinishedConsentForm = false;
+                            android_window_displayed = false;
+                            can_display_window = false;
+                            finished_listening = false;
+                            finished_reading = false;
+                            finished_questions = false;
+                            answeredQuestion1 = false;
+                            answeredQuestion2 = false;
+                            answeredQuestion3 = false;
+                            question1 = false;
+                            question2 = false;
+                            question3 = false;
+                            readConsent = false;
+                            consentFlag = false;
+                            readProcedures = false;
+                            proceduresFlag = false;
+                            readRequirements = false;
+                            requirementsFlag = false;
+                            readRisks = false;
+                            risksFlag = false;
+                            readBenefits = false;
+                            benefitsFlag = false;
+                            readCompCost = false;
+                            compCostFlag = false;
+                            readConfidentiality = false;
+                            confidentialityFlag = false;
+                            readQuestionsContact = false;
+                            questionsContactFlag = false;
+                            readVoluntary = false;
+                            voluntaryFlag = false;
+                            readEighteenPlus = false;
+                            eighteenPlusFlag = false;
+                            readUnderstand = false;
+                            understandFlag = false;
+                            readParticipate = false;
+                            participateFlag = false;
+                            canRepeat = true;
+                        }
+                        else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == false))
+                        {
+                            question3 = true;
+                            answeredQuestion3 = true;
+                            finished_questions = true;
+                            debugPlayerInfo = "Swipe right registered. Wants to participate.";
+                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+
+                            clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                            SoundManager.instance.PlayClips(clips, null, 0, () => {
+                                canRepeat = true;
+                                hasCheckedForConsent = true;
+                                reportConsent(SystemInfo.deviceUniqueIdentifier);
+                            }, 1, null, true);
+                        }
+                        else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == false))
+                        {
+                            question2 = true;
+                            answeredQuestion2 = true;
+                            canRepeat = true;
+                            debugPlayerInfo = "Swipe right registered. Understood information.";
+                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+
+                            if ((answeredQuestion3 == false) && (finished_listening == true))
+                            {
+                                canRepeat = false;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[8] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[7] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                        }
+                        else if ((hearingConsentForm == true) && (answeredQuestion1 == false))
+                        {
+                            question1 = true;
+                            answeredQuestion1 = true;
+                            canRepeat = true;
+                            debugPlayerInfo = "Swipe right registered. Is eighteen.";
+                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+
+                            if ((answeredQuestion2 == false) && (finished_listening == true))
+                            {
+                                canRepeat = false;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[6] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[5] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                        }
+                        else if ((readingConsentForm == false) && (hearingConsentForm == false) && (noConsent == false))
                         {
                             readingConsentForm = true;
                             canRepeat = true;
@@ -5676,172 +5666,7 @@ public class Player : MovingObject
                             finished_questions = true;
 
                             reportConsent(SystemInfo.deviceUniqueIdentifier);
-                        }
-                        else if ((hearingConsentForm == true) && (answeredQuestion1 == false))
-                        {
-                            question1 = true;
-                            answeredQuestion1 = true;
-                            canRepeat = true;
-                            debugPlayerInfo = "Swipe right registered. Is eighteen.";
-                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                        }
-                        else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == false))
-                        {
-                            question2 = true;
-                            answeredQuestion2 = true;
-                            canRepeat = true;
-                            debugPlayerInfo = "Swipe right registered. Understood information.";
-                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                        }
-                        else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == false))
-                        {
-                            question3 = true;
-                            answeredQuestion3 = true;
-                            canRepeat = true;
-                            finished_reading = true;
-                            finished_questions = true;
-                            debugPlayerInfo = "Swipe right registered. Wants to participate.";
-                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-
-                            clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                            SoundManager.instance.PlayClips(clips, null, 0, () => {
-                                canRepeat = true;
-                                hasCheckedForConsent = true;
-                                reportConsent(SystemInfo.deviceUniqueIdentifier);
-                            }, 1, null, true);
-                        }
-                        else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (finished_questions == true) && ((question1 == false) || (question2 == false) || (question3 == false)))
-                        {
-                            hearingConsentForm = false;
-                            readingConsentForm = true;
-                            noConsent = false;
-                            hasCheckedForConsent = true;
-                            hasFinishedConsentForm = false;
-                            android_window_displayed = false;
-                            can_display_window = false;
-                            finished_listening = false;
-                            finished_reading = false;
-                            finished_questions = false;
-                            answeredQuestion1 = false;
-                            answeredQuestion2 = false;
-                            answeredQuestion3 = false;
-                            question1 = false;
-                            question2 = false;
-                            question3 = false;
-                            readConsent = false;
-                            consentFlag = false;
-                            readProcedures = false;
-                            proceduresFlag = false;
-                            readRequirements = false;
-                            requirementsFlag = false;
-                            readRisks = false;
-                            risksFlag = false;
-                            readBenefits = false;
-                            benefitsFlag = false;
-                            readCompCost = false;
-                            compCostFlag = false;
-                            readConfidentiality = false;
-                            confidentialityFlag = false;
-                            readQuestionsContact = false;
-                            questionsContactFlag = false;
-                            readVoluntary = false;
-                            voluntaryFlag = false;
-                            readEighteenPlus = false;
-                            eighteenPlusFlag = false;
-                            readUnderstand = false;
-                            understandFlag = false;
-                            readParticipate = false;
-                            participateFlag = false;
-                            canRepeat = true;
-                        }
-                        else if ((readingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (finished_questions == true) && ((question1 == false) || (question2 == false) || (question3 == false)))
-                        {
-                            hearingConsentForm = false;
-                            readingConsentForm = true;
-                            noConsent = false;
-                            hasCheckedForConsent = true;
-                            hasFinishedConsentForm = false;
-                            finished_listening = false;
-                            finished_reading = false;
-                            android_window_displayed = false;
-                            can_display_window = false;
-                            finished_questions = false;
-                            answeredQuestion1 = false;
-                            answeredQuestion2 = false;
-                            answeredQuestion3 = false;
-                            question1 = false;
-                            question2 = false;
-                            question3 = false;
-                            readConsent = false;
-                            consentFlag = false;
-                            readProcedures = false;
-                            proceduresFlag = false;
-                            readRequirements = false;
-                            requirementsFlag = false;
-                            readRisks = false;
-                            risksFlag = false;
-                            readBenefits = false;
-                            benefitsFlag = false;
-                            readCompCost = false;
-                            compCostFlag = false;
-                            readConfidentiality = false;
-                            confidentialityFlag = false;
-                            readQuestionsContact = false;
-                            questionsContactFlag = false;
-                            readVoluntary = false;
-                            voluntaryFlag = false;
-                            readEighteenPlus = false;
-                            eighteenPlusFlag = false;
-                            readUnderstand = false;
-                            understandFlag = false;
-                            readParticipate = false;
-                            participateFlag = false;
-                            canRepeat = true;
-                        }
-                        else if (noConsent == true)
-                        {
-                            hearingConsentForm = false;
-                            readingConsentForm = true;
-                            noConsent = false;
-                            hasCheckedForConsent = true;
-                            hasFinishedConsentForm = false;
-                            finished_listening = false;
-                            finished_reading = false;
-                            android_window_displayed = false;
-                            can_display_window = false;
-                            finished_questions = false;
-                            answeredQuestion1 = false;
-                            answeredQuestion2 = false;
-                            answeredQuestion3 = false;
-                            question1 = false;
-                            question2 = false;
-                            question3 = false;
-                            readConsent = false;
-                            consentFlag = false;
-                            readProcedures = false;
-                            proceduresFlag = false;
-                            readRequirements = false;
-                            requirementsFlag = false;
-                            readRisks = false;
-                            risksFlag = false;
-                            readBenefits = false;
-                            benefitsFlag = false;
-                            readCompCost = false;
-                            compCostFlag = false;
-                            readConfidentiality = false;
-                            confidentialityFlag = false;
-                            readQuestionsContact = false;
-                            questionsContactFlag = false;
-                            readVoluntary = false;
-                            voluntaryFlag = false;
-                            readEighteenPlus = false;
-                            eighteenPlusFlag = false;
-                            readUnderstand = false;
-                            understandFlag = false;
-                            readParticipate = false;
-                            participateFlag = false;
-                            canRepeat = true;
-                        }
+                        }                                                                                                                   
                     }
                 }
                 // If the up arrow key has been pressed.
@@ -7032,8 +6857,107 @@ public class Player : MovingObject
                     }
 
                     if ((hasFinishedConsentForm == false) && (hasStartedConsent == true))
-                    {
-                        if ((hearingConsentForm == false) && (readingConsentForm == false) && (noConsent == false))
+                    {        
+                        if ((noConsent == true) || (((hearingConsentForm == true) || (readingConsentForm == true)) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (finished_questions == true) && ((question1 == false) || (question2 == false) || (question3 == false))))
+                        {
+                            hearingConsentForm = true;
+                            readingConsentForm = false;
+                            noConsent = false;
+                            hasCheckedForConsent = true;
+                            hasFinishedConsentForm = false;
+                            finished_listening = false;
+                            finished_reading = false;
+                            android_window_displayed = false;
+                            can_display_window = false;
+                            finished_questions = false;
+                            answeredQuestion1 = false;
+                            answeredQuestion2 = false;
+                            answeredQuestion3 = false;
+                            question1 = false;
+                            question2 = false;
+                            question3 = false;
+                            readConsent = false;
+                            consentFlag = false;
+                            readProcedures = false;
+                            proceduresFlag = false;
+                            readRequirements = false;
+                            requirementsFlag = false;
+                            readRisks = false;
+                            risksFlag = false;
+                            readBenefits = false;
+                            benefitsFlag = false;
+                            readCompCost = false;
+                            compCostFlag = false;
+                            readConfidentiality = false;
+                            confidentialityFlag = false;
+                            readQuestionsContact = false;
+                            questionsContactFlag = false;
+                            readVoluntary = false;
+                            voluntaryFlag = false;
+                            readEighteenPlus = false;
+                            eighteenPlusFlag = false;
+                            readUnderstand = false;
+                            understandFlag = false;
+                            readParticipate = false;
+                            participateFlag = false;
+                            canRepeat = true;
+                        }
+                        else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == false))
+                        {
+                            question3 = false;
+                            answeredQuestion3 = true;
+                            finished_questions = true;
+                            debugPlayerInfo = "Swipe left registered. Does not want to participate.";
+                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                            clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                            SoundManager.instance.PlayClips(clips, null, 0, () => {
+                                canRepeat = true;
+                                hasCheckedForConsent = true;
+                            }, 1, null, true);
+                        }
+                        else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == false))
+                        {
+                            question2 = false;
+                            answeredQuestion2 = true;
+                            canRepeat = true;
+                            debugPlayerInfo = "Swipe left registered. Did not understand information.";
+                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                            if ((answeredQuestion3 == false) && (finished_listening == true))
+                            {
+                                canRepeat = false;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[8] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[7] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                        }
+                        else if ((hearingConsentForm == true) && (answeredQuestion1 == false))
+                        {
+                            question1 = false;
+                            answeredQuestion1 = true;
+                            canRepeat = true;
+                            debugPlayerInfo = "Swipe left registered. Is not eighteen.";
+                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                            if ((answeredQuestion2 == false) && (finished_listening == true))
+                            {
+                                canRepeat = false;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[6] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[5] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                        }
+                        else if ((hearingConsentForm == false) && (readingConsentForm == false) && (noConsent == false))
                         {
                             hearingConsentForm = true;
                             canRepeat = true;
@@ -7048,170 +6972,7 @@ public class Player : MovingObject
                                 clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[2], Database.soundEffectClips[0], Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[3] };
                             }
                             SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                        }
-                        else if ((hearingConsentForm == true) && (answeredQuestion1 == false))
-                        {
-                            question1 = false;
-                            answeredQuestion1 = true;
-                            canRepeat = true;
-                            debugPlayerInfo = "Swipe left registered. Is not eighteen.";
-                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                        }
-                        else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == false))
-                        {
-                            question2 = false;
-                            answeredQuestion2 = true;
-                            canRepeat = true;
-                            debugPlayerInfo = "Swipe left registered. Did not understand information.";
-                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                        }
-                        else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == false))
-                        {
-                            question3 = false;
-                            answeredQuestion3 = true;
-                            canRepeat = true;
-                            finished_questions = true;
-                            debugPlayerInfo = "Swipe left registered. Does not want to participate.";
-                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-
-                            clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                            SoundManager.instance.PlayClips(clips, null, 0, () => {
-                                canRepeat = true;
-                                hasCheckedForConsent = true;
-                            }, 1, null, true);
-                        }
-                        else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (finished_questions == true) && ((question1 == false) || (question2 == false) || (question3 == false)))
-                        {
-                            hearingConsentForm = true;
-                            readingConsentForm = false;
-                            noConsent = false;
-                            hasCheckedForConsent = true;
-                            hasFinishedConsentForm = false;
-                            finished_listening = false;
-                            finished_reading = false;
-                            android_window_displayed = false;
-                            can_display_window = false;
-                            finished_questions = false;
-                            answeredQuestion1 = false;
-                            answeredQuestion2 = false;
-                            answeredQuestion3 = false;
-                            question1 = false;
-                            question2 = false;
-                            question3 = false;
-                            readConsent = false;
-                            consentFlag = false;
-                            readProcedures = false;
-                            proceduresFlag = false;
-                            readRequirements = false;
-                            requirementsFlag = false;
-                            readRisks = false;
-                            risksFlag = false;
-                            readBenefits = false;
-                            benefitsFlag = false;
-                            readCompCost = false;
-                            compCostFlag = false;
-                            readConfidentiality = false;
-                            confidentialityFlag = false;
-                            readQuestionsContact = false;
-                            questionsContactFlag = false;
-                            readVoluntary = false;
-                            voluntaryFlag = false;
-                            readEighteenPlus = false;
-                            eighteenPlusFlag = false;
-                            readUnderstand = false;
-                            understandFlag = false;
-                            readParticipate = false;
-                            participateFlag = false;
-                            canRepeat = true;
-                        }
-                        else if ((readingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (finished_questions == true) && ((question1 == false) || (question2 == false) || (question3 == false)))
-                        {
-                            hearingConsentForm = true;
-                            readingConsentForm = false;
-                            noConsent = false;
-                            hasCheckedForConsent = true;
-                            hasFinishedConsentForm = false;
-                            finished_listening = false;
-                            finished_reading = false;
-                            android_window_displayed = false;
-                            can_display_window = false;
-                            finished_questions = false;
-                            answeredQuestion1 = false;
-                            answeredQuestion2 = false;
-                            answeredQuestion3 = false;
-                            question1 = false;
-                            question2 = false;
-                            question3 = false;
-                            readConsent = false;
-                            consentFlag = false;
-                            readProcedures = false;
-                            proceduresFlag = false;
-                            readRequirements = false;
-                            requirementsFlag = false;
-                            readRisks = false;
-                            risksFlag = false;
-                            readBenefits = false;
-                            benefitsFlag = false;
-                            readCompCost = false;
-                            compCostFlag = false;
-                            readConfidentiality = false;
-                            confidentialityFlag = false;
-                            readQuestionsContact = false;
-                            questionsContactFlag = false;
-                            readVoluntary = false;
-                            voluntaryFlag = false;
-                            readEighteenPlus = false;
-                            eighteenPlusFlag = false;
-                            readUnderstand = false;
-                            understandFlag = false;
-                            readParticipate = false;
-                            participateFlag = false;
-                            canRepeat = true;
-                        }
-                        else if (noConsent == true)
-                        {
-                            noConsent = false;
-                            hearingConsentForm = true;
-                            readingConsentForm = false;
-                            hasCheckedForConsent = true;
-                            hasFinishedConsentForm = false;
-                            finished_listening = false;
-                            android_window_displayed = false;
-                            can_display_window = false;
-                            finished_reading = false;
-                            finished_questions = false;
-                            answeredQuestion1 = false;
-                            answeredQuestion2 = false;
-                            answeredQuestion3 = false;
-                            question1 = false;
-                            question2 = false;
-                            question3 = false;
-                            readConsent = false;
-                            consentFlag = false;
-                            readProcedures = false;
-                            proceduresFlag = false;
-                            readRequirements = false;
-                            requirementsFlag = false;
-                            readRisks = false;
-                            risksFlag = false;
-                            readBenefits = false;
-                            benefitsFlag = false;
-                            readCompCost = false;
-                            compCostFlag = false;
-                            readConfidentiality = false;
-                            confidentialityFlag = false;
-                            readQuestionsContact = false;
-                            questionsContactFlag = false;
-                            readVoluntary = false;
-                            voluntaryFlag = false;
-                            readEighteenPlus = false;
-                            eighteenPlusFlag = false;
-                            readUnderstand = false;
-                            understandFlag = false;
-                            readParticipate = false;
-                            participateFlag = false;
-                            canRepeat = true;
-                        }
+                        }                                            
                     }
                 }
 
@@ -7338,21 +7099,64 @@ public class Player : MovingObject
                     }
 
                     if ((hasFinishedConsentForm == false) && (hasStartedConsent == true))
-                    {
-                        if ((readingConsentForm == false) && (hearingConsentForm == false) && (noConsent == false))
+                    {        
+                        if ((noConsent == true) || (((hearingConsentForm == true) || (readingConsentForm == true)) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (finished_questions == true) && ((question1 == false) || (question2 == false) || (question3 == false))))
                         {
+                            hearingConsentForm = false;
                             readingConsentForm = true;
+                            noConsent = false;
+                            hasCheckedForConsent = true;
+                            hasFinishedConsentForm = false;
+                            finished_listening = false;
+                            finished_reading = false;
+                            android_window_displayed = false;
+                            can_display_window = false;
+                            finished_questions = false;
+                            answeredQuestion1 = false;
+                            answeredQuestion2 = false;
+                            answeredQuestion3 = false;
+                            question1 = false;
+                            question2 = false;
+                            question3 = false;
+                            readConsent = false;
+                            consentFlag = false;
+                            readProcedures = false;
+                            proceduresFlag = false;
+                            readRequirements = false;
+                            requirementsFlag = false;
+                            readRisks = false;
+                            risksFlag = false;
+                            readBenefits = false;
+                            benefitsFlag = false;
+                            readCompCost = false;
+                            compCostFlag = false;
+                            readConfidentiality = false;
+                            confidentialityFlag = false;
+                            readQuestionsContact = false;
+                            questionsContactFlag = false;
+                            readVoluntary = false;
+                            voluntaryFlag = false;
+                            readEighteenPlus = false;
+                            eighteenPlusFlag = false;
+                            readUnderstand = false;
+                            understandFlag = false;
+                            readParticipate = false;
+                            participateFlag = false;
                             canRepeat = true;
-                            debugPlayerInfo = "Swipe right registered. Reading consent form manually.";
-                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         }
-                        else if ((hearingConsentForm == true) && (answeredQuestion1 == false))
+                        else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == false))
                         {
-                            question1 = true;
-                            answeredQuestion1 = true;
-                            canRepeat = true;
-                            debugPlayerInfo = "Swipe right registered. Is eighteen.";
+                            question3 = true;
+                            answeredQuestion3 = true;                            
+                            finished_questions = true;
+                            debugPlayerInfo = "Swipe right registered. Wants to participate.";
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                            clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                            SoundManager.instance.PlayClips(clips, null, 0, () => {
+                                canRepeat = true;
+                                hasCheckedForConsent = true;
+                                reportConsent(SystemInfo.deviceUniqueIdentifier);
+                            }, 1, null, true);
                         }
                         else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == false))
                         {
@@ -7361,155 +7165,48 @@ public class Player : MovingObject
                             canRepeat = true;
                             debugPlayerInfo = "Swipe right registered. Understood information.";
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                            if ((answeredQuestion3 == false) && (finished_listening == true))
+                            {
+                                canRepeat = false;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[8] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[7] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
                         }
-                        else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == false))
+                        else if ((hearingConsentForm == true) && (answeredQuestion1 == false))
                         {
-                            question3 = true;
-                            answeredQuestion3 = true;
+                            question1 = true;
+                            answeredQuestion1 = true;
                             canRepeat = true;
-                            finished_questions = true;
-                            debugPlayerInfo = "Swipe right registered. Wants to participate.";
+                            debugPlayerInfo = "Swipe right registered. Is eighteen.";
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-
-                            clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                            SoundManager.instance.PlayClips(clips, null, 0, () => {
-                                canRepeat = true;
-                                hasCheckedForConsent = true;
-                                reportConsent(SystemInfo.deviceUniqueIdentifier);
-                            }, 1, null, true);
+                            if ((answeredQuestion2 == false) && (finished_listening == true))
+                            {
+                                canRepeat = false;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[6] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[5] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
                         }
-                        else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (finished_questions == true) && ((question1 == false) || (question2 == false) || (question3 == false)))
+                        else if ((readingConsentForm == false) && (hearingConsentForm == false) && (noConsent == false))
                         {
-                            hearingConsentForm = false;
                             readingConsentForm = true;
-                            noConsent = false;
-                            hasCheckedForConsent = true;
-                            hasFinishedConsentForm = false;
-                            finished_listening = false;
-                            finished_reading = false;
-                            android_window_displayed = false;
-                            can_display_window = false;
-                            finished_questions = false;
-                            answeredQuestion1 = false;
-                            answeredQuestion2 = false;
-                            answeredQuestion3 = false;
-                            question1 = false;
-                            question2 = false;
-                            question3 = false;
-                            readConsent = false;
-                            consentFlag = false;
-                            readProcedures = false;
-                            proceduresFlag = false;
-                            readRequirements = false;
-                            requirementsFlag = false;
-                            readRisks = false;
-                            risksFlag = false;
-                            readBenefits = false;
-                            benefitsFlag = false;
-                            readCompCost = false;
-                            compCostFlag = false;
-                            readConfidentiality = false;
-                            confidentialityFlag = false;
-                            readQuestionsContact = false;
-                            questionsContactFlag = false;
-                            readVoluntary = false;
-                            voluntaryFlag = false;
-                            readEighteenPlus = false;
-                            eighteenPlusFlag = false;
-                            readUnderstand = false;
-                            understandFlag = false;
-                            readParticipate = false;
-                            participateFlag = false;
                             canRepeat = true;
-                        }
-                        else if ((readingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (finished_questions == true) && ((question1 == false) || (question2 == false) || (question3 == false)))
-                        {
-                            hearingConsentForm = false;
-                            readingConsentForm = true;
-                            noConsent = false;
-                            hasCheckedForConsent = true;
-                            hasFinishedConsentForm = false;
-                            finished_listening = false;
-                            finished_reading = false;
-                            android_window_displayed = false;
-                            can_display_window = false;
-                            finished_questions = false;
-                            answeredQuestion1 = false;
-                            answeredQuestion2 = false;
-                            answeredQuestion3 = false;
-                            question1 = false;
-                            question2 = false;
-                            question3 = false;
-                            readConsent = false;
-                            consentFlag = false;
-                            readProcedures = false;
-                            proceduresFlag = false;
-                            readRequirements = false;
-                            requirementsFlag = false;
-                            readRisks = false;
-                            risksFlag = false;
-                            readBenefits = false;
-                            benefitsFlag = false;
-                            readCompCost = false;
-                            compCostFlag = false;
-                            readConfidentiality = false;
-                            confidentialityFlag = false;
-                            readQuestionsContact = false;
-                            questionsContactFlag = false;
-                            readVoluntary = false;
-                            voluntaryFlag = false;
-                            readEighteenPlus = false;
-                            eighteenPlusFlag = false;
-                            readUnderstand = false;
-                            understandFlag = false;
-                            readParticipate = false;
-                            participateFlag = false;
-                            canRepeat = true;
-                        }
-                        else if (noConsent == true)
-                        {
-                            hearingConsentForm = false;
-                            readingConsentForm = true;
-                            noConsent = false;
-                            hasCheckedForConsent = true;
-                            hasFinishedConsentForm = false;
-                            android_window_displayed = false;
-                            can_display_window = false;
-                            finished_listening = false;
-                            finished_reading = false;
-                            finished_questions = false;
-                            answeredQuestion1 = false;
-                            answeredQuestion2 = false;
-                            answeredQuestion3 = false;
-                            question1 = false;
-                            question2 = false;
-                            question3 = false;
-                            readConsent = false;
-                            consentFlag = false;
-                            readProcedures = false;
-                            proceduresFlag = false;
-                            readRequirements = false;
-                            requirementsFlag = false;
-                            readRisks = false;
-                            risksFlag = false;
-                            readBenefits = false;
-                            benefitsFlag = false;
-                            readCompCost = false;
-                            compCostFlag = false;
-                            readConfidentiality = false;
-                            confidentialityFlag = false;
-                            readQuestionsContact = false;
-                            questionsContactFlag = false;
-                            readVoluntary = false;
-                            voluntaryFlag = false;
-                            readEighteenPlus = false;
-                            eighteenPlusFlag = false;
-                            readUnderstand = false;
-                            understandFlag = false;
-                            readParticipate = false;
-                            participateFlag = false;
-                            canRepeat = true;
-                        }
+                            debugPlayerInfo = "Swipe right registered. Reading consent form manually.";
+                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                        }                                              
                     }
                 }
 

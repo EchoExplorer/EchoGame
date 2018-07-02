@@ -49,7 +49,7 @@ public class GM_main_pre : MonoBehaviour
 
     // Use this for initialization
     void Start()
-    {
+    {       
         string filename = "";
         string[] svdata_split;
         GameMode.Game_Mode current = GameMode.instance.get_mode();
@@ -119,6 +119,8 @@ public class GM_main_pre : MonoBehaviour
 
     void init()
     {
+        skippingTutorial = -1;
+
         levelImage = GameObject.Find("LevelImage").gameObject;
         levelText = levelImage.transform.Find("LevelText").gameObject.GetComponent<Text>();
         levelText.fontSize = 18;
@@ -169,7 +171,8 @@ public class GM_main_pre : MonoBehaviour
                 levelText.text += "go to the main menu.";
             }
         }
-        Screen.orientation = ScreenOrientation.Landscape;
+
+        selectMode = SelectMode.NONE;
         at_confirm = false;
         hasGoneThroughSetup = true;
         eh = new eventHandler(InputModule.instance);
@@ -1116,7 +1119,7 @@ public class GM_main_pre : MonoBehaviour
                 {
                     GameMode.instance.gamemode = GameMode.Game_Mode.TUTORIAL_RESTART;
                 }
-                else
+                else if (GameMode.instance.gamemode == GameMode.Game_Mode.CONTINUE)
                 {
                     GameMode.instance.gamemode = GameMode.Game_Mode.RESTART;
                 }
