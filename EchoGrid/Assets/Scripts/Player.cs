@@ -4194,15 +4194,10 @@ public class Player : MovingObject
         {
             canCheckForConsent = false;
 
-            // string filename = Application.persistentDataPath + "consentRecord";
-            string filename = Path.Combine(Application.persistentDataPath, "consentRecord");
-            string[] svdata_split;
+            int hasConsented = PlayerPrefs.GetInt("Consented", -1);
 
-            if (System.IO.File.Exists(filename))
+            if (hasConsented != -1)
             {
-                svdata_split = System.IO.File.ReadAllLines(filename);
-                int hasConsented = Int32.Parse(svdata_split[0]);
-
                 if (hasConsented == 1)
                 {
                     debugPlayerInfo = "Previously consented to having their data collected. Can continue with level " + curLevel.ToString() + ".";
@@ -5162,7 +5157,7 @@ public class Player : MovingObject
                 {
                     if (noConsent == true)
                     {
-                        Utilities.writefile("consentRecord", "0");
+                        PlayerPrefs.SetInt("Consented", 0);
                         debugPlayerInfo = "Tap registered. Did not consent to having data collected. Can continue with level " + curLevel.ToString() + ".";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         hasFinishedConsentForm = true;
@@ -5183,7 +5178,7 @@ public class Player : MovingObject
 
                     else if (((hearingConsentForm == true) || (readingConsentForm == true)) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (question1 == true) && (question2 == true) && (question3 == true))
                     {
-                        Utilities.writefile("consentRecord", "1");
+                        PlayerPrefs.SetInt("Consented", 1);
                         debugPlayerInfo = "Tap registered. Consented to having data collected. Can continue with level " + curLevel.ToString() + ".";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.                      
                         hasFinishedConsentForm = true;
@@ -6702,7 +6697,7 @@ public class Player : MovingObject
                 {
                     if (noConsent == true)
                     {
-                        Utilities.writefile("consentRecord", "0");
+                        PlayerPrefs.SetInt("Consented", 0);
                         debugPlayerInfo = "Tap registered. Did not consent to having data collected. Can continue with level " + curLevel.ToString() + ".";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.                        
                         hasFinishedConsentForm = true;
@@ -6723,7 +6718,7 @@ public class Player : MovingObject
 
                     else if (((hearingConsentForm == true) || (readingConsentForm == true)) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (question1 == true) && (question2 == true) && (question3 == true))
                     {
-                        Utilities.writefile("consentRecord", "1");
+                        PlayerPrefs.SetInt("Consented", 1);
                         debugPlayerInfo = "Tap registered. Consented to having data collected. Can continue with level " + curLevel.ToString() + ".";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         hasFinishedConsentForm = true;
@@ -8481,15 +8476,9 @@ public class Player : MovingObject
             yield return false;
         }
 
-        // string filename = Application.persistentDataPath + "consentRecord";
-        string filename = Path.Combine(Application.persistentDataPath, "consentRecord");
-        string[] svdata_split;
-
-        if (System.IO.File.Exists(filename))
+        int hasConsented = PlayerPrefs.GetInt("Consented", -1);
+        if (hasConsented != -1)
         {
-            svdata_split = System.IO.File.ReadAllLines(filename);
-            int hasConsented = Int32.Parse(svdata_split[0]);
-
             if (hasConsented == 1)
             {
                 print("Has consented to sending their data to the server for research.");
