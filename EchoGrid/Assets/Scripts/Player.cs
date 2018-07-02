@@ -2779,10 +2779,29 @@ public class Player : MovingObject
                 if (SoundManager.instance.finishedAllClips == true)
                 {
                     finished_listening = true;
-                    debugPlayerInfo = "Finished listening to consent form and consent question 1.";
+                    canRepeat = true;
+                    debugPlayerInfo = "Finished listening to consent form audio.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 }
-            } 
+            }
+
+            if ((hearingConsentForm == true) && (answeredQuestion1 == false) && (finished_listening == true))
+            {
+                if (canRepeat == true)
+                {
+                    canRepeat = false;
+                    if (GM_title.isUsingTalkback == true)
+                    {
+                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[4] };
+                    }
+                    else if (GM_title.isUsingTalkback == false)
+                    {
+                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[3] };
+                    }
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                }
+            }
+
             
             if (((hearingConsentForm == true) || (readingConsentForm == true)) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (question1 == true) && (question2 == true) && (question3 == true) && (hasFinishedConsentForm == false))
             {
@@ -5354,6 +5373,9 @@ public class Player : MovingObject
                             readParticipate = false;
                             participateFlag = false;
                             canRepeat = true;
+
+                            clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[2], Database.soundEffectClips[0] };
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                         }
                         else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == false))
                         {
@@ -5416,16 +5438,9 @@ public class Player : MovingObject
                         {
                             hearingConsentForm = true;
                             canRepeat = true;
-                            debugPlayerInfo = "Swipe left registered. Reading consent form through audio instructions.";
+                            debugPlayerInfo = "Swipe left registered. Hearing consent form through audio instructions.";
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                            if (GM_title.isUsingTalkback == true)
-                            {
-                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[2], Database.soundEffectClips[0], Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[4] };
-                            }
-                            else if (GM_title.isUsingTalkback == false)
-                            {
-                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[2], Database.soundEffectClips[0], Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[3] };
-                            }
+                            clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[2], Database.soundEffectClips[0] };
                             SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                         }                                              
                     }
@@ -5590,6 +5605,9 @@ public class Player : MovingObject
                             readParticipate = false;
                             participateFlag = false;
                             canRepeat = true;
+
+                            clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[2], Database.soundEffectClips[0] };
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                         }
                         else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == false))
                         {
@@ -6901,6 +6919,9 @@ public class Player : MovingObject
                             readParticipate = false;
                             participateFlag = false;
                             canRepeat = true;
+
+                            clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[2], Database.soundEffectClips[0] };
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                         }
                         else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == false))
                         {
@@ -6961,16 +6982,9 @@ public class Player : MovingObject
                         {
                             hearingConsentForm = true;
                             canRepeat = true;
-                            debugPlayerInfo = "Swipe left registered. Reading consent form through audio instructions.";
+                            debugPlayerInfo = "Swipe left registered. Hearing consent form through audio instructions.";
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.                            
-                            if (GM_title.isUsingTalkback == true)
-                            {
-                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[2], Database.soundEffectClips[0], Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[4] };
-                            }
-                            else if (GM_title.isUsingTalkback == false)
-                            {
-                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[2], Database.soundEffectClips[0], Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[3] };
-                            }
+                            clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[2], Database.soundEffectClips[0] };
                             SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                         }                                            
                     }
@@ -7143,6 +7157,9 @@ public class Player : MovingObject
                             readParticipate = false;
                             participateFlag = false;
                             canRepeat = true;
+
+                            clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[2], Database.soundEffectClips[0] };
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                         }
                         else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == false))
                         {
