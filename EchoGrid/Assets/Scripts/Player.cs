@@ -640,49 +640,49 @@ public class Player : MovingObject
         float rightEndDelay = 0.0f;
         float frontDelay = 0.0f;
 
-        SoundManager.instance.PlaySingle(attenuatedClick);
+        // SoundManager.instance.PlaySingle(attenuatedClick);
         // SoundManager.instance.PlaySingle(pulse);
 
         if ((leftAudioSource != null) && (left_rightAudioSource != null))
         {
             leftDelay = 1.5f / 340;
-            leftAudioSource.PlayDelayed(leftDelay);
-            left_rightAudioSource.PlayDelayed(leftDelay);
+            // leftAudioSource.PlayDelayed(leftDelay);
+            // left_rightAudioSource.PlayDelayed(leftDelay);
             // print("Left played! Delay = " + leftDelay.ToString());
         }
         if ((rightAudioSource != null) && (right_leftAudioSource != null))
         {
             rightDelay = 1.5f / 340;
-            rightAudioSource.PlayDelayed(rightDelay);
-            right_leftAudioSource.PlayDelayed(rightDelay);
+            // rightAudioSource.PlayDelayed(rightDelay);
+            // right_leftAudioSource.PlayDelayed(rightDelay);
             // print("Right played! Delay = " + rightDelay.ToString());
         }
         if ((leftFrontAudioSource != null) && (leftFront_rightAudioSource != null))
         {
             leftFrontDelay = 2.12132f / 340;
-            leftFrontAudioSource.PlayDelayed(leftFrontDelay);
-            leftFront_rightAudioSource.PlayDelayed(leftFrontDelay);
+            // leftFrontAudioSource.PlayDelayed(leftFrontDelay);
+            // leftFront_rightAudioSource.PlayDelayed(leftFrontDelay);
             // print("Left front played! Delay = " + leftFrontDelay.ToString());
         }
         if ((rightFrontAudioSource != null) && (rightFront_leftAudioSource != null))
         {
             rightFrontDelay = 2.12132f / 340;
-            rightFrontAudioSource.PlayDelayed(rightFrontDelay);
-            rightFront_leftAudioSource.PlayDelayed(rightFrontDelay);
+            // rightFrontAudioSource.PlayDelayed(rightFrontDelay);
+            // rightFront_leftAudioSource.PlayDelayed(rightFrontDelay);
             // print("Right front played! Delay = " + rightFrontDelay.ToString());
         }
         if ((leftEndAudioSource != null) && (leftEnd_rightAudioSource != null))
         {
             leftEndDelay = (1.5f * stepsToLeftEnd + 0.75f) * 2 / 340;
-            leftEndAudioSource.PlayDelayed(leftEndDelay);
-            leftEnd_rightAudioSource.PlayDelayed(leftEndDelay);
+            // leftEndAudioSource.PlayDelayed(leftEndDelay);
+            // leftEnd_rightAudioSource.PlayDelayed(leftEndDelay);
             // print("Left End is " + stepsToLeftEnd + " steps away! Delay = " + leftEndDelay.ToString());
         }
         if ((rightEndAudioSource != null) && (rightEnd_leftAudioSource != null))
         {
             rightEndDelay = (1.5f * stepsToRightEnd + 0.75f) * 2 / 340;
-            rightEndAudioSource.PlayDelayed(rightEndDelay);
-            rightEnd_leftAudioSource.PlayDelayed(rightEndDelay);
+            // rightEndAudioSource.PlayDelayed(rightEndDelay);
+            // rightEnd_leftAudioSource.PlayDelayed(rightEndDelay);
             // print("Right End is " + stepsToRightEnd + " steps away! Delay = " + rightEndDelay.ToString());
         }
 
@@ -710,15 +710,15 @@ public class Player : MovingObject
                 }        
                 else if ((curLevel >= 17) && (curLevel <= 21))
                 {
-                    return 0.8750f;
+                    return 0.8300f;
                 }
                 else if ((curLevel >= 22) && (curLevel <= 26))
                 {
-                    return 0.7500f;
+                    return 0.7000f;
                 }
                 else if ((curLevel >= 27) && (curLevel <= 31))
                 {
-                    return 0.6250f;
+                    return 0.5800f;
                 }
                 else if ((curLevel >= 32) && (curLevel <= 36))
                 {
@@ -730,19 +730,19 @@ public class Player : MovingObject
                 }
                 else if ((curLevel >= 42) && (curLevel <= 46))
                 {
-                    return 0.3500f;
+                    return 0.3600f;
                 }
                 else if ((curLevel >= 47) && (curLevel <= 51))
                 {
-                    return 0.3100f;
+                    return 0.3050f;
                 }
                 else if ((curLevel >= 52) && (curLevel <= 56))
                 {
-                    return 0.2700f;
+                    return 0.2670f;
                 }
                 else if ((curLevel >= 57) && (curLevel <= 61))
                 {
-                    return 0.2350f;
+                    return 0.2300f;
                 }
                 else if ((curLevel >= 62) && (curLevel <= 66))
                 {
@@ -762,11 +762,11 @@ public class Player : MovingObject
                 }
                 else if ((curLevel >= 82) && (curLevel <= 86))
                 {
-                    return 0.1220f;
+                    return 0.1200f;
                 }
                 else if ((curLevel >= 87) && (curLevel <= 91))
                 {
-                    return 0.1075f;
+                    return 0.1060f;
                 }
                 else if (curLevel >= 92)
                 {
@@ -929,11 +929,11 @@ public class Player : MovingObject
                 }
                 else if ((curLevel >= 17) && (curLevel <= 21))
                 {
-                    return 0.4323f;
+                    return 0.4280f;
                 }
                 else if ((curLevel >= 22) && (curLevel <= 26))
                 {
-                    return 0.3705f;
+                    return 0.3650f;
                 }
                 else if ((curLevel >= 27) && (curLevel <= 31))
                 {
@@ -941,55 +941,55 @@ public class Player : MovingObject
                 }
                 else if ((curLevel >= 32) && (curLevel <= 36))
                 {
-                    return 0.2440f;
+                    return 0.2600f;
                 }
                 else if ((curLevel >= 37) && (curLevel <= 41))
                 {
-                    return 0.2100f;
+                    return 0.2300f;
                 }
                 else if ((curLevel >= 42) && (curLevel <= 46))
                 {
-                    return 0.1729f;
+                    return 0.2010f;
                 }
                 else if ((curLevel >= 47) && (curLevel <= 51))
                 {
-                    return 0.1531f;
+                    return 0.1751f;
                 }
                 else if ((curLevel >= 52) && (curLevel <= 56))
                 {
-                    return 0.1334f;
+                    return 0.1564f;
                 }
                 else if ((curLevel >= 57) && (curLevel <= 61))
                 {
-                    return 0.1161f;
+                    return 0.1371f;
                 }
                 else if ((curLevel >= 62) && (curLevel <= 66))
                 {
-                    return 0.0988f;
+                    return 0.1208f;
                 }
                 else if ((curLevel >= 67) && (curLevel <= 71))
                 {
-                    return 0.0889f;
+                    return 0.1049f;
                 }
                 else if ((curLevel >= 72) && (curLevel <= 76))
                 {
-                    return 0.0771f;
+                    return 0.0921f;
                 }
                 else if ((curLevel >= 77) && (curLevel <= 81))
                 {
-                    return 0.0682f;
+                    return 0.0832f;
                 }
                 else if ((curLevel >= 82) && (curLevel <= 86))
                 {
-                    return 0.0603f;
+                    return 0.0753f;
                 }
                 else if ((curLevel >= 87) && (curLevel <= 91))
                 {
-                    return 0.0531f;
+                    return 0.0681f;
                 }
                 else if (curLevel >= 92)
                 {
-                    return 0.0469f;
+                    return 0.0619f;
                 }
             }
             if ((echoType == "left_end") || (echoType == "left_end_right") || (echoType == "right_end") || (echoType == "right_end_left"))
@@ -1078,63 +1078,63 @@ public class Player : MovingObject
                 }
                 else if ((curLevel >= 22) && (curLevel <= 26))
                 {
-                    return 0.2528f;
+                    return 0.2540f;
                 }
                 else if ((curLevel >= 27) && (curLevel <= 31))
                 {
-                    return 0.2106f;
+                    return 0.2200f;
                 }
                 else if ((curLevel >= 32) && (curLevel <= 36))
                 {
-                    return 0.1665f;
+                    return 0.1930f;
                 }
                 else if ((curLevel >= 37) && (curLevel <= 41))
                 {
-                    return 0.1432f;
+                    return 0.1700f;
                 }
                 else if ((curLevel >= 42) && (curLevel <= 46))
                 {
-                    return 0.1180f;
+                    return 0.1500f;
                 }
                 else if ((curLevel >= 47) && (curLevel <= 51))
                 {
-                    return 0.1045f;
+                    return 0.1295f;
                 }
                 else if ((curLevel >= 52) && (curLevel <= 56))
                 {
-                    return 0.0910f;
+                    return 0.1150f;
                 }
                 else if ((curLevel >= 57) && (curLevel <= 61))
                 {
-                    return 0.0792f;
+                    return 0.0992f;
                 }
                 else if ((curLevel >= 62) && (curLevel <= 66))
                 {
-                    return 0.0674f;
+                    return 0.0884f;
                 }
                 else if ((curLevel >= 67) && (curLevel <= 71))
                 {
-                    return 0.0607f;
+                    return 0.0787f;
                 }
                 else if ((curLevel >= 72) && (curLevel <= 76))
                 {
-                    return 0.0526f;
+                    return 0.0706f;
                 }
                 else if ((curLevel >= 77) && (curLevel <= 81))
                 {
-                    return 0.0465f;
+                    return 0.0615f;
                 }
                 else if ((curLevel >= 82) && (curLevel <= 86))
                 {
-                    return 0.0411f;
+                    return 0.0561f;
                 }
                 else if ((curLevel >= 87) && (curLevel <= 91))
                 {
-                    return 0.0362f;
+                    return 0.0512f;
                 }
                 else if (curLevel >= 92)
                 {
-                    return 0.0320f;
+                    return 0.0470f;
                 }
             }
             if ((echoType == "left_end") || (echoType == "left_end_right") || (echoType == "right_end") || (echoType == "right_end_left"))
@@ -1223,63 +1223,63 @@ public class Player : MovingObject
                 }
                 else if ((curLevel >= 22) && (curLevel <= 26))
                 {
-                    return 0.2025f;
+                    return 0.2040f;
                 }
                 else if ((curLevel >= 27) && (curLevel <= 31))
                 {
-                    return 0.1688f;
+                    return 0.1760f;
                 }
                 else if ((curLevel >= 32) && (curLevel <= 36))
                 {
-                    return 0.1334f;
+                    return 0.1525f;
                 }
                 else if ((curLevel >= 37) && (curLevel <= 41))
                 {
-                    return 0.1148f;
+                    return 0.1340f;
                 }
                 else if ((curLevel >= 42) && (curLevel <= 46))
                 {
-                    return 0.0945f;
+                    return 0.1170f;
                 }
                 else if ((curLevel >= 47) && (curLevel <= 51))
                 {
-                    return 0.0837f;
+                    return 0.1007f;
                 }
                 else if ((curLevel >= 52) && (curLevel <= 56))
                 {
-                    return 0.0729f;
+                    return 0.0909f;
                 }
                 else if ((curLevel >= 57) && (curLevel <= 61))
                 {
-                    return 0.0635f;
+                    return 0.0805f;
                 }
                 else if ((curLevel >= 62) && (curLevel <= 66))
                 {
-                    return 0.0540f;
+                    return 0.0730f;
                 }
                 else if ((curLevel >= 67) && (curLevel <= 71))
                 {
-                    return 0.0486f;
+                    return 0.0636f;
                 }
                 else if ((curLevel >= 72) && (curLevel <= 76))
                 {
-                    return 0.0421f;
+                    return 0.0571f;
                 }
                 else if ((curLevel >= 77) && (curLevel <= 81))
                 {
-                    return 0.0373f;
+                    return 0.0523f;
                 }
                 else if ((curLevel >= 82) && (curLevel <= 86))
                 {
-                    return 0.0329f;
+                    return 0.0479f;
                 }
                 else if ((curLevel >= 87) && (curLevel <= 91))
                 {
-                    return 0.0290f;
+                    return 0.0440f;
                 }
                 else if (curLevel >= 92)
                 {
-                    return 0.0257f;
+                    return 0.0407f;
                 }
             }
             if ((echoType == "left_end") || (echoType == "left_end_right") || (echoType == "right_end") || (echoType == "right_end_left"))
@@ -1364,7 +1364,7 @@ public class Player : MovingObject
                 }
                 else if ((curLevel >= 17) && (curLevel <= 21))
                 {
-                    return 0.1913f;
+                    return 0.1920f;
                 }
                 else if ((curLevel >= 22) && (curLevel <= 26))
                 {
@@ -1372,59 +1372,59 @@ public class Player : MovingObject
                 }
                 else if ((curLevel >= 27) && (curLevel <= 31))
                 {
-                    return 0.1406f;
+                    return 0.1470f;
                 }
                 else if ((curLevel >= 32) && (curLevel <= 36))
                 {
-                    return 0.1112f;
+                    return 0.1280f;
                 }
                 else if ((curLevel >= 37) && (curLevel <= 41))
                 {
-                    return 0.0956f;
+                    return 0.1140f;
                 }
                 else if ((curLevel >= 42) && (curLevel <= 46))
                 {
-                    return 0.0788f;
+                    return 0.1010f;
                 }
                 else if ((curLevel >= 47) && (curLevel <= 51))
                 {
-                    return 0.0698f;
+                    return 0.0888f;
                 }
                 else if ((curLevel >= 52) && (curLevel <= 56))
                 {
-                    return 0.0608f;
+                    return 0.0795f;
                 }
                 else if ((curLevel >= 57) && (curLevel <= 61))
                 {
-                    return 0.0529f;
+                    return 0.0712f;
                 }
                 else if ((curLevel >= 62) && (curLevel <= 66))
                 {
-                    return 0.0450f;
+                    return 0.0615f;
                 }
                 else if ((curLevel >= 67) && (curLevel <= 71))
                 {
-                    return 0.0405f;
+                    return 0.0547f;
                 }
                 else if ((curLevel >= 72) && (curLevel <= 76))
                 {
-                    return 0.0351f;
+                    return 0.0481f;
                 }
                 else if ((curLevel >= 77) && (curLevel <= 81))
                 {
-                    return 0.0311f;
+                    return 0.0441f;
                 }
                 else if ((curLevel >= 82) && (curLevel <= 86))
                 {
-                    return 0.0275f;
+                    return 0.0405f;
                 }
                 else if ((curLevel >= 87) && (curLevel <= 91))
                 {
-                    return 0.0242f;
+                    return 0.0372f;
                 }
                 else if (curLevel >= 92)
                 {
-                    return 0.0214f;
+                    return 0.0354f;
                 }
             }
             if ((echoType == "left_end") || (echoType == "left_end_right") || (echoType == "right_end") || (echoType == "right_end_left"))
@@ -1513,63 +1513,63 @@ public class Player : MovingObject
                 }
                 else if ((curLevel >= 22) && (curLevel <= 26))
                 {
-                    return 0.1478f;
+                    return 0.1490f;
                 }
                 else if ((curLevel >= 27) && (curLevel <= 31))
                 {
-                    return 0.1231f;
+                    return 0.1320f;
                 }
                 else if ((curLevel >= 32) && (curLevel <= 36))
                 {
-                    return 0.0973f;
+                    return 0.1140f;
                 }
                 else if ((curLevel >= 37) && (curLevel <= 41))
                 {
-                    return 0.0837f;
+                    return 0.1010f;
                 }
                 else if ((curLevel >= 42) && (curLevel <= 46))
                 {
-                    return 0.0690f;
+                    return 0.0910f;
                 }
                 else if ((curLevel >= 47) && (curLevel <= 51))
                 {
-                    return 0.0611f;
+                    return 0.0801f;
                 }
                 else if ((curLevel >= 52) && (curLevel <= 56))
                 {
-                    return 0.0532f;
+                    return 0.0692f;
                 }
                 else if ((curLevel >= 57) && (curLevel <= 61))
                 {
-                    return 0.0463f;
+                    return 0.0613f;
                 }
                 else if ((curLevel >= 62) && (curLevel <= 66))
                 {
-                    return 0.0394f;
+                    return 0.0555f;
                 }
                 else if ((curLevel >= 67) && (curLevel <= 71))
                 {
-                    return 0.0355f;
+                    return 0.0490f;
                 }
                 else if ((curLevel >= 72) && (curLevel <= 76))
                 {
-                    return 0.0307f;
+                    return 0.0432f;
                 }
                 else if ((curLevel >= 77) && (curLevel <= 81))
                 {
-                    return 0.0272f;
+                    return 0.0392f;
                 }
                 else if ((curLevel >= 82) && (curLevel <= 86))
                 {
-                    return 0.0240f;
+                    return 0.0362f;
                 }
                 else if ((curLevel >= 87) && (curLevel <= 91))
                 {
-                    return 0.0212f;
+                    return 0.0324f;
                 }
                 else if (curLevel >= 92)
                 {
-                    return 0.0187f;
+                    return 0.0337f;
                 }
             }
             if ((echoType == "left_end") || (echoType == "left_end_right") || (echoType == "right_end") || (echoType == "right_end_left"))
@@ -1654,67 +1654,67 @@ public class Player : MovingObject
                 }
                 else if ((curLevel >= 17) && (curLevel <= 21))
                 {
-                    return 0.1531f;
+                    return 0.1520f;
                 }
                 else if ((curLevel >= 22) && (curLevel <= 26))
                 {
-                    return 0.1313f;
+                    return 0.1320f;
                 }
                 else if ((curLevel >= 27) && (curLevel <= 31))
                 {
-                    return 0.1094f;
+                    return 0.1160f;
                 }
                 else if ((curLevel >= 32) && (curLevel <= 36))
                 {
-                    return 0.0865f;
+                    return 0.1020f;
                 }
                 else if ((curLevel >= 37) && (curLevel <= 41))
                 {
-                    return 0.0744f;
+                    return 0.0910f;
                 }
                 else if ((curLevel >= 42) && (curLevel <= 46))
                 {
-                    return 0.0613f;
+                    return 0.0790f;
                 }
                 else if ((curLevel >= 47) && (curLevel <= 51))
                 {
-                    return 0.0543f;
+                    return 0.0723f;
                 }
                 else if ((curLevel >= 52) && (curLevel <= 56))
                 {
-                    return 0.0473f;
+                    return 0.0618f;
                 }
                 else if ((curLevel >= 57) && (curLevel <= 61))
                 {
-                    return 0.0411f;
+                    return 0.0561f;
                 }
                 else if ((curLevel >= 62) && (curLevel <= 66))
                 {
-                    return 0.0350f;
+                    return 0.0490f;
                 }
                 else if ((curLevel >= 67) && (curLevel <= 71))
                 {
-                    return 0.0315f;
+                    return 0.0445f;
                 }
                 else if ((curLevel >= 72) && (curLevel <= 76))
                 {
-                    return 0.0273f;
+                    return 0.0397f;
                 }
                 else if ((curLevel >= 77) && (curLevel <= 81))
                 {
-                    return 0.0242f;
+                    return 0.0362f;
                 }
                 else if ((curLevel >= 82) && (curLevel <= 86))
                 {
-                    return 0.0214f;
+                    return 0.0334f;
                 }
                 else if ((curLevel >= 87) && (curLevel <= 91))
                 {
-                    return 0.0188f;
+                    return 0.0318f;
                 }
                 else if (curLevel >= 92)
                 {
-                    return 0.0166f;
+                    return 0.0296f;
                 }
             }
             if ((echoType == "left_end") || (echoType == "left_end_right") || (echoType == "right_end") || (echoType == "right_end_left"))
@@ -1799,67 +1799,67 @@ public class Player : MovingObject
                 }
                 else if ((curLevel >= 17) && (curLevel <= 21))
                 {
-                    return 0.1365f;
+                    return 0.1350f;
                 }
                 else if ((curLevel >= 22) && (curLevel <= 26))
                 {
-                    return 0.1170f;
+                    return 0.1190f;
                 }
                 else if ((curLevel >= 27) && (curLevel <= 31))
                 {
-                    return 0.0975f;
+                    return 0.1040f;
                 }
                 else if ((curLevel >= 32) && (curLevel <= 36))
                 {
-                    return 0.0771f;
+                    return 0.0935f;
                 }
                 else if ((curLevel >= 37) && (curLevel <= 41))
                 {
-                    return 0.0663f;
+                    return 0.0830f;
                 }
                 else if ((curLevel >= 42) && (curLevel <= 46))
                 {
-                    return 0.0546f;
+                    return 0.0720f;
                 }
                 else if ((curLevel >= 47) && (curLevel <= 51))
                 {
-                    return 0.0484f;
+                    return 0.0647f;
                 }
                 else if ((curLevel >= 52) && (curLevel <= 56))
                 {
-                    return 0.0421f;
+                    return 0.0578f;
                 }
                 else if ((curLevel >= 57) && (curLevel <= 61))
                 {
-                    return 0.0367f;
+                    return 0.0510f;
                 }
                 else if ((curLevel >= 62) && (curLevel <= 66))
                 {
-                    return 0.0312f;
+                    return 0.0447f;
                 }
                 else if ((curLevel >= 67) && (curLevel <= 71))
                 {
-                    return 0.0281f;
+                    return 0.0399f;
                 }
                 else if ((curLevel >= 72) && (curLevel <= 76))
                 {
-                    return 0.0243f;
+                    return 0.0343f;
                 }
                 else if ((curLevel >= 77) && (curLevel <= 81))
                 {
-                    return 0.0215f;
+                    return 0.0305f;
                 }
                 else if ((curLevel >= 82) && (curLevel <= 86))
                 {
-                    return 0.0190f;
+                    return 0.0260f;
                 }
                 else if ((curLevel >= 87) && (curLevel <= 91))
                 {
-                    return 0.0168f;
+                    return 0.0228f;
                 }
                 else if (curLevel >= 92)
                 {
-                    return 0.0148f;
+                    return 0.0190f;
                 }
             }
             if ((echoType == "left_end") || (echoType == "left_end_right") || (echoType == "right_end") || (echoType == "right_end_left"))
@@ -1948,63 +1948,63 @@ public class Player : MovingObject
                 }
                 else if ((curLevel >= 22) && (curLevel <= 26))
                 {
-                    return 0.1050f;
+                    return 0.1085f;
                 }
                 else if ((curLevel >= 27) && (curLevel <= 31))
                 {
-                    return 0.0875f;
+                    return 0.0935f;
                 }
                 else if ((curLevel >= 32) && (curLevel <= 36))
                 {
-                    return 0.0692f;
+                    return 0.0870f;
                 }
                 else if ((curLevel >= 37) && (curLevel <= 41))
                 {
-                    return 0.0595f;
+                    return 0.0770f;
                 }
                 else if ((curLevel >= 42) && (curLevel <= 46))
                 {
-                    return 0.0490f;
+                    return 0.0650f;
                 }
                 else if ((curLevel >= 47) && (curLevel <= 51))
                 {
-                    return 0.0434f;
+                    return 0.0584f;
                 }
                 else if ((curLevel >= 52) && (curLevel <= 56))
                 {
-                    return 0.0378f;
+                    return 0.0528f;
                 }
                 else if ((curLevel >= 57) && (curLevel <= 61))
                 {
-                    return 0.0329f;
+                    return 0.0470f;
                 }
                 else if ((curLevel >= 62) && (curLevel <= 66))
                 {
-                    return 0.0280f;
+                    return 0.0426f;
                 }
                 else if ((curLevel >= 67) && (curLevel <= 71))
                 {
-                    return 0.0252f;
+                    return 0.0367f;
                 }
                 else if ((curLevel >= 72) && (curLevel <= 76))
                 {
-                    return 0.0218f;
+                    return 0.0322f;
                 }
                 else if ((curLevel >= 77) && (curLevel <= 81))
                 {
-                    return 0.0193f;
+                    return 0.0280f;
                 }
                 else if ((curLevel >= 82) && (curLevel <= 86))
                 {
-                    return 0.0171f;
+                    return 0.0240f;
                 }
                 else if ((curLevel >= 87) && (curLevel <= 91))
                 {
-                    return 0.0151f;
+                    return 0.0210f;
                 }
                 else if (curLevel >= 92)
                 {
-                    return 0.0133f;
+                    return 0.0180f;
                 }
             }
             if ((echoType == "left_end") || (echoType == "left_end_right") || (echoType == "right_end") || (echoType == "right_end_left"))
