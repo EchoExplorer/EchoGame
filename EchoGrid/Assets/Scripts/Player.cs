@@ -2106,6 +2106,10 @@ public class Player : MovingObject
     /// </summary>
 	private void reportOnEcho()
     {
+        if (PlayerPrefs.GetInt("TotalTime", 0) < 180000)
+        {
+            return;
+        }
         string echoEndpoint = "http://echolock.andrew.cmu.edu/cgi-bin/acceptEchoData.py";
 
         Vector2 idx_location = GameManager.instance.boardScript.get_idx_from_pos(transform.position);
@@ -2604,7 +2608,7 @@ public class Player : MovingObject
         string levelDataEndpoint = "http://echolock.andrew.cmu.edu/cgi-bin/acceptLevelData.py";
         int temp = GameManager.instance.boardScript.local_stats[curLevel];
 
-        int timePlayed = PlayerPrefs.GetInt("TotalTime");
+        int timePlayed = PlayerPrefs.GetInt("TotalTime", 0);
 
         if (timePlayed < 180000)
         {
