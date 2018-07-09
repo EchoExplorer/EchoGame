@@ -81,6 +81,8 @@ public class Player : MovingObject
         noPressed = true;
     }
 
+    private int echoNum = 0;
+
     // Usage data to keep track of
     public static bool want_exit = false;
     bool at_pause_menu = false; // indicating if the player activated pause menu
@@ -288,6 +290,7 @@ public class Player : MovingObject
     protected override void Start()
     {
         curLevel = GameManager.instance.level;
+        echoNum = 0;
         init();
         // Adjust player scale
         Vector3 new_scale = transform.localScale;
@@ -2357,21 +2360,19 @@ public class Player : MovingObject
                 changedDir = true;
                 hasMoved = true;
                 rotateplayer(dir);
-                if (reportSent)
+                post_act = "Turn ";
+                if (old_dir == get_player_dir("LEFT"))
                 {
-                    post_act = "Turn ";
-                    if ((dir - get_player_dir("LEFT")).magnitude <= 0.01f)
-                    {
-                        post_act += "Left";
-                    }
-                    else
-                    {
-                        post_act += "Right";
-                    }
-
-                    reportOnEcho();
-                    reportSent = false;
+                    post_act += "Right";
                 }
+                else if (old_dir == get_player_dir("RIGHT"))
+                {
+                    post_act += "Left";
+                }
+
+                reportOnEcho();
+                reportSent = false;
+
             }
             else
             {
@@ -2422,6 +2423,7 @@ public class Player : MovingObject
         // Call the AttemptMove method of the base class, passing in the component T (in this case Wall) and x and y direction to move.
         bool canMove = base.AttemptMove<T>(xDir, yDir);
         numSteps += 1;
+        reportSent = true;
         if (canMove == true)
         {
             hasMoved = true;
@@ -2485,13 +2487,13 @@ public class Player : MovingObject
             {
                 crashLocs = crashLocs + ";" + loc;
             }
-
             if (reportSent)
             {
                 post_act = "Crash";
                 reportOnEcho();
                 reportSent = false;
             }
+
         }
 
         if (reportSent)
@@ -2547,13 +2549,9 @@ public class Player : MovingObject
         {
             SoundManager.instance.PlayVoice(Database.mainGameClips[31], true, 0.0f, 0.0f, 0.5f); // Tell the player that they are not currently at the exit.
         }
-
-        if (reportSent)
-        {
-            post_act = "Exit";
-            reportOnEcho();
-            reportSent = false;
-        }
+        post_act = "Exit";
+        reportOnEcho();
+        reportSent = false;
     }
 
     /// <summary>
@@ -5120,6 +5118,7 @@ public class Player : MovingObject
                             StartCoroutine(DelayedPlayEcho(0.25f)); // Play the echo.
                             GameManager.instance.boardScript.gamerecord += lastEcho;
                             GameManager.instance.boardScript.gamerecord += "}";
+                            echoNum += 1;
                         }
                     }
                     else if ((want_exit == true) && (loadingScene == false))
@@ -6660,6 +6659,7 @@ public class Player : MovingObject
                             StartCoroutine(DelayedPlayEcho(0.25f)); // Play the echo.
                             GameManager.instance.boardScript.gamerecord += lastEcho;
                             GameManager.instance.boardScript.gamerecord += "}";
+                            echoNum += 1;
                         }
                     }
                     else if ((at_pause_menu == true) && (loadingScene == false))
