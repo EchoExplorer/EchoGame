@@ -2,6 +2,36 @@
 #import "IOSNativePopUpsManager.h"
 @implementation IOSNativePopUpsManager
 
++ (void)showThree: (NSString *) title message: (NSString*) msg yesTitle:(NSString*) b1 noTitle: (NSString*) b2 naTitle: (NSString*) b3{
+    
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:title message:msg preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *yesAction = [UIAlertAction actionWithTitle:b1 style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [alertController dismissViewControllerAnimated:NO completion:nil];
+        UnitySendMessage("Player", "switchYes", [DataConverter NSIntToChar:0]);
+    }];
+    
+    UIAlertAction *noAction = [UIAlertAction actionWithTitle:b2 style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [alertController dismissViewControllerAnimated:NO completion:nil];
+        UnitySendMessage("Player", "switchNo", [DataConverter NSIntToChar:0]);
+    }];
+    
+    UIAlertAction *naAction = [UIAlertAction actionWithTitle:b3 style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [alertController dismissViewControllerAnimated:NO completion:nil];
+        UnitySendMessage("Player", "switchNA", [DataConverter NSIntToChar:0]);
+    }];
+    
+    [alertController addAction:yesAction];
+    [alertController addAction:noAction];
+    [alertController addAction:naAction];
+    
+    UIViewController *viewController = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
+    NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:alertController.view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationLessThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:viewController.view.frame.size.height*0.8f];
+    [alertController.view addConstraint:constraint];
+    
+    [[[[UIApplication sharedApplication] keyWindow] rootViewController] presentViewController:alertController animated:YES completion:nil];
+    
+}
+
 + (void)showTwo: (NSString *) title message: (NSString*) msg yesTitle:(NSString*) b1 noTitle: (NSString*) b2{
     
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:title message:msg preferredStyle:UIAlertControllerStyleAlert];
@@ -91,6 +121,10 @@
 
 extern "C" {
     // Unity Call
+    void _ex_ShowThree(char* title, char* message, char* yes, char* no, char* na) {
+        [IOSNativePopUpsManager showThree:[DataConverter charToNSString:title] message:[DataConverter charToNSString:message] yesTitle:[DataConverter charToNSString:yes] noTitle:[DataConverter charToNSString:no] naTitle:[DataConverter charToNSString:na]];
+    }
+    
     void _ex_ShowTwo(char* title, char* message, char* yes, char* no) {
         [IOSNativePopUpsManager showTwo:[DataConverter charToNSString:title] message:[DataConverter charToNSString:message] yesTitle:[DataConverter charToNSString:yes] noTitle:[DataConverter charToNSString:no]];
     }
