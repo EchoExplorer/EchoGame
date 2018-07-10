@@ -70,6 +70,7 @@ public class Player : MovingObject
 
     bool yesPressed = false;
     bool noPressed = false;
+    bool naPressed = false;
 
     public void switchYes(string yes)
     {
@@ -79,6 +80,11 @@ public class Player : MovingObject
     public void switchNo(string no)
     {
         noPressed = true;
+    }
+
+    public void switchNA(string na)
+    {
+        naPressed = true;
     }
 
     private int echoNum = 0;
@@ -225,6 +231,90 @@ public class Player : MovingObject
     bool answeredQuestion2 = false;
     bool question3 = false;
     bool answeredQuestion3 = false;
+
+    bool finished_reading_survey = false;
+    bool finished_listening_survey = false;
+    bool finished_questions_survey = false;
+    bool can_display_window_survey = false;
+
+    bool noSurvey = false;
+    bool readingSurvey = false;
+    bool hearingSurvey = false;
+
+    bool readControls = false;
+    bool controlsFlag = false;
+    bool readEasy = false;
+    bool easyFlag = false;
+    bool readEchoNavigate = false;
+    bool echoNavigateFlag = false;
+    bool readEnjoy = false;
+    bool enjoyFlag = false;
+    bool readFrustrating = false;
+    bool frustratingFlag = false;
+    bool readHearingImpaired = false;
+    bool hearingImpairedFlag = false;
+    bool readHints = false;
+    bool hintsFlag = false;
+    bool readInstructions = false;
+    bool instructionsFlag = false;
+    bool readLook = false;
+    bool lookFlag = false;
+    bool readLost = false;
+    bool lostFlag = false;
+    bool readPlayMore = false;
+    bool playMoreFlag = false;
+    bool readTutorial = false;
+    bool tutorialFlag = false;
+    bool readTutorialHelp = false;
+    bool tutorialHelpFlag = false;
+    bool readUnderstandEcho = false;
+    bool understandEchoFlag = false;
+    bool readVisuallyImpaired = false;
+    bool visuallyImpairedFlag = false;
+    bool readEmail = false;
+    bool emailFlag = false;
+    bool readLikes = false;
+    bool likesFlag = false;
+    bool readConfusions = false;
+    bool confusionsFlag = false;
+    bool readSuggestions = false;
+    bool suggestionsFlag = false;
+
+    string surveyQuestion1 = "";
+    bool answeredSurveyQuestion1 = false;
+    string surveyQuestion2 = "";
+    bool answeredSurveyQuestion2 = false;
+    string surveyQuestion3 = "";
+    bool answeredSurveyQuestion3 = false;
+    string surveyQuestion4 = "";
+    bool answeredSurveyQuestion4 = false;
+    string surveyQuestion5 = "";
+    bool answeredSurveyQuestion5 = false;
+    string surveyQuestion6 = "";
+    bool answeredSurveyQuestion6 = false;
+    string surveyQuestion7 = "";
+    bool answeredSurveyQuestion7 = false;
+    string surveyQuestion8 = "";
+    bool answeredSurveyQuestion8 = false;
+    string surveyQuestion9 = "";
+    bool answeredSurveyQuestion9 = false;
+    string surveyQuestion10 = "";
+    bool answeredSurveyQuestion10 = false;
+    string surveyQuestion11 = "";
+    bool answeredSurveyQuestion11 = false;
+    string surveyQuestion12 = "";
+    bool answeredSurveyQuestion12 = false;
+    string surveyQuestion13 = "";
+    bool answeredSurveyQuestion13 = false;
+    string surveyQuestion14 = "";
+    bool answeredSurveyQuestion14 = false;
+    string surveyQuestion15 = "";
+    bool answeredSurveyQuestion15 = false;
+
+    string email = "";    
+    string likes = "";
+    string confusions = "";
+    string suggestions = "";
 
     string consentSurveyCode = "";
 
@@ -4802,8 +4892,1056 @@ public class Player : MovingObject
 #endif
             }
         }
-#endif
 
+        if (curLevel == 11)
+        {
+            if ((readingSurvey == true) && (android_window_displayed == false) && (can_display_window_survey == true))
+            {
+                android_window_displayed = true;
+                finished_reading_survey = false;
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readEnjoy == false) && (enjoyFlag == false))
+            {
+                enjoyFlag = true;
+
+                string title = "Question 1";
+                string message = "Are you enjoying the game?";
+
+#if UNITY_IOS
+                IOSNative.ShowTwo(title, message, "Yes", "No");   
+#endif
+#if UNITY_ANDROID
+                AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.SURVEY;
+                ad.DisplayAndroidWindow(title, message, dialogueType);
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readEnjoy == false) && (enjoyFlag == true) && (ad.yesclicked() == true || yesPressed == true))
+            {
+                readEnjoy = true;
+                surveyQuestion1 = "yes";
+                answeredSurveyQuestion1 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                yesPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readEnjoy == false) && (enjoyFlag == true) && (ad.noclicked() == true || noPressed == true))
+            {
+                readEnjoy = true;
+                surveyQuestion1 = "no";
+                answeredSurveyQuestion1 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                noPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readEnjoy == false) && (enjoyFlag == true) && (ad.naclicked() == true || naPressed == true))
+            {
+                readEnjoy = true;
+                surveyQuestion1 = "na";
+                answeredSurveyQuestion1 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                naPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readEnjoy == true) && (readPlayMore == false) && (playMoreFlag == false))
+            {
+                playMoreFlag = true;
+
+                string title = "Question 2";
+                string message = "Do you plan to play this game more?";
+
+#if UNITY_IOS
+                IOSNative.ShowTwo(title, message, "Yes", "No");
+#endif
+#if UNITY_ANDROID
+                AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.SURVEY;
+                ad.DisplayAndroidWindow(title, message, dialogueType, "Yes", "No", "N/A");
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readPlayMore == false) && (playMoreFlag == true) && (ad.yesclicked() == true || yesPressed == true))
+            {
+                readPlayMore = true;
+                surveyQuestion2 = "yes";
+                answeredSurveyQuestion2 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                yesPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readPlayMore == false) && (playMoreFlag == true) && (ad.noclicked() == true || noPressed == true))
+            {
+                readPlayMore = true;
+                surveyQuestion2 = "no";
+                answeredSurveyQuestion2 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                noPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readPlayMore == false) && (playMoreFlag == true) && (ad.naclicked() == true || naPressed == true))
+            {
+                readPlayMore = true;
+                surveyQuestion2 = "na";
+                answeredSurveyQuestion2 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                naPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readPlayMore == true) && (readEasy == false) && (easyFlag == false))
+            {
+                easyFlag = true;
+
+                string title = "Question 3";
+                string message = "Did you find this game easy?";
+
+#if UNITY_IOS
+                IOSNative.ShowTwo(title, message, "Yes", "No");
+#endif
+#if UNITY_ANDROID
+                AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.SURVEY;
+                ad.DisplayAndroidWindow(title, message, dialogueType, "Yes", "No", "N/A");
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readEasy == false) && (easyFlag == true) && (ad.yesclicked() == true || yesPressed == true))
+            {
+                readEasy = true;
+                surveyQuestion3 = "yes";
+                answeredSurveyQuestion3 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                yesPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readEasy == false) && (easyFlag == true) && (ad.noclicked() == true || noPressed == true))
+            {
+                readEasy = true;
+                surveyQuestion3 = "no";
+                answeredSurveyQuestion3 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                noPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readEasy == false) && (easyFlag == true) && (ad.naclicked() == true || naPressed == true))
+            {
+                readEasy = true;
+                surveyQuestion3 = "na";
+                answeredSurveyQuestion3 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                naPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readEasy == true) && (readLost == false) && (lostFlag == false))
+            {
+                lostFlag = true;
+
+                string title = "Question 4";
+                string message = "Did you get lost often?";
+
+#if UNITY_IOS
+                IOSNative.ShowTwo(title, message, "Yes", "No");
+#endif
+#if UNITY_ANDROID
+                AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.SURVEY;
+                ad.DisplayAndroidWindow(title, message, dialogueType, "Yes", "No", "N/A");
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readLost == false) && (lostFlag == true) && (ad.yesclicked() == true || yesPressed == true))
+            {
+                readLost = true;
+                surveyQuestion4 = "yes";
+                answeredSurveyQuestion4 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                yesPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readLost == false) && (lostFlag == true) && (ad.noclicked() == true || noPressed == true))
+            {
+                readLost = true;
+                surveyQuestion4 = "no";
+                answeredSurveyQuestion4 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                noPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readLost == false) && (lostFlag == true) && (ad.naclicked() == true || naPressed == true))
+            {
+                readLost = true;
+                surveyQuestion4 = "na";
+                answeredSurveyQuestion4 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                naPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readLost == true) && (readUnderstandEcho == false) && (understandEchoFlag == false))
+            {
+                understandEchoFlag = true;
+
+                string title = "Question 5";
+                string message = "Did you understand what the echoes were telling you about the maze?";
+
+#if UNITY_IOS
+                IOSNative.ShowTwo(title, message, "Yes", "No");
+#endif
+#if UNITY_ANDROID
+                AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.SURVEY;
+                ad.DisplayAndroidWindow(title, message, dialogueType, "Yes", "No", "N/A");
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readUnderstandEcho == false) && (understandEchoFlag == true) && (ad.yesclicked() == true || yesPressed == true))
+            {
+                readUnderstandEcho = true;
+                surveyQuestion5 = "yes";
+                answeredSurveyQuestion5 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                yesPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readUnderstandEcho == false) && (understandEchoFlag == true) && (ad.noclicked() == true || noPressed == true))
+            {
+                readUnderstandEcho = true;
+                surveyQuestion5 = "no";
+                answeredSurveyQuestion5 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                noPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readUnderstandEcho == false) && (understandEchoFlag == true) && (ad.naclicked() == true || naPressed == true))
+            {
+                readUnderstandEcho = true;
+                surveyQuestion5 = "na";
+                answeredSurveyQuestion5 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                naPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readUnderstandEcho == true) && (readFrustrating == false) && (frustratingFlag == false))
+            {
+                frustratingFlag = true;
+
+                string title = "Question 6";
+                string message = "Did you find this game frustrating?";
+
+#if UNITY_IOS
+                IOSNative.ShowTwo(title, message, "Yes", "No");
+#endif
+#if UNITY_ANDROID
+                AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.SURVEY;
+                ad.DisplayAndroidWindow(title, message, dialogueType, "Yes", "No", "N/A");
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readFrustrating == false) && (frustratingFlag == true) && (ad.yesclicked() == true || yesPressed == true))
+            {
+                readFrustrating = true;
+                surveyQuestion6 = "yes";
+                answeredSurveyQuestion6 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                yesPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readFrustrating == false) && (frustratingFlag == true) && (ad.noclicked() == true || noPressed == true))
+            {
+                readFrustrating = true;
+                surveyQuestion6 = "no";
+                answeredSurveyQuestion6 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                noPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readFrustrating == false) && (frustratingFlag == true) && (ad.naclicked() == true || naPressed == true))
+            {
+                readFrustrating = true;
+                surveyQuestion6 = "na";
+                answeredSurveyQuestion6 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                naPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readFrustrating == true) && (readTutorial == false) && (tutorialFlag == false))
+            {
+                tutorialFlag = true;
+
+                string title = "Question 7";
+                string message = "Did you start with the tutorial?";
+
+#if UNITY_IOS
+                IOSNative.ShowTwo(title, message, "Yes", "No");
+#endif
+#if UNITY_ANDROID
+                AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.SURVEY;
+                ad.DisplayAndroidWindow(title, message, dialogueType, "Yes", "No", "N/A");
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readTutorial == false) && (tutorialFlag == true) && (ad.yesclicked() == true || yesPressed == true))
+            {
+                readTutorial = true;
+                surveyQuestion7 = "yes";
+                answeredSurveyQuestion7 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                yesPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readTutorial == false) && (tutorialFlag == true) && (ad.noclicked() == true || noPressed == true))
+            {
+                readTutorial = true;
+                surveyQuestion7 = "no";
+                answeredSurveyQuestion7 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                noPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readTutorial == false) && (tutorialFlag == true) && (ad.naclicked() == true || naPressed == true))
+            {
+                readTutorial = true;
+                surveyQuestion7 = "na";
+                answeredSurveyQuestion7 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                naPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readTutorial == true) && (readTutorialHelp == false) && (tutorialHelpFlag == false))
+            {
+                tutorialHelpFlag = true;
+
+                string title = "Question 8";
+                string message = "Was the tutorial helpful?";
+
+#if UNITY_IOS
+                IOSNative.ShowTwo(title, message, "Yes", "No");
+#endif
+#if UNITY_ANDROID
+                AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.SURVEY;
+                ad.DisplayAndroidWindow(title, message, dialogueType, "Yes", "No", "N/A");
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readTutorialHelp == false) && (tutorialHelpFlag == true) && (ad.yesclicked() == true || yesPressed == true))
+            {
+                readTutorialHelp = true;
+                surveyQuestion8 = "yes";
+                answeredSurveyQuestion8 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                yesPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readTutorialHelp == false) && (tutorialHelpFlag == true) && (ad.noclicked() == true || noPressed == true))
+            {
+                readTutorialHelp = true;
+                surveyQuestion8 = "no";
+                answeredSurveyQuestion8 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                noPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readTutorialHelp == false) && (tutorialHelpFlag == true) && (ad.naclicked() == true || naPressed == true))
+            {
+                readTutorialHelp = true;
+                surveyQuestion8 = "na";
+                answeredSurveyQuestion8 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                naPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readTutorialHelp == true) && (readHints == false) && (hintsFlag == false))
+            {
+                hintsFlag = true;
+
+                string title = "Question 9";
+                string message = "Was the hint menu helpful?";
+
+#if UNITY_IOS
+                IOSNative.ShowTwo(title, message, "Yes", "No");
+#endif
+#if UNITY_ANDROID
+                AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.SURVEY;
+                ad.DisplayAndroidWindow(title, message, dialogueType, "Yes", "No", "N/A");
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readHints == false) && (hintsFlag == true) && (ad.yesclicked() == true || yesPressed == true))
+            {
+                readHints = true;
+                surveyQuestion9 = "yes";
+                answeredSurveyQuestion9 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                yesPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readHints == false) && (hintsFlag == true) && (ad.noclicked() == true || noPressed == true))
+            {
+                readHints = true;
+                surveyQuestion9 = "no";
+                answeredSurveyQuestion9 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                noPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readHints == false) && (hintsFlag == true) && (ad.naclicked() == true || naPressed == true))
+            {
+                readHints = true;
+                surveyQuestion9 = "na";
+                answeredSurveyQuestion9 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                naPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readHints == true) && (readInstructions == false) && (instructionsFlag == false))
+            {
+                instructionsFlag = true;
+
+                string title = "Question 10";
+                string message = "Were the voice instructions helpful?";
+
+#if UNITY_IOS
+                IOSNative.ShowTwo(title, message, "Yes", "No");
+#endif
+#if UNITY_ANDROID
+                AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.SURVEY;
+                ad.DisplayAndroidWindow(title, message, dialogueType, "Yes", "No", "N/A");
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readInstructions == false) && (instructionsFlag == true) && (ad.yesclicked() == true || yesPressed == true))
+            {
+                readInstructions = true;
+                surveyQuestion10 = "yes";
+                answeredSurveyQuestion10 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                yesPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readInstructions == false) && (instructionsFlag == true) && (ad.noclicked() == true || noPressed == true))
+            {
+                readInstructions = true;
+                surveyQuestion10 = "no";
+                answeredSurveyQuestion10 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                noPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readInstructions == false) && (instructionsFlag == true) && (ad.naclicked() == true || naPressed == true))
+            {
+                readInstructions = true;
+                surveyQuestion10 = "na";
+                answeredSurveyQuestion10 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                naPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readInstructions == true) && (readControls == false) && (controlsFlag == false))
+            {
+                controlsFlag = true;
+
+                string title = "Question 11";
+                string message = "Were the control gestures easy to learn and use?";
+
+#if UNITY_IOS
+                IOSNative.ShowTwo(title, message, "Yes", "No");
+#endif
+#if UNITY_ANDROID
+                AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.SURVEY;
+                ad.DisplayAndroidWindow(title, message, dialogueType, "Yes", "No", "N/A");
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readControls == false) && (controlsFlag == true) && (ad.yesclicked() == true || yesPressed == true))
+            {
+                readControls = true;
+                surveyQuestion11 = "yes";
+                answeredSurveyQuestion11 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                yesPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readControls == false) && (controlsFlag == true) && (ad.noclicked() == true || noPressed == true))
+            {
+                readControls = true;
+                surveyQuestion11 = "no";
+                answeredSurveyQuestion11 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                noPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readControls == false) && (controlsFlag == true) && (ad.naclicked() == true || naPressed == true))
+            {
+                readControls = true;
+                surveyQuestion11 = "na";
+                answeredSurveyQuestion11 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                naPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readControls == true) && (readLook == false) && (lookFlag == false))
+            {
+                lookFlag = true;
+
+                string title = "Question 12";
+                string message = "Did you ever look at the maze to figure out where to go?";
+
+#if UNITY_IOS
+                IOSNative.ShowTwo(title, message, "Yes", "No");
+#endif
+#if UNITY_ANDROID
+                AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.SURVEY;
+                ad.DisplayAndroidWindow(title, message, dialogueType, "Yes", "No", "N/A");
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readLook == false) && (lookFlag == true) && (ad.yesclicked() == true || yesPressed == true))
+            {
+                readLook = true;
+                surveyQuestion12 = "yes";
+                answeredSurveyQuestion12 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                yesPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readLook == false) && (lookFlag == true) && (ad.noclicked() == true || noPressed == true))
+            {
+                readLook = true;
+                surveyQuestion12 = "no";
+                answeredSurveyQuestion12 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                noPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readLook == false) && (lookFlag == true) && (ad.naclicked() == true || naPressed == true))
+            {
+                readLook = true;
+                surveyQuestion12 = "na";
+                answeredSurveyQuestion12 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                naPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readLook == true) && (readEchoNavigate == false) && (echoNavigateFlag == false))
+            {
+                echoNavigateFlag = true;
+
+                string title = "Question 13";
+                string message = "Have you ever used echoes to navigate before, either in a game or real life?";
+
+#if UNITY_IOS
+                IOSNative.ShowTwo(title, message, "Yes", "No");
+#endif
+#if UNITY_ANDROID
+                AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.SURVEY;
+                ad.DisplayAndroidWindow(title, message, dialogueType, "Yes", "No", "N/A");
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readEchoNavigate == false) && (echoNavigateFlag == true) && (ad.yesclicked() == true || yesPressed == true))
+            {
+                readEchoNavigate = true;
+                surveyQuestion13 = "yes";
+                answeredSurveyQuestion13 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                yesPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readEchoNavigate == false) && (echoNavigateFlag == true) && (ad.noclicked() == true || noPressed == true))
+            {
+                readEchoNavigate = true;
+                surveyQuestion13 = "no";
+                answeredSurveyQuestion13 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                noPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readEchoNavigate == false) && (echoNavigateFlag == true) && (ad.naclicked() == true || naPressed == true))
+            {
+                readEchoNavigate = true;
+                surveyQuestion13 = "na";
+                answeredSurveyQuestion13 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                naPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readEchoNavigate == true) && (readVisuallyImpaired == false) && (visuallyImpairedFlag == false))
+            {
+                visuallyImpairedFlag = true;
+
+                string title = "Question 14";
+                string message = "Do you have a visual impairment that is not fully corrected by glasses?";
+
+#if UNITY_IOS
+                IOSNative.ShowTwo(title, message, "Yes", "No");
+#endif
+#if UNITY_ANDROID
+                AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.SURVEY;
+                ad.DisplayAndroidWindow(title, message, dialogueType, "Yes", "No", "N/A");
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readVisuallyImpaired == false) && (visuallyImpairedFlag == true) && (ad.yesclicked() == true || yesPressed == true))
+            {
+                readVisuallyImpaired = true;
+                surveyQuestion14 = "yes";
+                answeredSurveyQuestion14 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                yesPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readVisuallyImpaired == false) && (visuallyImpairedFlag == true) && (ad.noclicked() == true || noPressed == true))
+            {
+                readVisuallyImpaired = true;
+                surveyQuestion14 = "no";
+                answeredSurveyQuestion14 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                noPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readVisuallyImpaired == false) && (visuallyImpairedFlag == true) && (ad.naclicked() == true || naPressed == true))
+            {
+                readVisuallyImpaired = true;
+                surveyQuestion14 = "na";
+                answeredSurveyQuestion14 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                naPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readVisuallyImpaired == true) && (readHearingImpaired == false) && (hearingImpairedFlag == false))
+            {
+                hearingImpairedFlag = true;
+
+                string title = "Question 15";
+                string message = "Do you have a hearing impairment?";
+
+#if UNITY_IOS
+                IOSNative.ShowTwo(title, message, "Yes", "No");
+#endif
+#if UNITY_ANDROID
+                AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.SURVEY;
+                ad.DisplayAndroidWindow(title, message, dialogueType, "Yes", "No", "N/A");
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readHearingImpaired == false) && (hearingImpairedFlag == true) && (ad.yesclicked() == true || yesPressed == true))
+            {
+                readHearingImpaired = true;
+                surveyQuestion15 = "yes";
+                answeredSurveyQuestion15 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                yesPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readHearingImpaired == false) && (hearingImpairedFlag == true) && (ad.noclicked() == true || noPressed == true))
+            {
+                readHearingImpaired = true;
+                surveyQuestion15 = "no";
+                answeredSurveyQuestion15 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                noPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readHearingImpaired == false) && (hearingImpairedFlag == true) && (ad.naclicked() == true || naPressed == true))
+            {
+                readHearingImpaired = true;
+                surveyQuestion15 = "na";
+                answeredSurveyQuestion15 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                naPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readHearingImpaired == true) && (readEmail == false) && (emailFlag == false))
+            {
+                emailFlag = true;
+
+                string title = "Email Address";
+                string message = "Enter email if you'd be interested in being contacted about psychology research using this game.";
+
+#if UNITY_IOS
+                IOSNative.ShowOne(title, message, "Next");
+#endif
+#if UNITY_ANDROID
+                AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.INPUT;
+                ad.DisplayAndroidWindow(title, message, dialogueType, "Next");
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readEmail == false) && (emailFlag == true) && (ad.yesclicked() == true || yesPressed == true))
+            {
+                readEmail = true;
+                email = ad.getInputStr();
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                yesPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readEmail == true) && (readLikes == false) && (likesFlag == false))
+            {
+                likesFlag = true;
+
+                string title = "Likes";
+                string message = "Do you have any particular things you liked about the game?";
+
+#if UNITY_IOS
+                IOSNative.ShowOne(title, message, "Next");
+#endif
+#if UNITY_ANDROID
+                AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.INPUT;
+                ad.DisplayAndroidWindow(title, message, dialogueType, "Next");
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readLikes == false) && (likesFlag == true) && (ad.yesclicked() == true || yesPressed == true))
+            {
+                readLikes = true;
+                likes = ad.getInputStr();
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                yesPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readLikes == true) && (readConfusions == false) && (confusionsFlag == false))
+            {
+                confusionsFlag = true;
+
+                string title = "Complaints/Confusions";
+                string message = "Do you have any complaints or confusions about the game?";
+
+#if UNITY_IOS
+                IOSNative.ShowOne(title, message, "Next");
+#endif
+#if UNITY_ANDROID
+                AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.INPUT;
+                ad.DisplayAndroidWindow(title, message, dialogueType, "Next");
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readConfusions == false) && (confusionsFlag == true) && (ad.yesclicked() == true || yesPressed == true))
+            {
+                readConfusions = true;
+                confusions = ad.getInputStr();
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                yesPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readConfusions == true) && (readSuggestions == false) && (suggestionsFlag == false))
+            {
+                suggestionsFlag = true;
+
+                string title = "Suggestions";
+                string message = "Do you have any suggestions for how to improve the game?";
+
+#if UNITY_IOS
+                IOSNative.ShowOne(title, message, "Next");
+#endif
+#if UNITY_ANDROID
+                AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.INPUT;
+                ad.DisplayAndroidWindow(title, message, dialogueType, "Next");
+#endif
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readSuggestions == false) && (suggestionsFlag == true) && (ad.yesclicked() == true || yesPressed == true))
+            {
+                readSuggestions = true;
+                suggestions = ad.getInputStr();
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                yesPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+                finished_reading_survey = true;
+                finished_questions_survey = true;
+                readingSurvey = false;
+                android_window_displayed = false;
+                can_display_window_survey = false;
+            }
+        }
+#endif
 
         if ((curLevel == 3) && (BoardManager.finishedTutorialLevel3 == false) && (canDoGestureTutorial == false) && (finishedCornerInstruction == true) && (hasTappedAtCorner == false) && (BoardManager.player_idx.x == 9) && (BoardManager.player_idx.y == 9) && (finishedEcho == true))
         {

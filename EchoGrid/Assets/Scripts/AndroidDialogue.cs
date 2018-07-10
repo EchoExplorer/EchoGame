@@ -21,7 +21,8 @@ public class AndroidDialogue : MonoBehaviour
     {
         NORMAL = 0,
         YESONLY = 1,
-        INPUT = 2
+        INPUT = 2,
+        SURVEY = 3
     }
 
     const int ButtonWidth = 256;
@@ -29,6 +30,7 @@ public class AndroidDialogue : MonoBehaviour
 
     private bool mYesPressed = false;
     private bool mNoPressed = false;
+    private bool mNAPressed = false;
 
     string inputStr = "";
 
@@ -36,6 +38,7 @@ public class AndroidDialogue : MonoBehaviour
     {
         mYesPressed = false;
         mNoPressed = false;
+        mNAPressed = false;
     }
 
     /// <summary>
@@ -44,9 +47,9 @@ public class AndroidDialogue : MonoBehaviour
     /// </summary>
     /// <param name="msg">The message to be displayed within the box.</param>
     /// <param name="type">The dialogue type to use.</param>
-    public void DisplayAndroidWindow(string title, string message, DialogueType type = DialogueType.NORMAL, string yes = "Yes", string no = "No")
+    public void DisplayAndroidWindow(string title, string message, DialogueType type = DialogueType.NORMAL, string yes = "Yes", string no = "No", string na = "N/A")
     {
-        showDialog(type, title, message, yes, no);
+        showDialog(type, title, message, yes, no, na);
     }
 
     /// <summary>
@@ -70,6 +73,15 @@ public class AndroidDialogue : MonoBehaviour
     }
 
     /// <summary>
+    /// Determines whether the user clicked 'N/A' on the most recent dialogue.
+    /// </summary>
+    /// <returns>Boolean, true if the user clicked on 'N/A'</returns>
+    public bool naclicked()
+    {
+        return mNAPressed;
+    }
+
+    /// <summary>
     /// Resets the flags for a future message prompt.
     /// </summary>
     public void clearflag()
@@ -78,6 +90,7 @@ public class AndroidDialogue : MonoBehaviour
         //TODO: set inputStr to the empty string too.
         mYesPressed = false;
         mNoPressed = false;
+        mNAPressed = false;
     }
 
     /// <summary>
@@ -119,6 +132,7 @@ public class AndroidDialogue : MonoBehaviour
         {
             mDialog.mYesPressed = true;
             mDialog.mNoPressed = false;
+            mDialog.mNAPressed = false;
         }
     }
 
@@ -137,6 +151,7 @@ public class AndroidDialogue : MonoBehaviour
         {
             mDialog.mYesPressed = true;
             mDialog.mNoPressed = false;
+            mDialog.mNAPressed = false;
             AndroidJavaObject editable = new AndroidJavaClass("android.text.Editable");
             editable = InputText.Call<AndroidJavaObject>("getText");
             mDialog.inputStr = editable.Call<string>("toString");
@@ -159,12 +174,32 @@ public class AndroidDialogue : MonoBehaviour
         {
             mDialog.mYesPressed = false;
             mDialog.mNoPressed = true;
+            mDialog.mNAPressed = false;
         }
     }
 
+    // Create the postive action listner class
+    // It has to be derived from the AndroidJavaProxy class
+    // Make the methods as same as that of DialogInterface.OnClickListener
+    private class NeutralButtonListner : AndroidJavaProxy
+    {
+        private AndroidDialogue mDialog;
+
+        public NeutralButtonListner(AndroidDialogue d) : base("android.content.DialogInterface$OnClickListener")
+        {
+            mDialog = d;
+        }
+
+        public void onClick(AndroidJavaObject obj, int value)
+        {
+            mDialog.mYesPressed = false;
+            mDialog.mNoPressed = false;
+            mDialog.mNAPressed = true;
+        }
+    }
 
 #endif
-    private void showDialog(DialogueType type, string title, string message, string yesText, string noText)
+    private void showDialog(DialogueType type, string title, string message, string yesText, string noText, string naText)
     {
 
 #if UNITY_ANDROID
@@ -205,6 +240,11 @@ public class AndroidDialogue : MonoBehaviour
                 case DialogueType.INPUT:
                     alertDialogBuilder.Call<AndroidJavaObject>("setView", InputTextField);
                     alertDialogBuilder.Call<AndroidJavaObject>("setPositiveButton", yesText, new InputTextFieldListner(this, InputTextField));
+                    break;
+                case DialogueType.SURVEY:
+                    alertDialogBuilder.Call<AndroidJavaObject>("setPositiveButton", yesText, new PositiveButtonListner(this));
+                    alertDialogBuilder.Call<AndroidJavaObject>("setNegativeButton", noText, new NegativeButtonListner(this));
+                    alertDialogBuilder.Call<AndroidJavaObject>("setNeutralButton", naText, new NeutralButtonListner(this));
                     break;
                 default: // same as normal
                     alertDialogBuilder.Call<AndroidJavaObject>("setPositiveButton", yesText, new PositiveButtonListner(this));
