@@ -99,12 +99,8 @@ public class Player : MovingObject
     string debugPlayerInfo; // String for debugging the effects of the player's actions (Tells you they rotated, swiped, etc.).
 
     bool survey_activated = false;
-#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
-    bool code_entered = false;
-    bool URL_shown = false;
     bool survey_shown = false;
     string surveyCode = "";
-#endif 
 
     List<AudioClip> clips;
     public AudioMixerGroup mixerGroup;
@@ -177,7 +173,6 @@ public class Player : MovingObject
     AudioClip echoleftend_right = Database.odeon_left_rightspeaker;
     AudioClip echorightend = Database.odeon_right_rightspeaker;
     AudioClip echorightend_left = Database.odeon_right_leftspeaker;
-    AudioClip pulse = Database.testPulse;
 
     bool canCheckForConsent = false;
     bool hasCheckedForConsent = false;
@@ -225,17 +220,18 @@ public class Player : MovingObject
     bool participateFlag = false;
     bool readParticipate = false;
 
-    bool question1 = false;
+    string question1 = "";
     bool answeredQuestion1 = false;
-    bool question2 = false;
+    string question2 = "";
     bool answeredQuestion2 = false;
-    bool question3 = false;
+    string question3 = "";
     bool answeredQuestion3 = false;
 
     bool finished_reading_survey = false;
     bool finished_listening_survey = false;
     bool finished_questions_survey = false;
     bool can_display_window_survey = false;
+    bool can_submit_survey = false;
 
     bool noSurvey = false;
     bool readingSurvey = false;
@@ -310,14 +306,11 @@ public class Player : MovingObject
     bool answeredSurveyQuestion14 = false;
     string surveyQuestion15 = "";
     bool answeredSurveyQuestion15 = false;
-
-    string email = "";    
+    string email = "";
     string likes = "";
     string confusions = "";
     string suggestions = "";
-
-    string consentSurveyCode = "";
-
+   
     void Awake()
     {
         if (instance == null)
@@ -413,11 +406,6 @@ public class Player : MovingObject
         PlayEcho();
     }
 
-    // A breakdown of short, medium and long distances
-    string[] frontDistS = { "2.25", "3.75" };
-    string[] frontDistM = { "5.25", "6.75" };
-    string[] frontDistL = { "8.25", "9.75", "11.25", "12.75" };
-
     /// <summary>
     /// A function that determines which echo file to play based on the surrounding environment.
     /// </summary>
@@ -437,7 +425,6 @@ public class Player : MovingObject
         echoleftend_right = Database.odeon_left_rightspeaker;
         echorightend = Database.odeon_right_rightspeaker;
         echorightend_left = Database.odeon_right_leftspeaker;
-        pulse = Database.testPulse;
 
         Vector3 dir = transform.right;
         int dir_x = (int)Math.Round(dir.x);
@@ -734,7 +721,6 @@ public class Player : MovingObject
         float frontDelay = 0.0f;
 
         SoundManager.instance.PlaySingle(attenuatedClick);
-        // SoundManager.instance.PlaySingle(pulse);
 
         if ((leftAudioSource != null) && (left_rightAudioSource != null))
         {
@@ -2761,26 +2747,69 @@ public class Player : MovingObject
 
         WWW www = new WWW(echoEndpoint, echoForm);
         StartCoroutine(Utilities.WaitForRequest(www));
+
+        string echoEndpoint2 = "https://echolock.andrew.cmu.edu/cgi-bin/acceptConsent.py";
+
+        WWWForm echoForm2 = new WWWForm();
+        echoForm.AddField("userName", Utilities.encrypt(SystemInfo.deviceUniqueIdentifier));
+        echoForm2.AddField("agecheck", Utilities.encrypt(question1));
+        echoForm2.AddField("understandcheck", Utilities.encrypt(question2));
+        echoForm2.AddField("researchcheck", Utilities.encrypt(question3));     
+
+        Logging.Log(System.Text.Encoding.ASCII.GetString(echoForm2.data), Logging.LogLevel.LOW_PRIORITY);
+
+        WWW www2 = new WWW(echoEndpoint2, echoForm2);
+        StartCoroutine(Utilities.WaitForRequest(www2));
     }
 
     /// <summary>
-    /// Unused function related to sending survey data.
+    /// Sends survey data to the server.
     /// </summary>
 	private void reportsurvey(string code)
     {
         string echoEndpoint = "http://echolock.andrew.cmu.edu/cgi-bin/acceptSurvey.py";
 
-        WWWForm echoForm = new WWWForm();
-        echoForm.AddField("userName", Utilities.encrypt(SystemInfo.deviceUniqueIdentifier));
+        WWWForm echoForm = new WWWForm();        
         echoForm.AddField("surveyID", Utilities.encrypt(code));
-        echoForm.AddField("dateTimeStamp", Utilities.encrypt(System.DateTime.Now.ToString()));
+        echoForm.AddField("enjoy", Utilities.encrypt(surveyQuestion1));
+        echoForm.AddField("playmore", Utilities.encrypt(surveyQuestion2));
+        echoForm.AddField("easy", Utilities.encrypt(surveyQuestion3));
+        echoForm.AddField("lost", Utilities.encrypt(surveyQuestion4));
+        echoForm.AddField("understandecho", Utilities.encrypt(surveyQuestion5));
+        echoForm.AddField("frustrating", Utilities.encrypt(surveyQuestion6));
+        echoForm.AddField("tutorial", Utilities.encrypt(surveyQuestion7));
+        echoForm.AddField("tutorialhelp", Utilities.encrypt(surveyQuestion8));
+        echoForm.AddField("hints", Utilities.encrypt(surveyQuestion9));
+        echoForm.AddField("instructions", Utilities.encrypt(surveyQuestion10));
+        echoForm.AddField("controls", Utilities.encrypt(surveyQuestion11));
+        echoForm.AddField("look", Utilities.encrypt(surveyQuestion12));
+        echoForm.AddField("echonavigate", Utilities.encrypt(surveyQuestion13));                       
+        echoForm.AddField("visuallyimpaired", Utilities.encrypt(surveyQuestion14));
+        echoForm.AddField("hearingimpaired", Utilities.encrypt(surveyQuestion15));
+        echoForm.AddField("email", Utilities.encrypt(email));
+        echoForm.AddField("likes", Utilities.encrypt(likes));
+        echoForm.AddField("confusions", Utilities.encrypt(confusions));
+        echoForm.AddField("suggestions", Utilities.encrypt(suggestions));
         // the code is the first digit of device id
 
         // Logging.Log(System.Text.Encoding.ASCII.GetString(echoForm.data), Logging.LogLevel.LOW_PRIORITY);
 
         WWW www = new WWW(echoEndpoint, echoForm);
         StartCoroutine(Utilities.WaitForRequest(www));
-    }    
+
+        string echoEndpoint2 = "http://echolock.andrew.cmu.edu/cgi-bin/acceptSurvey.py";
+
+        WWWForm echoForm2 = new WWWForm();
+        echoForm2.AddField("userName", Utilities.encrypt(SystemInfo.deviceUniqueIdentifier));
+        echoForm2.AddField("surveyID", Utilities.encrypt(code));
+        echoForm2.AddField("dateTimeStamp", Utilities.encrypt(System.DateTime.Now.ToString()));
+        // the code is the first digit of device id
+
+        // Logging.Log(System.Text.Encoding.ASCII.GetString(echoForm2.data), Logging.LogLevel.LOW_PRIORITY);
+
+        WWW www2 = new WWW(echoEndpoint2, echoForm2);
+        StartCoroutine(Utilities.WaitForRequest(www2));
+    }
 
     /// <summary>
     /// Plays an instruction voice related to the menu.
@@ -2895,7 +2924,7 @@ public class Player : MovingObject
             }
 
             
-            if (((hearingConsentForm == true) || (readingConsentForm == true)) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (question1 == true) && (question2 == true) && (question3 == true) && (hasFinishedConsentForm == false))
+            if (((hearingConsentForm == true) || (readingConsentForm == true)) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (question1 == "yes") && (question2 == "yes") && (question3 == "yes") && (hasFinishedConsentForm == false))
             {
                 if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
                 {
@@ -2912,9 +2941,9 @@ public class Player : MovingObject
                 }
             }
 
-            else if (((hearingConsentForm == true) || (readingConsentForm == true)) && ((answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true)) && ((question1 == false) || (question2 == false) || (question3 == false)) && (hasFinishedConsentForm == false))
+            else if (((hearingConsentForm == true) || (readingConsentForm == true)) && ((answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true)) && ((question1 == "no") || (question2 == "no") || (question3 == "no")) && (hasFinishedConsentForm == false))
             {
-                if (question1 == false)
+                if (question1 == "no")
                 {
                     if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
                     {
@@ -2923,7 +2952,7 @@ public class Player : MovingObject
                         SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                     }
                 }
-                else if (question2 == false)
+                else if (question2 == "no")
                 {
                     if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
                     {
@@ -2932,7 +2961,7 @@ public class Player : MovingObject
                         SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                     }
                 }
-                else if (question3 == false)
+                else if (question3 == "no")
                 {
                     if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
                     {
@@ -2972,6 +3001,108 @@ public class Player : MovingObject
                     {
                         clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.consentClips[15], Database.levelStartClips[curLevel], Database.consentClips[16] };
                     }
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                }
+            }
+        }
+
+        if ((curLevel == 11) && (survey_activated == true) && (survey_shown == true))
+        {
+            if ((hearingSurvey == false) && (readingSurvey == false) && (noSurvey == false))
+            {
+                if (GM_title.isUsingTalkback == true)
+                {
+                    clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.surveyClips[1] };
+                }
+                else if (GM_title.isUsingTalkback == false)
+                {
+                    clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.surveyClips[0] };
+                }
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clip.
+            }
+
+            if ((readingSurvey == true) && (answeredSurveyQuestion1 == false))
+            {
+                if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
+                {
+                    if (can_display_window_survey == false)
+                    {
+                        canRepeat = false;
+                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[2] };
+                        SoundManager.instance.PlayClips(clips, null, 0, () => {
+                            can_display_window_survey = true;
+                        }, 3, null, true); // Play the appropriate clip.
+                    }
+                }                
+            }
+
+            if ((hearingSurvey == true) && (answeredSurveyQuestion1 == false))
+            {
+                if (canRepeat == true)
+                {
+                    canRepeat = false;
+                    if (GM_title.isUsingTalkback == true)
+                    {
+                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[4] };
+                    }
+                    else if (GM_title.isUsingTalkback == false)
+                    {
+                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[3] };
+                    }
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                }
+            }
+
+            if (((hearingSurvey == true) || (readingSurvey == true)) && (finished_questions_survey == true) && (can_submit_survey == false))
+            {
+                if (canRepeat == true)
+                {
+                    canRepeat = false;
+                    if (GM_title.isUsingTalkback == true)
+                    {
+                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[35] };
+                    }
+                    else if (GM_title.isUsingTalkback == false)
+                    {
+                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[34] };
+                    }
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                }
+            }
+
+            if (((hearingSurvey == true) || (readingSurvey == true)) && (finished_questions_survey == true) && (can_submit_survey == true))
+            {
+                if (canRepeat == true)
+                {
+                    canRepeat = false;
+                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[38] };                
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                }
+            }
+
+            if ((noSurvey == true) && (can_submit_survey == false))
+            {
+                if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
+                {
+                    canRepeat = false;
+                    if (GM_title.isUsingTalkback == true)
+                    {
+                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[37] };
+                    }
+                    else if (GM_title.isUsingTalkback == false)
+                    {
+                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[36] };
+                    }
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                }
+            }
+
+            if ((noSurvey == true) && (can_submit_survey == true))
+            {
+                if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
+                {
+                    canRepeat = false;
+                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[39] };
                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                 }
             }
@@ -4162,100 +4293,36 @@ public class Player : MovingObject
                 debugPlayerInfo = "Exiting level clip has finished.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo);
                 canGoToNextLevel = true;
-#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
-                if (curLevel == 11)
+
+                if ((curLevel == 11) && (survey_activated == false) && (survey_shown == false))
                 {
                     survey_activated = true;
                 }
-#endif 
             }
 
             // If the player is at the exit and the exit level sound has played.
             if ((playedExitClip == true) && (canGoToNextLevel == true) && (SoundManager.instance.finishedAllClips == true))
             {
-#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
                 // pop up the survey at the end of tutorial        
                 if ((GameManager.instance.level == 11) && (survey_activated == true))
-                {
-                    print("At survey");
+                {                    
                     if (survey_shown == false)
                     {
-#if UNITY_IOS
-                        yesPressed = false;
-                        noPressed = false;
-                        IOSNative.ShowTwo("Survey", "Would you like to take \n a short survey about the game?", "Yes", "No");
-#endif
-#if UNITY_ANDROID
-                        ad.clearflag();
-                        ad.DisplayAndroidWindow("Survey", "Would you like to take \n a short survey about the game?", AndroidDialogue.DialogueType.NORMAL);
-#endif                        
+                        print("At survey");
                         survey_shown = true;
                         debugPlayerInfo = "Showing survey.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    }
-
-                    if ((survey_shown == true) && (URL_shown == false) && (ad.noclicked() || noPressed == true) && (code_entered == false))
-                    {
-#if UNITY_IOS
-                        noPressed = false;
-#endif
-#if UNITY_ANDROID
-                        ad.clearflag();
-#endif
-                        survey_activated = false;
-                        debugPlayerInfo = "Does not want to do survey.";
-                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                    }
-                    if ((survey_shown == true) && (URL_shown == false) && (ad.yesclicked() || yesPressed == true) && (code_entered == false))
-                    {
-                        // display a code, and submit it reportSurvey()
-                        // Please enter code (first six digits of UDID) on the survey page
-                        code_entered = true;
 
                         if (SystemInfo.deviceUniqueIdentifier.Length <= 6)
                         {
                             surveyCode = SystemInfo.deviceUniqueIdentifier;
                         }
-                        else
+                        else if (SystemInfo.deviceUniqueIdentifier.Length > 6)
                         {
                             surveyCode = SystemInfo.deviceUniqueIdentifier.Substring(0, 6);
                         }
-                        string codemsg = "Your survey code is: \n" + surveyCode + "\n please enter this in the survey.";
-                        debugPlayerInfo = "Displaying code.";
-                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-#if UNITY_IOS
-                        yesPressed = false;
-                        IOSNative.ShowOne("Survey Code", codemsg, "Yes");
-#endif
-#if UNITY_ANDROID
-                        ad.clearflag();
-                        ad.DisplayAndroidWindow("Survey Code", codemsg, AndroidDialogue.DialogueType.YESONLY);
-#endif                        
-                    }                    
-                    if ((survey_shown == true) && (URL_shown == false) && (ad.yesclicked() || yesPressed == true) && (code_entered == true))
-                    {
-                        debugPlayerInfo = "Opening URL.";
-                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                        URL_shown = true;
-                        Application.OpenURL("https://echolock.andrew.cmu.edu/survey/"); // "http://echolock.andrew.cmu.edu/survey/?"
-                    }
-                    if ((survey_shown == true) && (URL_shown == true))
-                    {
-                        debugPlayerInfo = "Reporting survey.";
-                        DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-#if UNITY_IOS
-                        yesPressed = false;
-                        IOSNative.ShowOne("Thank You", "Thank you for taking the survey!", "Done");
-#endif
-#if UNITY_ANDROID
-                        ad.clearflag();
-                        ad.DisplayAndroidWindow("Thank You", "Thank you for taking the survey!", AndroidDialogue.DialogueType.YESONLY);
-#endif     
-                        reportsurvey(surveyCode);
-                        survey_activated = false;
-                    }                    
+                    }       
                 }
-#endif
 
                 if (survey_activated == false)
                 {
@@ -4267,6 +4334,30 @@ public class Player : MovingObject
                     changingLevel = true;
                     attemptExitFromLevel(); // Attempt to exit the level.
                 }
+            }
+
+            // pop up the survey at the end of tutorial        
+            if ((GameManager.instance.level == 11) && (survey_activated == true))
+            {
+                if ((survey_shown == true) && (noConsent == true))
+                {
+                    survey_activated = false;
+                    survey_shown = false;
+
+                    print("Does not want to do survey.");
+                    debugPlayerInfo = "Does not want to do survey.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                }               
+                if ((survey_shown == true) && (finished_questions_survey == true))
+                {
+                    print("Reporting survey.");
+                    debugPlayerInfo = "Reporting survey.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+
+                    reportsurvey(surveyCode);
+                    survey_activated = false;
+                    survey_shown = false;
+                }                    
             }
         }
 
@@ -4763,7 +4854,7 @@ public class Player : MovingObject
             {
                 readEighteenPlus = true;
                 answeredQuestion1 = true;
-                question1 = true;
+                question1 = "yes";
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
 #if UNITY_IOS
@@ -4778,7 +4869,7 @@ public class Player : MovingObject
             {
                 readEighteenPlus = true;
                 answeredQuestion1 = true;
-                question1 = false;
+                question1 = "no";
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
 #if UNITY_IOS
@@ -4809,7 +4900,7 @@ public class Player : MovingObject
             {
                 readUnderstand = true;
                 answeredQuestion2 = true;
-                question2 = true;
+                question2 = "yes";
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
 #if UNITY_IOS
@@ -4824,7 +4915,7 @@ public class Player : MovingObject
             {
                 readUnderstand = true;
                 answeredQuestion2 = true;
-                question2 = false;
+                question2 = "no";
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
 #if UNITY_IOS
@@ -4855,7 +4946,7 @@ public class Player : MovingObject
             {
                 readParticipate = true;
                 answeredQuestion3 = true;
-                question3 = true;
+                question3 = "yes";
                 android_window_displayed = false;
                 can_display_window = false;
                 finished_reading = true;
@@ -4876,7 +4967,7 @@ public class Player : MovingObject
             {
                 readParticipate = true;
                 answeredQuestion3 = true;
-                question3 = false;
+                question3 = "no";
                 android_window_displayed = false;
                 can_display_window = false;
                 finished_reading = true;
@@ -4893,7 +4984,7 @@ public class Player : MovingObject
             }
         }
 
-        if (curLevel == 11)
+        if ((curLevel == 11) && (survey_activated == true))
         {
             if ((readingSurvey == true) && (android_window_displayed == false) && (can_display_window_survey == true))
             {
@@ -4909,7 +5000,7 @@ public class Player : MovingObject
                 string message = "Are you enjoying the game?";
 
 #if UNITY_IOS
-                IOSNative.ShowTwo(title, message, "Yes", "No");   
+                IOSNative.ShowThree(title, message, "Yes", "No", "N/A");   
 #endif
 #if UNITY_ANDROID
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.SURVEY;
@@ -4970,7 +5061,7 @@ public class Player : MovingObject
                 string message = "Do you plan to play this game more?";
 
 #if UNITY_IOS
-                IOSNative.ShowTwo(title, message, "Yes", "No");
+                IOSNative.ShowThree(title, message, "Yes", "No", "N/A");   
 #endif
 #if UNITY_ANDROID
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.SURVEY;
@@ -5031,7 +5122,7 @@ public class Player : MovingObject
                 string message = "Did you find this game easy?";
 
 #if UNITY_IOS
-                IOSNative.ShowTwo(title, message, "Yes", "No");
+                IOSNative.ShowThree(title, message, "Yes", "No", "N/A");   
 #endif
 #if UNITY_ANDROID
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.SURVEY;
@@ -5092,7 +5183,7 @@ public class Player : MovingObject
                 string message = "Did you get lost often?";
 
 #if UNITY_IOS
-                IOSNative.ShowTwo(title, message, "Yes", "No");
+                IOSNative.ShowThree(title, message, "Yes", "No", "N/A");   
 #endif
 #if UNITY_ANDROID
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.SURVEY;
@@ -5153,7 +5244,7 @@ public class Player : MovingObject
                 string message = "Did you understand what the echoes were telling you about the maze?";
 
 #if UNITY_IOS
-                IOSNative.ShowTwo(title, message, "Yes", "No");
+                IOSNative.ShowThree(title, message, "Yes", "No", "N/A");   
 #endif
 #if UNITY_ANDROID
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.SURVEY;
@@ -5214,7 +5305,7 @@ public class Player : MovingObject
                 string message = "Did you find this game frustrating?";
 
 #if UNITY_IOS
-                IOSNative.ShowTwo(title, message, "Yes", "No");
+                IOSNative.ShowThree(title, message, "Yes", "No", "N/A");   
 #endif
 #if UNITY_ANDROID
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.SURVEY;
@@ -5275,7 +5366,7 @@ public class Player : MovingObject
                 string message = "Did you start with the tutorial?";
 
 #if UNITY_IOS
-                IOSNative.ShowTwo(title, message, "Yes", "No");
+                IOSNative.ShowThree(title, message, "Yes", "No", "N/A");   
 #endif
 #if UNITY_ANDROID
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.SURVEY;
@@ -5336,7 +5427,7 @@ public class Player : MovingObject
                 string message = "Was the tutorial helpful?";
 
 #if UNITY_IOS
-                IOSNative.ShowTwo(title, message, "Yes", "No");
+                IOSNative.ShowThree(title, message, "Yes", "No", "N/A");   
 #endif
 #if UNITY_ANDROID
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.SURVEY;
@@ -5397,7 +5488,7 @@ public class Player : MovingObject
                 string message = "Was the hint menu helpful?";
 
 #if UNITY_IOS
-                IOSNative.ShowTwo(title, message, "Yes", "No");
+                IOSNative.ShowThree(title, message, "Yes", "No", "N/A");   
 #endif
 #if UNITY_ANDROID
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.SURVEY;
@@ -5458,7 +5549,7 @@ public class Player : MovingObject
                 string message = "Were the voice instructions helpful?";
 
 #if UNITY_IOS
-                IOSNative.ShowTwo(title, message, "Yes", "No");
+                IOSNative.ShowThree(title, message, "Yes", "No", "N/A");   
 #endif
 #if UNITY_ANDROID
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.SURVEY;
@@ -5519,7 +5610,7 @@ public class Player : MovingObject
                 string message = "Were the control gestures easy to learn and use?";
 
 #if UNITY_IOS
-                IOSNative.ShowTwo(title, message, "Yes", "No");
+                IOSNative.ShowThree(title, message, "Yes", "No", "N/A");   
 #endif
 #if UNITY_ANDROID
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.SURVEY;
@@ -5580,7 +5671,7 @@ public class Player : MovingObject
                 string message = "Did you ever look at the maze to figure out where to go?";
 
 #if UNITY_IOS
-                IOSNative.ShowTwo(title, message, "Yes", "No");
+                IOSNative.ShowThree(title, message, "Yes", "No", "N/A");   
 #endif
 #if UNITY_ANDROID
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.SURVEY;
@@ -5641,7 +5732,7 @@ public class Player : MovingObject
                 string message = "Have you ever used echoes to navigate before, either in a game or real life?";
 
 #if UNITY_IOS
-                IOSNative.ShowTwo(title, message, "Yes", "No");
+                IOSNative.ShowThree(title, message, "Yes", "No", "N/A");   
 #endif
 #if UNITY_ANDROID
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.SURVEY;
@@ -5702,7 +5793,7 @@ public class Player : MovingObject
                 string message = "Do you have a visual impairment that is not fully corrected by glasses?";
 
 #if UNITY_IOS
-                IOSNative.ShowTwo(title, message, "Yes", "No");
+                IOSNative.ShowThree(title, message, "Yes", "No", "N/A");   
 #endif
 #if UNITY_ANDROID
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.SURVEY;
@@ -5763,7 +5854,7 @@ public class Player : MovingObject
                 string message = "Do you have a hearing impairment?";
 
 #if UNITY_IOS
-                IOSNative.ShowTwo(title, message, "Yes", "No");
+                IOSNative.ShowThree(title, message, "Yes", "No", "N/A");   
 #endif
 #if UNITY_ANDROID
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.SURVEY;
@@ -5927,7 +6018,9 @@ public class Player : MovingObject
                 readSuggestions = true;
                 suggestions = ad.getInputStr();
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+                SoundManager.instance.PlayClips(clips, null, 0, () => {
+                    canRepeat = true;                   
+                }, 1, null, true);
 #if UNITY_IOS
                 yesPressed = false;
 #endif
@@ -5936,7 +6029,143 @@ public class Player : MovingObject
 #endif
                 finished_reading_survey = true;
                 finished_questions_survey = true;
-                readingSurvey = false;
+                android_window_displayed = false;
+                can_display_window_survey = false;
+            }
+
+            if ((hearingSurvey == true) && (can_display_window_survey == false) && (answeredSurveyQuestion15 == true))
+            {
+                can_display_window_survey = true;
+            }
+
+            if ((hearingSurvey == true) && (android_window_displayed == false) && (can_display_window_survey == true))
+            {
+                android_window_displayed = true;
+                finished_listening_survey = false;
+            }
+
+            if ((hearingSurvey == true) && (android_window_displayed == true) && (finished_listening_survey == false) && (answeredSurveyQuestion15 == true) && (readEmail == false) && (emailFlag == false))
+            {
+                emailFlag = true;
+
+                string title = "Email Address";
+                string message = "Enter email if you'd be interested in being contacted about psychology research using this game.";
+
+#if UNITY_IOS
+                IOSNative.ShowOne(title, message, "Next");
+#endif
+#if UNITY_ANDROID
+                AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.INPUT;
+                ad.DisplayAndroidWindow(title, message, dialogueType, "Next");
+#endif
+            }
+
+            if ((hearingSurvey == true) && (android_window_displayed == true) && (finished_listening_survey == false) && (readEmail == false) && (emailFlag == true) && (ad.yesclicked() == true || yesPressed == true))
+            {
+                readEmail = true;
+                email = ad.getInputStr();
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                yesPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((hearingSurvey == true) && (android_window_displayed == true) && (finished_listening_survey == false) && (readEmail == true) && (readLikes == false) && (likesFlag == false))
+            {
+                likesFlag = true;
+
+                string title = "Likes";
+                string message = "Do you have any particular things you liked about the game?";
+
+#if UNITY_IOS
+                IOSNative.ShowOne(title, message, "Next");
+#endif
+#if UNITY_ANDROID
+                AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.INPUT;
+                ad.DisplayAndroidWindow(title, message, dialogueType, "Next");
+#endif
+            }
+
+            if ((hearingSurvey == true) && (android_window_displayed == true) && (finished_listening_survey == false) && (readLikes == false) && (likesFlag == true) && (ad.yesclicked() == true || yesPressed == true))
+            {
+                readLikes = true;
+                likes = ad.getInputStr();
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                yesPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((hearingSurvey == true) && (android_window_displayed == true) && (finished_listening_survey == false) && (readLikes == true) && (readConfusions == false) && (confusionsFlag == false))
+            {
+                confusionsFlag = true;
+
+                string title = "Complaints/Confusions";
+                string message = "Do you have any complaints or confusions about the game?";
+
+#if UNITY_IOS
+                IOSNative.ShowOne(title, message, "Next");
+#endif
+#if UNITY_ANDROID
+                AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.INPUT;
+                ad.DisplayAndroidWindow(title, message, dialogueType, "Next");
+#endif
+            }
+
+            if ((hearingSurvey == true) && (android_window_displayed == true) && (finished_listening_survey == false) && (readConfusions == false) && (confusionsFlag == true) && (ad.yesclicked() == true || yesPressed == true))
+            {
+                readConfusions = true;
+                confusions = ad.getInputStr();
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
+#if UNITY_IOS
+                yesPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+            }
+
+            if ((hearingSurvey == true) && (android_window_displayed == true) && (finished_listening_survey == false) && (readConfusions == true) && (readSuggestions == false) && (suggestionsFlag == false))
+            {
+                suggestionsFlag = true;
+
+                string title = "Suggestions";
+                string message = "Do you have any suggestions for how to improve the game?";
+
+#if UNITY_IOS
+                IOSNative.ShowOne(title, message, "Next");
+#endif
+#if UNITY_ANDROID
+                AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.INPUT;
+                ad.DisplayAndroidWindow(title, message, dialogueType, "Next");
+#endif
+            }
+
+            if ((hearingSurvey == true) && (android_window_displayed == true) && (finished_listening_survey == false) && (readSuggestions == false) && (suggestionsFlag == true) && (ad.yesclicked() == true || yesPressed == true))
+            {
+                readSuggestions = true;
+                suggestions = ad.getInputStr();
+                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                SoundManager.instance.PlayClips(clips, null, 0, () => {
+                    canRepeat = true;                  
+                }, 1, null, true);
+#if UNITY_IOS
+                yesPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+                finished_listening_survey = true;
+                finished_questions_survey = true;
                 android_window_displayed = false;
                 can_display_window_survey = false;
             }
@@ -6304,7 +6533,8 @@ public class Player : MovingObject
                         hasFinishedConsentForm = true;
                         canPlayLevel = false;
                         clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[23], Database.levelStartClips[curLevel], Database.consentClips[24], Database.levelStartClips[curLevel] };
-                        SoundManager.instance.PlayClips(clips, null, 0, () => {
+                        SoundManager.instance.PlayClips(clips, null, 0, () =>
+                        {
                             hasCheckedForConsent = true;
                             hasStartedConsent = false;
                             canRepeat = true;
@@ -6317,7 +6547,7 @@ public class Player : MovingObject
                         }, 6, null, true);
                     }
 
-                    else if (((hearingConsentForm == true) || (readingConsentForm == true)) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (question1 == true) && (question2 == true) && (question3 == true))
+                    else if (((hearingConsentForm == true) || (readingConsentForm == true)) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (question1 == "yes") && (question2 == "yes") && (question3 == "yes"))
                     {
                         PlayerPrefs.SetInt("Consented", 1);
                         debugPlayerInfo = "Tap registered. Consented to having data collected. Can continue with level " + curLevel.ToString() + ".";
@@ -6325,7 +6555,8 @@ public class Player : MovingObject
                         hasFinishedConsentForm = true;
                         canPlayLevel = false;
                         clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[22], Database.levelStartClips[curLevel], Database.consentClips[24], Database.levelStartClips[curLevel] };
-                        SoundManager.instance.PlayClips(clips, null, 0, () => {
+                        SoundManager.instance.PlayClips(clips, null, 0, () =>
+                        {
                             hasCheckedForConsent = true;
                             hasStartedConsent = false;
                             canRepeat = true;
@@ -6342,6 +6573,23 @@ public class Player : MovingObject
                     {
                         debugPlayerInfo = "Tap registered. Does nothing here.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    }
+                }
+
+                if ((GameManager.instance.level == 11) && (survey_activated == true) && (survey_shown == true))
+                {
+                    if ((hearingSurvey == true) && (finished_questions_survey == true))
+                    {
+                        hearingSurvey = false;
+                        survey_activated = false;                        
+                        reportsurvey(surveyCode);
+                    }
+
+                    if (noConsent == true)
+                    {
+                        noConsent = false;
+                        survey_activated = false;
+                        reportsurvey(surveyCode);
                     }
                 }
             }
@@ -6465,8 +6713,8 @@ public class Player : MovingObject
                     }
 
                     if ((hasFinishedConsentForm == false) && (hasStartedConsent == true))
-                    {                                  
-                        if ((noConsent == true) || (((readingConsentForm == true) || (hearingConsentForm == true)) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (finished_questions == true) && ((question1 == false) || (question2 == false) || (question3 == false))))
+                    {
+                        if ((noConsent == true) || (((readingConsentForm == true) || (hearingConsentForm == true)) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (finished_questions == true) && ((question1 == "no") || (question2 == "no") || (question3 == "no"))))
                         {
                             hearingConsentForm = true;
                             readingConsentForm = false;
@@ -6481,9 +6729,9 @@ public class Player : MovingObject
                             answeredQuestion1 = false;
                             answeredQuestion2 = false;
                             answeredQuestion3 = false;
-                            question1 = false;
-                            question2 = false;
-                            question3 = false;
+                            question1 = "";
+                            question2 = "";
+                            question3 = "";
                             readConsent = false;
                             consentFlag = false;
                             readProcedures = false;
@@ -6515,20 +6763,21 @@ public class Player : MovingObject
                         }
                         else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == false))
                         {
-                            question3 = false;
+                            question3 = "no";
                             answeredQuestion3 = true;
                             finished_questions = true;
                             debugPlayerInfo = "Swipe left registered. Does not want to participate.";
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                             clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                            SoundManager.instance.PlayClips(clips, null, 0, () => {
+                            SoundManager.instance.PlayClips(clips, null, 0, () =>
+                            {
                                 canRepeat = true;
                                 hasCheckedForConsent = true;
                             }, 1, null, true);
                         }
                         else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == false))
                         {
-                            question2 = false;
+                            question2 = "no";
                             answeredQuestion2 = true;
                             canRepeat = true;
                             debugPlayerInfo = "Swipe left registered. Did not understand information.";
@@ -6550,7 +6799,7 @@ public class Player : MovingObject
                         }
                         else if ((hearingConsentForm == true) && (answeredQuestion1 == false))
                         {
-                            question1 = false;
+                            question1 = "no";
                             answeredQuestion1 = true;
                             canRepeat = true;
                             debugPlayerInfo = "Swipe left registered. Is not eighteen.";
@@ -6568,7 +6817,7 @@ public class Player : MovingObject
                                     clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[5] };
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }                            
+                            }
                         }
                         else if ((hearingConsentForm == false) && (readingConsentForm == false) && (noConsent == false))
                         {
@@ -6578,7 +6827,235 @@ public class Player : MovingObject
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                             clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[2], Database.soundEffectClips[0] };
                             SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                        }                                              
+                        }
+                    }
+
+                    if ((GameManager.instance.level == 11) && (survey_activated == true) && (survey_shown == true))
+                    {
+                        if (hearingSurvey == true)
+                        {
+                            if ((answeredSurveyQuestion15 == false) && (answeredSurveyQuestion14 == true))
+                            {
+                                surveyQuestion15 = "no";
+                                answeredSurveyQuestion15 = true;
+                                finished_questions_survey = true;
+                            }
+                            if ((answeredSurveyQuestion14 == false) && (answeredSurveyQuestion13 == true))
+                            {
+                                surveyQuestion14 = "no";
+                                answeredSurveyQuestion14 = true;
+                            }
+                            if ((answeredSurveyQuestion13 == false) && (answeredSurveyQuestion12 == true))
+                            {
+                                surveyQuestion13 = "no";
+                                answeredSurveyQuestion13 = true;
+                            }
+                            if ((answeredSurveyQuestion12 == false) && (answeredSurveyQuestion11 == true))
+                            {
+                                surveyQuestion12 = "no";
+                                answeredSurveyQuestion12 = true;
+                            }
+                            if ((answeredSurveyQuestion11 == false) && (answeredSurveyQuestion10 == true))
+                            {
+                                surveyQuestion11 = "no";
+                                answeredSurveyQuestion11 = true;
+                            }
+                            if ((answeredSurveyQuestion10 == false) && (answeredSurveyQuestion9 == true))
+                            {
+                                surveyQuestion10 = "no";
+                                answeredSurveyQuestion10 = true;
+                            }
+                            if ((answeredSurveyQuestion9 == false) && (answeredSurveyQuestion8 == true))
+                            {
+                                surveyQuestion9 = "no";
+                                answeredSurveyQuestion9 = true;
+                            }
+                            if ((answeredSurveyQuestion8 == false) && (answeredSurveyQuestion7 == true))
+                            {
+                                surveyQuestion8 = "no";
+                                answeredSurveyQuestion8 = true;
+                            }
+                            if ((answeredSurveyQuestion7 == false) && (answeredSurveyQuestion6 == true))
+                            {
+                                surveyQuestion7 = "no";
+                                answeredSurveyQuestion7 = true;
+                            }
+                            if ((answeredSurveyQuestion6 == false) && (answeredSurveyQuestion5 == true))
+                            {
+                                surveyQuestion6 = "no";
+                                answeredSurveyQuestion6 = true;
+                            }
+                            if ((answeredSurveyQuestion5 == false) && (answeredSurveyQuestion4 == true))
+                            {
+                                surveyQuestion5 = "no";
+                                answeredSurveyQuestion5 = true;
+                            }
+                            if ((answeredSurveyQuestion4 == false) && (answeredSurveyQuestion3 == true))
+                            {
+                                surveyQuestion4 = "no";
+                                answeredSurveyQuestion4 = true;
+                            }
+                            if ((answeredSurveyQuestion3 == false) && (answeredSurveyQuestion2 == true))
+                            {
+                                surveyQuestion3 = "no";
+                                answeredSurveyQuestion3 = true;
+                            }
+                            if ((answeredSurveyQuestion2 == false) && (answeredSurveyQuestion1 == true))
+                            {
+                                surveyQuestion2 = "no";
+                                answeredSurveyQuestion2 = true;
+                            }
+                            if (answeredSurveyQuestion1 == false)
+                            {
+                                surveyQuestion1 = "no";
+                                answeredSurveyQuestion1 = true;
+                            }
+                        }
+
+                        if (noConsent == true)
+                        {
+                            noConsent = false;
+                            hearingSurvey = true;
+                            android_window_displayed = false;
+                            finished_listening_survey = false;
+                            finished_questions_survey = false;
+                            surveyQuestion1 = "";
+                            answeredSurveyQuestion1 = false;
+                            surveyQuestion2 = "";
+                            answeredSurveyQuestion2 = false;
+                            surveyQuestion3 = "";
+                            answeredSurveyQuestion3 = false;
+                            surveyQuestion4 = "";
+                            answeredSurveyQuestion4 = false;
+                            surveyQuestion5 = "";
+                            answeredSurveyQuestion5 = false;
+                            surveyQuestion6 = "";
+                            answeredSurveyQuestion6 = false;
+                            surveyQuestion7 = "";
+                            answeredSurveyQuestion7 = false;
+                            surveyQuestion8 = "";
+                            answeredSurveyQuestion8 = false;
+                            surveyQuestion9 = "";
+                            answeredSurveyQuestion9 = false;
+                            surveyQuestion10 = "";
+                            answeredSurveyQuestion10 = false;
+                            surveyQuestion11 = "";
+                            answeredSurveyQuestion11 = false;
+                            surveyQuestion12 = "";
+                            answeredSurveyQuestion12 = false;
+                            surveyQuestion13 = "";
+                            answeredSurveyQuestion13 = false;
+                            surveyQuestion14 = "";
+                            answeredSurveyQuestion14 = false;
+                            surveyQuestion15 = "";
+                            answeredSurveyQuestion15 = false;
+                            email = "";
+                            likes = "";
+                            confusions = "";
+                            suggestions = "";
+                            readEnjoy = false;
+                            enjoyFlag = false;
+                            readPlayMore = false;
+                            playMoreFlag = false;
+                            readEasy = false;
+                            easyFlag = false;
+                            readLost = false;
+                            lostFlag = false;
+                            readUnderstandEcho = false;
+                            understandEchoFlag = false;
+                            readFrustrating = false;
+                            frustratingFlag = false;
+                            readTutorial = false;
+                            tutorialFlag = false;
+                            readTutorialHelp = false;
+                            tutorialHelpFlag = false;
+                            readHints = false;
+                            hintsFlag = false;
+                            readInstructions = false;
+                            instructionsFlag = false;
+                            readControls = false;
+                            controlsFlag = false;
+                            readLook = false;
+                            lookFlag = false;
+                            readEchoNavigate = false;
+                            echoNavigateFlag = false;
+                            readVisuallyImpaired = false;
+                            visuallyImpairedFlag = false;
+                            readHearingImpaired = false;
+                            hearingImpairedFlag = false;
+                        }
+
+                        if ((hearingSurvey == false) && (readingSurvey == false) && (noSurvey == false))
+                        {
+                            hearingSurvey = true;
+                            android_window_displayed = false;
+                            finished_listening_survey = false;
+                            finished_questions_survey = false;
+                            surveyQuestion1 = "";
+                            answeredSurveyQuestion1 = false;
+                            surveyQuestion2 = "";
+                            answeredSurveyQuestion2 = false;
+                            surveyQuestion3 = "";
+                            answeredSurveyQuestion3 = false;
+                            surveyQuestion4 = "";
+                            answeredSurveyQuestion4 = false;
+                            surveyQuestion5 = "";
+                            answeredSurveyQuestion5 = false;
+                            surveyQuestion6 = "";
+                            answeredSurveyQuestion6 = false;
+                            surveyQuestion7 = "";
+                            answeredSurveyQuestion7 = false;
+                            surveyQuestion8 = "";
+                            answeredSurveyQuestion8 = false;
+                            surveyQuestion9 = "";
+                            answeredSurveyQuestion9 = false;
+                            surveyQuestion10 = "";
+                            answeredSurveyQuestion10 = false;
+                            surveyQuestion11 = "";
+                            answeredSurveyQuestion11 = false;
+                            surveyQuestion12 = "";
+                            answeredSurveyQuestion12 = false;
+                            surveyQuestion13 = "";
+                            answeredSurveyQuestion13 = false;
+                            surveyQuestion14 = "";
+                            answeredSurveyQuestion14 = false;
+                            surveyQuestion15 = "";
+                            answeredSurveyQuestion15 = false;
+                            email = "";
+                            likes = "";
+                            confusions = "";
+                            suggestions = "";
+                            readEnjoy = false;
+                            enjoyFlag = false;
+                            readPlayMore = false;
+                            playMoreFlag = false;
+                            readEasy = false;
+                            easyFlag = false;
+                            readLost = false;
+                            lostFlag = false;
+                            readUnderstandEcho = false;
+                            understandEchoFlag = false;
+                            readFrustrating = false;
+                            frustratingFlag = false;
+                            readTutorial = false;
+                            tutorialFlag = false;
+                            readTutorialHelp = false;
+                            tutorialHelpFlag = false;
+                            readHints = false;
+                            hintsFlag = false;
+                            readInstructions = false;
+                            instructionsFlag = false;
+                            readControls = false;
+                            controlsFlag = false;
+                            readLook = false;
+                            lookFlag = false;
+                            readEchoNavigate = false;
+                            echoNavigateFlag = false;
+                            readVisuallyImpaired = false;
+                            visuallyImpairedFlag = false;
+                            readHearingImpaired = false;
+                            hearingImpairedFlag = false;
+                        }
                     }
                 }
                 // If the right arrow key has been pressed.
@@ -6698,7 +7175,7 @@ public class Player : MovingObject
 
                     if ((hasFinishedConsentForm == false) && (hasStartedConsent == true))
                     {
-                        if ((noConsent == true) || (((hearingConsentForm == true) || (readingConsentForm == true)) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (finished_questions == true) && ((question1 == false) || (question2 == false) || (question3 == false))))
+                        if ((noConsent == true) || (((hearingConsentForm == true) || (readingConsentForm == true)) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (finished_questions == true) && ((question1 == "no") || (question2 == "no") || (question3 == "no"))))
                         {
                             hearingConsentForm = false;
                             readingConsentForm = true;
@@ -6713,9 +7190,9 @@ public class Player : MovingObject
                             answeredQuestion1 = false;
                             answeredQuestion2 = false;
                             answeredQuestion3 = false;
-                            question1 = false;
-                            question2 = false;
-                            question3 = false;
+                            question1 = "";
+                            question2 = "";
+                            question3 = "";
                             readConsent = false;
                             consentFlag = false;
                             readProcedures = false;
@@ -6747,14 +7224,15 @@ public class Player : MovingObject
                         }
                         else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == false))
                         {
-                            question3 = true;
+                            question3 = "yes";
                             answeredQuestion3 = true;
                             finished_questions = true;
                             debugPlayerInfo = "Swipe right registered. Wants to participate.";
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
 
                             clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                            SoundManager.instance.PlayClips(clips, null, 0, () => {
+                            SoundManager.instance.PlayClips(clips, null, 0, () =>
+                            {
                                 canRepeat = true;
                                 hasCheckedForConsent = true;
                                 reportConsent(SystemInfo.deviceUniqueIdentifier);
@@ -6762,7 +7240,7 @@ public class Player : MovingObject
                         }
                         else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == false))
                         {
-                            question2 = true;
+                            question2 = "yes";
                             answeredQuestion2 = true;
                             canRepeat = true;
                             debugPlayerInfo = "Swipe right registered. Understood information.";
@@ -6784,7 +7262,7 @@ public class Player : MovingObject
                         }
                         else if ((hearingConsentForm == true) && (answeredQuestion1 == false))
                         {
-                            question1 = true;
+                            question1 = "yes";
                             answeredQuestion1 = true;
                             canRepeat = true;
                             debugPlayerInfo = "Swipe right registered. Is eighteen.";
@@ -6812,15 +7290,98 @@ public class Player : MovingObject
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                             finished_reading = true;
                             answeredQuestion1 = true;
-                            question1 = true;
+                            question1 = "yes";
                             answeredQuestion2 = true;
-                            question2 = true;
+                            question2 = "yes";
                             answeredQuestion3 = true;
-                            question3 = true;
+                            question3 = "yes";
                             finished_questions = true;
 
                             reportConsent(SystemInfo.deviceUniqueIdentifier);
-                        }                                                                                                                   
+                        }
+                    }
+
+                    if ((GameManager.instance.level == 11) && (survey_activated == true) && (survey_shown == true))
+                    {
+                        if (hearingSurvey == true)
+                        {
+                            if ((answeredSurveyQuestion15 == false) && (answeredSurveyQuestion14 == true))
+                            {
+                                surveyQuestion15 = "yes";
+                                answeredSurveyQuestion15 = true;
+                                finished_questions_survey = true;
+                            }
+                            if ((answeredSurveyQuestion14 == false) && (answeredSurveyQuestion13 == true))
+                            {
+                                surveyQuestion14 = "yes";
+                                answeredSurveyQuestion14 = true;
+                            }
+                            if ((answeredSurveyQuestion13 == false) && (answeredSurveyQuestion12 == true))
+                            {
+                                surveyQuestion13 = "yes";
+                                answeredSurveyQuestion13 = true;
+                            }
+                            if ((answeredSurveyQuestion12 == false) && (answeredSurveyQuestion11 == true))
+                            {
+                                surveyQuestion12 = "yes";
+                                answeredSurveyQuestion12 = true;
+                            }
+                            if ((answeredSurveyQuestion11 == false) && (answeredSurveyQuestion10 == true))
+                            {
+                                surveyQuestion11 = "yes";
+                                answeredSurveyQuestion11 = true;
+                            }
+                            if ((answeredSurveyQuestion10 == false) && (answeredSurveyQuestion9 == true))
+                            {
+                                surveyQuestion10 = "yes";
+                                answeredSurveyQuestion10 = true;
+                            }
+                            if ((answeredSurveyQuestion9 == false) && (answeredSurveyQuestion8 == true))
+                            {
+                                surveyQuestion9 = "yes";
+                                answeredSurveyQuestion9 = true;
+                            }
+                            if ((answeredSurveyQuestion8 == false) && (answeredSurveyQuestion7 == true))
+                            {
+                                surveyQuestion8 = "yes";
+                                answeredSurveyQuestion8 = true;
+                            }
+                            if ((answeredSurveyQuestion7 == false) && (answeredSurveyQuestion6 == true))
+                            {
+                                surveyQuestion7 = "yes";
+                                answeredSurveyQuestion7 = true;
+                            }
+                            if ((answeredSurveyQuestion6 == false) && (answeredSurveyQuestion5 == true))
+                            {
+                                surveyQuestion6 = "yes";
+                                answeredSurveyQuestion6 = true;
+                            }
+                            if ((answeredSurveyQuestion5 == false) && (answeredSurveyQuestion4 == true))
+                            {
+                                surveyQuestion5 = "yes";
+                                answeredSurveyQuestion5 = true;
+                            }
+                            if ((answeredSurveyQuestion4 == false) && (answeredSurveyQuestion3 == true))
+                            {
+                                surveyQuestion4 = "yes";
+                                answeredSurveyQuestion4 = true;
+                            }
+                            if ((answeredSurveyQuestion3 == false) && (answeredSurveyQuestion2 == true))
+                            {
+                                surveyQuestion3 = "yes";
+                                answeredSurveyQuestion3 = true;
+                            }
+                            if ((answeredSurveyQuestion2 == false) && (answeredSurveyQuestion1 == true))
+                            {
+                                surveyQuestion2 = "yes";
+                                answeredSurveyQuestion2 = true;
+                            }
+                            if (answeredSurveyQuestion1 == false)
+                            {
+                                surveyQuestion1 = "yes";
+                                answeredSurveyQuestion1 = true;
+                            }
+                        }
                     }
                 }
                 // If the up arrow key has been pressed.
@@ -6849,14 +7410,16 @@ public class Player : MovingObject
                             if (GM_title.isUsingTalkback == true)
                             {
                                 clips = new List<AudioClip> { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.tutorialClips[13], Database.tutorialClips[15] };
-                                SoundManager.instance.PlayClips(clips, null, 0, () => {
+                                SoundManager.instance.PlayClips(clips, null, 0, () =>
+                                {
                                     haveSwipedThreeTimes = true;
                                 }, 4, null, true); // If they are using Talkback, play the correct instructions.
                             }
                             else if (GM_title.isUsingTalkback == false)
                             {
                                 clips = new List<AudioClip> { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.tutorialClips[13], Database.tutorialClips[14] };
-                                SoundManager.instance.PlayClips(clips, null, 0, () => {
+                                SoundManager.instance.PlayClips(clips, null, 0, () =>
+                                {
                                     haveSwipedThreeTimes = true;
                                 }, 0, null, true); // If they are not using Talkback, play the correct instructions.
                             }
@@ -7136,7 +7699,8 @@ public class Player : MovingObject
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
 
                             clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                            SoundManager.instance.PlayClips(clips, null, 0, () => {
+                            SoundManager.instance.PlayClips(clips, null, 0, () =>
+                            {
                                 canRepeat = true;
                                 hasCheckedForConsent = true;
                             }, 1, null, true);
@@ -7153,10 +7717,105 @@ public class Player : MovingObject
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.                           
 
                             clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                            SoundManager.instance.PlayClips(clips, null, 0, () => {
+                            SoundManager.instance.PlayClips(clips, null, 0, () =>
+                            {
                                 canRepeat = true;
                                 hasCheckedForConsent = true;
                             }, 1, null, true);
+                        }
+                    }
+
+                    if ((GameManager.instance.level == 11) && (survey_activated == true) && (survey_shown == true))
+                    {
+                        if (finished_questions_survey == true)
+                        {
+                            hearingSurvey = false;
+                            noConsent = true;
+                        }
+
+                        if (hearingSurvey == true)
+                        {
+                            if ((answeredSurveyQuestion15 == false) && (answeredSurveyQuestion14 == true))
+                            {
+                                surveyQuestion15 = "na";
+                                answeredSurveyQuestion15 = true;
+                                finished_questions_survey = true;
+                            }
+                            if ((answeredSurveyQuestion14 == false) && (answeredSurveyQuestion13 == true))
+                            {
+                                surveyQuestion14 = "na";
+                                answeredSurveyQuestion14 = true;
+                            }
+                            if ((answeredSurveyQuestion13 == false) && (answeredSurveyQuestion12 == true))
+                            {
+                                surveyQuestion13 = "na";
+                                answeredSurveyQuestion13 = true;
+                            }
+                            if ((answeredSurveyQuestion12 == false) && (answeredSurveyQuestion11 == true))
+                            {
+                                surveyQuestion12 = "na";
+                                answeredSurveyQuestion12 = true;
+                            }
+                            if ((answeredSurveyQuestion11 == false) && (answeredSurveyQuestion10 == true))
+                            {
+                                surveyQuestion11 = "na";
+                                answeredSurveyQuestion11 = true;
+                            }
+                            if ((answeredSurveyQuestion10 == false) && (answeredSurveyQuestion9 == true))
+                            {
+                                surveyQuestion10 = "na";
+                                answeredSurveyQuestion10 = true;
+                            }
+                            if ((answeredSurveyQuestion9 == false) && (answeredSurveyQuestion8 == true))
+                            {
+                                surveyQuestion9 = "na";
+                                answeredSurveyQuestion9 = true;
+                            }
+                            if ((answeredSurveyQuestion8 == false) && (answeredSurveyQuestion7 == true))
+                            {
+                                surveyQuestion8 = "na";
+                                answeredSurveyQuestion8 = true;
+                            }
+                            if ((answeredSurveyQuestion7 == false) && (answeredSurveyQuestion6 == true))
+                            {
+                                surveyQuestion7 = "na";
+                                answeredSurveyQuestion7 = true;
+                            }
+                            if ((answeredSurveyQuestion6 == false) && (answeredSurveyQuestion5 == true))
+                            {
+                                surveyQuestion6 = "na";
+                                answeredSurveyQuestion6 = true;
+                            }
+                            if ((answeredSurveyQuestion5 == false) && (answeredSurveyQuestion4 == true))
+                            {
+                                surveyQuestion5 = "na";
+                                answeredSurveyQuestion5 = true;
+                            }
+                            if ((answeredSurveyQuestion4 == false) && (answeredSurveyQuestion3 == true))
+                            {
+                                surveyQuestion4 = "na";
+                                answeredSurveyQuestion4 = true;
+                            }
+                            if ((answeredSurveyQuestion3 == false) && (answeredSurveyQuestion2 == true))
+                            {
+                                surveyQuestion3 = "na";
+                                answeredSurveyQuestion3 = true;
+                            }
+                            if ((answeredSurveyQuestion2 == false) && (answeredSurveyQuestion1 == true))
+                            {
+                                surveyQuestion2 = "na";
+                                answeredSurveyQuestion2 = true;
+                            }
+                            if (answeredSurveyQuestion1 == false)
+                            {
+                                surveyQuestion1 = "na";
+                                answeredSurveyQuestion1 = true;
+                            }
+                        }
+
+                        if ((hearingSurvey == false) && (readingSurvey == false) && (noSurvey == false))
+                        {
+                            noSurvey = true;
                         }
                     }
                 }
@@ -7858,7 +8517,7 @@ public class Player : MovingObject
                         }, 6, null, true);
                     }
 
-                    else if (((hearingConsentForm == true) || (readingConsentForm == true)) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (question1 == true) && (question2 == true) && (question3 == true))
+                    else if (((hearingConsentForm == true) || (readingConsentForm == true)) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (question1 == "yes") && (question2 == "yes") && (question3 == "yes"))
                     {
                         PlayerPrefs.SetInt("Consented", 1);
                         debugPlayerInfo = "Tap registered. Consented to having data collected. Can continue with level " + curLevel.ToString() + ".";
@@ -7883,6 +8542,28 @@ public class Player : MovingObject
                     {
                         debugPlayerInfo = "Tap registered. Does nothing here.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                    }
+                }
+
+                if ((GameManager.instance.level == 11) && (survey_activated == true) && (survey_shown == true))
+                {
+                    if ((hearingSurvey == true) && (finished_questions_survey == true))
+                    {
+                        hearingSurvey = false;
+                        survey_activated = false;
+                        reportsurvey(surveyCode);
+                    }
+                    if ((readingSurvey == true) && (finished_questions_survey == true))
+                    {
+                        readingSurvey = false;
+                        survey_activated = false;
+                        reportsurvey(surveyCode);
+                    }
+                    if (noConsent == true)
+                    {
+                        noConsent = false;
+                        survey_activated = false;
+                        reportsurvey(surveyCode);
                     }
                 }
             }
@@ -8013,7 +8694,7 @@ public class Player : MovingObject
 
                     if ((hasFinishedConsentForm == false) && (hasStartedConsent == true))
                     {        
-                        if ((noConsent == true) || (((hearingConsentForm == true) || (readingConsentForm == true)) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (finished_questions == true) && ((question1 == false) || (question2 == false) || (question3 == false))))
+                        if ((noConsent == true) || (((hearingConsentForm == true) || (readingConsentForm == true)) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (finished_questions == true) && ((question1 == "no") || (question2 == "no") || (question3 == "no"))))
                         {
                             hearingConsentForm = true;
                             readingConsentForm = false;
@@ -8028,9 +8709,9 @@ public class Player : MovingObject
                             answeredQuestion1 = false;
                             answeredQuestion2 = false;
                             answeredQuestion3 = false;
-                            question1 = false;
-                            question2 = false;
-                            question3 = false;
+                            question1 = "";
+                            question2 = "";
+                            question3 = "";
                             readConsent = false;
                             consentFlag = false;
                             readProcedures = false;
@@ -8062,7 +8743,7 @@ public class Player : MovingObject
                         }
                         else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == false))
                         {
-                            question3 = false;
+                            question3 = "no";
                             answeredQuestion3 = true;
                             finished_questions = true;
                             debugPlayerInfo = "Swipe left registered. Does not want to participate.";
@@ -8075,7 +8756,7 @@ public class Player : MovingObject
                         }
                         else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == false))
                         {
-                            question2 = false;
+                            question2 = "no";
                             answeredQuestion2 = true;
                             canRepeat = true;
                             debugPlayerInfo = "Swipe left registered. Did not understand information.";
@@ -8096,7 +8777,7 @@ public class Player : MovingObject
                         }
                         else if ((hearingConsentForm == true) && (answeredQuestion1 == false))
                         {
-                            question1 = false;
+                            question1 = "no";
                             answeredQuestion1 = true;
                             canRepeat = true;
                             debugPlayerInfo = "Swipe left registered. Is not eighteen.";
@@ -8124,6 +8805,234 @@ public class Player : MovingObject
                             clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[2], Database.soundEffectClips[0] };
                             SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                         }                                            
+                    }
+
+
+                    if ((GameManager.instance.level == 11) && (survey_activated == true) && (survey_shown == true))
+                    {
+                        if (hearingSurvey == true)
+                        {                                                                                                                  
+                            if ((answeredSurveyQuestion15 == false) && (answeredSurveyQuestion14 == true))
+                            {
+                                surveyQuestion15 = "no";
+                                answeredSurveyQuestion15 = true;                                
+                            }
+                            if ((answeredSurveyQuestion14 == false) && (answeredSurveyQuestion13 == true))
+                            {
+                                surveyQuestion14 = "no";
+                                answeredSurveyQuestion14 = true;
+                            }
+                            if ((answeredSurveyQuestion13 == false) && (answeredSurveyQuestion12 == true))
+                            {
+                                surveyQuestion13 = "no";
+                                answeredSurveyQuestion13 = true;
+                            }
+                            if ((answeredSurveyQuestion12 == false) && (answeredSurveyQuestion11 == true))
+                            {
+                                surveyQuestion12 = "no";
+                                answeredSurveyQuestion12 = true;
+                            }
+                            if ((answeredSurveyQuestion11 == false) && (answeredSurveyQuestion10 == true))
+                            {
+                                surveyQuestion11 = "no";
+                                answeredSurveyQuestion11 = true;
+                            }
+                            if ((answeredSurveyQuestion10 == false) && (answeredSurveyQuestion9 == true))
+                            {
+                                surveyQuestion10 = "no";
+                                answeredSurveyQuestion10 = true;
+                            }
+                            if ((answeredSurveyQuestion9 == false) && (answeredSurveyQuestion8 == true))
+                            {
+                                surveyQuestion9 = "no";
+                                answeredSurveyQuestion9 = true;
+                            }
+                            if ((answeredSurveyQuestion8 == false) && (answeredSurveyQuestion7 == true))
+                            {
+                                surveyQuestion8 = "no";
+                                answeredSurveyQuestion8 = true;
+                            }
+                            if ((answeredSurveyQuestion7 == false) && (answeredSurveyQuestion6 == true))
+                            {
+                                surveyQuestion7 = "no";
+                                answeredSurveyQuestion7 = true;
+                            }
+                            if ((answeredSurveyQuestion6 == false) && (answeredSurveyQuestion5 == true))
+                            {
+                                surveyQuestion6 = "no";
+                                answeredSurveyQuestion6 = true;
+                            }
+                            if ((answeredSurveyQuestion5 == false) && (answeredSurveyQuestion4 == true))
+                            {
+                                surveyQuestion5 = "no";
+                                answeredSurveyQuestion5 = true;
+                            }
+                            if ((answeredSurveyQuestion4 == false) && (answeredSurveyQuestion3 == true))
+                            {
+                                surveyQuestion4 = "no";
+                                answeredSurveyQuestion4 = true;
+                            }
+                            if ((answeredSurveyQuestion3 == false) && (answeredSurveyQuestion2 == true))
+                            {
+                                surveyQuestion3 = "no";
+                                answeredSurveyQuestion3 = true;
+                            }
+                            if ((answeredSurveyQuestion2 == false) && (answeredSurveyQuestion1 == true))
+                            {
+                                surveyQuestion2 = "no";
+                                answeredSurveyQuestion2 = true;
+                            }
+                            if (answeredSurveyQuestion1 == false)
+                            {
+                                surveyQuestion1 = "no";
+                                answeredSurveyQuestion1 = true;
+                            }
+                        }
+
+                        if (noConsent == true)
+                        {
+                            noConsent = false;
+                            hearingSurvey = true;
+                            android_window_displayed = false;
+                            finished_listening_survey = false;
+                            finished_questions_survey = false;
+                            surveyQuestion1 = "";
+                            answeredSurveyQuestion1 = false;
+                            surveyQuestion2 = "";
+                            answeredSurveyQuestion2 = false;
+                            surveyQuestion3 = "";
+                            answeredSurveyQuestion3 = false;
+                            surveyQuestion4 = "";
+                            answeredSurveyQuestion4 = false;
+                            surveyQuestion5 = "";
+                            answeredSurveyQuestion5 = false;
+                            surveyQuestion6 = "";
+                            answeredSurveyQuestion6 = false;
+                            surveyQuestion7 = "";
+                            answeredSurveyQuestion7 = false;
+                            surveyQuestion8 = "";
+                            answeredSurveyQuestion8 = false;
+                            surveyQuestion9 = "";
+                            answeredSurveyQuestion9 = false;
+                            surveyQuestion10 = "";
+                            answeredSurveyQuestion10 = false;
+                            surveyQuestion11 = "";
+                            answeredSurveyQuestion11 = false;
+                            surveyQuestion12 = "";
+                            answeredSurveyQuestion12 = false;
+                            surveyQuestion13 = "";
+                            answeredSurveyQuestion13 = false;
+                            surveyQuestion14 = "";
+                            answeredSurveyQuestion14 = false;
+                            surveyQuestion15 = "";
+                            answeredSurveyQuestion15 = false;
+                            email = "";
+                            likes = "";
+                            confusions = "";
+                            suggestions = "";
+                            readEnjoy = false;
+                            enjoyFlag = false;
+                            readPlayMore = false;
+                            playMoreFlag = false;
+                            readEasy = false;
+                            easyFlag = false;
+                            readLost = false;
+                            lostFlag = false;
+                            readUnderstandEcho = false;
+                            understandEchoFlag = false;
+                            readFrustrating = false;
+                            frustratingFlag = false;
+                            readTutorial = false;
+                            tutorialFlag = false;
+                            readTutorialHelp = false;
+                            tutorialHelpFlag = false;
+                            readHints = false;
+                            hintsFlag = false;
+                            readInstructions = false;
+                            instructionsFlag = false;
+                            readControls = false;
+                            controlsFlag = false;
+                            readLook = false;
+                            lookFlag = false;
+                            readEchoNavigate = false;
+                            echoNavigateFlag = false;
+                            readVisuallyImpaired = false;
+                            visuallyImpairedFlag = false;
+                            readHearingImpaired = false;
+                            hearingImpairedFlag = false;
+                        }
+
+                        if ((hearingSurvey == false) && (readingSurvey == false) && (noSurvey == false))
+                        {
+                            hearingSurvey = true;
+                            android_window_displayed = false;
+                            finished_listening_survey = false;
+                            finished_questions_survey = false;
+                            surveyQuestion1 = "";
+                            answeredSurveyQuestion1 = false;
+                            surveyQuestion2 = "";
+                            answeredSurveyQuestion2 = false;
+                            surveyQuestion3 = "";
+                            answeredSurveyQuestion3 = false;
+                            surveyQuestion4 = "";
+                            answeredSurveyQuestion4 = false;
+                            surveyQuestion5 = "";
+                            answeredSurveyQuestion5 = false;
+                            surveyQuestion6 = "";
+                            answeredSurveyQuestion6 = false;
+                            surveyQuestion7 = "";
+                            answeredSurveyQuestion7 = false;
+                            surveyQuestion8 = "";
+                            answeredSurveyQuestion8 = false;
+                            surveyQuestion9 = "";
+                            answeredSurveyQuestion9 = false;
+                            surveyQuestion10 = "";
+                            answeredSurveyQuestion10 = false;
+                            surveyQuestion11 = "";
+                            answeredSurveyQuestion11 = false;
+                            surveyQuestion12 = "";
+                            answeredSurveyQuestion12 = false;
+                            surveyQuestion13 = "";
+                            answeredSurveyQuestion13 = false;
+                            surveyQuestion14 = "";
+                            answeredSurveyQuestion14 = false;
+                            surveyQuestion15 = "";
+                            answeredSurveyQuestion15 = false;
+                            email = "";
+                            likes = "";
+                            confusions = "";
+                            suggestions = "";
+                            readEnjoy = false;
+                            enjoyFlag = false;
+                            readPlayMore = false;
+                            playMoreFlag = false;
+                            readEasy = false;
+                            easyFlag = false;
+                            readLost = false;
+                            lostFlag = false;
+                            readUnderstandEcho = false;
+                            understandEchoFlag = false;
+                            readFrustrating = false;
+                            frustratingFlag = false;
+                            readTutorial = false;
+                            tutorialFlag = false;
+                            readTutorialHelp = false;
+                            tutorialHelpFlag = false;
+                            readHints = false;
+                            hintsFlag = false;
+                            readInstructions = false;
+                            instructionsFlag = false;
+                            readControls = false;
+                            controlsFlag = false;
+                            readLook = false;
+                            lookFlag = false;
+                            readEchoNavigate = false;
+                            echoNavigateFlag = false;
+                            readVisuallyImpaired = false;
+                            visuallyImpairedFlag = false;
+                            readHearingImpaired = false;
+                            hearingImpairedFlag = false;
+                        }
                     }
                 }
 
@@ -8251,7 +9160,7 @@ public class Player : MovingObject
 
                     if ((hasFinishedConsentForm == false) && (hasStartedConsent == true))
                     {        
-                        if ((noConsent == true) || (((hearingConsentForm == true) || (readingConsentForm == true)) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (finished_questions == true) && ((question1 == false) || (question2 == false) || (question3 == false))))
+                        if ((noConsent == true) || (((hearingConsentForm == true) || (readingConsentForm == true)) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (finished_questions == true) && ((question1 == "no") || (question2 == "no") || (question3 == "no"))))
                         {
                             hearingConsentForm = false;
                             readingConsentForm = true;
@@ -8266,9 +9175,9 @@ public class Player : MovingObject
                             answeredQuestion1 = false;
                             answeredQuestion2 = false;
                             answeredQuestion3 = false;
-                            question1 = false;
-                            question2 = false;
-                            question3 = false;
+                            question1 = "";
+                            question2 = "";
+                            question3 = "";
                             readConsent = false;
                             consentFlag = false;
                             readProcedures = false;
@@ -8300,7 +9209,7 @@ public class Player : MovingObject
                         }
                         else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == false))
                         {
-                            question3 = true;
+                            question3 = "yes";
                             answeredQuestion3 = true;                            
                             finished_questions = true;
                             debugPlayerInfo = "Swipe right registered. Wants to participate.";
@@ -8314,7 +9223,7 @@ public class Player : MovingObject
                         }
                         else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == false))
                         {
-                            question2 = true;
+                            question2 = "yes";
                             answeredQuestion2 = true;
                             canRepeat = true;
                             debugPlayerInfo = "Swipe right registered. Understood information.";
@@ -8335,7 +9244,7 @@ public class Player : MovingObject
                         }
                         else if ((hearingConsentForm == true) && (answeredQuestion1 == false))
                         {
-                            question1 = true;
+                            question1 = "yes";
                             answeredQuestion1 = true;
                             canRepeat = true;
                             debugPlayerInfo = "Swipe right registered. Is eighteen.";
@@ -8361,6 +9270,235 @@ public class Player : MovingObject
                             debugPlayerInfo = "Swipe right registered. Reading consent form manually.";
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         }                                              
+                    }
+
+                    if ((GameManager.instance.level == 11) && (survey_activated == true) && (survey_shown == true))
+                    {
+                        if (hearingSurvey == true)
+                        {
+                            if ((answeredSurveyQuestion15 == false) && (answeredSurveyQuestion14 == true))
+                            {
+                                surveyQuestion15 = "yes";
+                                answeredSurveyQuestion15 = true;
+                            }
+                            if ((answeredSurveyQuestion14 == false) && (answeredSurveyQuestion13 == true))
+                            {
+                                surveyQuestion14 = "yes";
+                                answeredSurveyQuestion14 = true;
+                            }
+                            if ((answeredSurveyQuestion13 == false) && (answeredSurveyQuestion12 == true))
+                            {
+                                surveyQuestion13 = "yes";
+                                answeredSurveyQuestion13 = true;
+                            }
+                            if ((answeredSurveyQuestion12 == false) && (answeredSurveyQuestion11 == true))
+                            {
+                                surveyQuestion12 = "yes";
+                                answeredSurveyQuestion12 = true;
+                            }
+                            if ((answeredSurveyQuestion11 == false) && (answeredSurveyQuestion10 == true))
+                            {
+                                surveyQuestion11 = "yes";
+                                answeredSurveyQuestion11 = true;
+                            }
+                            if ((answeredSurveyQuestion10 == false) && (answeredSurveyQuestion9 == true))
+                            {
+                                surveyQuestion10 = "yes";
+                                answeredSurveyQuestion10 = true;
+                            }
+                            if ((answeredSurveyQuestion9 == false) && (answeredSurveyQuestion8 == true))
+                            {
+                                surveyQuestion9 = "yes";
+                                answeredSurveyQuestion9 = true;
+                            }
+                            if ((answeredSurveyQuestion8 == false) && (answeredSurveyQuestion7 == true))
+                            {
+                                surveyQuestion8 = "yes";
+                                answeredSurveyQuestion8 = true;
+                            }
+                            if ((answeredSurveyQuestion7 == false) && (answeredSurveyQuestion6 == true))
+                            {
+                                surveyQuestion7 = "yes";
+                                answeredSurveyQuestion7 = true;
+                            }
+                            if ((answeredSurveyQuestion6 == false) && (answeredSurveyQuestion5 == true))
+                            {
+                                surveyQuestion6 = "yes";
+                                answeredSurveyQuestion6 = true;
+                            }
+                            if ((answeredSurveyQuestion5 == false) && (answeredSurveyQuestion4 == true))
+                            {
+                                surveyQuestion5 = "yes";
+                                answeredSurveyQuestion5 = true;
+                            }
+                            if ((answeredSurveyQuestion4 == false) && (answeredSurveyQuestion3 == true))
+                            {
+                                surveyQuestion4 = "yes";
+                                answeredSurveyQuestion4 = true;
+                            }
+                            if ((answeredSurveyQuestion3 == false) && (answeredSurveyQuestion2 == true))
+                            {
+                                surveyQuestion3 = "yes";
+                                answeredSurveyQuestion3 = true;
+                            }
+                            if ((answeredSurveyQuestion2 == false) && (answeredSurveyQuestion1 == true))
+                            {
+                                surveyQuestion2 = "yes";
+                                answeredSurveyQuestion2 = true;
+                            }
+                            if (answeredSurveyQuestion1 == false)
+                            {
+                                surveyQuestion1 = "yes";
+                                answeredSurveyQuestion1 = true;
+                            }
+                        }
+
+                        if (noConsent == true)
+                        {
+                            noConsent = false;
+                            readingSurvey = true;
+                            android_window_displayed = false;
+                            can_display_window_survey = true;
+                            finished_reading_survey = false;
+                            finished_questions_survey = false;
+                            surveyQuestion1 = "";
+                            answeredSurveyQuestion1 = false;
+                            surveyQuestion2 = "";
+                            answeredSurveyQuestion2 = false;
+                            surveyQuestion3 = "";
+                            answeredSurveyQuestion3 = false;
+                            surveyQuestion4 = "";
+                            answeredSurveyQuestion4 = false;
+                            surveyQuestion5 = "";
+                            answeredSurveyQuestion5 = false;
+                            surveyQuestion6 = "";
+                            answeredSurveyQuestion6 = false;
+                            surveyQuestion7 = "";
+                            answeredSurveyQuestion7 = false;
+                            surveyQuestion8 = "";
+                            answeredSurveyQuestion8 = false;
+                            surveyQuestion9 = "";
+                            answeredSurveyQuestion9 = false;
+                            surveyQuestion10 = "";
+                            answeredSurveyQuestion10 = false;
+                            surveyQuestion11 = "";
+                            answeredSurveyQuestion11 = false;
+                            surveyQuestion12 = "";
+                            answeredSurveyQuestion12 = false;
+                            surveyQuestion13 = "";
+                            answeredSurveyQuestion13 = false;
+                            surveyQuestion14 = "";
+                            answeredSurveyQuestion14 = false;
+                            surveyQuestion15 = "";
+                            answeredSurveyQuestion15 = false;
+                            email = "";
+                            likes = "";
+                            confusions = "";
+                            suggestions = "";
+                            readEnjoy = false;
+                            enjoyFlag = false;
+                            readPlayMore = false;
+                            playMoreFlag = false;
+                            readEasy = false;
+                            easyFlag = false;
+                            readLost = false;
+                            lostFlag = false;
+                            readUnderstandEcho = false;
+                            understandEchoFlag = false;
+                            readFrustrating = false;
+                            frustratingFlag = false;
+                            readTutorial = false;
+                            tutorialFlag = false;
+                            readTutorialHelp = false;
+                            tutorialHelpFlag = false;
+                            readHints = false;
+                            hintsFlag = false;
+                            readInstructions = false;
+                            instructionsFlag = false;
+                            readControls = false;
+                            controlsFlag = false;
+                            readLook = false;
+                            lookFlag = false;
+                            readEchoNavigate = false;
+                            echoNavigateFlag = false;
+                            readVisuallyImpaired = false;
+                            visuallyImpairedFlag = false;
+                            readHearingImpaired = false;
+                            hearingImpairedFlag = false;
+                        }
+
+                        if ((hearingSurvey == false) && (readingSurvey == false) && (noSurvey == false))
+                        {
+                            readingSurvey = true;
+                            android_window_displayed = false;
+                            can_display_window_survey = true;
+                            finished_reading_survey = false;
+                            finished_questions_survey = false;
+                            surveyQuestion1 = "";
+                            answeredSurveyQuestion1 = false;
+                            surveyQuestion2 = "";
+                            answeredSurveyQuestion2 = false;
+                            surveyQuestion3 = "";
+                            answeredSurveyQuestion3 = false;
+                            surveyQuestion4 = "";
+                            answeredSurveyQuestion4 = false;
+                            surveyQuestion5 = "";
+                            answeredSurveyQuestion5 = false;
+                            surveyQuestion6 = "";
+                            answeredSurveyQuestion6 = false;
+                            surveyQuestion7 = "";
+                            answeredSurveyQuestion7 = false;
+                            surveyQuestion8 = "";
+                            answeredSurveyQuestion8 = false;
+                            surveyQuestion9 = "";
+                            answeredSurveyQuestion9 = false;
+                            surveyQuestion10 = "";
+                            answeredSurveyQuestion10 = false;
+                            surveyQuestion11 = "";
+                            answeredSurveyQuestion11 = false;
+                            surveyQuestion12 = "";
+                            answeredSurveyQuestion12 = false;
+                            surveyQuestion13 = "";
+                            answeredSurveyQuestion13 = false;
+                            surveyQuestion14 = "";
+                            answeredSurveyQuestion14 = false;
+                            surveyQuestion15 = "";
+                            answeredSurveyQuestion15 = false;
+                            email = "";
+                            likes = "";
+                            confusions = "";
+                            suggestions = "";
+                            readEnjoy = false;
+                            enjoyFlag = false;
+                            readPlayMore = false;
+                            playMoreFlag = false;
+                            readEasy = false;
+                            easyFlag = false;
+                            readLost = false;
+                            lostFlag = false;
+                            readUnderstandEcho = false;
+                            understandEchoFlag = false;
+                            readFrustrating = false;
+                            frustratingFlag = false;
+                            readTutorial = false;
+                            tutorialFlag = false;
+                            readTutorialHelp = false;
+                            tutorialHelpFlag = false;
+                            readHints = false;
+                            hintsFlag = false;
+                            readInstructions = false;
+                            instructionsFlag = false;
+                            readControls = false;
+                            controlsFlag = false;
+                            readLook = false;
+                            lookFlag = false;
+                            readEchoNavigate = false;
+                            echoNavigateFlag = false;
+                            readVisuallyImpaired = false;
+                            visuallyImpairedFlag = false;
+                            readHearingImpaired = false;
+                            hearingImpairedFlag = false;
+                        }
                     }
                 }
 
@@ -8703,6 +9841,99 @@ public class Player : MovingObject
                                 canRepeat = true;
                                 hasCheckedForConsent = true;
                             }, 1, null, true);
+                        }
+                    }
+
+                    if ((GameManager.instance.level == 11) && (survey_activated == true) && (survey_shown == true))
+                    {
+                        if (finished_questions_survey == true)
+                        {
+                            hearingSurvey = false;
+                            noConsent = true;
+                        }
+
+                        if (hearingSurvey == true)
+                        {
+                            if ((answeredSurveyQuestion15 == false) && (answeredSurveyQuestion14 == true))
+                            {
+                                surveyQuestion15 = "na";
+                                answeredSurveyQuestion15 = true;
+                            }
+                            if ((answeredSurveyQuestion14 == false) && (answeredSurveyQuestion13 == true))
+                            {
+                                surveyQuestion14 = "na";
+                                answeredSurveyQuestion14 = true;
+                            }
+                            if ((answeredSurveyQuestion13 == false) && (answeredSurveyQuestion12 == true))
+                            {
+                                surveyQuestion13 = "na";
+                                answeredSurveyQuestion13 = true;
+                            }
+                            if ((answeredSurveyQuestion12 == false) && (answeredSurveyQuestion11 == true))
+                            {
+                                surveyQuestion12 = "na";
+                                answeredSurveyQuestion12 = true;
+                            }
+                            if ((answeredSurveyQuestion11 == false) && (answeredSurveyQuestion10 == true))
+                            {
+                                surveyQuestion11 = "na";
+                                answeredSurveyQuestion11 = true;
+                            }
+                            if ((answeredSurveyQuestion10 == false) && (answeredSurveyQuestion9 == true))
+                            {
+                                surveyQuestion10 = "na";
+                                answeredSurveyQuestion10 = true;
+                            }
+                            if ((answeredSurveyQuestion9 == false) && (answeredSurveyQuestion8 == true))
+                            {
+                                surveyQuestion9 = "na";
+                                answeredSurveyQuestion9 = true;
+                            }
+                            if ((answeredSurveyQuestion8 == false) && (answeredSurveyQuestion7 == true))
+                            {
+                                surveyQuestion8 = "na";
+                                answeredSurveyQuestion8 = true;
+                            }
+                            if ((answeredSurveyQuestion7 == false) && (answeredSurveyQuestion6 == true))
+                            {
+                                surveyQuestion7 = "na";
+                                answeredSurveyQuestion7 = true;
+                            }
+                            if ((answeredSurveyQuestion6 == false) && (answeredSurveyQuestion5 == true))
+                            {
+                                surveyQuestion6 = "na";
+                                answeredSurveyQuestion6 = true;
+                            }
+                            if ((answeredSurveyQuestion5 == false) && (answeredSurveyQuestion4 == true))
+                            {
+                                surveyQuestion5 = "na";
+                                answeredSurveyQuestion5 = true;
+                            }
+                            if ((answeredSurveyQuestion4 == false) && (answeredSurveyQuestion3 == true))
+                            {
+                                surveyQuestion4 = "na";
+                                answeredSurveyQuestion4 = true;
+                            }
+                            if ((answeredSurveyQuestion3 == false) && (answeredSurveyQuestion2 == true))
+                            {
+                                surveyQuestion3 = "na";
+                                answeredSurveyQuestion3 = true;
+                            }
+                            if ((answeredSurveyQuestion2 == false) && (answeredSurveyQuestion1 == true))
+                            {
+                                surveyQuestion2 = "na";
+                                answeredSurveyQuestion2 = true;
+                            }
+                            if (answeredSurveyQuestion1 == false)
+                            {
+                                surveyQuestion1 = "na";
+                                answeredSurveyQuestion1 = true;
+                            }
+                        }
+
+                        if ((hearingSurvey == false) && (readingSurvey == false) && (noSurvey == false))
+                        {
+                            noSurvey = true;
                         }
                     }
                 }
@@ -9543,7 +10774,7 @@ public class Player : MovingObject
             }
         }
 #endif // End of mobile platform dependendent compilation section started above with #elif
-        calculateMove(dir);
+                    calculateMove(dir);
     }
 
     protected override void OnCantMove<T>(T component)

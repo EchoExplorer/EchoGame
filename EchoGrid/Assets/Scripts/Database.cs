@@ -52,6 +52,10 @@ public class Database : MonoBehaviour
     [HideInInspector]
     public static AudioClip[] consentClips = new AudioClip[26];
 
+    // Survey clips
+    [HideInInspector]
+    public static AudioClip[] surveyClips = new AudioClip[40];
+
     // Game environment settings clips
     [HideInInspector]
     public static AudioClip[] settingsClips = new AudioClip[10];
@@ -150,6 +154,49 @@ public class Database : MonoBehaviour
         consentClips[22] = Resources.Load("instructions/consent/thank_you_for_consenting") as AudioClip;
         consentClips[23] = Resources.Load("instructions/consent/did_not_consent") as AudioClip;
         consentClips[24] = Resources.Load("instructions/consent/change_consent_status") as AudioClip;
+
+        // Survey clips
+        surveyClips[0] = Resources.Load("instructions/survey/survey_intro_normal") as AudioClip;
+        surveyClips[1] = Resources.Load("instructions/survey/survey_intro_talkback") as AudioClip;
+        surveyClips[2] = Resources.Load("instructions/survey/reading_survey_as_text") as AudioClip;
+        surveyClips[3] = Resources.Load("instructions/survey/enjoying_game_normal") as AudioClip;
+        surveyClips[4] = Resources.Load("instructions/survey/enjoying_game_talkback") as AudioClip;
+        surveyClips[5] = Resources.Load("instructions/survey/play_more_normal") as AudioClip;
+        surveyClips[6] = Resources.Load("instructions/survey/play_more_talkback") as AudioClip;
+        surveyClips[7] = Resources.Load("instructions/survey/easy_game_normal") as AudioClip;
+        surveyClips[8] = Resources.Load("instructions/survey/easy_game_talkback") as AudioClip;
+        surveyClips[9] = Resources.Load("instructions/survey/lost_often_normal") as AudioClip;
+        surveyClips[10] = Resources.Load("instructions/survey/lost_often_talkback") as AudioClip;
+        surveyClips[11] = Resources.Load("instructions/survey/understand_echoes_normal") as AudioClip;
+        surveyClips[12] = Resources.Load("instructions/survey/understand_echoes_talkback") as AudioClip;
+        surveyClips[13] = Resources.Load("instructions/survey/frustrating_game_normal") as AudioClip;
+        surveyClips[14] = Resources.Load("instructions/survey/frustrating_game_talkback") as AudioClip;
+        surveyClips[15] = Resources.Load("instructions/survey/start_tutorial_normal") as AudioClip;
+        surveyClips[16] = Resources.Load("instructions/survey/start_tutorial_talkback") as AudioClip;
+        surveyClips[17] = Resources.Load("instructions/survey/tutorial_helpful_normal") as AudioClip;
+        surveyClips[18] = Resources.Load("instructions/survey/tutorial_helpful_talkback") as AudioClip;
+        surveyClips[19] = Resources.Load("instructions/survey/hints_helpful_normal") as AudioClip;
+        surveyClips[20] = Resources.Load("instructions/survey/hints_helpful_talkback") as AudioClip;
+        surveyClips[21] = Resources.Load("instructions/survey/instructions_helpful_normal") as AudioClip;
+        surveyClips[22] = Resources.Load("instructions/survey/instructions_helpful_talkback") as AudioClip;
+        surveyClips[23] = Resources.Load("instructions/survey/gestures_easy_normal") as AudioClip;
+        surveyClips[24] = Resources.Load("instructions/survey/gestures_easy_talkback") as AudioClip;
+        surveyClips[25] = Resources.Load("instructions/survey/look_at_maze_normal") as AudioClip;
+        surveyClips[26] = Resources.Load("instructions/survey/look_at_maze_talkback") as AudioClip;
+        surveyClips[27] = Resources.Load("instructions/survey/used_echo_navigation_normal") as AudioClip;
+        surveyClips[28] = Resources.Load("instructions/survey/used_echo_navigation_talkback") as AudioClip;
+        surveyClips[29] = Resources.Load("instructions/survey/visual_impairment_normal") as AudioClip;
+        surveyClips[30] = Resources.Load("instructions/survey/visual_impairment_talkback") as AudioClip;
+        surveyClips[31] = Resources.Load("instructions/survey/hearing_impairment_normal") as AudioClip;
+        surveyClips[32] = Resources.Load("instructions/survey/hearing_impairment_talkback") as AudioClip;
+        surveyClips[33] = Resources.Load("instructions/survey/input_questions") as AudioClip;
+        surveyClips[34] = Resources.Load("instructions/survey/survey_sure_submit_normal") as AudioClip;
+        surveyClips[35] = Resources.Load("instructions/survey/survey_sure_submit_talkback") as AudioClip;
+        surveyClips[36] = Resources.Load("instructions/survey/survey_sure_no_submit_normal") as AudioClip;
+        surveyClips[37] = Resources.Load("instructions/survey/survey_sure_no_submit_talkback") as AudioClip;
+        surveyClips[38] = Resources.Load("instructions/survey/thank_you_submit_survey") as AudioClip;
+        surveyClips[39] = Resources.Load("instructions/survey/did_not_submit_survey") as AudioClip;
+
 
         // Game environment setting clips
         settingsClips[0] = Resources.Load("instructions/settings/orient_phone") as AudioClip;
