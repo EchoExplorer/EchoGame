@@ -87,6 +87,25 @@ public class Player : MovingObject
         naPressed = true;
     }
 
+    public void setReply(string message)
+    {
+        string temp = message.Substring(0, 6);
+        string result = message.Substring(6, message.Length);
+        print(result);
+        if (temp == "Email:"){
+            email = result;
+        }
+        else if (temp == "Likes:"){
+            likes = result;
+        }
+        else if (temp == "Confu:"){
+            confusions = result;
+        }
+        else{
+            suggestions = result; 
+        }
+    }
+
     private int echoNum = 0;
 
     // Usage data to keep track of
@@ -5915,7 +5934,7 @@ public class Player : MovingObject
                 string message = "Enter email if you'd be interested in being contacted about psychology research using this game.";
 
 #if UNITY_IOS
-                IOSNative.ShowOne(title, message, "Next");
+                IOSNative.ShowOneText(title, message, "Next", "Email:");
 #endif
 #if UNITY_ANDROID
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.INPUT;
@@ -5926,13 +5945,13 @@ public class Player : MovingObject
             if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readEmail == false) && (emailFlag == true) && (ad.yesclicked() == true || yesPressed == true))
             {
                 readEmail = true;
-                email = ad.getInputStr();
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
 #if UNITY_IOS
                 yesPressed = false;
 #endif
 #if UNITY_ANDROID
+                email = ad.getInputStr();
                 ad.clearflag();
 #endif
             }
@@ -5945,7 +5964,7 @@ public class Player : MovingObject
                 string message = "Do you have any particular things you liked about the game?";
 
 #if UNITY_IOS
-                IOSNative.ShowOne(title, message, "Next");
+                IOSNative.ShowOneText(title, message, "Next", "Likes:");
 #endif
 #if UNITY_ANDROID
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.INPUT;
@@ -5956,13 +5975,13 @@ public class Player : MovingObject
             if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readLikes == false) && (likesFlag == true) && (ad.yesclicked() == true || yesPressed == true))
             {
                 readLikes = true;
-                likes = ad.getInputStr();
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
 #if UNITY_IOS
                 yesPressed = false;
 #endif
 #if UNITY_ANDROID
+                likes = ad.getInputStr();
                 ad.clearflag();
 #endif
             }
@@ -5975,7 +5994,7 @@ public class Player : MovingObject
                 string message = "Do you have any complaints or confusions about the game?";
 
 #if UNITY_IOS
-                IOSNative.ShowOne(title, message, "Next");
+                IOSNative.ShowOneText(title, message, "Next", "Confu:");
 #endif
 #if UNITY_ANDROID
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.INPUT;
@@ -5986,13 +6005,13 @@ public class Player : MovingObject
             if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readConfusions == false) && (confusionsFlag == true) && (ad.yesclicked() == true || yesPressed == true))
             {
                 readConfusions = true;
-                confusions = ad.getInputStr();
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
 #if UNITY_IOS
                 yesPressed = false;
 #endif
 #if UNITY_ANDROID
+                confusions = ad.getInputStr();
                 ad.clearflag();
 #endif
             }
@@ -6005,7 +6024,7 @@ public class Player : MovingObject
                 string message = "Do you have any suggestions for how to improve the game?";
 
 #if UNITY_IOS
-                IOSNative.ShowOne(title, message, "Next");
+                IOSNative.ShowOneText(title, message, "Next", "Sugge:");
 #endif
 #if UNITY_ANDROID
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.INPUT;
@@ -6016,7 +6035,6 @@ public class Player : MovingObject
             if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readSuggestions == false) && (suggestionsFlag == true) && (ad.yesclicked() == true || yesPressed == true))
             {
                 readSuggestions = true;
-                suggestions = ad.getInputStr();
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, () => {
                     canRepeat = true;                   
@@ -6025,6 +6043,7 @@ public class Player : MovingObject
                 yesPressed = false;
 #endif
 #if UNITY_ANDROID
+                suggestions = ad.getInputStr();
                 ad.clearflag();
 #endif
                 finished_reading_survey = true;
@@ -6052,7 +6071,7 @@ public class Player : MovingObject
                 string message = "Enter email if you'd be interested in being contacted about psychology research using this game.";
 
 #if UNITY_IOS
-                IOSNative.ShowOne(title, message, "Next");
+                IOSNative.ShowOneText(title, message, "Next", "Email:");
 #endif
 #if UNITY_ANDROID
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.INPUT;
@@ -6063,13 +6082,13 @@ public class Player : MovingObject
             if ((hearingSurvey == true) && (android_window_displayed == true) && (finished_listening_survey == false) && (readEmail == false) && (emailFlag == true) && (ad.yesclicked() == true || yesPressed == true))
             {
                 readEmail = true;
-                email = ad.getInputStr();
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
 #if UNITY_IOS
                 yesPressed = false;
 #endif
 #if UNITY_ANDROID
+                email = ad.getInputStr();
                 ad.clearflag();
 #endif
             }
@@ -6077,12 +6096,11 @@ public class Player : MovingObject
             if ((hearingSurvey == true) && (android_window_displayed == true) && (finished_listening_survey == false) && (readEmail == true) && (readLikes == false) && (likesFlag == false))
             {
                 likesFlag = true;
-
                 string title = "Likes";
                 string message = "Do you have any particular things you liked about the game?";
 
 #if UNITY_IOS
-                IOSNative.ShowOne(title, message, "Next");
+                IOSNative.ShowOneText(title, message, "Next", "Likes:");
 #endif
 #if UNITY_ANDROID
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.INPUT;
@@ -6093,13 +6111,13 @@ public class Player : MovingObject
             if ((hearingSurvey == true) && (android_window_displayed == true) && (finished_listening_survey == false) && (readLikes == false) && (likesFlag == true) && (ad.yesclicked() == true || yesPressed == true))
             {
                 readLikes = true;
-                likes = ad.getInputStr();
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
 #if UNITY_IOS
                 yesPressed = false;
 #endif
 #if UNITY_ANDROID
+                likes = ad.getInputStr();
                 ad.clearflag();
 #endif
             }
@@ -6112,7 +6130,7 @@ public class Player : MovingObject
                 string message = "Do you have any complaints or confusions about the game?";
 
 #if UNITY_IOS
-                IOSNative.ShowOne(title, message, "Next");
+                IOSNative.ShowOneText(title, message, "Next", "Confu:");
 #endif
 #if UNITY_ANDROID
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.INPUT;
@@ -6123,13 +6141,13 @@ public class Player : MovingObject
             if ((hearingSurvey == true) && (android_window_displayed == true) && (finished_listening_survey == false) && (readConfusions == false) && (confusionsFlag == true) && (ad.yesclicked() == true || yesPressed == true))
             {
                 readConfusions = true;
-                confusions = ad.getInputStr();
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
 #if UNITY_IOS
                 yesPressed = false;
 #endif
 #if UNITY_ANDROID
+                confusions = ad.getInputStr();
                 ad.clearflag();
 #endif
             }
@@ -6142,7 +6160,7 @@ public class Player : MovingObject
                 string message = "Do you have any suggestions for how to improve the game?";
 
 #if UNITY_IOS
-                IOSNative.ShowOne(title, message, "Next");
+                IOSNative.ShowOneText(title, message, "Next", "Sugge:");
 #endif
 #if UNITY_ANDROID
                 AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.INPUT;
@@ -6153,7 +6171,6 @@ public class Player : MovingObject
             if ((hearingSurvey == true) && (android_window_displayed == true) && (finished_listening_survey == false) && (readSuggestions == false) && (suggestionsFlag == true) && (ad.yesclicked() == true || yesPressed == true))
             {
                 readSuggestions = true;
-                suggestions = ad.getInputStr();
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, () => {
                     canRepeat = true;                  
@@ -6162,6 +6179,7 @@ public class Player : MovingObject
                 yesPressed = false;
 #endif
 #if UNITY_ANDROID
+                suggestions = ad.getInputStr();
                 ad.clearflag();
 #endif
                 finished_listening_survey = true;

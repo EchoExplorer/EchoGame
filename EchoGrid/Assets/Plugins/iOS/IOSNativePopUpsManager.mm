@@ -2,6 +2,27 @@
 #import "IOSNativePopUpsManager.h"
 @implementation IOSNativePopUpsManager
 
++(void)showOneText: (NSString *) title message: (NSString*) msg okTitle:(NSString*) b1 fromVar:(NSString*) b2{
+    
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:title message:msg preferredStyle:UIAlertControllerStyleAlert];
+    
+    [alertController addTextFieldWithConfigurationHandler:^(UITextField *textField) {}];
+    
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:b1 style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [alertController dismissViewControllerAnimated:NO completion:nil];
+        UnitySendMessage("Player", "setReply", [DataConverter NSStringToChar:[b2 stringByAppendingString:[[alertController textFields][0] text]]]);
+    }];
+    
+    [alertController addAction:okAction];
+    
+    UIViewController *viewController = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
+    NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:alertController.view attribute:NSLayoutAttributeHeight     relatedBy:NSLayoutRelationLessThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:viewController.view.frame.size.height*0.8f];
+    [alertController.view addConstraint:constraint];
+    
+    [[[[UIApplication sharedApplication] keyWindow] rootViewController] presentViewController:alertController animated:YES completion:nil];
+    
+}
+
 + (void)showThree: (NSString *) title message: (NSString*) msg yesTitle:(NSString*) b1 noTitle: (NSString*) b2 naTitle: (NSString*) b3{
     
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:title message:msg preferredStyle:UIAlertControllerStyleAlert];
@@ -121,6 +142,10 @@
 
 extern "C" {
     // Unity Call
+    void _ex_ShowOneText(char* title, char* message, char* ok, char* to) {
+        [IOSNativePopUpsManager showOneText:[DataConverter charToNSString:title] message:[DataConverter charToNSString:message] okTitle:[DataConverter charToNSString:ok] fromVar:[DataConverter charToNSString:to]];
+    }
+    
     void _ex_ShowThree(char* title, char* message, char* yes, char* no, char* na) {
         [IOSNativePopUpsManager showThree:[DataConverter charToNSString:title] message:[DataConverter charToNSString:message] yesTitle:[DataConverter charToNSString:yes] noTitle:[DataConverter charToNSString:no] naTitle:[DataConverter charToNSString:na]];
     }

@@ -5,6 +5,9 @@ using System.Runtime.InteropServices;
 public static class IOSNative
 {  
     [DllImport("__Internal")]
+    private static extern void _ex_ShowOneText(string title, string message, string ok, string to);
+
+    [DllImport("__Internal")]
     private static extern void _ex_ShowThree(string title, string message, string yes, string no, string na);
 
     [DllImport("__Internal")]
@@ -19,6 +22,12 @@ public static class IOSNative
     [DllImport("__Internal")]
     private static extern void _ex_ShowOneG(string title, string message, string ok);
 
+
+
+    public static void ShowOneText(string title, string message, string ok, string to)
+    {
+        _ex_ShowOneText(title, message, ok, to);
+    }
 
     public static void ShowThree(string title, string message, string yes, string no, string na)
     {
