@@ -41,9 +41,9 @@
         UnitySendMessage("Player", "switchNA", [DataConverter NSIntToChar:0]);
     }];
     
-    [alertController addAction:yesAction];
     [alertController addAction:noAction];
     [alertController addAction:naAction];
+    [alertController addAction:yesAction];
     
     UIViewController *viewController = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
     NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:alertController.view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationLessThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:viewController.view.frame.size.height*0.8f];
@@ -66,8 +66,8 @@
         UnitySendMessage("Player", "switchNo", [DataConverter NSIntToChar:0]);
     }];
     
-    [alertController addAction:yesAction];
     [alertController addAction:noAction];
+    [alertController addAction:yesAction];
     
     UIViewController *viewController = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
     NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:alertController.view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationLessThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:viewController.view.frame.size.height*0.8f];
@@ -109,8 +109,8 @@
         UnitySendMessage("GameManager", "switchNo", [DataConverter NSIntToChar:0]);
     }];
     
-    [alertController addAction:yesAction];
     [alertController addAction:noAction];
+    [alertController addAction:yesAction];
     
     UIViewController *viewController = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
     NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:alertController.view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationLessThanOrEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1 constant:viewController.view.frame.size.height*0.8f];

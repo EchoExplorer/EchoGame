@@ -2202,7 +2202,7 @@ public class Player : MovingObject
     /// </summary>
 	private void reportOnEcho()
     {
-        if (PlayerPrefs.GetInt("TotalTime", 0) < 180000)
+        if (PlayerPrefs.GetInt("TotalTime", 0) > 180000)
         {
             return;
         }
