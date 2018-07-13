@@ -87,25 +87,6 @@ public class Player : MovingObject
         naPressed = true;
     }
 
-    public void setReply(string message)
-    {
-        string temp = message.Substring(0, 6);
-        string result = message.Substring(6, message.Length);
-        print(result);
-        if (temp == "Email:"){
-            email = result;
-        }
-        else if (temp == "Likes:"){
-            likes = result;
-        }
-        else if (temp == "Confu:"){
-            confusions = result;
-        }
-        else{
-            suggestions = result; 
-        }
-    }
-
     private int echoNum = 0;
 
     // Usage data to keep track of
@@ -251,7 +232,6 @@ public class Player : MovingObject
     bool finished_questions_survey = false;
     bool can_display_window_survey = false;
     bool can_submit_survey = false;
-    bool playedInputBoxClip = false;
 
     bool noSurvey = false;
     bool readingSurvey = false;
@@ -287,14 +267,6 @@ public class Player : MovingObject
     bool understandEchoFlag = false;
     bool readVisuallyImpaired = false;
     bool visuallyImpairedFlag = false;
-    bool readEmail = false;
-    bool emailFlag = false;
-    bool readLikes = false;
-    bool likesFlag = false;
-    bool readConfusions = false;
-    bool confusionsFlag = false;
-    bool readSuggestions = false;
-    bool suggestionsFlag = false;
 
     string surveyQuestion1 = "";
     bool answeredSurveyQuestion1 = false;
@@ -326,10 +298,6 @@ public class Player : MovingObject
     bool answeredSurveyQuestion14 = false;
     string surveyQuestion15 = "";
     bool answeredSurveyQuestion15 = false;
-    string email = "";
-    string likes = "";
-    string confusions = "";
-    string suggestions = "";
    
     void Awake()
     {
@@ -2809,10 +2777,6 @@ public class Player : MovingObject
         echoForm.AddField("echonavigate", Utilities.encrypt(surveyQuestion13));                       
         echoForm.AddField("visuallyimpaired", Utilities.encrypt(surveyQuestion14));
         echoForm.AddField("hearingimpaired", Utilities.encrypt(surveyQuestion15));
-        echoForm.AddField("email", Utilities.encrypt(email));
-        echoForm.AddField("likes", Utilities.encrypt(likes));
-        echoForm.AddField("confusions", Utilities.encrypt(confusions));
-        echoForm.AddField("suggestions", Utilities.encrypt(suggestions));
         // the code is the first digit of device id
 
         // Logging.Log(System.Text.Encoding.ASCII.GetString(echoForm.data), Logging.LogLevel.LOW_PRIORITY);
@@ -3041,7 +3005,7 @@ public class Player : MovingObject
                 {
                     clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.surveyClips[0] };
                 }
-                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clip.
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clip.                
             }
 
             if ((readingSurvey == true) && (answeredSurveyQuestion1 == false))
@@ -5891,177 +5855,13 @@ public class Player : MovingObject
                 surveyQuestion15 = "yes";
                 answeredSurveyQuestion15 = true;
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
-#if UNITY_IOS
-                yesPressed = false;
-#endif
-#if UNITY_ANDROID
-                ad.clearflag();
-#endif
-            }
-
-            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readHearingImpaired == false) && (hearingImpairedFlag == true) && (ad.noclicked() == true || noPressed == true))
-            {
-                readHearingImpaired = true;
-                surveyQuestion15 = "no";
-                answeredSurveyQuestion15 = true;
-                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
-#if UNITY_IOS
-                noPressed = false;
-#endif
-#if UNITY_ANDROID
-                ad.clearflag();
-#endif
-            }
-
-            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readHearingImpaired == false) && (hearingImpairedFlag == true) && (ad.naclicked() == true || naPressed == true))
-            {
-                readHearingImpaired = true;
-                surveyQuestion15 = "na";
-                answeredSurveyQuestion15 = true;
-                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
-#if UNITY_IOS
-                naPressed = false;
-#endif
-#if UNITY_ANDROID
-                ad.clearflag();
-#endif
-            }
-
-            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readHearingImpaired == true) && (answeredSurveyQuestion15 == true) && (finished_questions_survey == true) && (readEmail == false) && (emailFlag == false) && (playedInputBoxClip == false))
-            {
-                playedInputBoxClip = true;
-                clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.surveyClips[33] };
-                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-            }
-
-            bool explainedInputBoxes = false;
-            if (((readingSurvey == true) || (hearingSurvey == true)) && (android_window_displayed == true) && (finished_reading_survey == false) && (readHearingImpaired == true) && (readEmail == false) && (emailFlag == false) && (SoundManager.instance.finishedAllClips == true))
-            {
-                explainedInputBoxes = true;
-            }
-
-            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readHearingImpaired == true) && (readEmail == false) && (emailFlag == false) && (explainedInputBoxes == true))
-            {
-                emailFlag = true;
-                playedInputBoxClip = false;
-
-                string title = "Email Address";
-                string message = "Enter email if you'd be interested in being contacted about psychology research using this game.";
-
-#if UNITY_IOS
-                IOSNative.ShowOneText(title, message, "Next", "Email:");
-#endif
-#if UNITY_ANDROID
-                AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.INPUT;
-                ad.DisplayAndroidWindow(title, message, dialogueType, "Next");
-#endif
-            }
-
-            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readEmail == false) && (emailFlag == true) && (ad.yesclicked() == true || yesPressed == true))
-            {
-                readEmail = true;
-                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
-#if UNITY_IOS
-                yesPressed = false;
-#endif
-#if UNITY_ANDROID
-                email = ad.getInputStr();
-                ad.clearflag();
-#endif
-            }
-
-            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readEmail == true) && (readLikes == false) && (likesFlag == false))
-            {
-                likesFlag = true;
-
-                string title = "Likes";
-                string message = "Do you have any particular things you liked about the game?";
-
-#if UNITY_IOS
-                IOSNative.ShowOneText(title, message, "Next", "Likes:");
-#endif
-#if UNITY_ANDROID
-                AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.INPUT;
-                ad.DisplayAndroidWindow(title, message, dialogueType, "Next");
-#endif
-            }
-
-            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readLikes == false) && (likesFlag == true) && (ad.yesclicked() == true || yesPressed == true))
-            {
-                readLikes = true;
-                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
-#if UNITY_IOS
-                yesPressed = false;
-#endif
-#if UNITY_ANDROID
-                likes = ad.getInputStr();
-                ad.clearflag();
-#endif
-            }
-
-            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readLikes == true) && (readConfusions == false) && (confusionsFlag == false))
-            {
-                confusionsFlag = true;
-
-                string title = "Complaints/Confusions";
-                string message = "Do you have any complaints or confusions about the game?";
-
-#if UNITY_IOS
-                IOSNative.ShowOneText(title, message, "Next", "Confu:");
-#endif
-#if UNITY_ANDROID
-                AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.INPUT;
-                ad.DisplayAndroidWindow(title, message, dialogueType, "Next");
-#endif
-            }
-
-            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readConfusions == false) && (confusionsFlag == true) && (ad.yesclicked() == true || yesPressed == true))
-            {
-                readConfusions = true;
-                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
-#if UNITY_IOS
-                yesPressed = false;
-#endif
-#if UNITY_ANDROID
-                confusions = ad.getInputStr();
-                ad.clearflag();
-#endif
-            }
-
-            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readConfusions == true) && (readSuggestions == false) && (suggestionsFlag == false))
-            {
-                suggestionsFlag = true;
-
-                string title = "Suggestions";
-                string message = "Do you have any suggestions for how to improve the game?";
-
-#if UNITY_IOS
-                IOSNative.ShowOneText(title, message, "Next", "Sugge:");
-#endif
-#if UNITY_ANDROID
-                AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.INPUT;
-                ad.DisplayAndroidWindow(title, message, dialogueType, "Next");
-#endif
-            }
-
-            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readSuggestions == false) && (suggestionsFlag == true) && (ad.yesclicked() == true || yesPressed == true))
-            {
-                readSuggestions = true;
-                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, () => {
-                    canRepeat = true;                   
+                    canRepeat = true;
                 }, 1, null, true);
 #if UNITY_IOS
                 yesPressed = false;
 #endif
 #if UNITY_ANDROID
-                suggestions = ad.getInputStr();
                 ad.clearflag();
 #endif
                 finished_reading_survey = true;
@@ -6070,138 +5870,43 @@ public class Player : MovingObject
                 can_display_window_survey = false;
             }
 
-            if ((hearingSurvey == true) && (can_display_window_survey == false) && (answeredSurveyQuestion15 == true))
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readHearingImpaired == false) && (hearingImpairedFlag == true) && (ad.noclicked() == true || noPressed == true))
             {
-                can_display_window_survey = true;
-            }
-
-            if ((hearingSurvey == true) && (android_window_displayed == false) && (can_display_window_survey == true))
-            {
-                android_window_displayed = true;
-                finished_listening_survey = false;
-            }
-
-            if ((hearingSurvey == true) && (android_window_displayed == true) && (finished_listening_survey == false) && (answeredSurveyQuestion15 == true) && (readEmail == false) && (emailFlag == false) && (explainedInputBoxes == true))
-            {
-                emailFlag = true;
-                playedInputBoxClip = false;
-
-                string title = "Email Address";
-                string message = "Enter email if you'd be interested in being contacted about psychology research using this game.";
-
-#if UNITY_IOS
-                IOSNative.ShowOneText(title, message, "Next", "Email:");
-#endif
-#if UNITY_ANDROID
-                AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.INPUT;
-                ad.DisplayAndroidWindow(title, message, dialogueType, "Next");
-#endif
-            }
-
-            if ((hearingSurvey == true) && (android_window_displayed == true) && (finished_listening_survey == false) && (readEmail == false) && (emailFlag == true) && (ad.yesclicked() == true || yesPressed == true))
-            {
-                readEmail = true;
-                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
-#if UNITY_IOS
-                yesPressed = false;
-#endif
-#if UNITY_ANDROID
-                email = ad.getInputStr();
-                ad.clearflag();
-#endif
-            }
-
-            if ((hearingSurvey == true) && (android_window_displayed == true) && (finished_listening_survey == false) && (readEmail == true) && (readLikes == false) && (likesFlag == false))
-            {
-                likesFlag = true;
-                string title = "Likes";
-                string message = "Do you have any particular things you liked about the game?";
-
-#if UNITY_IOS
-                IOSNative.ShowOneText(title, message, "Next", "Likes:");
-#endif
-#if UNITY_ANDROID
-                AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.INPUT;
-                ad.DisplayAndroidWindow(title, message, dialogueType, "Next");
-#endif
-            }
-
-            if ((hearingSurvey == true) && (android_window_displayed == true) && (finished_listening_survey == false) && (readLikes == false) && (likesFlag == true) && (ad.yesclicked() == true || yesPressed == true))
-            {
-                readLikes = true;
-                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
-#if UNITY_IOS
-                yesPressed = false;
-#endif
-#if UNITY_ANDROID
-                likes = ad.getInputStr();
-                ad.clearflag();
-#endif
-            }
-
-            if ((hearingSurvey == true) && (android_window_displayed == true) && (finished_listening_survey == false) && (readLikes == true) && (readConfusions == false) && (confusionsFlag == false))
-            {
-                confusionsFlag = true;
-
-                string title = "Complaints/Confusions";
-                string message = "Do you have any complaints or confusions about the game?";
-
-#if UNITY_IOS
-                IOSNative.ShowOneText(title, message, "Next", "Confu:");
-#endif
-#if UNITY_ANDROID
-                AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.INPUT;
-                ad.DisplayAndroidWindow(title, message, dialogueType, "Next");
-#endif
-            }
-
-            if ((hearingSurvey == true) && (android_window_displayed == true) && (finished_listening_survey == false) && (readConfusions == false) && (confusionsFlag == true) && (ad.yesclicked() == true || yesPressed == true))
-            {
-                readConfusions = true;
-                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
-                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.
-#if UNITY_IOS
-                yesPressed = false;
-#endif
-#if UNITY_ANDROID
-                confusions = ad.getInputStr();
-                ad.clearflag();
-#endif
-            }
-
-            if ((hearingSurvey == true) && (android_window_displayed == true) && (finished_listening_survey == false) && (readConfusions == true) && (readSuggestions == false) && (suggestionsFlag == false))
-            {
-                suggestionsFlag = true;
-
-                string title = "Suggestions";
-                string message = "Do you have any suggestions for how to improve the game?";
-
-#if UNITY_IOS
-                IOSNative.ShowOneText(title, message, "Next", "Sugge:");
-#endif
-#if UNITY_ANDROID
-                AndroidDialogue.DialogueType dialogueType = AndroidDialogue.DialogueType.INPUT;
-                ad.DisplayAndroidWindow(title, message, dialogueType, "Next");
-#endif
-            }
-
-            if ((hearingSurvey == true) && (android_window_displayed == true) && (finished_listening_survey == false) && (readSuggestions == false) && (suggestionsFlag == true) && (ad.yesclicked() == true || yesPressed == true))
-            {
-                readSuggestions = true;
+                readHearingImpaired = true;
+                surveyQuestion15 = "no";
+                answeredSurveyQuestion15 = true;
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, () => {
-                    canRepeat = true;                  
+                    canRepeat = true;
                 }, 1, null, true);
 #if UNITY_IOS
-                yesPressed = false;
+                noPressed = false;
 #endif
 #if UNITY_ANDROID
-                suggestions = ad.getInputStr();
                 ad.clearflag();
 #endif
-                finished_listening_survey = true;
+                finished_reading_survey = true;
+                finished_questions_survey = true;
+                android_window_displayed = false;
+                can_display_window_survey = false;
+            }
+
+            if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readHearingImpaired == false) && (hearingImpairedFlag == true) && (ad.naclicked() == true || naPressed == true))
+            {
+                readHearingImpaired = true;
+                surveyQuestion15 = "na";
+                answeredSurveyQuestion15 = true;
+                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33] };
+                SoundManager.instance.PlayClips(clips, null, 0, () => {
+                    canRepeat = true;
+                }, 1, null, true);
+#if UNITY_IOS
+                naPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
+                finished_reading_survey = true;
                 finished_questions_survey = true;
                 android_window_displayed = false;
                 can_display_window_survey = false;
@@ -6875,8 +6580,13 @@ public class Player : MovingObject
                             {
                                 surveyQuestion15 = "no";
                                 answeredSurveyQuestion15 = true;
+                                finished_listening_survey = true;
                                 finished_questions_survey = true;
-								canRepeat = true;
+                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33] };
+                                SoundManager.instance.PlayClips(clips, null, 0, () =>
+                                {
+                                    canRepeat = true;
+                                }, 0, null, true);                                
                             }
                             if ((answeredSurveyQuestion14 == false) && (answeredSurveyQuestion13 == true))
                             {
@@ -7074,13 +6784,6 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-
-                            if ((android_window_displayed == true) && (finished_listening_survey == false) && (readHearingImpaired == true) && (answeredSurveyQuestion15 == true) && (finished_questions_survey == true) && (readEmail == false) && (emailFlag == false) && (playedInputBoxClip == false))
-                            {
-                                playedInputBoxClip = true;
-                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33] };
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
                         }
 
                         if ((noConsent == true) || (readingSurvey == true) || (hearingSurvey == true) || ((hearingSurvey == false) && (readingSurvey == false) && (noSurvey == false)))
@@ -7091,7 +6794,6 @@ public class Player : MovingObject
                             android_window_displayed = false;
                             finished_listening_survey = false;
                             finished_questions_survey = false;
-                            playedInputBoxClip = false;
                             surveyQuestion1 = "";
                             answeredSurveyQuestion1 = false;
                             surveyQuestion2 = "";
@@ -7122,10 +6824,6 @@ public class Player : MovingObject
                             answeredSurveyQuestion14 = false;
                             surveyQuestion15 = "";
                             answeredSurveyQuestion15 = false;
-                            email = "";
-                            likes = "";
-                            confusions = "";
-                            suggestions = "";
                             readEnjoy = false;
                             enjoyFlag = false;
                             readPlayMore = false;
@@ -7411,7 +7109,13 @@ public class Player : MovingObject
                             {
                                 surveyQuestion15 = "yes";
                                 answeredSurveyQuestion15 = true;
+                                finished_listening_survey = true;
                                 finished_questions_survey = true;
+                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33] };
+                                SoundManager.instance.PlayClips(clips, null, 0, () =>
+                                {
+                                    canRepeat = true;
+                                }, 0, null, true);
                             }
                             if ((answeredSurveyQuestion14 == false) && (answeredSurveyQuestion13 == true))
                             {
@@ -7608,14 +7312,7 @@ public class Player : MovingObject
                                     clips = new List<AudioClip>() { Database.surveyClips[5] };
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-
-                            if ((android_window_displayed == true) && (finished_listening_survey == false) && (readHearingImpaired == true) && (answeredSurveyQuestion15 == true) && (finished_questions_survey == true) && (readEmail == false) && (emailFlag == false) && (playedInputBoxClip == false))
-                            {
-                                playedInputBoxClip = true;
-                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33] };
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
+                            }                          
                         }
                     }
                 }
@@ -7975,7 +7672,13 @@ public class Player : MovingObject
                             {
                                 surveyQuestion15 = "na";
                                 answeredSurveyQuestion15 = true;
+                                finished_listening = true;
                                 finished_questions_survey = true;
+                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33] };
+                                SoundManager.instance.PlayClips(clips, null, 0, () =>
+                                {
+                                    canRepeat = true;
+                                }, 0, null, true);
                             }
                             if ((answeredSurveyQuestion14 == false) && (answeredSurveyQuestion13 == true))
                             {
@@ -8171,13 +7874,6 @@ public class Player : MovingObject
                                 {
                                     clips = new List<AudioClip>() { Database.surveyClips[5] };
                                 }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-
-                            if ((android_window_displayed == true) && (finished_listening_survey == false) && (readHearingImpaired == true) && (answeredSurveyQuestion15 == true) && (finished_questions_survey == true) && (readEmail == false) && (emailFlag == false) && (playedInputBoxClip == false))
-                            {
-                                playedInputBoxClip = true;
-                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33] };
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
                         }
@@ -9183,8 +8879,15 @@ public class Player : MovingObject
                         {                                                                                                                  
                             if ((answeredSurveyQuestion15 == false) && (answeredSurveyQuestion14 == true))
                             {
-                                surveyQuestion15 = "no";
-                                answeredSurveyQuestion15 = true;                                
+                                surveyQuestion15 = "no";                                       
+                                answeredSurveyQuestion15 = true;
+                                finished_listening_survey = true;
+                                finished_questions_survey = true;
+                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33] };
+                                SoundManager.instance.PlayClips(clips, null, 0, () =>
+                                {
+                                    canRepeat = true;
+                                }, 0, null, true);
                             }
                             if ((answeredSurveyQuestion14 == false) && (answeredSurveyQuestion13 == true))
                             {
@@ -9382,13 +9085,6 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-
-                            if ((android_window_displayed == true) && (finished_listening_survey == false) && (readHearingImpaired == true) && (answeredSurveyQuestion15 == true) && (finished_questions_survey == true) && (readEmail == false) && (emailFlag == false) && (playedInputBoxClip == false))
-                            {
-                                playedInputBoxClip = true;
-                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33] };
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
                         }
 
                         if ((noConsent == true) || (readingSurvey == true) || (hearingSurvey == true) || ((hearingSurvey == false) && (readingSurvey == false) && (noSurvey == false)))
@@ -9399,7 +9095,6 @@ public class Player : MovingObject
                             android_window_displayed = false;
                             finished_listening_survey = false;
                             finished_questions_survey = false;
-                            playedInputBoxClip = false;
                             surveyQuestion1 = "";
                             answeredSurveyQuestion1 = false;
                             surveyQuestion2 = "";
@@ -9430,10 +9125,6 @@ public class Player : MovingObject
                             answeredSurveyQuestion14 = false;
                             surveyQuestion15 = "";
                             answeredSurveyQuestion15 = false;
-                            email = "";
-                            likes = "";
-                            confusions = "";
-                            suggestions = "";
                             readEnjoy = false;
                             enjoyFlag = false;
                             readPlayMore = false;
@@ -9712,6 +9403,13 @@ public class Player : MovingObject
                             {
                                 surveyQuestion15 = "yes";
                                 answeredSurveyQuestion15 = true;
+                                finished_listening_survey = true;
+                                finished_questions_survey = true;
+                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33] };
+                                SoundManager.instance.PlayClips(clips, null, 0, () =>
+                                {
+                                    canRepeat = true;
+                                }, 0, null, true);
                             }
                             if ((answeredSurveyQuestion14 == false) && (answeredSurveyQuestion13 == true))
                             {
@@ -9909,12 +9607,6 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((android_window_displayed == true) && (finished_listening_survey == false) && (readHearingImpaired == true) && (answeredSurveyQuestion15 == true) && (finished_questions_survey == true) && (readEmail == false) && (emailFlag == false) && (playedInputBoxClip == false))
-                            {
-                                playedInputBoxClip = true;
-                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33] };
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
                         }
 
                         if ((noConsent == true) || (readingSurvey == true) || (hearingSurvey == true) || ((hearingSurvey == false) && (readingSurvey == false) && (noSurvey == false)))
@@ -9923,10 +9615,12 @@ public class Player : MovingObject
 							hearingSurvey = false;
                             readingSurvey = true;
                             android_window_displayed = false;
-                            can_display_window_survey = true;
+                            if ((noConsent == true) || (readingSurvey == true) || (hearingSurvey == true))
+                            {
+                                can_display_window_survey = true;
+                            }
                             finished_reading_survey = false;
                             finished_questions_survey = false;
-                            playedInputBoxClip = false;
                             surveyQuestion1 = "";
                             answeredSurveyQuestion1 = false;
                             surveyQuestion2 = "";
@@ -9957,10 +9651,6 @@ public class Player : MovingObject
                             answeredSurveyQuestion14 = false;
                             surveyQuestion15 = "";
                             answeredSurveyQuestion15 = false;
-                            email = "";
-                            likes = "";
-                            confusions = "";
-                            suggestions = "";
                             readEnjoy = false;
                             enjoyFlag = false;
                             readPlayMore = false;
@@ -10352,6 +10042,13 @@ public class Player : MovingObject
                             {
                                 surveyQuestion15 = "na";
                                 answeredSurveyQuestion15 = true;
+                                finished_listening_survey = true;
+                                finished_questions_survey = true;
+                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33] };
+                                SoundManager.instance.PlayClips(clips, null, 0, () =>
+                                {
+                                    canRepeat = true;
+                                }, 0, null, true);
                             }
                             if ((answeredSurveyQuestion14 == false) && (answeredSurveyQuestion13 == true))
                             {
@@ -10547,12 +10244,6 @@ public class Player : MovingObject
                                 {
                                     clips = new List<AudioClip>() { Database.surveyClips[5] };
                                 }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((android_window_displayed == true) && (finished_listening_survey == false) && (readHearingImpaired == true) && (answeredSurveyQuestion15 == true) && (finished_questions_survey == true) && (readEmail == false) && (emailFlag == false) && (playedInputBoxClip == false))
-                            {
-                                playedInputBoxClip = true;
-                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33] };
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
                         }

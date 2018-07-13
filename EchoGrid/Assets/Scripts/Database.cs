@@ -189,7 +189,7 @@ public class Database : MonoBehaviour
         surveyClips[30] = Resources.Load("instructions/survey/visual_impairment_talkback") as AudioClip;
         surveyClips[31] = Resources.Load("instructions/survey/hearing_impairment_normal") as AudioClip;
         surveyClips[32] = Resources.Load("instructions/survey/hearing_impairment_talkback") as AudioClip;
-        surveyClips[33] = Resources.Load("instructions/survey/input_questions") as AudioClip;
+        surveyClips[33] = Resources.Load("instructions/survey/email_developers") as AudioClip;
         surveyClips[34] = Resources.Load("instructions/survey/survey_sure_submit_normal") as AudioClip;
         surveyClips[35] = Resources.Load("instructions/survey/survey_sure_submit_talkback") as AudioClip;
         surveyClips[36] = Resources.Load("instructions/survey/survey_sure_no_submit_normal") as AudioClip;
