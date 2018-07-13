@@ -2768,7 +2768,7 @@ public class Player : MovingObject
         WWW www = new WWW(echoEndpoint, echoForm);
         StartCoroutine(Utilities.WaitForRequest(www));
 
-        string echoEndpoint2 = "https://echolock.andrew.cmu.edu/cgi-bin/acceptConsent.py";
+        string echoEndpoint2 = "https://echolock.andrew.cmu.edu/cgi-bin/processConsent.py";
 
         WWWForm echoForm2 = new WWWForm();
         echoForm.AddField("userName", Utilities.encrypt(SystemInfo.deviceUniqueIdentifier));
@@ -2817,7 +2817,7 @@ public class Player : MovingObject
         WWW www = new WWW(echoEndpoint, echoForm);
         StartCoroutine(Utilities.WaitForRequest(www));
 
-        string echoEndpoint2 = "http://echolock.andrew.cmu.edu/cgi-bin/acceptSurvey.py";
+        string echoEndpoint2 = "http://echolock.andrew.cmu.edu/cgi-bin/processSurvey.py";
 
         WWWForm echoForm2 = new WWWForm();
         echoForm2.AddField("userName", Utilities.encrypt(SystemInfo.deviceUniqueIdentifier));
