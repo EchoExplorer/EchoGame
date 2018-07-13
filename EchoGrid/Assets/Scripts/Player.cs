@@ -2275,7 +2275,6 @@ public class Player : MovingObject
         echoForm.AddField("userName", Utilities.encrypt(SystemInfo.deviceUniqueIdentifier));
         echoForm.AddField("currentLevel", Utilities.encrypt(curLevel.ToString()));
         echoForm.AddField("trackCount", Utilities.encrypt(GameManager.instance.boardScript.local_stats[curLevel].ToString()));
-        echoForm.AddField("echo", lastEcho); // fix
         echoForm.AddField("echoLocation", Utilities.encrypt(location));
         echoForm.AddField("postEchoAction", Utilities.encrypt(post_act));
         echoForm.AddField("correctAction", Utilities.encrypt(correct_post_act));
@@ -2614,6 +2613,10 @@ public class Player : MovingObject
     /// </summary>
 	private void reportOnCrash()
     {
+        if (PlayerPrefs.GetInt("TotalTime", 0) > 180000)
+        {
+            return;
+        }
         string crashEndpoint = "http://echolock.andrew.cmu.edu/cgi-bin/acceptCrashData.py";
 
         Vector2 idx_pos = GameManager.instance.boardScript.get_idx_from_pos(transform.position);
@@ -11533,7 +11536,7 @@ public class Player : MovingObject
                     storedFilepath = tempFilepath;
                     print("Final Path: " + storedFilepath);
 
-                    string[] levelData = new string[12];
+                    string[] levelData = new string[13];
 
                     levelData[0] = Utilities.encrypt(SystemInfo.deviceUniqueIdentifier);
                     levelData[1] = Utilities.encrypt(curLevel.ToString());
@@ -11547,6 +11550,7 @@ public class Player : MovingObject
                     levelData[9] = Utilities.encrypt(GameManager.instance.boardScript.asciiLevelRep);
                     levelData[10] = GameManager.instance.boardScript.gamerecord;
                     levelData[11] = score.ToString();
+                    levelData[12] = Utilities.encrypt(echoNum.ToString());
 
                     System.IO.File.WriteAllLines(storedFilepath, levelData);
                     print("Stored data in local file to send later.");
@@ -11580,6 +11584,7 @@ public class Player : MovingObject
                         levelCompleteForm.AddField("startTime", Utilities.encrypt(startTime.ToString()));
                         levelCompleteForm.AddField("endTime", Utilities.encrypt(endTime.ToString()));
                         levelCompleteForm.AddField("timeElapsed", Utilities.encrypt(accurateElapsed.ToString("F3")));
+                        levelCompleteForm.AddField("totalEchoes", Utilities.encrypt(echoNum.ToString()));
                         levelCompleteForm.AddField("exitAttempts", Utilities.encrypt(exitAttempts.ToString()));
                         levelCompleteForm.AddField("asciiLevelRep", Utilities.encrypt(GameManager.instance.boardScript.asciiLevelRep));
                         levelCompleteForm.AddField("levelRecord", (GameManager.instance.boardScript.gamerecord));
@@ -11667,6 +11672,7 @@ public class Player : MovingObject
                         levelData[9] = Utilities.encrypt(GameManager.instance.boardScript.asciiLevelRep);
                         levelData[10] = GameManager.instance.boardScript.gamerecord;
                         levelData[11] = score.ToString();
+                        levelData[12] = Utilities.encrypt(echoNum.ToString());
 
                         System.IO.File.WriteAllLines(storedFilepath, levelData);
                         print("Stored data in local file to send later.");
@@ -11739,6 +11745,7 @@ public class Player : MovingObject
                     levelCompleteForm.AddField("exitAttempts", svdata_split[8]);
                     levelCompleteForm.AddField("asciiLevelRep", svdata_split[9]);
                     levelCompleteForm.AddField("levelRecord", svdata_split[10]);
+                    levelCompleteForm.AddField("totalEchoes", svdata_split[12]);
 
                     // Logging.Log(System.Text.Encoding.ASCII.GetString(levelCompleteForm.data), Logging.LogLevel.LOW_PRIORITY);
 
