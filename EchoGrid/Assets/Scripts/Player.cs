@@ -126,6 +126,7 @@ public class Player : MovingObject
     bool hasMoved = false;
     float ratio;
 
+    bool tapped; 
     bool swipedUp;
     bool rotatedLeft;
     bool rotatedRight;
@@ -141,6 +142,9 @@ public class Player : MovingObject
     static bool hasTappedAtCorner = false;
 
     public static bool reachedExit = false;
+
+    bool backAtStart = false;
+    bool atExit = false;
 
     bool restartLevel = false;
     bool goBackToMain = false;
@@ -2529,14 +2533,66 @@ public class Player : MovingObject
                 }
                 else
                 {
-                    clips = new List<AudioClip>() { Database.soundEffectClips[8] };
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clip.
+                    if (BoardManager.gotBackToStart == false)
+                    {
+                        clips = new List<AudioClip>() { Database.soundEffectClips[8] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clip.
+                    }
+                    else if (BoardManager.gotBackToStart == true)
+                    {
+                        if (BoardManager.startDir == get_player_dir("FRONT"))
+                        {
+                            clips = new List<AudioClip>() { Database.soundEffectClips[8], Database.soundEffectClips[0], Database.mainGameClips[18] };
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                        }
+                        if (BoardManager.startDir == get_player_dir("LEFT"))
+                        {
+                            clips = new List<AudioClip>() { Database.soundEffectClips[8], Database.soundEffectClips[0], Database.mainGameClips[35] };
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                        }
+                        if (BoardManager.startDir == get_player_dir("RIGHT"))
+                        {
+                            clips = new List<AudioClip>() { Database.soundEffectClips[8], Database.soundEffectClips[0], Database.mainGameClips[36] };
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                        }
+                        if (BoardManager.startDir == get_player_dir("BACK"))
+                        {
+                            clips = new List<AudioClip>() { Database.soundEffectClips[8], Database.soundEffectClips[0], Database.mainGameClips[29] };
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                        }
+                    }                    
                 }
             }
             else if (curLevel >= 12)
             {
-                clips = new List<AudioClip>() { Database.soundEffectClips[8] };
-                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clip.
+                if (BoardManager.gotBackToStart == false)
+                {
+                    clips = new List<AudioClip>() { Database.soundEffectClips[8] };
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clip.
+                }
+                else if (BoardManager.gotBackToStart == true)
+                {
+                    if (BoardManager.startDir == get_player_dir("FRONT"))
+                    {
+                        clips = new List<AudioClip>() { Database.soundEffectClips[8], Database.soundEffectClips[0], Database.mainGameClips[18] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                    }
+                    if (BoardManager.startDir == get_player_dir("LEFT"))
+                    {
+                        clips = new List<AudioClip>() { Database.soundEffectClips[8], Database.soundEffectClips[0], Database.mainGameClips[35] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                    }
+                    if (BoardManager.startDir == get_player_dir("RIGHT"))
+                    {
+                        clips = new List<AudioClip>() { Database.soundEffectClips[8], Database.soundEffectClips[0], Database.mainGameClips[36] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                    }
+                    if (BoardManager.startDir == get_player_dir("BACK"))
+                    {
+                        clips = new List<AudioClip>() { Database.soundEffectClips[8], Database.soundEffectClips[0], Database.mainGameClips[29] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                    }
+                }
             }
             numCrashes++; // Increment the crash count
             // Decrement the step count (as no successful step was made)
@@ -3100,7 +3156,44 @@ public class Player : MovingObject
         Vector2 exitPos = BoardManager.exit_idx;
 
         if (hasFinishedConsentForm == true)
-        {
+        {            
+            if ((BoardManager.gotBackToStart == true) && (tapped == true))            
+            {
+                tapped = false;
+                finishedEcho = false;
+                StartCoroutine(DelayedPlayEcho(0.25f));                             
+            }
+
+            if ((BoardManager.gotBackToStart == true) && (tapped == false) && (swipedUp == false) && (finishedEcho == true))
+            {
+                finishedEcho = false;
+                if (BoardManager.startDir == get_player_dir("FRONT"))
+                {
+                    clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.mainGameClips[18] };
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                }
+                if (BoardManager.startDir == get_player_dir("LEFT"))
+                {
+                    clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.mainGameClips[35] };
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                }
+                if (BoardManager.startDir == get_player_dir("RIGHT"))
+                {
+                    clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.mainGameClips[36] };
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                }
+                if (BoardManager.startDir == get_player_dir("BACK"))
+                {
+                    clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.mainGameClips[29] };
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                }
+            }
+
+            if ((BoardManager.gotBackToStart == false) && (tapped == true))
+            {
+                tapped = false;
+            }
+
             if (swipedUp == true)
             {
                 if (curLevel <= 11)
@@ -3224,7 +3317,8 @@ public class Player : MovingObject
                             // If the player returns to their start position.
                             else if ((canPlayClip[2, 3] == true) && (canDoGestureTutorial == false) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x == startPos.x) && (playerPos.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
                             {
-                                // Keep this check in, but do nothing.
+                                backAtStart = true;
+                                finishedEcho = false;
                             }
                             else
                             {
@@ -3235,9 +3329,9 @@ public class Player : MovingObject
                                 {
                                     canPlayClip[2, 1] = true;
                                 }
-                                if ((playerPos.x != startPos.x) && (playerPos.y != startPos.y) && (BoardManager.left_start_pt == true))
+                                if ((playerPos.x == exitPos.x) && (playerPos.y == exitPos.y))
                                 {
-                                    canPlayClip[2, 3] = true;
+                                    canPlayClip[2, 2] = true;
                                 }
                             }
                         }
@@ -3287,7 +3381,8 @@ public class Player : MovingObject
                             // If the player returns to their start position.
                             else if ((canPlayClip[4, 3] == true) && (playerPos.x == startPos.x) && (playerPos.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
                             {
-                                // Keep this check in, but do nothing.
+                                backAtStart = true;
+                                finishedEcho = false;
                             }
                             else
                             {
@@ -3298,9 +3393,9 @@ public class Player : MovingObject
                                 {
                                     canPlayClip[4, 1] = true;
                                 }
-                                if ((playerPos.x != startPos.x) && (playerPos.y != startPos.y) && (BoardManager.left_start_pt == true))
+                                if ((playerPos.x == exitPos.x) && (playerPos.y == exitPos.y))
                                 {
-                                    canPlayClip[4, 3] = true;
+                                    canPlayClip[4, 2] = true;
                                 }
                             }
                         }
@@ -3345,7 +3440,8 @@ public class Player : MovingObject
                             // If the player returns to their start position.
                             else if ((canPlayClip[10, 3] == true) && (playerPos.x == startPos.x) && (playerPos.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
                             {
-                                // Keep this check in, but do nothing.
+                                backAtStart = true;
+                                finishedEcho = false;
                             }
                             // Otherwise play a normal swipe up.
                             else
@@ -3360,10 +3456,6 @@ public class Player : MovingObject
                                 if ((playerPos.x == exitPos.x) && (playerPos.y == exitPos.y))
                                 {
                                     canPlayClip[10, 2] = true;
-                                }
-                                if ((playerPos.x != startPos.x) && (playerPos.y != startPos.y) && (BoardManager.left_start_pt == true))
-                                {
-                                    canPlayClip[10, 3] = true;
                                 }
                             }
                         }
@@ -3390,7 +3482,8 @@ public class Player : MovingObject
                             // If the player returns to their start position.
                             else if ((canPlayClip[(curLevel - 1), 3] == true) && (playerPos.x == startPos.x) && (playerPos.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
                             {
-                                // Keep this check in, but do nothing.
+                                backAtStart = true;
+                                finishedEcho = false;
                             }
                             // Otherwise play a normal swipe up.
                             else
@@ -3402,9 +3495,9 @@ public class Player : MovingObject
                                 {
                                     canPlayClip[(curLevel - 1), 1] = true;
                                 }
-                                if ((playerPos.x != startPos.x) && (playerPos.y != startPos.y) && (BoardManager.left_start_pt == true))
+                                if ((playerPos.x == exitPos.x) && (playerPos.y == exitPos.y))
                                 {
-                                    canPlayClip[(curLevel - 1), 3] = true;
+                                    canPlayClip[(curLevel - 1), 2] = true;
                                 }
                             }
                         }
@@ -3418,41 +3511,27 @@ public class Player : MovingObject
                         if ((canPlayClip[11, 1] == true) && (ratio <= 0.5f) && (ratio >= 0.4665f))
                         {
                             canPlayClip[11, 1] = false;
-                            canPlayClip[10, 2] = true;
-                            canPlayClip[10, 3] = true;
                             clips = new List<AudioClip>() { Database.soundEffectClips[4] };
                             SoundManager.instance.PlayClips(clips, null, 0, () => StartCoroutine(DelayedPlayEcho(0.25f)), 1, null, true); // Play the appropriate clip.
                         }
                         // If the player has reached the exit.
                         else if ((canPlayClip[11, 2] == true) && (playerPos.x == exitPos.x) && (playerPos.y == exitPos.y))
                         {
-                            // Keep this check in, but do nothing.
-                            canPlayClip[10, 1] = true;
-                            canPlayClip[11, 2] = false;
-                            canPlayClip[10, 3] = true;                            
+                            canPlayClip[11, 2] = false;                          
                             clips = new List<AudioClip>() { Database.soundEffectClips[4] };
                             SoundManager.instance.PlayClips(clips, null, 0, () => StartCoroutine(DelayedPlayEcho(0.25f)), 1, null, true); // Play the appropriate clip.
                         }
                         // If the player returns to their start position.
-                        else if ((canPlayClip[11, 3] == true) && (playerPos.x == startPos.x) && (playerPos.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
-                        {
-                            canPlayClip[11, 3] = false;
-                            canPlayClip[10, 1] = true;
-                            canPlayClip[10, 2] = true;
-                            clips = new List<AudioClip>() { Database.soundEffectClips[4] };
-                            SoundManager.instance.PlayClips(clips, null, 0, () => StartCoroutine(DelayedPlayEcho(0.25f)), 1, null, true); // Play the appropriate clip.
+                        else if ((playerPos.x == startPos.x) && (playerPos.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
+                        {                           
+                            backAtStart = true;
+                            finishedEcho = false;
                         }
                         else
                         {
-                            canPlayClip[10, 1] = true;
-                            canPlayClip[10, 2] = true;
-                            canPlayClip[10, 3] = true;
                             clips = new List<AudioClip>() { Database.soundEffectClips[4] };
                             SoundManager.instance.PlayClips(clips, null, 0, () => StartCoroutine(DelayedPlayEcho(0.25f)), 1, null, true); // Play the appropriate clip.
                         }
-                        canPlayClip[10, 4] = true;
-                        canPlayClip[10, 5] = true;
-                        canPlayClip[10, 6] = true;
                     }
                 }
                 swipedUp = false;
@@ -3492,13 +3571,35 @@ public class Player : MovingObject
 
                 else
                 {
-                    clips = new List<AudioClip>() { Database.soundEffectClips[5] };
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                    if (BoardManager.gotBackToStart == true)
+                    {
+                        if (BoardManager.startDir == get_player_dir("FRONT"))
+                        {
+                            clips = new List<AudioClip>() { Database.soundEffectClips[5], Database.soundEffectClips[0], Database.mainGameClips[18] };
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                        }
+                        if (BoardManager.startDir == get_player_dir("LEFT"))
+                        {
+                            clips = new List<AudioClip>() { Database.soundEffectClips[5], Database.soundEffectClips[0], Database.mainGameClips[35] };
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                        }
+                        if (BoardManager.startDir == get_player_dir("RIGHT"))
+                        {
+                            clips = new List<AudioClip>() { Database.soundEffectClips[5], Database.soundEffectClips[0], Database.mainGameClips[36] };
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                        }
+                        if (BoardManager.startDir == get_player_dir("BACK"))
+                        {
+                            clips = new List<AudioClip>() { Database.soundEffectClips[5], Database.soundEffectClips[0], Database.mainGameClips[29] };
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                        }                       
+                    }
+                    else if (BoardManager.gotBackToStart == false)
+                    {
+                        clips = new List<AudioClip>() { Database.soundEffectClips[5] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                    }                   
                     rotatedLeft = false;
-                }
-
-                if (BoardManager.gotBackToStart == false)
-                {
                     debugPlayerInfo = "Rotated left. Rotated player left 90 degrees. XPos = " + BoardManager.player_idx.x.ToString() + ", YPos = " + BoardManager.player_idx.y.ToString();
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 }
@@ -3532,17 +3633,40 @@ public class Player : MovingObject
 
                 else if ((curLevel != 3) || ((curLevel == 3) && (canDoGestureTutorial == false)))
                 {
-                    clips = new List<AudioClip>() { Database.soundEffectClips[6] };
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                    rotatedRight = false;
-                }
+                    if (BoardManager.gotBackToStart == true)
+                    {
+                        if (BoardManager.startDir == get_player_dir("FRONT"))
+                        {
+                            clips = new List<AudioClip>() { Database.soundEffectClips[6], Database.soundEffectClips[0], Database.mainGameClips[18] };
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                        }
+                        if (BoardManager.startDir == get_player_dir("LEFT"))
+                        {
+                            clips = new List<AudioClip>() { Database.soundEffectClips[6], Database.soundEffectClips[0], Database.mainGameClips[35] };
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                        }
+                        if (BoardManager.startDir == get_player_dir("RIGHT"))
+                        {
+                            clips = new List<AudioClip>() { Database.soundEffectClips[6], Database.soundEffectClips[0], Database.mainGameClips[36] };
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                        }
+                        if (BoardManager.startDir == get_player_dir("BACK"))
+                        {
+                            clips = new List<AudioClip>() { Database.soundEffectClips[6], Database.soundEffectClips[0], Database.mainGameClips[29] };
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                        }
+                    }
+                    else if (BoardManager.gotBackToStart == false)
+                    {
+                        clips = new List<AudioClip>() { Database.soundEffectClips[6] };
+                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                    }
 
-                if (BoardManager.gotBackToStart == false)
-                {
+                    rotatedRight = false;
                     debugPlayerInfo = "Rotated right. Rotated player right 90 degrees. XPos = " + BoardManager.player_idx.x.ToString() + ", YPos = " + BoardManager.player_idx.y.ToString();
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 }
-            }
+            }            
         }
 
         if (curLevel == 1)
@@ -4078,14 +4202,33 @@ public class Player : MovingObject
                 canPlayClip[(curLevel - 1), 3] = false;
                 debugPlayerInfo = "Returned to start position. Turn around by rotating twice, then continue by moving forward.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[29] };
+                clips = new List<AudioClip>() { Database.soundEffectClips[4] };
                 SoundManager.instance.PlayClips(clips, null, 0, () => StartCoroutine(DelayedPlayEcho(0.25f)), 1, null, true); // Play the appropriate clip.
             }
             else if ((curLevel >= 12) && (canPlayClip[11, 3] == true))
             {
                 canPlayClip[11, 3] = false;
-                clips = new List<AudioClip>() { Database.soundEffectClips[4], Database.soundEffectClips[0], Database.mainGameClips[29] };
+                debugPlayerInfo = "Returned to start position. Turn around by rotating twice, then continue by moving forward.";
+                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                clips = new List<AudioClip>() { Database.soundEffectClips[4] };
                 SoundManager.instance.PlayClips(clips, null, 0, () => StartCoroutine(DelayedPlayEcho(0.25f)), 1, null, true); // Play the appropriate clip.
+            }
+
+            if ((curLevel <= 11) && (canPlayClip[(curLevel - 1), 3] == false) && (backAtStart == true) && (finishedEcho == true))
+            {
+                backAtStart = false;
+                debugPlayerInfo = "Playing back to start clip.";
+                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.mainGameClips[29] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clip.
+            }
+            else if ((curLevel >= 12) && (canPlayClip[11, 3] == false) && (backAtStart == true) && (finishedEcho == true))
+            {
+                backAtStart = false;
+                debugPlayerInfo = "Playing back to start clip.";
+                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.mainGameClips[29] };
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clip.
             }
         }
 
@@ -4094,10 +4237,12 @@ public class Player : MovingObject
             if (curLevel <= 11)
             {
                 canPlayClip[(curLevel - 1), 3] = true;
+                backAtStart = false;
             }
             else if (curLevel >= 12)
             {
                 canPlayClip[11, 3] = true;
+                backAtStart = false;
             }
         }
 
@@ -6228,10 +6373,14 @@ public class Player : MovingObject
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
 
                             GameManager.instance.boardScript.gamerecord += "E{"; // Record the echo.                                         
-                            StartCoroutine(DelayedPlayEcho(0.25f)); // Play the echo.
+                            if (BoardManager.gotBackToStart == false)
+                            {
+                                StartCoroutine(DelayedPlayEcho(0.25f)); // Play the echo.
+                            }
                             GameManager.instance.boardScript.gamerecord += lastEcho;
                             GameManager.instance.boardScript.gamerecord += "}";
                             echoNum += 1;
+                            tapped = true;
                         }
                     }
                     else if ((want_exit == true) && (loadingScene == false))
@@ -8522,10 +8671,14 @@ public class Player : MovingObject
                             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
 
                             GameManager.instance.boardScript.gamerecord += "E{"; // Record the echo.                                         
-                            StartCoroutine(DelayedPlayEcho(0.25f)); // Play the echo.
+                            if (BoardManager.gotBackToStart == false)
+                            {
+                                StartCoroutine(DelayedPlayEcho(0.25f)); // Play the echo.
+                            }
                             GameManager.instance.boardScript.gamerecord += lastEcho;
                             GameManager.instance.boardScript.gamerecord += "}";
                             echoNum += 1;
+                            tapped = true;
                         }
                     }
                     else if ((at_pause_menu == true) && (loadingScene == false))

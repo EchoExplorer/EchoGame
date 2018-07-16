@@ -606,7 +606,7 @@ public class GM_main_pre : MonoBehaviour
                 }
                 else if (ie.isRight == true)
                 {
-                    debugPlayerInfo = "RIght rotation registered. This gesture does nothing in this menu.";
+                    debugPlayerInfo = "Right rotation registered. This gesture does nothing in this menu.";
                 }
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
             }
@@ -930,7 +930,7 @@ public class GM_main_pre : MonoBehaviour
                 }
                 else if (ie.isRight == true)
                 {
-                    debugPlayerInfo = "RIght rotation registered. This gesture does nothing in this menu.";
+                    debugPlayerInfo = "Right rotation registered. This gesture does nothing in this menu.";
                 }
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
             }
@@ -1101,7 +1101,7 @@ public class GM_main_pre : MonoBehaviour
                         selectMode = SelectMode.NONE;
                         SceneManager.LoadScene("Main");
                     }, 3, null); // Play the appropriate clips.
-                }
+                }               
                 break;
             // If mode is set to New, we have confirmed and swiped left, so start a new game from either the tutorial or the first non-tutorial level.
             case SelectMode.NEW:                
@@ -1151,15 +1151,17 @@ public class GM_main_pre : MonoBehaviour
                 break;
             // If the mode is set to Specific, load a specific that the user selects.
             case SelectMode.SPECIFIC:
-                if (pickedSpecificLevel == true)
-                {
-                    selectMode = SelectMode.NONE;
+                if ((pickedSpecificLevel == true) && (skippingTutorial == -1))
+                {                                   
                     skippingTutorial = 2;
                     clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[30], Database.soundEffectClips[0] };
                     balances = new float[] { 0, 0, 0, 0 };
-                    SoundManager.instance.PlayClips(clips, balances, 0, () => {                        
-                        SceneManager.LoadScene("Main");
-                    }, 4, null); // Play the appropriate clips.
+                    SoundManager.instance.PlayClips(clips, balances, 0, null, 0, null); // Play the appropriate clips.
+                }
+                if ((pickedSpecificLevel == true) && (skippingTutorial == 2) && (SoundManager.instance.finishedAllClips == true))
+                {
+                    selectMode = SelectMode.NONE;
+                    SceneManager.LoadScene("Main");
                 }
                 break;
             default:

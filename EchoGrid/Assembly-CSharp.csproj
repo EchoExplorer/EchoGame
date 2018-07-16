@@ -54,7 +54,6 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\AndroidDialogue.cs" />
-     <Compile Include="Assets\Scripts\AudioMixerControl.cs" />
      <Compile Include="Assets\Scripts\BoardManager.cs" />
      <Compile Include="Assets\Scripts\Const.cs" />
      <Compile Include="Assets\Scripts\Database.cs" />

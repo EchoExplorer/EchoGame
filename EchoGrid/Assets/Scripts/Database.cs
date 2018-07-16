@@ -74,7 +74,7 @@ public class Database : MonoBehaviour
 
     // Main game clips
     [HideInInspector]
-    public static AudioClip[] mainGameClips = new AudioClip[35];
+    public static AudioClip[] mainGameClips = new AudioClip[37];
     [HideInInspector]
     public static AudioClip[] levelStartClips = new AudioClip[151];
     [HideInInspector]
@@ -346,6 +346,8 @@ public class Database : MonoBehaviour
         mainGameClips[32] = Resources.Load("instructions/main_game/crashed_at_exit") as AudioClip;
         mainGameClips[33] = Resources.Load("instructions/main_game/crashed_at_right_turn") as AudioClip;
         mainGameClips[34] = Resources.Load("instructions/main_game/crashed_at_left_turn") as AudioClip;
+        mainGameClips[35] = Resources.Load("instructions/main_game/back_at_start_turn_left") as AudioClip;
+        mainGameClips[36] = Resources.Load("instructions/main_game/back_at_start_turn_right") as AudioClip;
 
         // Level start clips
         levelStartClips[0] = Resources.Load("instructions/level_start/start") as AudioClip;
