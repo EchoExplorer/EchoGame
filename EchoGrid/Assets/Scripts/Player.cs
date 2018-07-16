@@ -4509,6 +4509,7 @@ public class Player : MovingObject
         {
             canCheckForConsent = false;
 
+            // PlayerPrefs.SetInt("Consented", -1);
             int hasConsented = PlayerPrefs.GetInt("Consented", -1);
 
             if (hasConsented != -1)
@@ -7462,6 +7463,77 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }                          
+                        }
+
+                        if ((noConsent == true) || (readingSurvey == true) || ((hearingSurvey == false) && (readingSurvey == false) && (noSurvey == false)))
+                        {
+                            noConsent = false;
+                            readingSurvey = true;
+                            hearingSurvey = false;
+                            android_window_displayed = false;
+                            finished_reading_survey = true;
+                            finished_questions_survey = true;
+                            surveyQuestion1 = "na";
+                            answeredSurveyQuestion1 = true;
+                            surveyQuestion2 = "na";
+                            answeredSurveyQuestion2 = true;
+                            surveyQuestion3 = "na";
+                            answeredSurveyQuestion3 = true;
+                            surveyQuestion4 = "na";
+                            answeredSurveyQuestion4 = true;
+                            surveyQuestion5 = "na";
+                            answeredSurveyQuestion5 = true;
+                            surveyQuestion6 = "na";
+                            answeredSurveyQuestion6 = true;
+                            surveyQuestion7 = "na";
+                            answeredSurveyQuestion7 = true;
+                            surveyQuestion8 = "na";
+                            answeredSurveyQuestion8 = true;
+                            surveyQuestion9 = "na";
+                            answeredSurveyQuestion9 = true;
+                            surveyQuestion10 = "na";
+                            answeredSurveyQuestion10 = true;
+                            surveyQuestion11 = "na";
+                            answeredSurveyQuestion11 = true;
+                            surveyQuestion12 = "na";
+                            answeredSurveyQuestion12 = true;
+                            surveyQuestion13 = "na";
+                            answeredSurveyQuestion13 = true;
+                            surveyQuestion14 = "na";
+                            answeredSurveyQuestion14 = true;
+                            surveyQuestion15 = "na";
+                            answeredSurveyQuestion15 = true;
+                            readEnjoy = true;
+                            enjoyFlag = true;
+                            readPlayMore = true;
+                            playMoreFlag = true;
+                            readEasy = true;
+                            easyFlag = true;
+                            readLost = true;
+                            lostFlag = true;
+                            readUnderstandEcho = true;
+                            understandEchoFlag = true;
+                            readFrustrating = true;
+                            frustratingFlag = true;
+                            readTutorial = true;
+                            tutorialFlag = true;
+                            readTutorialHelp = true;
+                            tutorialHelpFlag = true;
+                            readHints = true;
+                            hintsFlag = true;
+                            readInstructions = true;
+                            instructionsFlag = true;
+                            readControls = true;
+                            controlsFlag = true;
+                            readLook = true;
+                            lookFlag = true;
+                            readEchoNavigate = true;
+                            echoNavigateFlag = true;
+                            readVisuallyImpaired = true;
+                            visuallyImpairedFlag = true;
+                            readHearingImpaired = true;
+                            hearingImpairedFlag = true;
+                            canRepeat = true;
                         }
                     }
                 }
@@ -11425,10 +11497,10 @@ public class Player : MovingObject
                         levelCompleteForm.AddField("trackCount", Utilities.encrypt(temp.ToString()));
                         levelCompleteForm.AddField("crashCount", Utilities.encrypt(numCrashes.ToString()));
                         levelCompleteForm.AddField("stepCount", Utilities.encrypt(numSteps.ToString()));
-                        levelCompleteForm.AddField("startTime", Utilities.encrypt(startTime.ToString()));
-                        levelCompleteForm.AddField("endTime", Utilities.encrypt(endTime.ToString()));
                         levelCompleteForm.AddField("timeElapsed", Utilities.encrypt(accurateElapsed.ToString("F3")));
                         levelCompleteForm.AddField("totalEchoes", Utilities.encrypt(echoNum.ToString()));
+                        levelCompleteForm.AddField("startTime", Utilities.encrypt(startTime.ToString()));
+                        levelCompleteForm.AddField("endTime", Utilities.encrypt(endTime.ToString()));                        
                         levelCompleteForm.AddField("exitAttempts", Utilities.encrypt(exitAttempts.ToString()));
                         levelCompleteForm.AddField("asciiLevelRep", Utilities.encrypt(GameManager.instance.boardScript.asciiLevelRep));
                         levelCompleteForm.AddField("levelRecord", (GameManager.instance.boardScript.gamerecord));
