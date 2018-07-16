@@ -2783,6 +2783,7 @@ public class Player : MovingObject
     /// </summary>
     private void reportConsent(string code)
     {
+        /*
         string echoEndpoint = "https://echolock.andrew.cmu.edu/cgi-bin/acceptConsent.py";
 
         WWWForm echoForm = new WWWForm();
@@ -2807,6 +2808,7 @@ public class Player : MovingObject
 
         WWW www2 = new WWW(echoEndpoint2, echoForm2);
         StartCoroutine(Utilities.WaitForRequest(www2));
+        */
     }
 
     /// <summary>
@@ -2814,6 +2816,7 @@ public class Player : MovingObject
     /// </summary>
 	private void reportsurvey(string code)
     {
+        /*
         string echoEndpoint = "http://echolock.andrew.cmu.edu/cgi-bin/acceptSurvey.py";
 
         WWWForm echoForm = new WWWForm();        
@@ -2852,6 +2855,7 @@ public class Player : MovingObject
 
         WWW www2 = new WWW(echoEndpoint2, echoForm2);
         StartCoroutine(Utilities.WaitForRequest(www2));
+        */
     }
 
     /// <summary>
@@ -3189,7 +3193,7 @@ public class Player : MovingObject
                 }
             }
 
-            if ((BoardManager.gotBackToStart == false) && (tapped == true))
+            if ((BoardManager.gotBackToStart == false) && (BoardManager.reachedExit == false) && (tapped == true))
             {
                 tapped = false;
             }
@@ -4358,7 +4362,12 @@ public class Player : MovingObject
             // If the player has reached the exit and not swiped down, play the appropriate exit clip.
             if ((endingLevel == false) && (playedExitClip == false))
             {
-                if ((curLevel <= 11) && (canPlayClip[(curLevel - 1), 2] == false) && (finishedEcho == true))
+                if ((curLevel <= 11) && (canPlayClip[(curLevel - 1), 2] == false) && (tapped == true) && (finishedEcho == true))
+                {
+                    tapped = false;
+                    finishedEcho = false;
+                }
+                if ((curLevel <= 11) && (canPlayClip[(curLevel - 1), 2] == false) && (tapped == false) && (finishedEcho == true))
                 {
                     if (curLevel == 1)
                     {
@@ -4404,7 +4413,7 @@ public class Player : MovingObject
                     {
                         finishedEcho = false;
                     }
-                }
+                }                
             }
 
             // If the player is at the exit and has swiped down.
@@ -11412,13 +11421,13 @@ public class Player : MovingObject
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
                     directoryEnd = Application.persistentDataPath.IndexOf("AuditoryLab") + 10;
 #endif
-#if UNITY_ANDROID
+#if UNITY_ANDROID && !UNITY_EDITOR && !UNITY_STANDALONE && !UNITY_WEBPLAYER
                     directoryEnd = Application.persistentDataPath.IndexOf("AuditoryLab.Echoadventure") + 24;
 #endif
-#if UNITY_IOS
+#if UNITY_IOS && !UNITY_EDITOR && !UNITY_STANDALONE && !UNITY_WEBPLAYER
                     directoryEnd = Application.persistentDataPath.IndexOf("Documents") + 8;
 #endif
-
+                    print("Directory End: " + directoryEnd.ToString());
                     string searchPath = Application.persistentDataPath.Substring(0, (directoryEnd + 1));
                     print("Search Path: " + searchPath);
                     string searchPattern = Application.productName + "storeddata";
@@ -11452,21 +11461,20 @@ public class Player : MovingObject
                     storedFilepath = tempFilepath;
                     print("Final Path: " + storedFilepath);
 
-                    string[] levelData = new string[13];
+                    string[] levelData = new string[12];
 
                     levelData[0] = Utilities.encrypt(SystemInfo.deviceUniqueIdentifier);
                     levelData[1] = Utilities.encrypt(curLevel.ToString());
                     levelData[2] = Utilities.encrypt(temp.ToString());
                     levelData[3] = Utilities.encrypt(numCrashes.ToString());
                     levelData[4] = Utilities.encrypt(numSteps.ToString());
-                    levelData[5] = Utilities.encrypt(startTime.ToString());
-                    levelData[6] = Utilities.encrypt(endTime.ToString());
-                    levelData[7] = Utilities.encrypt(accurateElapsed.ToString("F3"));
-                    levelData[8] = Utilities.encrypt(exitAttempts.ToString());
-                    levelData[9] = Utilities.encrypt(GameManager.instance.boardScript.asciiLevelRep);
-                    levelData[10] = GameManager.instance.boardScript.gamerecord;
-                    levelData[11] = score.ToString();
-                    levelData[12] = Utilities.encrypt(echoNum.ToString());
+                    levelData[5] = Utilities.encrypt(accurateElapsed.ToString("F3"));
+                    levelData[6] = Utilities.encrypt(echoNum.ToString());
+                    levelData[7] = Utilities.encrypt(startTime.ToString());
+                    levelData[8] = Utilities.encrypt(endTime.ToString());
+                    levelData[9] = Utilities.encrypt(exitAttempts.ToString());
+                    levelData[10] = Utilities.encrypt(GameManager.instance.boardScript.asciiLevelRep);
+                    levelData[11] = GameManager.instance.boardScript.gamerecord;
 
                     System.IO.File.WriteAllLines(storedFilepath, levelData);
                     print("Stored data in local file to send later.");
@@ -11503,7 +11511,7 @@ public class Player : MovingObject
                         levelCompleteForm.AddField("endTime", Utilities.encrypt(endTime.ToString()));                        
                         levelCompleteForm.AddField("exitAttempts", Utilities.encrypt(exitAttempts.ToString()));
                         levelCompleteForm.AddField("asciiLevelRep", Utilities.encrypt(GameManager.instance.boardScript.asciiLevelRep));
-                        levelCompleteForm.AddField("levelRecord", (GameManager.instance.boardScript.gamerecord));
+                        levelCompleteForm.AddField("levelRecord", (GameManager.instance.boardScript.gamerecord));                        
 
                         // Logging.Log(System.Text.Encoding.ASCII.GetString(levelCompleteForm.data), Logging.LogLevel.LOW_PRIORITY);
 
@@ -11513,7 +11521,7 @@ public class Player : MovingObject
                         // Send the details of the crash locations
                         // form.AddField("crashLocations", crashLocs);
 
-                        levelCompleteForm.AddField("score", score);
+                        // levelCompleteForm.AddField("score", score);
 
                         WWW www2 = new WWW(levelDataEndpoint, levelCompleteForm);
 
@@ -11535,12 +11543,13 @@ public class Player : MovingObject
 #if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
                         directoryEnd = Application.persistentDataPath.IndexOf("AuditoryLab") + 10;
 #endif
-#if UNITY_ANDROID
+#if UNITY_ANDROID && !UNITY_EDITOR && !UNITY_STANDALONE && !UNITY_WEBPLAYER
                         directoryEnd = Application.persistentDataPath.IndexOf("AuditoryLab.Echoadventure") + 24;
 #endif
-#if UNITY_IOS
+#if UNITY_IOS && !UNITY_EDITOR && !UNITY_STANDALONE && !UNITY_WEBPLAYER
                         directoryEnd = Application.persistentDataPath.IndexOf("Documents") + 8;
 #endif
+                        print("Directory End: " + directoryEnd.ToString());
                         string searchPath = Application.persistentDataPath.Substring(0, (directoryEnd + 1));
                         print("Search Path: " + searchPath);
                         string searchPattern = Application.productName + "storeddata";
@@ -11581,14 +11590,13 @@ public class Player : MovingObject
                         levelData[2] = Utilities.encrypt(temp.ToString());
                         levelData[3] = Utilities.encrypt(numCrashes.ToString());
                         levelData[4] = Utilities.encrypt(numSteps.ToString());
-                        levelData[5] = Utilities.encrypt(startTime.ToString());
-                        levelData[6] = Utilities.encrypt(endTime.ToString());
-                        levelData[7] = Utilities.encrypt(accurateElapsed.ToString("F3"));
-                        levelData[8] = Utilities.encrypt(exitAttempts.ToString());
-                        levelData[9] = Utilities.encrypt(GameManager.instance.boardScript.asciiLevelRep);
-                        levelData[10] = GameManager.instance.boardScript.gamerecord;
-                        levelData[11] = score.ToString();
-                        levelData[12] = Utilities.encrypt(echoNum.ToString());
+                        levelData[5] = Utilities.encrypt(accurateElapsed.ToString("F3"));
+                        levelData[6] = Utilities.encrypt(echoNum.ToString());
+                        levelData[7] = Utilities.encrypt(startTime.ToString());
+                        levelData[8] = Utilities.encrypt(endTime.ToString());
+                        levelData[9] = Utilities.encrypt(exitAttempts.ToString());
+                        levelData[10] = Utilities.encrypt(GameManager.instance.boardScript.asciiLevelRep);
+                        levelData[11] = GameManager.instance.boardScript.gamerecord;
 
                         System.IO.File.WriteAllLines(storedFilepath, levelData);
                         print("Stored data in local file to send later.");
@@ -11615,16 +11623,16 @@ public class Player : MovingObject
     void SendStoredData(string levelDataEndpoint)
     {
         int directoryEnd = 0;
-#if UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR
+#if (UNITY_STANDALONE || UNITY_WEBPLAYER || UNITY_EDITOR)
         directoryEnd = Application.persistentDataPath.IndexOf("AuditoryLab") + 10;
 #endif
-#if UNITY_ANDROID
+#if UNITY_ANDROID && !UNITY_EDITOR && !UNITY_STANDALONE && !UNITY_WEBPLAYER
         directoryEnd = Application.persistentDataPath.IndexOf("AuditoryLab.Echoadventure") + 24;
 #endif
-#if UNITY_IOS
+#if UNITY_IOS && !UNITY_EDITOR && !UNITY_STANDALONE && !UNITY_WEBPLAYER
         directoryEnd = Application.persistentDataPath.IndexOf("Documents") + 8;
 #endif
-
+        print("Directory End: " + directoryEnd.ToString());
         string searchPath = Application.persistentDataPath.Substring(0, (directoryEnd + 1));
         print("Search Path: " + searchPath);
         string searchPattern = Application.productName + "storeddata";
@@ -11655,13 +11663,13 @@ public class Player : MovingObject
                     levelCompleteForm.AddField("trackCount", svdata_split[2]);
                     levelCompleteForm.AddField("crashCount", svdata_split[3]);
                     levelCompleteForm.AddField("stepCount", svdata_split[4]);
-                    levelCompleteForm.AddField("startTime", svdata_split[5]);
-                    levelCompleteForm.AddField("endTime", svdata_split[6]);
-                    levelCompleteForm.AddField("timeElapsed", svdata_split[7]);
-                    levelCompleteForm.AddField("exitAttempts", svdata_split[8]);
-                    levelCompleteForm.AddField("asciiLevelRep", svdata_split[9]);
-                    levelCompleteForm.AddField("levelRecord", svdata_split[10]);
-                    levelCompleteForm.AddField("totalEchoes", svdata_split[12]);
+                    levelCompleteForm.AddField("timeElapsed", svdata_split[5]);
+                    levelCompleteForm.AddField("totalEchoes", svdata_split[6]);
+                    levelCompleteForm.AddField("startTime", svdata_split[7]);
+                    levelCompleteForm.AddField("endTime", svdata_split[8]);
+                    levelCompleteForm.AddField("exitAttempts", svdata_split[9]);
+                    levelCompleteForm.AddField("asciiLevelRep", svdata_split[10]);
+                    levelCompleteForm.AddField("levelRecord", svdata_split[11]);
 
                     // Logging.Log(System.Text.Encoding.ASCII.GetString(levelCompleteForm.data), Logging.LogLevel.LOW_PRIORITY);
 
@@ -11671,7 +11679,7 @@ public class Player : MovingObject
                     // Send the details of the crash locations
                     // form.AddField("crashLocations", crashLocs);
 
-                    levelCompleteForm.AddField("score", Int32.Parse(svdata_split[11]));
+                    // levelCompleteForm.AddField("score", Int32.Parse(svdata_split[11]));
 
                     WWW www2 = new WWW(levelDataEndpoint, levelCompleteForm);
 
