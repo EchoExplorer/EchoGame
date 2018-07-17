@@ -141,13 +141,23 @@ public class GM_title : MonoBehaviour
                     if (repeatSetupClip == true)
                     {
                         repeatInterruptedClips = true;
+#if !UNITY_IOS
                         clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.settingsClips[1], Database.settingsClips[2] };
+#endif
+#if UNITY_IOS
+                        clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.settingsClips[1], Database.settingsClips[10] };
+#endif
                         SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
                     }
                     else if (repeatSetupClip == false)
                     {
                         repeatInterruptedClips = true;
+#if !UNITY_IOS
                         clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.settingsClips[1], Database.settingsClips[2] };
+#endif
+#if UNITY_IOS
+                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.settingsClips[1], Database.settingsClips[10] };
+#endif
                         SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
                         repeatSetupClip = true;
                     }
@@ -164,8 +174,19 @@ public class GM_title : MonoBehaviour
                     if (isUsingTalkback == true)
                     {
                         canRepeat = false;
+                        List<AudioClip> clips2;
+#if !UNITY_IOS
                         clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.settingsClips[3], Database.settingsClips[5], Database.settingsClips[7] };
-                        List<AudioClip> clips2 = new List<AudioClip>() { Database.soundEffectClips[0], Database.settingsClips[3], Database.settingsClips[5], Database.settingsClips[7] };
+#endif
+#if UNITY_IOS
+                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.settingsClips[11], Database.settingsClips[5], Database.settingsClips[7] };
+#endif
+#if !UNITY_IOS
+                        clips2 = new List<AudioClip>() { Database.soundEffectClips[0], Database.settingsClips[3], Database.settingsClips[5], Database.settingsClips[7] };
+#endif
+#if UNITY_IOS
+                        clips2 = new List<AudioClip>() { Database.soundEffectClips[0], Database.settingsClips[11], Database.settingsClips[5], Database.settingsClips[7] };
+#endif                        
                         if (repeatSetupClip == true)
                         {
                             repeatInterruptedClips = true;
