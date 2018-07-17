@@ -120,6 +120,7 @@ public class GM_main_pre : MonoBehaviour
     void init()
     {
         skippingTutorial = -1;
+        firstConfirm = false;
 
         levelImage = GameObject.Find("LevelImage").gameObject;
         levelText = levelImage.transform.Find("LevelText").gameObject.GetComponent<Text>();
@@ -189,88 +190,100 @@ public class GM_main_pre : MonoBehaviour
             {
                 if (selectMode != SelectMode.SPECIFIC)
                 {
-                    if ((GameMode.instance.gamemode == GameMode.Game_Mode.TUTORIAL) || (GameMode.instance.gamemode == GameMode.Game_Mode.TUTORIAL_RESTART))
+                    if (selectMode != SelectMode.CONTINUE)
                     {
-                        if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
+                        if ((GameMode.instance.gamemode == GameMode.Game_Mode.TUTORIAL) || (GameMode.instance.gamemode == GameMode.Game_Mode.TUTORIAL_RESTART))
                         {
-                            // If the player is using Talkback.
-                            if (GM_title.isUsingTalkback == true)
+                            if (((SoundManager.instance.finishedAllClips == true) || (canRepeat == true)) && (skippingTutorial == -1))
                             {
-                                canRepeat = false;
-                                if (repeatPregameClip == true)
+                                // If the player is using Talkback.
+                                if (GM_title.isUsingTalkback == true)
                                 {
-                                    repeatInterruptedClips = true;
-                                    clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.preGameMenuClips[1], Database.preGameMenuClips[5], Database.levelStartClips[levelToStart], Database.preGameMenuClips[9], Database.preGameMenuClips[13] };
-                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
+                                    canRepeat = false;
+                                    if (repeatPregameClip == true)
+                                    {
+                                        repeatInterruptedClips = true;
+                                        clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.preGameMenuClips[1], Database.preGameMenuClips[5], Database.levelStartClips[levelToStart], Database.preGameMenuClips[9], Database.preGameMenuClips[13] };
+                                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
+                                    }
+                                    else if (repeatPregameClip == false)
+                                    {
+                                        repeatInterruptedClips = true;
+                                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[1], Database.preGameMenuClips[5], Database.levelStartClips[levelToStart], Database.preGameMenuClips[9], Database.preGameMenuClips[13] };
+                                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
+                                        repeatPregameClip = true;
+                                    }
                                 }
-                                else if (repeatPregameClip == false)
+                                // If the player is not using Talkback.
+                                else if (GM_title.isUsingTalkback == false)
                                 {
-                                    repeatInterruptedClips = true;
-                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[1], Database.preGameMenuClips[5], Database.levelStartClips[levelToStart], Database.preGameMenuClips[9], Database.preGameMenuClips[13] };
-                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
-                                    repeatPregameClip = true;
+                                    canRepeat = false;
+                                    if (repeatPregameClip == true)
+                                    {
+                                        repeatInterruptedClips = true;
+                                        clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.preGameMenuClips[0], Database.preGameMenuClips[4], Database.levelStartClips[levelToStart], Database.preGameMenuClips[8], Database.preGameMenuClips[12] };
+                                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
+                                    }
+                                    else if (repeatPregameClip == false)
+                                    {
+                                        repeatInterruptedClips = true;
+                                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[0], Database.preGameMenuClips[4], Database.levelStartClips[levelToStart], Database.preGameMenuClips[8], Database.preGameMenuClips[12] };
+                                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
+                                        repeatPregameClip = true;
+                                    }
                                 }
                             }
-                            // If the player is not using Talkback.
-                            else if (GM_title.isUsingTalkback == false)
+                        }
+                        else if ((GameMode.instance.gamemode == GameMode.Game_Mode.CONTINUE) || (GameMode.instance.gamemode == GameMode.Game_Mode.RESTART))
+                        {
+                            if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
                             {
-                                canRepeat = false;
-                                if (repeatPregameClip == true)
+                                // If the player is using Talkback.
+                                if (GM_title.isUsingTalkback == true)
                                 {
-                                    repeatInterruptedClips = true;
-                                    clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.preGameMenuClips[0], Database.preGameMenuClips[4], Database.levelStartClips[levelToStart], Database.preGameMenuClips[8], Database.preGameMenuClips[12] };
-                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
+                                    canRepeat = false;
+                                    if (repeatPregameClip == true)
+                                    {
+                                        repeatInterruptedClips = true;
+                                        clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.preGameMenuClips[3], Database.preGameMenuClips[7], Database.levelStartClips[levelToStart], Database.preGameMenuClips[11], Database.preGameMenuClips[13] };
+                                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
+                                    }
+                                    else if (repeatPregameClip == false)
+                                    {
+                                        repeatInterruptedClips = true;
+                                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[3], Database.preGameMenuClips[7], Database.levelStartClips[levelToStart], Database.preGameMenuClips[11], Database.preGameMenuClips[13] };
+                                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
+                                        repeatPregameClip = true;
+                                    }
                                 }
-                                else if (repeatPregameClip == false)
+                                // If the player is not using Talkback.
+                                else if (GM_title.isUsingTalkback == false)
                                 {
-                                    repeatInterruptedClips = true;
-                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[0], Database.preGameMenuClips[4], Database.levelStartClips[levelToStart], Database.preGameMenuClips[8], Database.preGameMenuClips[12] };
-                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
-                                    repeatPregameClip = true;
+                                    canRepeat = false;
+                                    if (repeatPregameClip == true)
+                                    {
+                                        repeatInterruptedClips = true;
+                                        clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.preGameMenuClips[2], Database.preGameMenuClips[6], Database.levelStartClips[levelToStart], Database.preGameMenuClips[10], Database.preGameMenuClips[12] };
+                                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
+                                    }
+                                    else if (repeatPregameClip == false)
+                                    {
+                                        repeatInterruptedClips = true;
+                                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[2], Database.preGameMenuClips[6], Database.levelStartClips[levelToStart], Database.preGameMenuClips[10], Database.preGameMenuClips[12] };
+                                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
+                                        repeatPregameClip = true;
+                                    }
                                 }
                             }
                         }
                     }
-                    else if ((GameMode.instance.gamemode == GameMode.Game_Mode.CONTINUE) || (GameMode.instance.gamemode == GameMode.Game_Mode.RESTART))
+                    if (selectMode == SelectMode.CONTINUE)
                     {
-                        if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
+                        if (repeatPregameClip == true)
                         {
-                            // If the player is using Talkback.
-                            if (GM_title.isUsingTalkback == true)
-                            {
-                                canRepeat = false;
-                                if (repeatPregameClip == true)
-                                {
-                                    repeatInterruptedClips = true;
-                                    clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.preGameMenuClips[3], Database.preGameMenuClips[7], Database.levelStartClips[levelToStart], Database.preGameMenuClips[11], Database.preGameMenuClips[13] };
-                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
-                                }
-                                else if (repeatPregameClip == false)
-                                {
-                                    repeatInterruptedClips = true;
-                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[3], Database.preGameMenuClips[7], Database.levelStartClips[levelToStart], Database.preGameMenuClips[11], Database.preGameMenuClips[13] };
-                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
-                                    repeatPregameClip = true;
-                                }
-                            }
-                            // If the player is not using Talkback.
-                            else if (GM_title.isUsingTalkback == false)
-                            {
-                                canRepeat = false;
-                                if (repeatPregameClip == true)
-                                {
-                                    repeatInterruptedClips = true;
-                                    clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.preGameMenuClips[2], Database.preGameMenuClips[6], Database.levelStartClips[levelToStart], Database.preGameMenuClips[10], Database.preGameMenuClips[12] };
-                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
-                                }
-                                else if (repeatPregameClip == false)
-                                {
-                                    repeatInterruptedClips = true;
-                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[2], Database.preGameMenuClips[6], Database.levelStartClips[levelToStart], Database.preGameMenuClips[10], Database.preGameMenuClips[12] };
-                                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
-                                    repeatPregameClip = true;
-                                }
-                            }
+                            repeatPregameClip = false;                            
+                            clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[18] };
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.  
                         }
                     }
                 }
@@ -369,6 +382,13 @@ public class GM_main_pre : MonoBehaviour
                     // If the player is using Talkback.
                     if (GM_title.isUsingTalkback == true)
                     {
+                        if (firstConfirm == false)
+                        {
+                            canRepeat = false;
+                            repeatInterruptedClips = false;
+                            clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.preGameMenuClips[14], Database.preGameMenuClips[16] };
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
+                        }
                         if (firstConfirm == true)
                         {
                             firstConfirm = false;
@@ -376,18 +396,18 @@ public class GM_main_pre : MonoBehaviour
                             repeatInterruptedClips = true;
                             clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[14], Database.preGameMenuClips[16] };
                             SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
-                        }
-                        else
-                        {
-                            canRepeat = false;
-                            repeatInterruptedClips = false;
-                            clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.preGameMenuClips[14], Database.preGameMenuClips[16] };
-                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
-                        }
+                        }                        
                     }
                     // If the player is not using Talkback.
                     else if (GM_title.isUsingTalkback == false)
                     {
+                        if (firstConfirm == false)
+                        {
+                            canRepeat = false;
+                            repeatInterruptedClips = true;
+                            clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.preGameMenuClips[14], Database.preGameMenuClips[15] };
+                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
+                        }
                         if (firstConfirm == true)
                         {
                             firstConfirm = false;
@@ -395,14 +415,7 @@ public class GM_main_pre : MonoBehaviour
                             repeatInterruptedClips = true;
                             clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[14], Database.preGameMenuClips[15] };
                             SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
-                        }
-                        else
-                        {
-                            canRepeat = false;
-                            repeatInterruptedClips = true;
-                            clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.preGameMenuClips[14], Database.preGameMenuClips[15] };
-                            SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
-                        }
+                        }                       
                     }
                 }
             }
@@ -484,7 +497,7 @@ public class GM_main_pre : MonoBehaviour
                 {
                     if (selectMode != SelectMode.SPECIFIC)
                     {
-                        canRepeat = true;
+                        firstConfirm = false;
                         repeatInterruptedClips = false;
                         selectMode = SelectMode.CONTINUE; // If we have swiped right, set mode to Continue.
                     }
@@ -784,7 +797,7 @@ public class GM_main_pre : MonoBehaviour
                 {
                     if (selectMode != SelectMode.SPECIFIC)
                     {
-                        canRepeat = true;
+                        firstConfirm = false;
                         repeatInterruptedClips = false;
                         selectMode = SelectMode.CONTINUE; // If we have swiped right, set mode to Continue.
                     }
@@ -1090,17 +1103,18 @@ public class GM_main_pre : MonoBehaviour
             case SelectMode.CONTINUE:                
                 debugPlayerInfo = "Swiped right. Continuing from where you left off.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
+
+                if ((firstConfirm == true) && (skippingTutorial == 1) && (repeatPregameClip == false) && (canRepeat == false) && (SoundManager.instance.finishedAllClips == true))
                 {
-                    canRepeat = false;
+                    selectMode = SelectMode.NONE;
+                    SceneManager.LoadScene("Main");
+                }
+                if (firstConfirm == false)
+                {
                     firstConfirm = true;
+                    canRepeat = false;
+                    repeatPregameClip = true;
                     skippingTutorial = 1;
-                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[18] };
-                    balances = new float[] { 0, 0, 0 };
-                    SoundManager.instance.PlayClips(clips, balances, 0, () => {
-                        selectMode = SelectMode.NONE;
-                        SceneManager.LoadScene("Main");
-                    }, 3, null); // Play the appropriate clips.
                 }               
                 break;
             // If mode is set to New, we have confirmed and swiped left, so start a new game from either the tutorial or the first non-tutorial level.
@@ -1109,6 +1123,7 @@ public class GM_main_pre : MonoBehaviour
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.                
                 at_confirm = true;
                 canRepeat = true;
+                repeatPregameClip = false;
                 selectMode = SelectMode.NONE;
                 break;
             // If mode is set to Confirm, we have tapped to confirm we want to start a new game, so let the player swipe left to start.
@@ -1124,17 +1139,20 @@ public class GM_main_pre : MonoBehaviour
                     GameMode.instance.gamemode = GameMode.Game_Mode.RESTART;
                 }
                 // Utilities.write_save(0); ???
-                if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
+
+                if ((firstConfirm == true) && (skippingTutorial == 0) && (SoundManager.instance.finishedAllClips == true))
+                {
+                    selectMode = SelectMode.NONE;
+                    SceneManager.LoadScene("Main");
+                }
+                if (((SoundManager.instance.finishedAllClips == true) || (canRepeat == true)) && (skippingTutorial == -1) && (selectMode == SelectMode.CONFIRM))
                 {
                     canRepeat = false;
                     firstConfirm = true;
                     skippingTutorial = 0;
                     clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[17] };
                     balances = new float[] { 0, 0, 0 };
-                    SoundManager.instance.PlayClips(clips, balances, 0, () => {
-                        selectMode = SelectMode.NONE;
-                        SceneManager.LoadScene("Main");
-                    }, 3, null); // Play the appropriate clips.                          
+                    SoundManager.instance.PlayClips(clips, balances, 0, null, 0, null); // Play the appropriate clips.
                 }
                 break;
             // If mode is set to Back, go back to the main menu.
@@ -1145,8 +1163,8 @@ public class GM_main_pre : MonoBehaviour
                 {
                     canRepeat = false;
                     firstConfirm = true;
-                    SceneManager.LoadScene("Title_Screen"); // Move back to the main menu.
                     selectMode = SelectMode.NONE;
+                    SceneManager.LoadScene("Title_Screen"); // Move back to the main menu.                   
                 }
                 break;
             // If the mode is set to Specific, load a specific that the user selects.

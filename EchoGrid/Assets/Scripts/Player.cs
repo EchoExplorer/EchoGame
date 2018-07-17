@@ -100,6 +100,7 @@ public class Player : MovingObject
 
     bool survey_activated = false;
     bool survey_shown = false;
+    string consentCode = "";
     string surveyCode = "";
 
     List<AudioClip> clips;
@@ -144,7 +145,7 @@ public class Player : MovingObject
     public static bool reachedExit = false;
 
     bool backAtStart = false;
-    bool atExit = false;
+    bool playEchoOnce = false;
 
     bool restartLevel = false;
     bool goBackToMain = false;
@@ -2783,20 +2784,19 @@ public class Player : MovingObject
     /// </summary>
     private void reportConsent(string code)
     {
-        /*
-        string echoEndpoint = "https://echolock.andrew.cmu.edu/cgi-bin/acceptConsent.py";
+        string echoEndpoint = "https://echolock.andrew.cmu.edu/cgi-bin/consent1.py";
 
         WWWForm echoForm = new WWWForm();
         echoForm.AddField("userName", Utilities.encrypt(SystemInfo.deviceUniqueIdentifier));
         echoForm.AddField("consentID", Utilities.encrypt(code));
         echoForm.AddField("dateTimeStamp", Utilities.encrypt(System.DateTime.Now.ToString()));
 
-        Logging.Log(System.Text.Encoding.ASCII.GetString(echoForm.data), Logging.LogLevel.LOW_PRIORITY);
+        // Logging.Log(System.Text.Encoding.ASCII.GetString(echoForm.data), Logging.LogLevel.LOW_PRIORITY);
 
         WWW www = new WWW(echoEndpoint, echoForm);
         StartCoroutine(Utilities.WaitForRequest(www));
 
-        string echoEndpoint2 = "https://echolock.andrew.cmu.edu/cgi-bin/processConsent.py";
+        string echoEndpoint2 = "https://echolock.andrew.cmu.edu/cgi-bin/consent2.py";
 
         WWWForm echoForm2 = new WWWForm();
         echoForm.AddField("userName", Utilities.encrypt(SystemInfo.deviceUniqueIdentifier));
@@ -2804,11 +2804,10 @@ public class Player : MovingObject
         echoForm2.AddField("understandcheck", Utilities.encrypt(question2));
         echoForm2.AddField("researchcheck", Utilities.encrypt(question3));     
 
-        Logging.Log(System.Text.Encoding.ASCII.GetString(echoForm2.data), Logging.LogLevel.LOW_PRIORITY);
+        // Logging.Log(System.Text.Encoding.ASCII.GetString(echoForm2.data), Logging.LogLevel.LOW_PRIORITY);
 
         WWW www2 = new WWW(echoEndpoint2, echoForm2);
         StartCoroutine(Utilities.WaitForRequest(www2));
-        */
     }
 
     /// <summary>
@@ -2816,8 +2815,7 @@ public class Player : MovingObject
     /// </summary>
 	private void reportsurvey(string code)
     {
-        /*
-        string echoEndpoint = "http://echolock.andrew.cmu.edu/cgi-bin/acceptSurvey.py";
+        string echoEndpoint = "http://echolock.andrew.cmu.edu/cgi-bin/survey1.py";
 
         WWWForm echoForm = new WWWForm();        
         echoForm.AddField("surveyID", Utilities.encrypt(code));
@@ -2843,7 +2841,7 @@ public class Player : MovingObject
         WWW www = new WWW(echoEndpoint, echoForm);
         StartCoroutine(Utilities.WaitForRequest(www));
 
-        string echoEndpoint2 = "http://echolock.andrew.cmu.edu/cgi-bin/processSurvey.py";
+        string echoEndpoint2 = "http://echolock.andrew.cmu.edu/cgi-bin/survey2.py";
 
         WWWForm echoForm2 = new WWWForm();
         echoForm2.AddField("userName", Utilities.encrypt(SystemInfo.deviceUniqueIdentifier));
@@ -2855,7 +2853,6 @@ public class Player : MovingObject
 
         WWW www2 = new WWW(echoEndpoint2, echoForm2);
         StartCoroutine(Utilities.WaitForRequest(www2));
-        */
     }
 
     /// <summary>
@@ -3319,7 +3316,7 @@ public class Player : MovingObject
                                 SoundManager.instance.PlayClips(clips, null, 0, () => StartCoroutine(DelayedPlayEcho(0.25f)), 1, null, true); // Play the appropriate clip.
                             }
                             // If the player returns to their start position.
-                            else if ((canPlayClip[2, 3] == true) && (canDoGestureTutorial == false) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x == startPos.x) && (playerPos.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
+                            else if (((canPlayClip[2, 3] == true) || (canPlayClip[2, 3] == false)) && (canDoGestureTutorial == false) && (BoardManager.finishedTutorialLevel3 == true) && (playerPos.x == startPos.x) && (playerPos.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
                             {
                                 backAtStart = true;
                                 finishedEcho = false;
@@ -3383,7 +3380,7 @@ public class Player : MovingObject
                                 SoundManager.instance.PlayClips(clips, null, 0, () => StartCoroutine(DelayedPlayEcho(0.25f)), 1, null, true); // Play the appropriate clip.
                             }
                             // If the player returns to their start position.
-                            else if ((canPlayClip[4, 3] == true) && (playerPos.x == startPos.x) && (playerPos.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
+                            else if (((canPlayClip[4, 3] == true) || (canPlayClip[4, 3] == false)) && (playerPos.x == startPos.x) && (playerPos.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
                             {
                                 backAtStart = true;
                                 finishedEcho = false;
@@ -3442,7 +3439,7 @@ public class Player : MovingObject
                                 SoundManager.instance.PlayClips(clips, null, 0, () => StartCoroutine(DelayedPlayEcho(0.25f)), 1, null, true); // Play the appropriate clip.
                             }
                             // If the player returns to their start position.
-                            else if ((canPlayClip[10, 3] == true) && (playerPos.x == startPos.x) && (playerPos.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
+                            else if (((canPlayClip[10, 3] == true) || (canPlayClip[10, 3] == false)) && (playerPos.x == startPos.x) && (playerPos.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
                             {
                                 backAtStart = true;
                                 finishedEcho = false;
@@ -3484,7 +3481,7 @@ public class Player : MovingObject
                                 SoundManager.instance.PlayClips(clips, null, 0, () => StartCoroutine(DelayedPlayEcho(0.25f)), 1, null, true); // Play the appropriate clip.
                             }
                             // If the player returns to their start position.
-                            else if ((canPlayClip[(curLevel - 1), 3] == true) && (playerPos.x == startPos.x) && (playerPos.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
+                            else if (((canPlayClip[(curLevel - 1), 3] == true) || (canPlayClip[(curLevel - 1), 3] == false)) && (playerPos.x == startPos.x) && (playerPos.y == startPos.y) && (BoardManager.left_start_pt == true) && (get_player_dir("BACK") == BoardManager.startDir))
                             {
                                 backAtStart = true;
                                 finishedEcho = false;
@@ -4204,18 +4201,31 @@ public class Player : MovingObject
             if ((curLevel <= 11) && (canPlayClip[(curLevel - 1), 3] == true))
             {
                 canPlayClip[(curLevel - 1), 3] = false;
+                playEchoOnce = false;
                 debugPlayerInfo = "Returned to start position. Turn around by rotating twice, then continue by moving forward.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 clips = new List<AudioClip>() { Database.soundEffectClips[4] };
-                SoundManager.instance.PlayClips(clips, null, 0, () => StartCoroutine(DelayedPlayEcho(0.25f)), 1, null, true); // Play the appropriate clip.
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clip.     
             }
             else if ((curLevel >= 12) && (canPlayClip[11, 3] == true))
             {
                 canPlayClip[11, 3] = false;
+                playEchoOnce = false;
                 debugPlayerInfo = "Returned to start position. Turn around by rotating twice, then continue by moving forward.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 clips = new List<AudioClip>() { Database.soundEffectClips[4] };
-                SoundManager.instance.PlayClips(clips, null, 0, () => StartCoroutine(DelayedPlayEcho(0.25f)), 1, null, true); // Play the appropriate clip.
+                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clip.            
+            }
+
+            if ((curLevel <= 11) && (canPlayClip[(curLevel - 1), 3] == false) && (playEchoOnce == false) && (backAtStart == true) && (finishedEcho == false) && (SoundManager.instance.finishedAllClips == true))
+            {
+                playEchoOnce = true;
+                StartCoroutine(DelayedPlayEcho(0.25f));
+            }
+            else if ((curLevel >= 12) && (canPlayClip[11, 3] == false) && (playEchoOnce == false) && (backAtStart == true) && (finishedEcho == false) && (SoundManager.instance.finishedAllClips == true))
+            {
+                playEchoOnce = true;
+                StartCoroutine(DelayedPlayEcho(0.25f));
             }
 
             if ((curLevel <= 11) && (canPlayClip[(curLevel - 1), 3] == false) && (backAtStart == true) && (finishedEcho == true))
@@ -5095,7 +5105,15 @@ public class Player : MovingObject
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, () => {
                     canRepeat = true;
-                    reportConsent(SystemInfo.deviceUniqueIdentifier);                   
+                    if (SystemInfo.deviceUniqueIdentifier.Length <= 6)
+                    {
+                        consentCode = SystemInfo.deviceUniqueIdentifier;
+                    }
+                    else if (SystemInfo.deviceUniqueIdentifier.Length > 6)
+                    {
+                        consentCode = SystemInfo.deviceUniqueIdentifier.Substring(0, 6);
+                    }
+                    reportConsent(consentCode);                   
                 }, 1, null, true);
 #if UNITY_IOS
                 yesPressed = false;
@@ -6486,6 +6504,13 @@ public class Player : MovingObject
                         reportsurvey(surveyCode);
                     }
 
+                    if ((readingSurvey == true) && (finished_questions_survey == true))
+                    {
+                        readingSurvey = false;
+                        survey_activated = false;
+                        reportsurvey(surveyCode);
+                    }
+
                     if (noConsent == true)
                     {
                         noConsent = false;
@@ -6732,10 +6757,10 @@ public class Player : MovingObject
                     }
 
                     if ((GameManager.instance.level == 11) && (survey_activated == true) && (survey_shown == true))
-                    {                        
+                    {
                         if (hearingSurvey == true)
                         {
-                            if ((answeredSurveyQuestion15 == false) && (answeredSurveyQuestion14 == true))
+                            if ((answeredSurveyQuestion15 == false) && (answeredSurveyQuestion14 == true) && (surveyQuestion14 != ""))
                             {
                                 surveyQuestion15 = "no";
                                 answeredSurveyQuestion15 = true;
@@ -6745,13 +6770,13 @@ public class Player : MovingObject
                                 SoundManager.instance.PlayClips(clips, null, 0, () =>
                                 {
                                     canRepeat = true;
-                                }, 0, null, true);                                
+                                }, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion14 == false) && (answeredSurveyQuestion13 == true))
+                            if ((answeredSurveyQuestion14 == false) && (answeredSurveyQuestion13 == true) && (surveyQuestion13 != ""))
                             {
                                 surveyQuestion14 = "no";
                                 answeredSurveyQuestion14 = true;
-								if (GM_title.isUsingTalkback == true)
+                                if (GM_title.isUsingTalkback == true)
                                 {
                                     clips = new List<AudioClip>() { Database.surveyClips[32] };
                                 }
@@ -6761,11 +6786,11 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion13 == false) && (answeredSurveyQuestion12 == true))
+                            if ((answeredSurveyQuestion13 == false) && (answeredSurveyQuestion12 == true) && (surveyQuestion12 != ""))
                             {
                                 surveyQuestion13 = "no";
                                 answeredSurveyQuestion13 = true;
-								if (GM_title.isUsingTalkback == true)
+                                if (GM_title.isUsingTalkback == true)
                                 {
                                     clips = new List<AudioClip>() { Database.surveyClips[30] };
                                 }
@@ -6775,11 +6800,11 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion12 == false) && (answeredSurveyQuestion11 == true))
+                            if ((answeredSurveyQuestion12 == false) && (answeredSurveyQuestion11 == true) && (surveyQuestion11 != ""))
                             {
                                 surveyQuestion12 = "no";
                                 answeredSurveyQuestion12 = true;
-								if (GM_title.isUsingTalkback == true)
+                                if (GM_title.isUsingTalkback == true)
                                 {
                                     clips = new List<AudioClip>() { Database.surveyClips[28] };
                                 }
@@ -6789,11 +6814,11 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion11 == false) && (answeredSurveyQuestion10 == true))
+                            if ((answeredSurveyQuestion11 == false) && (answeredSurveyQuestion10 == true) && (surveyQuestion10 != ""))
                             {
                                 surveyQuestion11 = "no";
                                 answeredSurveyQuestion11 = true;
-								if (GM_title.isUsingTalkback == true)
+                                if (GM_title.isUsingTalkback == true)
                                 {
                                     clips = new List<AudioClip>() { Database.surveyClips[26] };
                                 }
@@ -6803,11 +6828,11 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion10 == false) && (answeredSurveyQuestion9 == true))
+                            if ((answeredSurveyQuestion10 == false) && (answeredSurveyQuestion9 == true) && (surveyQuestion9 != ""))
                             {
                                 surveyQuestion10 = "no";
                                 answeredSurveyQuestion10 = true;
-								if (GM_title.isUsingTalkback == true)
+                                if (GM_title.isUsingTalkback == true)
                                 {
                                     clips = new List<AudioClip>() { Database.surveyClips[24] };
                                 }
@@ -6817,11 +6842,11 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion9 == false) && (answeredSurveyQuestion8 == true))
+                            if ((answeredSurveyQuestion9 == false) && (answeredSurveyQuestion8 == true) && (surveyQuestion8 != ""))
                             {
                                 surveyQuestion9 = "no";
                                 answeredSurveyQuestion9 = true;
-								if (GM_title.isUsingTalkback == true)
+                                if (GM_title.isUsingTalkback == true)
                                 {
                                     clips = new List<AudioClip>() { Database.surveyClips[22] };
                                 }
@@ -6831,11 +6856,11 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion8 == false) && (answeredSurveyQuestion7 == true))
+                            if ((answeredSurveyQuestion8 == false) && (answeredSurveyQuestion7 == true) && (surveyQuestion7 != ""))
                             {
                                 surveyQuestion8 = "no";
                                 answeredSurveyQuestion8 = true;
-								if (GM_title.isUsingTalkback == true)
+                                if (GM_title.isUsingTalkback == true)
                                 {
                                     clips = new List<AudioClip>() { Database.surveyClips[20] };
                                 }
@@ -6845,11 +6870,11 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion7 == false) && (answeredSurveyQuestion6 == true))
+                            if ((answeredSurveyQuestion7 == false) && (answeredSurveyQuestion6 == true) && (surveyQuestion6 != ""))
                             {
                                 surveyQuestion7 = "no";
                                 answeredSurveyQuestion7 = true;
-								if (GM_title.isUsingTalkback == true)
+                                if (GM_title.isUsingTalkback == true)
                                 {
                                     clips = new List<AudioClip>() { Database.surveyClips[18] };
                                 }
@@ -6859,11 +6884,11 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion6 == false) && (answeredSurveyQuestion5 == true))
+                            if ((answeredSurveyQuestion6 == false) && (answeredSurveyQuestion5 == true) && (surveyQuestion5 != ""))
                             {
                                 surveyQuestion6 = "no";
                                 answeredSurveyQuestion6 = true;
-								if (GM_title.isUsingTalkback == true)
+                                if (GM_title.isUsingTalkback == true)
                                 {
                                     clips = new List<AudioClip>() { Database.surveyClips[16] };
                                 }
@@ -6873,11 +6898,11 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion5 == false) && (answeredSurveyQuestion4 == true))
+                            if ((answeredSurveyQuestion5 == false) && (answeredSurveyQuestion4 == true) && (surveyQuestion4 != ""))
                             {
                                 surveyQuestion5 = "no";
                                 answeredSurveyQuestion5 = true;
-								if (GM_title.isUsingTalkback == true)
+                                if (GM_title.isUsingTalkback == true)
                                 {
                                     clips = new List<AudioClip>() { Database.surveyClips[14] };
                                 }
@@ -6887,11 +6912,11 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion4 == false) && (answeredSurveyQuestion3 == true))
+                            if ((answeredSurveyQuestion4 == false) && (answeredSurveyQuestion3 == true) && (surveyQuestion3 != ""))
                             {
                                 surveyQuestion4 = "no";
                                 answeredSurveyQuestion4 = true;
-								if (GM_title.isUsingTalkback == true)
+                                if (GM_title.isUsingTalkback == true)
                                 {
                                     clips = new List<AudioClip>() { Database.surveyClips[12] };
                                 }
@@ -6901,11 +6926,11 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion3 == false) && (answeredSurveyQuestion2 == true))
+                            if ((answeredSurveyQuestion3 == false) && (answeredSurveyQuestion2 == true) && (surveyQuestion2 != ""))
                             {
                                 surveyQuestion3 = "no";
                                 answeredSurveyQuestion3 = true;
-								if (GM_title.isUsingTalkback == true)
+                                if (GM_title.isUsingTalkback == true)
                                 {
                                     clips = new List<AudioClip>() { Database.surveyClips[10] };
                                 }
@@ -6915,11 +6940,11 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion2 == false) && (answeredSurveyQuestion1 == true))
+                            if ((answeredSurveyQuestion2 == false) && (answeredSurveyQuestion1 == true) && (surveyQuestion1 != ""))
                             {
                                 surveyQuestion2 = "no";
                                 answeredSurveyQuestion2 = true;
-								if (GM_title.isUsingTalkback == true)
+                                if (GM_title.isUsingTalkback == true)
                                 {
                                     clips = new List<AudioClip>() { Database.surveyClips[8] };
                                 }
@@ -6933,7 +6958,7 @@ public class Player : MovingObject
                             {
                                 surveyQuestion1 = "no";
                                 answeredSurveyQuestion1 = true;
-								if (GM_title.isUsingTalkback == true)
+                                if (GM_title.isUsingTalkback == true)
                                 {
                                     clips = new List<AudioClip>() { Database.surveyClips[6] };
                                 }
@@ -6945,13 +6970,14 @@ public class Player : MovingObject
                             }
                         }
 
-                        if ((noConsent == true) || (readingSurvey == true) || (hearingSurvey == true) || ((hearingSurvey == false) && (readingSurvey == false) && (noSurvey == false)))
+                        if ((noConsent == true) || ((readingSurvey == true) && (finished_reading_survey == true)) || ((hearingSurvey == true) && (finished_listening_survey == true)) || ((hearingSurvey == false) && (readingSurvey == false) && (noSurvey == false)))
                         {
-							noConsent = false;
-							readingSurvey = false;
-							hearingSurvey = true;
+                            noConsent = false;
+                            readingSurvey = false;
+                            hearingSurvey = true;
                             android_window_displayed = false;
                             finished_listening_survey = false;
+                            finished_reading_survey = false;
                             finished_questions_survey = false;
                             surveyQuestion1 = "";
                             answeredSurveyQuestion1 = false;
@@ -7012,8 +7038,8 @@ public class Player : MovingObject
                             readVisuallyImpaired = false;
                             visuallyImpairedFlag = false;
                             readHearingImpaired = false;
-                            hearingImpairedFlag = false;							
-							canRepeat = true;
+                            hearingImpairedFlag = false;
+                            canRepeat = true;
                         }
                     }
                 }
@@ -7194,7 +7220,15 @@ public class Player : MovingObject
                             {
                                 canRepeat = true;
                                 hasCheckedForConsent = true;
-                                reportConsent(SystemInfo.deviceUniqueIdentifier);
+                                if (SystemInfo.deviceUniqueIdentifier.Length <= 6)
+                                {
+                                    consentCode = SystemInfo.deviceUniqueIdentifier;
+                                }
+                                else if (SystemInfo.deviceUniqueIdentifier.Length > 6)
+                                {
+                                    consentCode = SystemInfo.deviceUniqueIdentifier.Substring(0, 6);
+                                }
+                                reportConsent(consentCode);
                             }, 1, null, true);
                         }
                         else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == false))
@@ -7256,15 +7290,23 @@ public class Player : MovingObject
                             question3 = "yes";
                             finished_questions = true;
 
-                            reportConsent(SystemInfo.deviceUniqueIdentifier);
+                            if (SystemInfo.deviceUniqueIdentifier.Length <= 6)
+                            {
+                                consentCode = SystemInfo.deviceUniqueIdentifier;
+                            }
+                            else if (SystemInfo.deviceUniqueIdentifier.Length > 6)
+                            {
+                                consentCode = SystemInfo.deviceUniqueIdentifier.Substring(0, 6);
+                            }
+                            reportConsent(consentCode);
                         }
                     }
 
                     if ((GameManager.instance.level == 11) && (survey_activated == true) && (survey_shown == true))
-                    {                        
+                    {
                         if (hearingSurvey == true)
                         {
-                            if ((answeredSurveyQuestion15 == false) && (answeredSurveyQuestion14 == true))
+                            if ((answeredSurveyQuestion15 == false) && (answeredSurveyQuestion14 == true) && (surveyQuestion14 != ""))
                             {
                                 surveyQuestion15 = "yes";
                                 answeredSurveyQuestion15 = true;
@@ -7276,11 +7318,11 @@ public class Player : MovingObject
                                     canRepeat = true;
                                 }, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion14 == false) && (answeredSurveyQuestion13 == true))
+                            if ((answeredSurveyQuestion14 == false) && (answeredSurveyQuestion13 == true) && (surveyQuestion13 != ""))
                             {
                                 surveyQuestion14 = "yes";
                                 answeredSurveyQuestion14 = true;
-								if (GM_title.isUsingTalkback == true)
+                                if (GM_title.isUsingTalkback == true)
                                 {
                                     clips = new List<AudioClip>() { Database.surveyClips[32] };
                                 }
@@ -7290,11 +7332,11 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion13 == false) && (answeredSurveyQuestion12 == true))
+                            if ((answeredSurveyQuestion13 == false) && (answeredSurveyQuestion12 == true) && (surveyQuestion12 != ""))
                             {
                                 surveyQuestion13 = "yes";
                                 answeredSurveyQuestion13 = true;
-								if (GM_title.isUsingTalkback == true)
+                                if (GM_title.isUsingTalkback == true)
                                 {
                                     clips = new List<AudioClip>() { Database.surveyClips[30] };
                                 }
@@ -7304,11 +7346,11 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion12 == false) && (answeredSurveyQuestion11 == true))
+                            if ((answeredSurveyQuestion12 == false) && (answeredSurveyQuestion11 == true) && (surveyQuestion11 != ""))
                             {
                                 surveyQuestion12 = "yes";
                                 answeredSurveyQuestion12 = true;
-								if (GM_title.isUsingTalkback == true)
+                                if (GM_title.isUsingTalkback == true)
                                 {
                                     clips = new List<AudioClip>() { Database.surveyClips[28] };
                                 }
@@ -7318,11 +7360,11 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion11 == false) && (answeredSurveyQuestion10 == true))
+                            if ((answeredSurveyQuestion11 == false) && (answeredSurveyQuestion10 == true) && (surveyQuestion10 != ""))
                             {
                                 surveyQuestion11 = "yes";
                                 answeredSurveyQuestion11 = true;
-								if (GM_title.isUsingTalkback == true)
+                                if (GM_title.isUsingTalkback == true)
                                 {
                                     clips = new List<AudioClip>() { Database.surveyClips[26] };
                                 }
@@ -7332,11 +7374,11 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion10 == false) && (answeredSurveyQuestion9 == true))
+                            if ((answeredSurveyQuestion10 == false) && (answeredSurveyQuestion9 == true) && (surveyQuestion9 != ""))
                             {
                                 surveyQuestion10 = "yes";
                                 answeredSurveyQuestion10 = true;
-								if (GM_title.isUsingTalkback == true)
+                                if (GM_title.isUsingTalkback == true)
                                 {
                                     clips = new List<AudioClip>() { Database.surveyClips[24] };
                                 }
@@ -7346,11 +7388,11 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion9 == false) && (answeredSurveyQuestion8 == true))
+                            if ((answeredSurveyQuestion9 == false) && (answeredSurveyQuestion8 == true) && (surveyQuestion8 != ""))
                             {
                                 surveyQuestion9 = "yes";
                                 answeredSurveyQuestion9 = true;
-								if (GM_title.isUsingTalkback == true)
+                                if (GM_title.isUsingTalkback == true)
                                 {
                                     clips = new List<AudioClip>() { Database.surveyClips[22] };
                                 }
@@ -7360,11 +7402,11 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion8 == false) && (answeredSurveyQuestion7 == true))
+                            if ((answeredSurveyQuestion8 == false) && (answeredSurveyQuestion7 == true) && (surveyQuestion7 != ""))
                             {
                                 surveyQuestion8 = "yes";
                                 answeredSurveyQuestion8 = true;
-								if (GM_title.isUsingTalkback == true)
+                                if (GM_title.isUsingTalkback == true)
                                 {
                                     clips = new List<AudioClip>() { Database.surveyClips[20] };
                                 }
@@ -7374,11 +7416,11 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion7 == false) && (answeredSurveyQuestion6 == true))
+                            if ((answeredSurveyQuestion7 == false) && (answeredSurveyQuestion6 == true) && (surveyQuestion6 != ""))
                             {
                                 surveyQuestion7 = "yes";
                                 answeredSurveyQuestion7 = true;
-								if (GM_title.isUsingTalkback == true)
+                                if (GM_title.isUsingTalkback == true)
                                 {
                                     clips = new List<AudioClip>() { Database.surveyClips[18] };
                                 }
@@ -7388,11 +7430,11 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion6 == false) && (answeredSurveyQuestion5 == true))
+                            if ((answeredSurveyQuestion6 == false) && (answeredSurveyQuestion5 == true) && (surveyQuestion5 != ""))
                             {
                                 surveyQuestion6 = "yes";
                                 answeredSurveyQuestion6 = true;
-								if (GM_title.isUsingTalkback == true)
+                                if (GM_title.isUsingTalkback == true)
                                 {
                                     clips = new List<AudioClip>() { Database.surveyClips[16] };
                                 }
@@ -7402,11 +7444,11 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion5 == false) && (answeredSurveyQuestion4 == true))
+                            if ((answeredSurveyQuestion5 == false) && (answeredSurveyQuestion4 == true) && (surveyQuestion4 != ""))
                             {
                                 surveyQuestion5 = "yes";
                                 answeredSurveyQuestion5 = true;
-								if (GM_title.isUsingTalkback == true)
+                                if (GM_title.isUsingTalkback == true)
                                 {
                                     clips = new List<AudioClip>() { Database.surveyClips[14] };
                                 }
@@ -7416,11 +7458,11 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion4 == false) && (answeredSurveyQuestion3 == true))
+                            if ((answeredSurveyQuestion4 == false) && (answeredSurveyQuestion3 == true) && (surveyQuestion3 != ""))
                             {
                                 surveyQuestion4 = "yes";
                                 answeredSurveyQuestion4 = true;
-								if (GM_title.isUsingTalkback == true)
+                                if (GM_title.isUsingTalkback == true)
                                 {
                                     clips = new List<AudioClip>() { Database.surveyClips[12] };
                                 }
@@ -7430,11 +7472,11 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion3 == false) && (answeredSurveyQuestion2 == true))
+                            if ((answeredSurveyQuestion3 == false) && (answeredSurveyQuestion2 == true) && (surveyQuestion2 != ""))
                             {
                                 surveyQuestion3 = "yes";
                                 answeredSurveyQuestion3 = true;
-								if (GM_title.isUsingTalkback == true)
+                                if (GM_title.isUsingTalkback == true)
                                 {
                                     clips = new List<AudioClip>() { Database.surveyClips[10] };
                                 }
@@ -7444,11 +7486,11 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion2 == false) && (answeredSurveyQuestion1 == true))
+                            if ((answeredSurveyQuestion2 == false) && (answeredSurveyQuestion1 == true) && (surveyQuestion1 != ""))
                             {
                                 surveyQuestion2 = "yes";
                                 answeredSurveyQuestion2 = true;
-								if (GM_title.isUsingTalkback == true)
+                                if (GM_title.isUsingTalkback == true)
                                 {
                                     clips = new List<AudioClip>() { Database.surveyClips[8] };
                                 }
@@ -7462,7 +7504,7 @@ public class Player : MovingObject
                             {
                                 surveyQuestion1 = "yes";
                                 answeredSurveyQuestion1 = true;
-								if (GM_title.isUsingTalkback == true)
+                                if (GM_title.isUsingTalkback == true)
                                 {
                                     clips = new List<AudioClip>() { Database.surveyClips[6] };
                                 }
@@ -7471,15 +7513,16 @@ public class Player : MovingObject
                                     clips = new List<AudioClip>() { Database.surveyClips[5] };
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }                          
+                            }
                         }
 
-                        if ((noConsent == true) || (readingSurvey == true) || ((hearingSurvey == false) && (readingSurvey == false) && (noSurvey == false)))
+                        if ((noConsent == true) || ((readingSurvey == true) && (finished_reading_survey == true)) || ((hearingSurvey == true) && (finished_listening_survey == true)) || ((hearingSurvey == false) && (readingSurvey == false) && (noSurvey == false)))
                         {
                             noConsent = false;
                             readingSurvey = true;
                             hearingSurvey = false;
                             android_window_displayed = false;
+                            finished_listening_survey = false;
                             finished_reading_survey = true;
                             finished_questions_survey = true;
                             surveyQuestion1 = "na";
@@ -7898,7 +7941,7 @@ public class Player : MovingObject
 
                         if (hearingSurvey == true)
                         {
-                            if ((answeredSurveyQuestion15 == false) && (answeredSurveyQuestion14 == true))
+                            if ((answeredSurveyQuestion15 == false) && (answeredSurveyQuestion14 == true) && (surveyQuestion14 != ""))
                             {
                                 surveyQuestion15 = "na";
                                 answeredSurveyQuestion15 = true;
@@ -7910,7 +7953,7 @@ public class Player : MovingObject
                                     canRepeat = true;
                                 }, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion14 == false) && (answeredSurveyQuestion13 == true))
+                            if ((answeredSurveyQuestion14 == false) && (answeredSurveyQuestion13 == true) && (surveyQuestion13 != ""))
                             {
                                 surveyQuestion14 = "na";
                                 answeredSurveyQuestion14 = true;
@@ -7924,7 +7967,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion13 == false) && (answeredSurveyQuestion12 == true))
+                            if ((answeredSurveyQuestion13 == false) && (answeredSurveyQuestion12 == true) && (surveyQuestion12 != ""))
                             {
                                 surveyQuestion13 = "na";
                                 answeredSurveyQuestion13 = true;
@@ -7938,7 +7981,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion12 == false) && (answeredSurveyQuestion11 == true))
+                            if ((answeredSurveyQuestion12 == false) && (answeredSurveyQuestion11 == true) && (surveyQuestion11 != ""))
                             {
                                 surveyQuestion12 = "na";
                                 answeredSurveyQuestion12 = true;
@@ -7952,7 +7995,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion11 == false) && (answeredSurveyQuestion10 == true))
+                            if ((answeredSurveyQuestion11 == false) && (answeredSurveyQuestion10 == true) && (surveyQuestion10 != ""))
                             {
                                 surveyQuestion11 = "na";
                                 answeredSurveyQuestion11 = true;
@@ -7966,7 +8009,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion10 == false) && (answeredSurveyQuestion9 == true))
+                            if ((answeredSurveyQuestion10 == false) && (answeredSurveyQuestion9 == true) && (surveyQuestion9 != ""))
                             {
                                 surveyQuestion10 = "na";
                                 answeredSurveyQuestion10 = true;
@@ -7980,7 +8023,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion9 == false) && (answeredSurveyQuestion8 == true))
+                            if ((answeredSurveyQuestion9 == false) && (answeredSurveyQuestion8 == true) && (surveyQuestion8 != ""))
                             {
                                 surveyQuestion9 = "na";
                                 answeredSurveyQuestion9 = true;
@@ -7994,7 +8037,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion8 == false) && (answeredSurveyQuestion7 == true))
+                            if ((answeredSurveyQuestion8 == false) && (answeredSurveyQuestion7 == true) && (surveyQuestion7 != ""))
                             {
                                 surveyQuestion8 = "na";
                                 answeredSurveyQuestion8 = true;
@@ -8008,7 +8051,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion7 == false) && (answeredSurveyQuestion6 == true))
+                            if ((answeredSurveyQuestion7 == false) && (answeredSurveyQuestion6 == true) && (surveyQuestion6 != ""))
                             {
                                 surveyQuestion7 = "na";
                                 answeredSurveyQuestion7 = true;
@@ -8022,7 +8065,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion6 == false) && (answeredSurveyQuestion5 == true))
+                            if ((answeredSurveyQuestion6 == false) && (answeredSurveyQuestion5 == true) && (surveyQuestion5 != ""))
                             {
                                 surveyQuestion6 = "na";
                                 answeredSurveyQuestion6 = true;
@@ -8036,7 +8079,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion5 == false) && (answeredSurveyQuestion4 == true))
+                            if ((answeredSurveyQuestion5 == false) && (answeredSurveyQuestion4 == true) && (surveyQuestion4 != ""))
                             {
                                 surveyQuestion5 = "na";
                                 answeredSurveyQuestion5 = true;
@@ -8050,7 +8093,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion4 == false) && (answeredSurveyQuestion3 == true))
+                            if ((answeredSurveyQuestion4 == false) && (answeredSurveyQuestion3 == true) && (surveyQuestion3 != ""))
                             {
                                 surveyQuestion4 = "na";
                                 answeredSurveyQuestion4 = true;
@@ -8064,7 +8107,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion3 == false) && (answeredSurveyQuestion2 == true))
+                            if ((answeredSurveyQuestion3 == false) && (answeredSurveyQuestion2 == true) && (surveyQuestion2 != ""))
                             {
                                 surveyQuestion3 = "na";
                                 answeredSurveyQuestion3 = true;
@@ -8078,7 +8121,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion2 == false) && (answeredSurveyQuestion1 == true))
+                            if ((answeredSurveyQuestion2 == false) && (answeredSurveyQuestion1 == true) && (surveyQuestion1 != ""))
                             {
                                 surveyQuestion2 = "na";
                                 answeredSurveyQuestion2 = true;
@@ -9111,7 +9154,7 @@ public class Player : MovingObject
                     {
                         if (hearingSurvey == true)
                         {                                                                                                                  
-                            if ((answeredSurveyQuestion15 == false) && (answeredSurveyQuestion14 == true))
+                            if ((answeredSurveyQuestion15 == false) && (answeredSurveyQuestion14 == true) && (surveyQuestion14 != ""))
                             {
                                 surveyQuestion15 = "no";                                       
                                 answeredSurveyQuestion15 = true;
@@ -9123,7 +9166,7 @@ public class Player : MovingObject
                                     canRepeat = true;
                                 }, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion14 == false) && (answeredSurveyQuestion13 == true))
+                            if ((answeredSurveyQuestion14 == false) && (answeredSurveyQuestion13 == true) && (surveyQuestion13 != ""))
                             {
                                 surveyQuestion14 = "no";
                                 answeredSurveyQuestion14 = true;
@@ -9137,7 +9180,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion13 == false) && (answeredSurveyQuestion12 == true))
+                            if ((answeredSurveyQuestion13 == false) && (answeredSurveyQuestion12 == true) && (surveyQuestion12 != ""))
                             {
                                 surveyQuestion13 = "no";
                                 answeredSurveyQuestion13 = true;
@@ -9151,7 +9194,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion12 == false) && (answeredSurveyQuestion11 == true))
+                            if ((answeredSurveyQuestion12 == false) && (answeredSurveyQuestion11 == true) && (surveyQuestion11 != ""))
                             {
                                 surveyQuestion12 = "no";
                                 answeredSurveyQuestion12 = true;
@@ -9165,7 +9208,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion11 == false) && (answeredSurveyQuestion10 == true))
+                            if ((answeredSurveyQuestion11 == false) && (answeredSurveyQuestion10 == true) && (surveyQuestion10 != ""))
                             {
                                 surveyQuestion11 = "no";
                                 answeredSurveyQuestion11 = true;
@@ -9179,7 +9222,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion10 == false) && (answeredSurveyQuestion9 == true))
+                            if ((answeredSurveyQuestion10 == false) && (answeredSurveyQuestion9 == true) && (surveyQuestion9 != ""))
                             {
                                 surveyQuestion10 = "no";
                                 answeredSurveyQuestion10 = true;
@@ -9193,7 +9236,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion9 == false) && (answeredSurveyQuestion8 == true))
+                            if ((answeredSurveyQuestion9 == false) && (answeredSurveyQuestion8 == true) && (surveyQuestion8 != ""))
                             {
                                 surveyQuestion9 = "no";
                                 answeredSurveyQuestion9 = true;
@@ -9207,7 +9250,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion8 == false) && (answeredSurveyQuestion7 == true))
+                            if ((answeredSurveyQuestion8 == false) && (answeredSurveyQuestion7 == true) && (surveyQuestion7 != ""))
                             {
                                 surveyQuestion8 = "no";
                                 answeredSurveyQuestion8 = true;
@@ -9221,7 +9264,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion7 == false) && (answeredSurveyQuestion6 == true))
+                            if ((answeredSurveyQuestion7 == false) && (answeredSurveyQuestion6 == true) && (surveyQuestion6 != ""))
                             {
                                 surveyQuestion7 = "no";
                                 answeredSurveyQuestion7 = true;
@@ -9235,7 +9278,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion6 == false) && (answeredSurveyQuestion5 == true))
+                            if ((answeredSurveyQuestion6 == false) && (answeredSurveyQuestion5 == true) && (surveyQuestion5 != ""))
                             {
                                 surveyQuestion6 = "no";
                                 answeredSurveyQuestion6 = true;
@@ -9249,7 +9292,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion5 == false) && (answeredSurveyQuestion4 == true))
+                            if ((answeredSurveyQuestion5 == false) && (answeredSurveyQuestion4 == true) && (surveyQuestion4 != ""))
                             {
                                 surveyQuestion5 = "no";
                                 answeredSurveyQuestion5 = true;
@@ -9263,7 +9306,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion4 == false) && (answeredSurveyQuestion3 == true))
+                            if ((answeredSurveyQuestion4 == false) && (answeredSurveyQuestion3 == true) && (surveyQuestion3 != ""))
                             {
                                 surveyQuestion4 = "no";
                                 answeredSurveyQuestion4 = true;
@@ -9277,7 +9320,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion3 == false) && (answeredSurveyQuestion2 == true))
+                            if ((answeredSurveyQuestion3 == false) && (answeredSurveyQuestion2 == true) && (surveyQuestion2 != ""))
                             {
                                 surveyQuestion3 = "no";
                                 answeredSurveyQuestion3 = true;
@@ -9291,7 +9334,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion2 == false) && (answeredSurveyQuestion1 == true))
+                            if ((answeredSurveyQuestion2 == false) && (answeredSurveyQuestion1 == true) && (surveyQuestion1 != ""))
                             {
                                 surveyQuestion2 = "no";
                                 answeredSurveyQuestion2 = true;
@@ -9321,13 +9364,14 @@ public class Player : MovingObject
                             }
                         }
 
-                        if ((noConsent == true) || (readingSurvey == true) || (hearingSurvey == true) || ((hearingSurvey == false) && (readingSurvey == false) && (noSurvey == false)))
+                        if ((noConsent == true) || ((readingSurvey == true) && (finished_reading_survey == true)) || ((hearingSurvey == true) && (finished_listening_survey == true)) || ((hearingSurvey == false) && (readingSurvey == false) && (noSurvey == false)))
                         {
 							noConsent = false;
 							readingSurvey = false;
 							hearingSurvey = true;
                             android_window_displayed = false;
                             finished_listening_survey = false;
+                            finished_reading_survey = false;
                             finished_questions_survey = false;
                             surveyQuestion1 = "";
                             answeredSurveyQuestion1 = false;
@@ -9575,6 +9619,14 @@ public class Player : MovingObject
                             SoundManager.instance.PlayClips(clips, null, 0, () => {
                                 canRepeat = true;
                                 hasCheckedForConsent = true;
+                                if (SystemInfo.deviceUniqueIdentifier.Length <= 6)
+                                {
+                                    consentCode = SystemInfo.deviceUniqueIdentifier;
+                                }
+                                else if (SystemInfo.deviceUniqueIdentifier.Length > 6)
+                                {
+                                    consentCode = SystemInfo.deviceUniqueIdentifier.Substring(0, 6);
+                                }
                                 reportConsent(SystemInfo.deviceUniqueIdentifier);
                             }, 1, null, true);
                         }
@@ -9633,7 +9685,7 @@ public class Player : MovingObject
                     {
                         if (hearingSurvey == true)
                         {
-                            if ((answeredSurveyQuestion15 == false) && (answeredSurveyQuestion14 == true))
+                            if ((answeredSurveyQuestion15 == false) && (answeredSurveyQuestion14 == true) && (surveyQuestion14 != ""))
                             {
                                 surveyQuestion15 = "yes";
                                 answeredSurveyQuestion15 = true;
@@ -9645,7 +9697,7 @@ public class Player : MovingObject
                                     canRepeat = true;
                                 }, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion14 == false) && (answeredSurveyQuestion13 == true))
+                            if ((answeredSurveyQuestion14 == false) && (answeredSurveyQuestion13 == true) && (surveyQuestion13 != ""))
                             {
                                 surveyQuestion14 = "yes";
                                 answeredSurveyQuestion14 = true;
@@ -9659,7 +9711,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion13 == false) && (answeredSurveyQuestion12 == true))
+                            if ((answeredSurveyQuestion13 == false) && (answeredSurveyQuestion12 == true) && (surveyQuestion12 != ""))
                             {
                                 surveyQuestion13 = "yes";
                                 answeredSurveyQuestion13 = true;
@@ -9673,7 +9725,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion12 == false) && (answeredSurveyQuestion11 == true))
+                            if ((answeredSurveyQuestion12 == false) && (answeredSurveyQuestion11 == true) && (surveyQuestion11 != ""))
                             {
                                 surveyQuestion12 = "yes";
                                 answeredSurveyQuestion12 = true;
@@ -9687,7 +9739,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion11 == false) && (answeredSurveyQuestion10 == true))
+                            if ((answeredSurveyQuestion11 == false) && (answeredSurveyQuestion10 == true) && (surveyQuestion10 != ""))
                             {
                                 surveyQuestion11 = "yes";
                                 answeredSurveyQuestion11 = true;
@@ -9701,7 +9753,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion10 == false) && (answeredSurveyQuestion9 == true))
+                            if ((answeredSurveyQuestion10 == false) && (answeredSurveyQuestion9 == true) && (surveyQuestion9 != ""))
                             {
                                 surveyQuestion10 = "yes";
                                 answeredSurveyQuestion10 = true;
@@ -9715,7 +9767,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion9 == false) && (answeredSurveyQuestion8 == true))
+                            if ((answeredSurveyQuestion9 == false) && (answeredSurveyQuestion8 == true) && (surveyQuestion8 != ""))
                             {
                                 surveyQuestion9 = "yes";
                                 answeredSurveyQuestion9 = true;
@@ -9729,7 +9781,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion8 == false) && (answeredSurveyQuestion7 == true))
+                            if ((answeredSurveyQuestion8 == false) && (answeredSurveyQuestion7 == true) && (surveyQuestion7 != ""))
                             {
                                 surveyQuestion8 = "yes";
                                 answeredSurveyQuestion8 = true;
@@ -9743,7 +9795,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion7 == false) && (answeredSurveyQuestion6 == true))
+                            if ((answeredSurveyQuestion7 == false) && (answeredSurveyQuestion6 == true) && (surveyQuestion6 != ""))
                             {
                                 surveyQuestion7 = "yes";
                                 answeredSurveyQuestion7 = true;
@@ -9757,7 +9809,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion6 == false) && (answeredSurveyQuestion5 == true))
+                            if ((answeredSurveyQuestion6 == false) && (answeredSurveyQuestion5 == true) && (surveyQuestion5 != ""))
                             {
                                 surveyQuestion6 = "yes";
                                 answeredSurveyQuestion6 = true;
@@ -9771,7 +9823,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion5 == false) && (answeredSurveyQuestion4 == true))
+                            if ((answeredSurveyQuestion5 == false) && (answeredSurveyQuestion4 == true) && (surveyQuestion4 != ""))
                             {
                                 surveyQuestion5 = "yes";
                                 answeredSurveyQuestion5 = true;
@@ -9785,7 +9837,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion4 == false) && (answeredSurveyQuestion3 == true))
+                            if ((answeredSurveyQuestion4 == false) && (answeredSurveyQuestion3 == true) && (surveyQuestion3 != ""))
                             {
                                 surveyQuestion4 = "yes";
                                 answeredSurveyQuestion4 = true;
@@ -9799,7 +9851,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion3 == false) && (answeredSurveyQuestion2 == true))
+                            if ((answeredSurveyQuestion3 == false) && (answeredSurveyQuestion2 == true) && (surveyQuestion2 != ""))
                             {
                                 surveyQuestion3 = "yes";
                                 answeredSurveyQuestion3 = true;
@@ -9813,7 +9865,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion2 == false) && (answeredSurveyQuestion1 == true))
+                            if ((answeredSurveyQuestion2 == false) && (answeredSurveyQuestion1 == true) && (surveyQuestion1 != ""))
                             {
                                 surveyQuestion2 = "yes";
                                 answeredSurveyQuestion2 = true;
@@ -9843,7 +9895,7 @@ public class Player : MovingObject
                             }
                         }
 
-                        if ((noConsent == true) || (readingSurvey == true) || (hearingSurvey == true) || ((hearingSurvey == false) && (readingSurvey == false) && (noSurvey == false)))
+                        if ((noConsent == true) || ((readingSurvey == true) && (finished_reading_survey == true)) || ((hearingSurvey == true) && (finished_listening_survey == true)) || ((hearingSurvey == false) && (readingSurvey == false) && (noSurvey == false)))
                         {
                             noConsent = false;
 							hearingSurvey = false;
@@ -9854,6 +9906,7 @@ public class Player : MovingObject
                                 can_display_window_survey = true;
                             }
                             finished_reading_survey = false;
+                            finished_listening_survey = false;
                             finished_questions_survey = false;
                             surveyQuestion1 = "";
                             answeredSurveyQuestion1 = false;
@@ -10272,7 +10325,7 @@ public class Player : MovingObject
 
                         if (hearingSurvey == true)
                         {
-                            if ((answeredSurveyQuestion15 == false) && (answeredSurveyQuestion14 == true))
+                            if ((answeredSurveyQuestion15 == false) && (answeredSurveyQuestion14 == true) && (surveyQuestion14 != ""))
                             {
                                 surveyQuestion15 = "na";
                                 answeredSurveyQuestion15 = true;
@@ -10284,7 +10337,7 @@ public class Player : MovingObject
                                     canRepeat = true;
                                 }, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion14 == false) && (answeredSurveyQuestion13 == true))
+                            if ((answeredSurveyQuestion14 == false) && (answeredSurveyQuestion13 == true) && (surveyQuestion13 != ""))
                             {
                                 surveyQuestion14 = "na";
                                 answeredSurveyQuestion14 = true;
@@ -10298,7 +10351,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion13 == false) && (answeredSurveyQuestion12 == true))
+                            if ((answeredSurveyQuestion13 == false) && (answeredSurveyQuestion12 == true) && (surveyQuestion12 != ""))
                             {
                                 surveyQuestion13 = "na";
                                 answeredSurveyQuestion13 = true;
@@ -10312,7 +10365,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion12 == false) && (answeredSurveyQuestion11 == true))
+                            if ((answeredSurveyQuestion12 == false) && (answeredSurveyQuestion11 == true) && (surveyQuestion11 != ""))
                             {
                                 surveyQuestion12 = "na";
                                 answeredSurveyQuestion12 = true;
@@ -10326,7 +10379,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion11 == false) && (answeredSurveyQuestion10 == true))
+                            if ((answeredSurveyQuestion11 == false) && (answeredSurveyQuestion10 == true) && (surveyQuestion10 != ""))
                             {
                                 surveyQuestion11 = "na";
                                 answeredSurveyQuestion11 = true;
@@ -10340,7 +10393,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion10 == false) && (answeredSurveyQuestion9 == true))
+                            if ((answeredSurveyQuestion10 == false) && (answeredSurveyQuestion9 == true) && (surveyQuestion9 != ""))
                             {
                                 surveyQuestion10 = "na";
                                 answeredSurveyQuestion10 = true;
@@ -10354,7 +10407,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion9 == false) && (answeredSurveyQuestion8 == true))
+                            if ((answeredSurveyQuestion9 == false) && (answeredSurveyQuestion8 == true) && (surveyQuestion8 != ""))
                             {
                                 surveyQuestion9 = "na";
                                 answeredSurveyQuestion9 = true;
@@ -10368,7 +10421,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion8 == false) && (answeredSurveyQuestion7 == true))
+                            if ((answeredSurveyQuestion8 == false) && (answeredSurveyQuestion7 == true) && (surveyQuestion7 != ""))
                             {
                                 surveyQuestion8 = "na";
                                 answeredSurveyQuestion8 = true;
@@ -10382,7 +10435,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion7 == false) && (answeredSurveyQuestion6 == true))
+                            if ((answeredSurveyQuestion7 == false) && (answeredSurveyQuestion6 == true) && (surveyQuestion6 != ""))
                             {
                                 surveyQuestion7 = "na";
                                 answeredSurveyQuestion7 = true;
@@ -10396,7 +10449,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion6 == false) && (answeredSurveyQuestion5 == true))
+                            if ((answeredSurveyQuestion6 == false) && (answeredSurveyQuestion5 == true) && (surveyQuestion5 != ""))
                             {
                                 surveyQuestion6 = "na";
                                 answeredSurveyQuestion6 = true;
@@ -10410,7 +10463,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion5 == false) && (answeredSurveyQuestion4 == true))
+                            if ((answeredSurveyQuestion5 == false) && (answeredSurveyQuestion4 == true) && (surveyQuestion4 != ""))
                             {
                                 surveyQuestion5 = "na";
                                 answeredSurveyQuestion5 = true;
@@ -10424,7 +10477,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion4 == false) && (answeredSurveyQuestion3 == true))
+                            if ((answeredSurveyQuestion4 == false) && (answeredSurveyQuestion3 == true) && (surveyQuestion3 != ""))
                             {
                                 surveyQuestion4 = "na";
                                 answeredSurveyQuestion4 = true;
@@ -10438,7 +10491,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion3 == false) && (answeredSurveyQuestion2 == true))
+                            if ((answeredSurveyQuestion3 == false) && (answeredSurveyQuestion2 == true) && (surveyQuestion2 != ""))
                             {
                                 surveyQuestion3 = "na";
                                 answeredSurveyQuestion3 = true;
@@ -10452,7 +10505,7 @@ public class Player : MovingObject
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                            if ((answeredSurveyQuestion2 == false) && (answeredSurveyQuestion1 == true))
+                            if ((answeredSurveyQuestion2 == false) && (answeredSurveyQuestion1 == true) && (surveyQuestion1 != ""))
                             {
                                 surveyQuestion2 = "na";
                                 answeredSurveyQuestion2 = true;
