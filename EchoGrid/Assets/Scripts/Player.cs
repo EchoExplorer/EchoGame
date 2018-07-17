@@ -2179,7 +2179,7 @@ public class Player : MovingObject
         {
             return;
         }
-        string echoEndpoint = "http://echolock.andrew.cmu.edu/cgi-bin/acceptEchoData.py";
+        string echoEndpoint = "http://echolock.andrew.cmu.edu/cgi-bin/echo.py";
 
         Vector2 idx_location = GameManager.instance.boardScript.get_idx_from_pos(transform.position);
         string location = "(" + idx_location.x.ToString() + "," + idx_location.y.ToString() + ")";
@@ -2729,7 +2729,7 @@ public class Player : MovingObject
         // Logging.Log(numCrashes, Logging.LogLevel.NORMAL);
 
         // TODO(agotsis) understand this. Reimplement.       
-        string levelDataEndpoint = "http://echolock.andrew.cmu.edu/cgi-bin/acceptLevelData.py";
+        string levelDataEndpoint = "http://echolock.andrew.cmu.edu/cgi-bin/level.py";
         int temp = GameManager.instance.boardScript.local_stats[curLevel];
 
         int timePlayed = PlayerPrefs.GetInt("TotalTime", 0);

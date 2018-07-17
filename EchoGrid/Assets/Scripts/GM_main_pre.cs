@@ -194,10 +194,22 @@ public class GM_main_pre : MonoBehaviour
                     {
                         if ((GameMode.instance.gamemode == GameMode.Game_Mode.TUTORIAL) || (GameMode.instance.gamemode == GameMode.Game_Mode.TUTORIAL_RESTART))
                         {
-                            if (((SoundManager.instance.finishedAllClips == true) || (canRepeat == true)) && (skippingTutorial == -1))
+                            if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
                             {
+                                if (skippingTutorial == 1)
+                                {
+                                    print("Found error with freeze.");
+                                    if (repeatPregameClip == true)
+                                    {
+                                        print("Fixed error with freeze.");
+                                        repeatPregameClip = false;
+                                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[18] };
+                                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.  
+                                    }
+                                }
+
                                 // If the player is using Talkback.
-                                if (GM_title.isUsingTalkback == true)
+                                else if ((skippingTutorial != 1) && (GM_title.isUsingTalkback == true))
                                 {
                                     canRepeat = false;
                                     if (repeatPregameClip == true)
@@ -215,7 +227,7 @@ public class GM_main_pre : MonoBehaviour
                                     }
                                 }
                                 // If the player is not using Talkback.
-                                else if (GM_title.isUsingTalkback == false)
+                                else if ((skippingTutorial != 1) && (GM_title.isUsingTalkback == false))
                                 {
                                     canRepeat = false;
                                     if (repeatPregameClip == true)
@@ -238,8 +250,18 @@ public class GM_main_pre : MonoBehaviour
                         {
                             if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
                             {
+                                if (skippingTutorial == 1)
+                                {
+                                    if (repeatPregameClip == true)
+                                    {
+                                        repeatPregameClip = false;
+                                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.preGameMenuClips[18] };
+                                        SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.  
+                                    }
+                                }
+
                                 // If the player is using Talkback.
-                                if (GM_title.isUsingTalkback == true)
+                                else if ((skippingTutorial != 1) && (GM_title.isUsingTalkback == true))
                                 {
                                     canRepeat = false;
                                     if (repeatPregameClip == true)
@@ -257,7 +279,7 @@ public class GM_main_pre : MonoBehaviour
                                     }
                                 }
                                 // If the player is not using Talkback.
-                                else if (GM_title.isUsingTalkback == false)
+                                else if ((skippingTutorial != 1) && (GM_title.isUsingTalkback == false))
                                 {
                                     canRepeat = false;
                                     if (repeatPregameClip == true)
@@ -377,7 +399,7 @@ public class GM_main_pre : MonoBehaviour
             }
             else if (at_confirm == true)
             {
-                if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
+                if (((SoundManager.instance.finishedAllClips == true) || (canRepeat == true)) && (skippingTutorial == -1))
                 {
                     // If the player is using Talkback.
                     if (GM_title.isUsingTalkback == true)
