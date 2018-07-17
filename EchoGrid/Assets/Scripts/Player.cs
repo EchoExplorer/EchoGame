@@ -2784,7 +2784,7 @@ public class Player : MovingObject
     /// </summary>
     private void reportConsent(string code)
     {
-        string echoEndpoint = "https://echolock.andrew.cmu.edu/cgi-bin/consent1.py";
+        string echoEndpoint = "http://echolock.andrew.cmu.edu/cgi-bin/consent1.py";
 
         WWWForm echoForm = new WWWForm();
         echoForm.AddField("userName", Utilities.encrypt(SystemInfo.deviceUniqueIdentifier));
@@ -2796,7 +2796,7 @@ public class Player : MovingObject
         WWW www = new WWW(echoEndpoint, echoForm);
         StartCoroutine(Utilities.WaitForRequest(www));
 
-        string echoEndpoint2 = "https://echolock.andrew.cmu.edu/cgi-bin/consent2.py";
+        string echoEndpoint2 = "http://echolock.andrew.cmu.edu/cgi-bin/consent2.py";
 
         WWWForm echoForm2 = new WWWForm();
         echoForm.AddField("userName", Utilities.encrypt(SystemInfo.deviceUniqueIdentifier));
