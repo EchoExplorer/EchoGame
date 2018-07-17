@@ -2642,7 +2642,7 @@ public class Player : MovingObject
         {
             return;
         }
-        string crashEndpoint = "http://echolock.andrew.cmu.edu/cgi-bin/acceptCrashData.py";
+        string crashEndpoint = "http://echolock.andrew.cmu.edu/cgi-bin/crash.py";
 
         Vector2 idx_pos = GameManager.instance.boardScript.get_idx_from_pos(transform.position);
         string location = "(" + idx_pos.x.ToString() + "," + idx_pos.y.ToString() + ")";
