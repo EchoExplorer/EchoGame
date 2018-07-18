@@ -286,7 +286,7 @@ public class BoardManager : MonoBehaviour
         player.transform.position = startPositions[randomDelta];
         start_idx = get_idx_from_pos(player.transform.position);
         player_idx = start_idx;
-        print("Player start position: X = " + start_idx.x.ToString() + ", Y = " + start_idx.y.ToString());
+        // print("Player start position: X = " + start_idx.x.ToString() + ", Y = " + start_idx.y.ToString());
 
         left_start_pt = false;
         gamerecord = gamerecord + "s@(" + start_idx.x.ToString() + "," + start_idx.y.ToString() + ")";
@@ -303,7 +303,7 @@ public class BoardManager : MonoBehaviour
             new_wall.transform.SetParent(wall_parent.transform);
         }
         exit_idx = get_idx_from_pos(exitPos);
-        print("Exit position: X = " + exit_idx.x.ToString() + ", Y = " + exit_idx.y.ToString());
+        // print("Exit position: X = " + exit_idx.x.ToString() + ", Y = " + exit_idx.y.ToString());
         GameObject new_exit = Instantiate(exit, exitPos, Quaternion.identity) as GameObject;
         new_exit.transform.SetParent(wall_parent.transform);
 
@@ -327,22 +327,22 @@ public class BoardManager : MonoBehaviour
             if (mazeSolution[mazeSolution.Length - 2] == 'u')
             {
                 player_script.rotateplayer_no_update(StringToDir("FRONT"));
-                print("Player start direction set to Front.");
+                // print("Player start direction set to Front.");
             }
             if (mazeSolution[mazeSolution.Length - 2] == 'd')
             {
                 player_script.rotateplayer_no_update(StringToDir("BACK"));
-                print("Player start direction set to Back.");
+                // print("Player start direction set to Back.");
             }
             if (mazeSolution[mazeSolution.Length - 2] == 'l')
             {
                 player_script.rotateplayer_no_update(StringToDir("LEFT"));
-                print("Player start direction set to Left.");
+                // print("Player start direction set to Left.");
             }
             if (mazeSolution[mazeSolution.Length - 2] == 'r')
             {
                 player_script.rotateplayer_no_update(StringToDir("RIGHT"));
-                print("Player start direction set to Right.");
+                // print("Player start direction set to Right.");
             }
         }
         startDir = player_script.get_player_dir("FRONT");
@@ -593,7 +593,7 @@ public class BoardManager : MonoBehaviour
                             if (line.Substring((6 + i), 1) == "D")
                             {
                                 currentLevelString = "DEFAULT";
-                                print("Level Searched: Level Default.\n");
+                                // print("Level Searched: Level Default.\n");
                             }
                             // Otherwise, add the character to the level string.
                             else if (line.Substring((6 + i), 1) != "D")
@@ -638,7 +638,7 @@ public class BoardManager : MonoBehaviour
                                 {
                                     if (j == 0)
                                     {
-                                        print("Level Searched: No corner information.");
+                                        // print("Level Searched: No corner information.");
                                     }
                                     // Get the start position of the deadend information.
                                     deadendInfoStart = (cornerInfoStart + j) + 2;
@@ -657,25 +657,25 @@ public class BoardManager : MonoBehaviour
                             }
                             else if (remainingCharacters == 0)
                             {
-                                print("Level Searched: No deadend information.");
+                                // print("Level Searched: No deadend information.");
                             }
                             else if (remainingCharacters > 2)
                             {
-                                print("Level Searched: Too many deadend characters.");
+                                // print("Level Searched: Too many deadend characters.");
                             }
                         }
 
                         int level_reading = Convert.ToInt32(currentLevelString);
                         if (level_reading == level_wanted)
                         { //  we found the level we want
-                            print("Level Searched: Level = " + currentLevelString + "\n");
+                            // print("Level Searched: Level = " + currentLevelString + "\n");
                             if (cornerString != "")
                             {
-                                print("Level Searched: Corners in Level " + currentLevelString + " = " + cornerString);
+                                // print("Level Searched: Corners in Level " + currentLevelString + " = " + cornerString);
                             }
                             if (deadendString != "")
                             {
-                                print("Level Searched: Deadends in Level " + currentLevelString + " = " + deadendString);
+                                // print("Level Searched: Deadends in Level " + currentLevelString + " = " + deadendString);
                             }
                             if ((cornerString != "") && (deadendString != ""))
                             {

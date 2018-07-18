@@ -119,7 +119,7 @@ public class Utilities : MonoBehaviour
             if ((filename != null) && (filePath != null))
             {
                 System.IO.File.Delete(filePath);
-                print("Deleted file: " + filename);
+                // print("Deleted file: " + filename);
             }
             //JSONNode data = JSON.Parse (www.text);
             //Debug.Log("this is the parsed json data: " + data["testData"]);

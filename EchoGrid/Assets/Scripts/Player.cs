@@ -98,7 +98,7 @@ public class Player : MovingObject
 
     string debugPlayerInfo; // String for debugging the effects of the player's actions (Tells you they rotated, swiped, etc.).
 
-    bool survey_activated = false;
+    public static bool survey_activated = false;
     bool survey_shown = false;
     string consentCode = "";
     string surveyCode = "";
@@ -237,6 +237,7 @@ public class Player : MovingObject
     bool finished_questions_survey = false;
     bool can_display_window_survey = false;
     bool can_submit_survey = false;
+    bool swipeToRestartSurvey = false;
 
     bool noSurvey = false;
     bool readingSurvey = false;
@@ -2158,12 +2159,12 @@ public class Player : MovingObject
     IEnumerator FinishedEchoClip(float waitTime, float[] delayTimes = null)
     {
         waitTime = delayTimes.Max();
-        print("Wait Time: " + waitTime.ToString());
+        // print("Wait Time: " + waitTime.ToString());
 
         yield return new WaitForSeconds(waitTime);
 
         finishedEcho = true;
-        print("Finished echo.");
+        // print("Finished echo.");
     }
 
     string post_act = "";
@@ -2799,7 +2800,7 @@ public class Player : MovingObject
         string echoEndpoint2 = "http://echolock.andrew.cmu.edu/cgi-bin/consent2.py";
 
         WWWForm echoForm2 = new WWWForm();
-        echoForm.AddField("userName", Utilities.encrypt(SystemInfo.deviceUniqueIdentifier));
+        echoForm2.AddField("userName", Utilities.encrypt(SystemInfo.deviceUniqueIdentifier));
         echoForm2.AddField("agecheck", Utilities.encrypt(question1));
         echoForm2.AddField("understandcheck", Utilities.encrypt(question2));
         echoForm2.AddField("researchcheck", Utilities.encrypt(question3));     
@@ -3054,33 +3055,104 @@ public class Player : MovingObject
         {
             if ((hearingSurvey == false) && (readingSurvey == false) && (noSurvey == false))
             {
-                if (GM_title.isUsingTalkback == true)
+                if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
                 {
-                    clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.surveyClips[1] };
+                    canRepeat = false;
+                    swipeToRestartSurvey = false;
+                    finished_listening_survey = false;
+                    finished_reading_survey = false;
+                    finished_questions_survey = false;
+                    android_window_displayed = false;
+                    can_display_window_survey = false;
+                    surveyQuestion1 = "";
+                    answeredSurveyQuestion1 = false;
+                    surveyQuestion2 = "";
+                    answeredSurveyQuestion2 = false;
+                    surveyQuestion3 = "";
+                    answeredSurveyQuestion3 = false;
+                    surveyQuestion4 = "";
+                    answeredSurveyQuestion4 = false;
+                    surveyQuestion5 = "";
+                    answeredSurveyQuestion5 = false;
+                    surveyQuestion6 = "";
+                    answeredSurveyQuestion6 = false;
+                    surveyQuestion7 = "";
+                    answeredSurveyQuestion7 = false;
+                    surveyQuestion8 = "";
+                    answeredSurveyQuestion8 = false;
+                    surveyQuestion9 = "";
+                    answeredSurveyQuestion9 = false;
+                    surveyQuestion10 = "";
+                    answeredSurveyQuestion10 = false;
+                    surveyQuestion11 = "";
+                    answeredSurveyQuestion11 = false;
+                    surveyQuestion12 = "";
+                    answeredSurveyQuestion12 = false;
+                    surveyQuestion13 = "";
+                    answeredSurveyQuestion13 = false;
+                    surveyQuestion14 = "";
+                    answeredSurveyQuestion14 = false;
+                    surveyQuestion15 = "";
+                    answeredSurveyQuestion15 = false;
+                    readEnjoy = false;
+                    enjoyFlag = false;
+                    readPlayMore = false;
+                    playMoreFlag = false;
+                    readEasy = false;
+                    easyFlag = false;
+                    readLost = false;
+                    lostFlag = false;
+                    readUnderstandEcho = false;
+                    understandEchoFlag = false;
+                    readFrustrating = false;
+                    frustratingFlag = false;
+                    readTutorial = false;
+                    tutorialFlag = false;
+                    readTutorialHelp = false;
+                    tutorialHelpFlag = false;
+                    readHints = false;
+                    hintsFlag = false;
+                    readInstructions = false;
+                    instructionsFlag = false;
+                    readControls = false;
+                    controlsFlag = false;
+                    readLook = false;
+                    lookFlag = false;
+                    readEchoNavigate = false;
+                    echoNavigateFlag = false;
+                    readVisuallyImpaired = false;
+                    visuallyImpairedFlag = false;
+                    readHearingImpaired = false;
+                    hearingImpairedFlag = false;
+
+                    if (GM_title.isUsingTalkback == true)
+                    {
+                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[1] };
+                    }
+                    else if (GM_title.isUsingTalkback == false)
+                    {
+                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[0] };
+                    }
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clip.                
                 }
-                else if (GM_title.isUsingTalkback == false)
-                {
-                    clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.surveyClips[0] };
-                }
-                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clip.                
             }
 
             if ((readingSurvey == true) && (answeredSurveyQuestion1 == false))
             {
-                if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
+                if ((canRepeat == true) && (can_display_window_survey == false))
                 {
-                    if (can_display_window_survey == false)
-                    {
-                        canRepeat = false;
-                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[2] };
-                        SoundManager.instance.PlayClips(clips, null, 0, () => {
-                            can_display_window_survey = true;
-                        }, 3, null, true); // Play the appropriate clip.
-                    }
-                }                
+                    canRepeat = false;
+                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[2] };
+                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clip.
+                }
+
+                if ((canRepeat == false) && (can_display_window_survey == false) && (SoundManager.instance.finishedAllClips == true))
+                {
+                    can_display_window_survey = true;
+                }
             }
 
-            if ((hearingSurvey == true) && (answeredSurveyQuestion1 == false))
+            if ((hearingSurvey == true) && (finished_listening_survey == false) && (answeredSurveyQuestion1 == false))
             {
                 if (canRepeat == true)
                 {
@@ -3097,28 +3169,82 @@ public class Player : MovingObject
                 }
             }
 
-            if (((hearingSurvey == true) || (readingSurvey == true)) && (finished_questions_survey == true) && (can_submit_survey == false))
-            {
-                if (canRepeat == true)
-                {
-                    canRepeat = false;
-                    if (GM_title.isUsingTalkback == true)
-                    {
-                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[35] };
-                    }
-                    else if (GM_title.isUsingTalkback == false)
-                    {
-                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[34] };
-                    }
-                    SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                }
-            }
-
             if (((hearingSurvey == true) || (readingSurvey == true)) && (finished_questions_survey == true) && (can_submit_survey == true))
             {
                 if (canRepeat == true)
                 {
                     canRepeat = false;
+                    hearingSurvey = false;
+                    readingSurvey = false;
+                    noSurvey = false;
+                    survey_activated = false;
+                    android_window_displayed = false;
+                    finished_listening_survey = false;
+                    finished_reading_survey = false;
+                    finished_questions_survey = false;
+                    can_display_window_survey = false;
+                    can_submit_survey = false;
+                    surveyQuestion1 = "";
+                    answeredSurveyQuestion1 = false;
+                    surveyQuestion2 = "";
+                    answeredSurveyQuestion2 = false;
+                    surveyQuestion3 = "";
+                    answeredSurveyQuestion3 = false;
+                    surveyQuestion4 = "";
+                    answeredSurveyQuestion4 = false;
+                    surveyQuestion5 = "";
+                    answeredSurveyQuestion5 = false;
+                    surveyQuestion6 = "";
+                    answeredSurveyQuestion6 = false;
+                    surveyQuestion7 = "";
+                    answeredSurveyQuestion7 = false;
+                    surveyQuestion8 = "";
+                    answeredSurveyQuestion8 = false;
+                    surveyQuestion9 = "";
+                    answeredSurveyQuestion9 = false;
+                    surveyQuestion10 = "";
+                    answeredSurveyQuestion10 = false;
+                    surveyQuestion11 = "";
+                    answeredSurveyQuestion11 = false;
+                    surveyQuestion12 = "";
+                    answeredSurveyQuestion12 = false;
+                    surveyQuestion13 = "";
+                    answeredSurveyQuestion13 = false;
+                    surveyQuestion14 = "";
+                    answeredSurveyQuestion14 = false;
+                    surveyQuestion15 = "";
+                    answeredSurveyQuestion15 = false;
+                    readEnjoy = false;
+                    enjoyFlag = false;
+                    readPlayMore = false;
+                    playMoreFlag = false;
+                    readEasy = false;
+                    easyFlag = false;
+                    readLost = false;
+                    lostFlag = false;
+                    readUnderstandEcho = false;
+                    understandEchoFlag = false;
+                    readFrustrating = false;
+                    frustratingFlag = false;
+                    readTutorial = false;
+                    tutorialFlag = false;
+                    readTutorialHelp = false;
+                    tutorialHelpFlag = false;
+                    readHints = false;
+                    hintsFlag = false;
+                    readInstructions = false;
+                    instructionsFlag = false;
+                    readControls = false;
+                    controlsFlag = false;
+                    readLook = false;
+                    lookFlag = false;
+                    readEchoNavigate = false;
+                    echoNavigateFlag = false;
+                    readVisuallyImpaired = false;
+                    visuallyImpairedFlag = false;
+                    readHearingImpaired = false;
+                    hearingImpairedFlag = false;
+
                     clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[38] };                
                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                 }
@@ -3126,7 +3252,7 @@ public class Player : MovingObject
 
             if ((noSurvey == true) && (can_submit_survey == false))
             {
-                if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
+                if (canRepeat == true)
                 {
                     canRepeat = false;
                     if (GM_title.isUsingTalkback == true)
@@ -3143,9 +3269,80 @@ public class Player : MovingObject
 
             if ((noSurvey == true) && (can_submit_survey == true))
             {
-                if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
+                if (canRepeat == true)
                 {
                     canRepeat = false;
+                    hearingSurvey = false;
+                    readingSurvey = false;
+                    noSurvey = false;
+                    survey_activated = false;
+                    android_window_displayed = false;
+                    finished_listening_survey = false;
+                    finished_reading_survey = false;
+                    finished_questions_survey = false;
+                    can_display_window_survey = false;
+                    can_submit_survey = false;
+                    surveyQuestion1 = "";
+                    answeredSurveyQuestion1 = false;
+                    surveyQuestion2 = "";
+                    answeredSurveyQuestion2 = false;
+                    surveyQuestion3 = "";
+                    answeredSurveyQuestion3 = false;
+                    surveyQuestion4 = "";
+                    answeredSurveyQuestion4 = false;
+                    surveyQuestion5 = "";
+                    answeredSurveyQuestion5 = false;
+                    surveyQuestion6 = "";
+                    answeredSurveyQuestion6 = false;
+                    surveyQuestion7 = "";
+                    answeredSurveyQuestion7 = false;
+                    surveyQuestion8 = "";
+                    answeredSurveyQuestion8 = false;
+                    surveyQuestion9 = "";
+                    answeredSurveyQuestion9 = false;
+                    surveyQuestion10 = "";
+                    answeredSurveyQuestion10 = false;
+                    surveyQuestion11 = "";
+                    answeredSurveyQuestion11 = false;
+                    surveyQuestion12 = "";
+                    answeredSurveyQuestion12 = false;
+                    surveyQuestion13 = "";
+                    answeredSurveyQuestion13 = false;
+                    surveyQuestion14 = "";
+                    answeredSurveyQuestion14 = false;
+                    surveyQuestion15 = "";
+                    answeredSurveyQuestion15 = false;
+                    readEnjoy = false;
+                    enjoyFlag = false;
+                    readPlayMore = false;
+                    playMoreFlag = false;
+                    readEasy = false;
+                    easyFlag = false;
+                    readLost = false;
+                    lostFlag = false;
+                    readUnderstandEcho = false;
+                    understandEchoFlag = false;
+                    readFrustrating = false;
+                    frustratingFlag = false;
+                    readTutorial = false;
+                    tutorialFlag = false;
+                    readTutorialHelp = false;
+                    tutorialHelpFlag = false;
+                    readHints = false;
+                    hintsFlag = false;
+                    readInstructions = false;
+                    instructionsFlag = false;
+                    readControls = false;
+                    controlsFlag = false;
+                    readLook = false;
+                    lookFlag = false;
+                    readEchoNavigate = false;
+                    echoNavigateFlag = false;
+                    readVisuallyImpaired = false;
+                    visuallyImpairedFlag = false;
+                    readHearingImpaired = false;
+                    hearingImpairedFlag = false;
+
                     clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[39] };
                     SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                 }
@@ -4136,7 +4333,7 @@ public class Player : MovingObject
     {
         if ((curLevel == 1) && (BoardManager.player_idx.x == 1) && (BoardManager.player_idx.y == 1) && (canDoGestureTutorial == false) && (BoardManager.finishedTutorialLevel1 == false))
         {
-            print("Can do gesture tutorial level 1");
+            // print("Can do gesture tutorial level 1");
             canDoGestureTutorial = true;
 
             // Play the beginning level 1 gesture tutorial clips and reset necessary variables.
@@ -4411,7 +4608,7 @@ public class Player : MovingObject
                         clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.mainGameClips[18] };
                         SoundManager.instance.PlayClips(clips, null, 0, null, 0, null);
                     }
-                    else if (curLevel == 11)
+                    else if ((curLevel == 11) && (can_submit_survey == false))
                     {
                         finishedEcho = false;
                         debugPlayerInfo = "Playing found level 11 exit clip.";
@@ -4459,8 +4656,11 @@ public class Player : MovingObject
                 {                    
                     if (survey_shown == false)
                     {
-                        print("At survey");
+                        // print("At survey");
                         survey_shown = true;
+                        hearingSurvey = false;
+                        readingSurvey = false;
+                        noConsent = false;
                         debugPlayerInfo = "Showing survey.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
 
@@ -4485,30 +4685,6 @@ public class Player : MovingObject
                     changingLevel = true;
                     attemptExitFromLevel(); // Attempt to exit the level.
                 }
-            }
-
-            // pop up the survey at the end of tutorial        
-            if ((GameManager.instance.level == 11) && (survey_activated == true))
-            {
-                if ((survey_shown == true) && (noConsent == true))
-                {
-                    survey_activated = false;
-                    survey_shown = false;
-
-                    print("Does not want to do survey.");
-                    debugPlayerInfo = "Does not want to do survey.";
-                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                }               
-                if ((survey_shown == true) && (finished_questions_survey == true))
-                {
-                    print("Reporting survey.");
-                    debugPlayerInfo = "Reporting survey.";
-                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-
-                    reportsurvey(surveyCode);
-                    survey_activated = false;
-                    survey_shown = false;
-                }                    
             }
         }
 
@@ -6027,10 +6203,17 @@ public class Player : MovingObject
                 readHearingImpaired = true;
                 surveyQuestion15 = "yes";
                 answeredSurveyQuestion15 = true;
-                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                if (GM_title.isUsingTalkback == true)
+                {
+                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33], Database.soundEffectClips[0], Database.surveyClips[35] };
+                }
+                if (GM_title.isUsingTalkback == false)
+                {
+                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33], Database.soundEffectClips[0], Database.surveyClips[34] };
+                }
                 SoundManager.instance.PlayClips(clips, null, 0, () => {
                     canRepeat = true;
-                }, 1, null, true);
+                }, 5, null, true);
 #if UNITY_IOS
                 yesPressed = false;
 #endif
@@ -6041,6 +6224,7 @@ public class Player : MovingObject
                 finished_questions_survey = true;
                 android_window_displayed = false;
                 can_display_window_survey = false;
+                can_submit_survey = false;
             }
 
             if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readHearingImpaired == false) && (hearingImpairedFlag == true) && (ad.noclicked() == true || noPressed == true))
@@ -6048,10 +6232,17 @@ public class Player : MovingObject
                 readHearingImpaired = true;
                 surveyQuestion15 = "no";
                 answeredSurveyQuestion15 = true;
-                clips = new List<AudioClip>() { Database.soundEffectClips[7] };
+                if (GM_title.isUsingTalkback == true)
+                {
+                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33], Database.soundEffectClips[0], Database.surveyClips[35] };
+                }
+                if (GM_title.isUsingTalkback == false)
+                {
+                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33], Database.soundEffectClips[0], Database.surveyClips[34] };
+                }
                 SoundManager.instance.PlayClips(clips, null, 0, () => {
                     canRepeat = true;
-                }, 1, null, true);
+                }, 5, null, true);
 #if UNITY_IOS
                 noPressed = false;
 #endif
@@ -6062,6 +6253,7 @@ public class Player : MovingObject
                 finished_questions_survey = true;
                 android_window_displayed = false;
                 can_display_window_survey = false;
+                can_submit_survey = false;
             }
 
             if ((readingSurvey == true) && (android_window_displayed == true) && (finished_reading_survey == false) && (readHearingImpaired == false) && (hearingImpairedFlag == true) && (ad.naclicked() == true || naPressed == true))
@@ -6069,10 +6261,17 @@ public class Player : MovingObject
                 readHearingImpaired = true;
                 surveyQuestion15 = "na";
                 answeredSurveyQuestion15 = true;
-                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33] };
+                if (GM_title.isUsingTalkback == true)
+                {
+                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33], Database.soundEffectClips[0], Database.surveyClips[35] };
+                }
+                if (GM_title.isUsingTalkback == false)
+                {
+                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33], Database.soundEffectClips[0], Database.surveyClips[34] };
+                }               
                 SoundManager.instance.PlayClips(clips, null, 0, () => {
                     canRepeat = true;
-                }, 1, null, true);
+                }, 5, null, true);
 #if UNITY_IOS
                 naPressed = false;
 #endif
@@ -6083,6 +6282,7 @@ public class Player : MovingObject
                 finished_questions_survey = true;
                 android_window_displayed = false;
                 can_display_window_survey = false;
+                can_submit_survey = false;
             }
         }
 #endif
@@ -6092,7 +6292,7 @@ public class Player : MovingObject
             hasTappedAtCorner = true;
             finishedEcho = false;
 
-            print("Can do gesture tutorial level 3");
+            // print("Can do gesture tutorial level 3");
             canDoGestureTutorial = true;
 
             // Play the first level 3 gesture tutorial clip and reset necessary variables.
@@ -6128,14 +6328,14 @@ public class Player : MovingObject
         {
             if (GM_title.isUsingTalkback == true)
             {
-                print("Starting turning instruction.");
+                // print("Starting turning instruction.");
                 hasStartedTurningInstruction = true;
                 clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.tutorialClips[25], Database.soundEffectClips[0], Database.soundEffectClips[6], Database.soundEffectClips[0], Database.tutorialClips[26], Database.tutorialClips[27] };
                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are using Talkback, play the correct instructions.                
             }
             else if (GM_title.isUsingTalkback == false)
             {
-                print("Starting turning instruction.");
+                // print("Starting turning instruction.");
                 hasStartedTurningInstruction = true;
                 clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.tutorialClips[24], Database.soundEffectClips[0], Database.soundEffectClips[6], Database.soundEffectClips[0], Database.tutorialClips[26], Database.tutorialClips[27] };
                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // If they are not using Talkback, play the correct instructions.                
@@ -6144,7 +6344,7 @@ public class Player : MovingObject
 
         if ((curLevel == 3) && (BoardManager.finishedTutorialLevel3 == false) && (hasTappedAtCorner == true) && (hasStartedTurningInstruction == true) && (finishedTurningInstruction == false) && (level3_remaining_turns == 4) && (SoundManager.instance.finishedAllClips == true))
         {
-            print("Finished turning instruction.");
+            // print("Finished turning instruction.");
             debugPlayerInfo = "Finished turning instruction.";
             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.             
             hasStartedTurningInstruction = false;
@@ -6499,23 +6699,22 @@ public class Player : MovingObject
                 {
                     if ((hearingSurvey == true) && (finished_questions_survey == true))
                     {
-                        hearingSurvey = false;
-                        survey_activated = false;                        
+                        can_submit_survey = true;
+                        canRepeat = true;
                         reportsurvey(surveyCode);
                     }
 
                     if ((readingSurvey == true) && (finished_questions_survey == true))
                     {
-                        readingSurvey = false;
-                        survey_activated = false;
+                        can_submit_survey = true;
+                        canRepeat = true;
                         reportsurvey(surveyCode);
                     }
 
-                    if (noConsent == true)
+                    if (noSurvey == true)
                     {
-                        noConsent = false;
-                        survey_activated = false;
-                        reportsurvey(surveyCode);
+                        can_submit_survey = true;
+                        canRepeat = true;
                     }
                 }
             }
@@ -6758,227 +6957,18 @@ public class Player : MovingObject
 
                     if ((GameManager.instance.level == 11) && (survey_activated == true) && (survey_shown == true))
                     {
-                        if (hearingSurvey == true)
+                        if (((noSurvey == true) && (swipeToRestartSurvey == true)) || ((readingSurvey == true) && (swipeToRestartSurvey == true)) || ((hearingSurvey == true) && (swipeToRestartSurvey == true)))
                         {
-                            if ((answeredSurveyQuestion15 == false) && (answeredSurveyQuestion14 == true) && (surveyQuestion14 != ""))
-                            {
-                                surveyQuestion15 = "no";
-                                answeredSurveyQuestion15 = true;
-                                finished_listening_survey = true;
-                                finished_questions_survey = true;
-                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33] };
-                                SoundManager.instance.PlayClips(clips, null, 0, () =>
-                                {
-                                    canRepeat = true;
-                                }, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion14 == false) && (answeredSurveyQuestion13 == true) && (surveyQuestion13 != ""))
-                            {
-                                surveyQuestion14 = "no";
-                                answeredSurveyQuestion14 = true;
-                                if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[32] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[31] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion13 == false) && (answeredSurveyQuestion12 == true) && (surveyQuestion12 != ""))
-                            {
-                                surveyQuestion13 = "no";
-                                answeredSurveyQuestion13 = true;
-                                if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[30] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[29] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion12 == false) && (answeredSurveyQuestion11 == true) && (surveyQuestion11 != ""))
-                            {
-                                surveyQuestion12 = "no";
-                                answeredSurveyQuestion12 = true;
-                                if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[28] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[27] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion11 == false) && (answeredSurveyQuestion10 == true) && (surveyQuestion10 != ""))
-                            {
-                                surveyQuestion11 = "no";
-                                answeredSurveyQuestion11 = true;
-                                if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[26] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[25] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion10 == false) && (answeredSurveyQuestion9 == true) && (surveyQuestion9 != ""))
-                            {
-                                surveyQuestion10 = "no";
-                                answeredSurveyQuestion10 = true;
-                                if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[24] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[23] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion9 == false) && (answeredSurveyQuestion8 == true) && (surveyQuestion8 != ""))
-                            {
-                                surveyQuestion9 = "no";
-                                answeredSurveyQuestion9 = true;
-                                if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[22] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[21] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion8 == false) && (answeredSurveyQuestion7 == true) && (surveyQuestion7 != ""))
-                            {
-                                surveyQuestion8 = "no";
-                                answeredSurveyQuestion8 = true;
-                                if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[20] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[19] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion7 == false) && (answeredSurveyQuestion6 == true) && (surveyQuestion6 != ""))
-                            {
-                                surveyQuestion7 = "no";
-                                answeredSurveyQuestion7 = true;
-                                if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[18] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[17] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion6 == false) && (answeredSurveyQuestion5 == true) && (surveyQuestion5 != ""))
-                            {
-                                surveyQuestion6 = "no";
-                                answeredSurveyQuestion6 = true;
-                                if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[16] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[15] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion5 == false) && (answeredSurveyQuestion4 == true) && (surveyQuestion4 != ""))
-                            {
-                                surveyQuestion5 = "no";
-                                answeredSurveyQuestion5 = true;
-                                if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[14] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[13] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion4 == false) && (answeredSurveyQuestion3 == true) && (surveyQuestion3 != ""))
-                            {
-                                surveyQuestion4 = "no";
-                                answeredSurveyQuestion4 = true;
-                                if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[12] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[11] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion3 == false) && (answeredSurveyQuestion2 == true) && (surveyQuestion2 != ""))
-                            {
-                                surveyQuestion3 = "no";
-                                answeredSurveyQuestion3 = true;
-                                if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[10] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[9] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion2 == false) && (answeredSurveyQuestion1 == true) && (surveyQuestion1 != ""))
-                            {
-                                surveyQuestion2 = "no";
-                                answeredSurveyQuestion2 = true;
-                                if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[8] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[7] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if (answeredSurveyQuestion1 == false)
-                            {
-                                surveyQuestion1 = "no";
-                                answeredSurveyQuestion1 = true;
-                                if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[6] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[5] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                        }
-
-                        if ((noConsent == true) || ((readingSurvey == true) && (finished_reading_survey == true)) || ((hearingSurvey == true) && (finished_listening_survey == true)) || ((hearingSurvey == false) && (readingSurvey == false) && (noSurvey == false)))
-                        {
-                            noConsent = false;
+                            noSurvey = false;
                             readingSurvey = false;
-                            hearingSurvey = true;
+                            hearingSurvey = false;
                             android_window_displayed = false;
                             finished_listening_survey = false;
                             finished_reading_survey = false;
                             finished_questions_survey = false;
+                            can_display_window_survey = false;
+                            can_submit_survey = false;
+                            swipeToRestartSurvey = false;
                             surveyQuestion1 = "";
                             answeredSurveyQuestion1 = false;
                             surveyQuestion2 = "";
@@ -7039,6 +7029,241 @@ public class Player : MovingObject
                             visuallyImpairedFlag = false;
                             readHearingImpaired = false;
                             hearingImpairedFlag = false;
+                            canRepeat = true;
+                        }
+
+                        if ((hearingSurvey == true) && (finished_questions_survey == false))
+                        {
+                            if ((answeredSurveyQuestion15 == false) && (answeredSurveyQuestion14 == true) && (surveyQuestion14 != ""))
+                            {
+                                surveyQuestion15 = "no";
+                                answeredSurveyQuestion15 = true;
+                                finished_listening_survey = true;
+                                finished_questions_survey = true;
+                                canRepeat = true;
+                                can_submit_survey = false;
+                                swipeToRestartSurvey = false;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33], Database.soundEffectClips[0], Database.surveyClips[35] };
+                                }
+                                if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33], Database.soundEffectClips[0], Database.surveyClips[34] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion14 == false) && (answeredSurveyQuestion13 == true) && (surveyQuestion13 != ""))
+                            {
+                                surveyQuestion14 = "no";
+                                answeredSurveyQuestion14 = true;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[32] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[31] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion13 == false) && (answeredSurveyQuestion12 == true) && (surveyQuestion12 != ""))
+                            {
+                                surveyQuestion13 = "no";
+                                answeredSurveyQuestion13 = true;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[30] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[29] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion12 == false) && (answeredSurveyQuestion11 == true) && (surveyQuestion11 != ""))
+                            {
+                                surveyQuestion12 = "no";
+                                answeredSurveyQuestion12 = true;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[28] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[27] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion11 == false) && (answeredSurveyQuestion10 == true) && (surveyQuestion10 != ""))
+                            {
+                                surveyQuestion11 = "no";
+                                answeredSurveyQuestion11 = true;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[26] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[25] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion10 == false) && (answeredSurveyQuestion9 == true) && (surveyQuestion9 != ""))
+                            {
+                                surveyQuestion10 = "no";
+                                answeredSurveyQuestion10 = true;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[24] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[23] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion9 == false) && (answeredSurveyQuestion8 == true) && (surveyQuestion8 != ""))
+                            {
+                                surveyQuestion9 = "no";
+                                answeredSurveyQuestion9 = true;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[22] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[21] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion8 == false) && (answeredSurveyQuestion7 == true) && (surveyQuestion7 != ""))
+                            {
+                                surveyQuestion8 = "no";
+                                answeredSurveyQuestion8 = true;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[20] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[19] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion7 == false) && (answeredSurveyQuestion6 == true) && (surveyQuestion6 != ""))
+                            {
+                                surveyQuestion7 = "no";
+                                answeredSurveyQuestion7 = true;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[18] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[17] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion6 == false) && (answeredSurveyQuestion5 == true) && (surveyQuestion5 != ""))
+                            {
+                                surveyQuestion6 = "no";
+                                answeredSurveyQuestion6 = true;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[16] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[15] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion5 == false) && (answeredSurveyQuestion4 == true) && (surveyQuestion4 != ""))
+                            {
+                                surveyQuestion5 = "no";
+                                answeredSurveyQuestion5 = true;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[14] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[13] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion4 == false) && (answeredSurveyQuestion3 == true) && (surveyQuestion3 != ""))
+                            {
+                                surveyQuestion4 = "no";
+                                answeredSurveyQuestion4 = true;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[12] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[11] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion3 == false) && (answeredSurveyQuestion2 == true) && (surveyQuestion2 != ""))
+                            {
+                                surveyQuestion3 = "no";
+                                answeredSurveyQuestion3 = true;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[10] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[9] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion2 == false) && (answeredSurveyQuestion1 == true) && (surveyQuestion1 != ""))
+                            {
+                                surveyQuestion2 = "no";
+                                answeredSurveyQuestion2 = true;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[8] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[7] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if (answeredSurveyQuestion1 == false)
+                            {
+                                surveyQuestion1 = "no";
+                                answeredSurveyQuestion1 = true;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[6] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[5] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                        }
+
+                        if ((hearingSurvey == false) && (readingSurvey == false) && (noSurvey == false))
+                        {
+                            hearingSurvey = true;
+                            swipeToRestartSurvey = false;
+                            canRepeat = true;
+                        }
+
+                        if ((swipeToRestartSurvey == false) && (((hearingSurvey == true) && (answeredSurveyQuestion15 == true)) || ((readingSurvey == true) && (answeredSurveyQuestion15 == true)) || ((noSurvey == true) && (can_submit_survey == false))))
+                        {
+                            swipeToRestartSurvey = true;
+                            hearingSurvey = false;
+                            readingSurvey = false;
+                            noSurvey = false;
                             canRepeat = true;
                         }
                     }
@@ -7304,227 +7529,17 @@ public class Player : MovingObject
 
                     if ((GameManager.instance.level == 11) && (survey_activated == true) && (survey_shown == true))
                     {
-                        if (hearingSurvey == true)
+                        if (((noSurvey == true) && (swipeToRestartSurvey == true)) || ((readingSurvey == true) && (swipeToRestartSurvey == true)) || ((hearingSurvey == true) && (swipeToRestartSurvey == true)))
                         {
-                            if ((answeredSurveyQuestion15 == false) && (answeredSurveyQuestion14 == true) && (surveyQuestion14 != ""))
-                            {
-                                surveyQuestion15 = "yes";
-                                answeredSurveyQuestion15 = true;
-                                finished_listening_survey = true;
-                                finished_questions_survey = true;
-                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33] };
-                                SoundManager.instance.PlayClips(clips, null, 0, () =>
-                                {
-                                    canRepeat = true;
-                                }, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion14 == false) && (answeredSurveyQuestion13 == true) && (surveyQuestion13 != ""))
-                            {
-                                surveyQuestion14 = "yes";
-                                answeredSurveyQuestion14 = true;
-                                if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[32] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[31] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion13 == false) && (answeredSurveyQuestion12 == true) && (surveyQuestion12 != ""))
-                            {
-                                surveyQuestion13 = "yes";
-                                answeredSurveyQuestion13 = true;
-                                if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[30] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[29] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion12 == false) && (answeredSurveyQuestion11 == true) && (surveyQuestion11 != ""))
-                            {
-                                surveyQuestion12 = "yes";
-                                answeredSurveyQuestion12 = true;
-                                if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[28] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[27] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion11 == false) && (answeredSurveyQuestion10 == true) && (surveyQuestion10 != ""))
-                            {
-                                surveyQuestion11 = "yes";
-                                answeredSurveyQuestion11 = true;
-                                if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[26] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[25] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion10 == false) && (answeredSurveyQuestion9 == true) && (surveyQuestion9 != ""))
-                            {
-                                surveyQuestion10 = "yes";
-                                answeredSurveyQuestion10 = true;
-                                if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[24] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[23] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion9 == false) && (answeredSurveyQuestion8 == true) && (surveyQuestion8 != ""))
-                            {
-                                surveyQuestion9 = "yes";
-                                answeredSurveyQuestion9 = true;
-                                if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[22] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[21] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion8 == false) && (answeredSurveyQuestion7 == true) && (surveyQuestion7 != ""))
-                            {
-                                surveyQuestion8 = "yes";
-                                answeredSurveyQuestion8 = true;
-                                if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[20] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[19] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion7 == false) && (answeredSurveyQuestion6 == true) && (surveyQuestion6 != ""))
-                            {
-                                surveyQuestion7 = "yes";
-                                answeredSurveyQuestion7 = true;
-                                if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[18] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[17] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion6 == false) && (answeredSurveyQuestion5 == true) && (surveyQuestion5 != ""))
-                            {
-                                surveyQuestion6 = "yes";
-                                answeredSurveyQuestion6 = true;
-                                if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[16] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[15] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion5 == false) && (answeredSurveyQuestion4 == true) && (surveyQuestion4 != ""))
-                            {
-                                surveyQuestion5 = "yes";
-                                answeredSurveyQuestion5 = true;
-                                if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[14] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[13] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion4 == false) && (answeredSurveyQuestion3 == true) && (surveyQuestion3 != ""))
-                            {
-                                surveyQuestion4 = "yes";
-                                answeredSurveyQuestion4 = true;
-                                if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[12] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[11] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion3 == false) && (answeredSurveyQuestion2 == true) && (surveyQuestion2 != ""))
-                            {
-                                surveyQuestion3 = "yes";
-                                answeredSurveyQuestion3 = true;
-                                if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[10] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[9] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion2 == false) && (answeredSurveyQuestion1 == true) && (surveyQuestion1 != ""))
-                            {
-                                surveyQuestion2 = "yes";
-                                answeredSurveyQuestion2 = true;
-                                if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[8] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[7] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if (answeredSurveyQuestion1 == false)
-                            {
-                                surveyQuestion1 = "yes";
-                                answeredSurveyQuestion1 = true;
-                                if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[6] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[5] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                        }
-
-                        if ((noConsent == true) || ((readingSurvey == true) && (finished_reading_survey == true)) || ((hearingSurvey == true) && (finished_listening_survey == true)) || ((hearingSurvey == false) && (readingSurvey == false) && (noSurvey == false)))
-                        {
-                            noConsent = false;
-                            readingSurvey = true;
+                            noSurvey = false;
+                            readingSurvey = false;
                             hearingSurvey = false;
                             android_window_displayed = false;
                             finished_listening_survey = false;
                             finished_reading_survey = true;
                             finished_questions_survey = true;
+                            can_submit_survey = false;
+                            swipeToRestartSurvey = false;
                             surveyQuestion1 = "na";
                             answeredSurveyQuestion1 = true;
                             surveyQuestion2 = "na";
@@ -7585,6 +7600,241 @@ public class Player : MovingObject
                             visuallyImpairedFlag = true;
                             readHearingImpaired = true;
                             hearingImpairedFlag = true;
+                            canRepeat = true;
+                        }
+
+                        if ((hearingSurvey == true) && (finished_questions_survey == false))
+                        {
+                            if ((answeredSurveyQuestion15 == false) && (answeredSurveyQuestion14 == true) && (surveyQuestion14 != ""))
+                            {
+                                surveyQuestion15 = "yes";
+                                answeredSurveyQuestion15 = true;
+                                canRepeat = true;
+                                can_submit_survey = false;
+                                finished_listening_survey = true;
+                                finished_questions_survey = true;
+                                swipeToRestartSurvey = false;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33], Database.soundEffectClips[0], Database.surveyClips[35] };
+                                }
+                                if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33], Database.soundEffectClips[0], Database.surveyClips[34] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion14 == false) && (answeredSurveyQuestion13 == true) && (surveyQuestion13 != ""))
+                            {
+                                surveyQuestion14 = "yes";
+                                answeredSurveyQuestion14 = true;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[32] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[31] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion13 == false) && (answeredSurveyQuestion12 == true) && (surveyQuestion12 != ""))
+                            {
+                                surveyQuestion13 = "yes";
+                                answeredSurveyQuestion13 = true;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[30] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[29] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion12 == false) && (answeredSurveyQuestion11 == true) && (surveyQuestion11 != ""))
+                            {
+                                surveyQuestion12 = "yes";
+                                answeredSurveyQuestion12 = true;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[28] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[27] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion11 == false) && (answeredSurveyQuestion10 == true) && (surveyQuestion10 != ""))
+                            {
+                                surveyQuestion11 = "yes";
+                                answeredSurveyQuestion11 = true;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[26] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[25] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion10 == false) && (answeredSurveyQuestion9 == true) && (surveyQuestion9 != ""))
+                            {
+                                surveyQuestion10 = "yes";
+                                answeredSurveyQuestion10 = true;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[24] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[23] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion9 == false) && (answeredSurveyQuestion8 == true) && (surveyQuestion8 != ""))
+                            {
+                                surveyQuestion9 = "yes";
+                                answeredSurveyQuestion9 = true;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[22] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[21] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion8 == false) && (answeredSurveyQuestion7 == true) && (surveyQuestion7 != ""))
+                            {
+                                surveyQuestion8 = "yes";
+                                answeredSurveyQuestion8 = true;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[20] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[19] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion7 == false) && (answeredSurveyQuestion6 == true) && (surveyQuestion6 != ""))
+                            {
+                                surveyQuestion7 = "yes";
+                                answeredSurveyQuestion7 = true;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[18] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[17] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion6 == false) && (answeredSurveyQuestion5 == true) && (surveyQuestion5 != ""))
+                            {
+                                surveyQuestion6 = "yes";
+                                answeredSurveyQuestion6 = true;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[16] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[15] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion5 == false) && (answeredSurveyQuestion4 == true) && (surveyQuestion4 != ""))
+                            {
+                                surveyQuestion5 = "yes";
+                                answeredSurveyQuestion5 = true;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[14] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[13] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion4 == false) && (answeredSurveyQuestion3 == true) && (surveyQuestion3 != ""))
+                            {
+                                surveyQuestion4 = "yes";
+                                answeredSurveyQuestion4 = true;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[12] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[11] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion3 == false) && (answeredSurveyQuestion2 == true) && (surveyQuestion2 != ""))
+                            {
+                                surveyQuestion3 = "yes";
+                                answeredSurveyQuestion3 = true;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[10] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[9] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion2 == false) && (answeredSurveyQuestion1 == true) && (surveyQuestion1 != ""))
+                            {
+                                surveyQuestion2 = "yes";
+                                answeredSurveyQuestion2 = true;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[8] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[7] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if (answeredSurveyQuestion1 == false)
+                            {
+                                surveyQuestion1 = "yes";
+                                answeredSurveyQuestion1 = true;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[6] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[5] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                        }                        
+
+                        if ((hearingSurvey == false) && (readingSurvey == false) && (noSurvey == false))
+                        {
+                            readingSurvey = true;
+                            swipeToRestartSurvey = false;
+                            canRepeat = true;
+                        }
+
+                        if ((swipeToRestartSurvey == false) && (((hearingSurvey == true) && (answeredSurveyQuestion15 == true)) || ((readingSurvey == true) && (answeredSurveyQuestion15 == true)) || ((noSurvey == true) && (can_submit_survey == false))))
+                        {
+                            swipeToRestartSurvey = true;
+                            hearingSurvey = false;
+                            readingSurvey = false;
+                            noSurvey = false;
                             canRepeat = true;
                         }
                     }
@@ -7932,26 +8182,42 @@ public class Player : MovingObject
 
                     if ((GameManager.instance.level == 11) && (survey_activated == true) && (survey_shown == true))
                     {
+                        if ((hearingSurvey == false) && (readingSurvey == false) && (noSurvey == false))
+                        {
+                            noSurvey = true;
+                            can_submit_survey = false;
+                            canRepeat = true;
+                        }
+
                         if (finished_questions_survey == true)
                         {
 							readingSurvey = false;
-                            hearingSurvey = false;
-                            noConsent = true;
+                            hearingSurvey = false;                            
+                            noSurvey = true;
+                            can_submit_survey = false;
+                            canRepeat = true;
                         }
 
-                        if (hearingSurvey == true)
+                        if ((hearingSurvey == true) && (finished_questions_survey == false))
                         {
                             if ((answeredSurveyQuestion15 == false) && (answeredSurveyQuestion14 == true) && (surveyQuestion14 != ""))
                             {
                                 surveyQuestion15 = "na";
                                 answeredSurveyQuestion15 = true;
+                                canRepeat = true;
                                 finished_listening = true;
                                 finished_questions_survey = true;
-                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33] };
-                                SoundManager.instance.PlayClips(clips, null, 0, () =>
+                                can_submit_survey = false;
+                                swipeToRestartSurvey = false;
+                                if (GM_title.isUsingTalkback == true)
                                 {
-                                    canRepeat = true;
-                                }, 0, null, true);
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33], Database.soundEffectClips[0], Database.surveyClips[35] };
+                                }
+                                if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33], Database.soundEffectClips[0], Database.surveyClips[34] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
                             if ((answeredSurveyQuestion14 == false) && (answeredSurveyQuestion13 == true) && (surveyQuestion13 != ""))
                             {
@@ -7959,11 +8225,11 @@ public class Player : MovingObject
                                 answeredSurveyQuestion14 = true;
 								if (GM_title.isUsingTalkback == true)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[32] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[32] };
                                 }
                                 else if (GM_title.isUsingTalkback == false)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[31] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[31] };
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
@@ -7973,11 +8239,11 @@ public class Player : MovingObject
                                 answeredSurveyQuestion13 = true;
 								if (GM_title.isUsingTalkback == true)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[30] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[30] };
                                 }
                                 else if (GM_title.isUsingTalkback == false)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[29] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[29] };
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
@@ -7987,11 +8253,11 @@ public class Player : MovingObject
                                 answeredSurveyQuestion12 = true;
 								if (GM_title.isUsingTalkback == true)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[28] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[28] };
                                 }
                                 else if (GM_title.isUsingTalkback == false)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[27] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[27] };
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
@@ -8001,11 +8267,11 @@ public class Player : MovingObject
                                 answeredSurveyQuestion11 = true;
 								if (GM_title.isUsingTalkback == true)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[26] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[26] };
                                 }
                                 else if (GM_title.isUsingTalkback == false)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[25] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[25] };
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
@@ -8015,11 +8281,11 @@ public class Player : MovingObject
                                 answeredSurveyQuestion10 = true;
 								if (GM_title.isUsingTalkback == true)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[24] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[24] };
                                 }
                                 else if (GM_title.isUsingTalkback == false)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[23] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[23] };
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
@@ -8029,11 +8295,11 @@ public class Player : MovingObject
                                 answeredSurveyQuestion9 = true;
 								if (GM_title.isUsingTalkback == true)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[22] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[22] };
                                 }
                                 else if (GM_title.isUsingTalkback == false)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[21] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[21] };
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
@@ -8043,11 +8309,11 @@ public class Player : MovingObject
                                 answeredSurveyQuestion8 = true;
 								if (GM_title.isUsingTalkback == true)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[20] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[20] };
                                 }
                                 else if (GM_title.isUsingTalkback == false)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[19] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[19] };
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
@@ -8057,11 +8323,11 @@ public class Player : MovingObject
                                 answeredSurveyQuestion7 = true;
 								if (GM_title.isUsingTalkback == true)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[18] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[18] };
                                 }
                                 else if (GM_title.isUsingTalkback == false)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[17] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[17] };
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
@@ -8071,11 +8337,11 @@ public class Player : MovingObject
                                 answeredSurveyQuestion6 = true;
 								if (GM_title.isUsingTalkback == true)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[16] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[16] };
                                 }
                                 else if (GM_title.isUsingTalkback == false)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[15] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[15] };
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
@@ -8085,11 +8351,11 @@ public class Player : MovingObject
                                 answeredSurveyQuestion5 = true;
 								if (GM_title.isUsingTalkback == true)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[14] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[14] };
                                 }
                                 else if (GM_title.isUsingTalkback == false)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[13] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[13] };
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
@@ -8099,11 +8365,11 @@ public class Player : MovingObject
                                 answeredSurveyQuestion4 = true;
 								if (GM_title.isUsingTalkback == true)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[12] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[12] };
                                 }
                                 else if (GM_title.isUsingTalkback == false)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[11] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[11] };
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
@@ -8113,11 +8379,11 @@ public class Player : MovingObject
                                 answeredSurveyQuestion3 = true;
 								if (GM_title.isUsingTalkback == true)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[10] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[10] };
                                 }
                                 else if (GM_title.isUsingTalkback == false)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[9] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[9] };
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
@@ -8127,11 +8393,11 @@ public class Player : MovingObject
                                 answeredSurveyQuestion2 = true;
 								if (GM_title.isUsingTalkback == true)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[8] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[8] };
                                 }
                                 else if (GM_title.isUsingTalkback == false)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[7] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[7] };
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
@@ -8141,20 +8407,15 @@ public class Player : MovingObject
                                 answeredSurveyQuestion1 = true;
 								if (GM_title.isUsingTalkback == true)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[6] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[6] };
                                 }
                                 else if (GM_title.isUsingTalkback == false)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[5] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[5] };
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                        }
-
-                        if ((hearingSurvey == false) && (readingSurvey == false) && (noSurvey == false))
-                        {
-                            noSurvey = true;
-                        }
+                        }                        
                     }
                 }
             }
@@ -8891,21 +9152,20 @@ public class Player : MovingObject
                 {
                     if ((hearingSurvey == true) && (finished_questions_survey == true))
                     {
-                        hearingSurvey = false;
-                        survey_activated = false;
+                        can_submit_survey = true;
+                        canRepeat = true;
                         reportsurvey(surveyCode);
                     }
                     if ((readingSurvey == true) && (finished_questions_survey == true))
                     {
-                        readingSurvey = false;
-                        survey_activated = false;
+                        can_submit_survey = true;
+                        canRepeat = true;
                         reportsurvey(surveyCode);
                     }
-                    if (noConsent == true)
+                    if (noSurvey == true)
                     {
-                        noConsent = false;
-                        survey_activated = false;
-                        reportsurvey(surveyCode);
+                        can_submit_survey = true;
+                        canRepeat = true;
                     }
                 }
             }
@@ -9151,228 +9411,18 @@ public class Player : MovingObject
 
 
                     if ((GameManager.instance.level == 11) && (survey_activated == true) && (survey_shown == true))
-                    {
-                        if (hearingSurvey == true)
-                        {                                                                                                                  
-                            if ((answeredSurveyQuestion15 == false) && (answeredSurveyQuestion14 == true) && (surveyQuestion14 != ""))
-                            {
-                                surveyQuestion15 = "no";                                       
-                                answeredSurveyQuestion15 = true;
-                                finished_listening_survey = true;
-                                finished_questions_survey = true;
-                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33] };
-                                SoundManager.instance.PlayClips(clips, null, 0, () =>
-                                {
-                                    canRepeat = true;
-                                }, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion14 == false) && (answeredSurveyQuestion13 == true) && (surveyQuestion13 != ""))
-                            {
-                                surveyQuestion14 = "no";
-                                answeredSurveyQuestion14 = true;
-								if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[32] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[31] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion13 == false) && (answeredSurveyQuestion12 == true) && (surveyQuestion12 != ""))
-                            {
-                                surveyQuestion13 = "no";
-                                answeredSurveyQuestion13 = true;
-								if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[30] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[29] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion12 == false) && (answeredSurveyQuestion11 == true) && (surveyQuestion11 != ""))
-                            {
-                                surveyQuestion12 = "no";
-                                answeredSurveyQuestion12 = true;
-								if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[28] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[27] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion11 == false) && (answeredSurveyQuestion10 == true) && (surveyQuestion10 != ""))
-                            {
-                                surveyQuestion11 = "no";
-                                answeredSurveyQuestion11 = true;
-								if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[26] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[25] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion10 == false) && (answeredSurveyQuestion9 == true) && (surveyQuestion9 != ""))
-                            {
-                                surveyQuestion10 = "no";
-                                answeredSurveyQuestion10 = true;
-								if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[24] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[23] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion9 == false) && (answeredSurveyQuestion8 == true) && (surveyQuestion8 != ""))
-                            {
-                                surveyQuestion9 = "no";
-                                answeredSurveyQuestion9 = true;
-								if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[22] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[21] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion8 == false) && (answeredSurveyQuestion7 == true) && (surveyQuestion7 != ""))
-                            {
-                                surveyQuestion8 = "no";
-                                answeredSurveyQuestion8 = true;
-								if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[20] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[19] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion7 == false) && (answeredSurveyQuestion6 == true) && (surveyQuestion6 != ""))
-                            {
-                                surveyQuestion7 = "no";
-                                answeredSurveyQuestion7 = true;
-								if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[18] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[17] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion6 == false) && (answeredSurveyQuestion5 == true) && (surveyQuestion5 != ""))
-                            {
-                                surveyQuestion6 = "no";
-                                answeredSurveyQuestion6 = true;
-								if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[16] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[15] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion5 == false) && (answeredSurveyQuestion4 == true) && (surveyQuestion4 != ""))
-                            {
-                                surveyQuestion5 = "no";
-                                answeredSurveyQuestion5 = true;
-								if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[14] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[13] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion4 == false) && (answeredSurveyQuestion3 == true) && (surveyQuestion3 != ""))
-                            {
-                                surveyQuestion4 = "no";
-                                answeredSurveyQuestion4 = true;
-								if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[12] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[11] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion3 == false) && (answeredSurveyQuestion2 == true) && (surveyQuestion2 != ""))
-                            {
-                                surveyQuestion3 = "no";
-                                answeredSurveyQuestion3 = true;
-								if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[10] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[9] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion2 == false) && (answeredSurveyQuestion1 == true) && (surveyQuestion1 != ""))
-                            {
-                                surveyQuestion2 = "no";
-                                answeredSurveyQuestion2 = true;
-								if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[8] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[7] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if (answeredSurveyQuestion1 == false)
-                            {
-                                surveyQuestion1 = "no";
-                                answeredSurveyQuestion1 = true;
-								if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[6] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[5] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                        }
-
-                        if ((noConsent == true) || ((readingSurvey == true) && (finished_reading_survey == true)) || ((hearingSurvey == true) && (finished_listening_survey == true)) || ((hearingSurvey == false) && (readingSurvey == false) && (noSurvey == false)))
+                    {                       
+                        if (((noSurvey == true) && (swipeToRestartSurvey == true)) || ((readingSurvey == true) && (swipeToRestartSurvey == true)) || ((hearingSurvey == true) && (swipeToRestartSurvey == true)))
                         {
-							noConsent = false;
-							readingSurvey = false;
-							hearingSurvey = true;
+                            noSurvey = false;
+                            readingSurvey = false;
+                            hearingSurvey = false;
                             android_window_displayed = false;
                             finished_listening_survey = false;
                             finished_reading_survey = false;
                             finished_questions_survey = false;
+                            can_submit_survey = false;
+                            swipeToRestartSurvey = false;
                             surveyQuestion1 = "";
                             answeredSurveyQuestion1 = false;
                             surveyQuestion2 = "";
@@ -9433,6 +9483,242 @@ public class Player : MovingObject
                             visuallyImpairedFlag = false;
                             readHearingImpaired = false;
                             hearingImpairedFlag = false;
+                            canRepeat = true;
+                        }
+
+                        if ((hearingSurvey == true) && (finished_questions_survey == false))
+                        {                                                                                                                  
+                            if ((answeredSurveyQuestion15 == false) && (answeredSurveyQuestion14 == true) && (surveyQuestion14 != ""))
+                            {
+                                surveyQuestion15 = "no";                                       
+                                answeredSurveyQuestion15 = true;
+                                canRepeat = true;
+                                finished_listening_survey = true;
+                                finished_questions_survey = true;
+                                can_submit_survey = false;
+                                swipeToRestartSurvey = false;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33], Database.soundEffectClips[0], Database.surveyClips[35] };
+                                }
+                                if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33], Database.soundEffectClips[0], Database.surveyClips[34] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion14 == false) && (answeredSurveyQuestion13 == true) && (surveyQuestion13 != ""))
+                            {
+                                surveyQuestion14 = "no";
+                                answeredSurveyQuestion14 = true;
+								if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[32] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[31] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion13 == false) && (answeredSurveyQuestion12 == true) && (surveyQuestion12 != ""))
+                            {
+                                surveyQuestion13 = "no";
+                                answeredSurveyQuestion13 = true;
+								if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[30] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[29] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion12 == false) && (answeredSurveyQuestion11 == true) && (surveyQuestion11 != ""))
+                            {
+                                surveyQuestion12 = "no";
+                                answeredSurveyQuestion12 = true;
+								if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[28] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[27] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion11 == false) && (answeredSurveyQuestion10 == true) && (surveyQuestion10 != ""))
+                            {
+                                surveyQuestion11 = "no";
+                                answeredSurveyQuestion11 = true;
+								if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[26] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[25] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion10 == false) && (answeredSurveyQuestion9 == true) && (surveyQuestion9 != ""))
+                            {
+                                surveyQuestion10 = "no";
+                                answeredSurveyQuestion10 = true;
+								if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[24] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[23] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion9 == false) && (answeredSurveyQuestion8 == true) && (surveyQuestion8 != ""))
+                            {
+                                surveyQuestion9 = "no";
+                                answeredSurveyQuestion9 = true;
+								if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[22] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[21] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion8 == false) && (answeredSurveyQuestion7 == true) && (surveyQuestion7 != ""))
+                            {
+                                surveyQuestion8 = "no";
+                                answeredSurveyQuestion8 = true;
+								if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[20] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[19] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion7 == false) && (answeredSurveyQuestion6 == true) && (surveyQuestion6 != ""))
+                            {
+                                surveyQuestion7 = "no";
+                                answeredSurveyQuestion7 = true;
+								if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[18] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[17] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion6 == false) && (answeredSurveyQuestion5 == true) && (surveyQuestion5 != ""))
+                            {
+                                surveyQuestion6 = "no";
+                                answeredSurveyQuestion6 = true;
+								if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[16] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[15] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion5 == false) && (answeredSurveyQuestion4 == true) && (surveyQuestion4 != ""))
+                            {
+                                surveyQuestion5 = "no";
+                                answeredSurveyQuestion5 = true;
+								if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[14] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[13] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion4 == false) && (answeredSurveyQuestion3 == true) && (surveyQuestion3 != ""))
+                            {
+                                surveyQuestion4 = "no";
+                                answeredSurveyQuestion4 = true;
+								if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[12] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[11] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion3 == false) && (answeredSurveyQuestion2 == true) && (surveyQuestion2 != ""))
+                            {
+                                surveyQuestion3 = "no";
+                                answeredSurveyQuestion3 = true;
+								if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[10] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[9] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion2 == false) && (answeredSurveyQuestion1 == true) && (surveyQuestion1 != ""))
+                            {
+                                surveyQuestion2 = "no";
+                                answeredSurveyQuestion2 = true;
+								if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[8] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[7] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if (answeredSurveyQuestion1 == false)
+                            {
+                                surveyQuestion1 = "no";
+                                answeredSurveyQuestion1 = true;
+								if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[6] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[5] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                        }
+
+                        if ((hearingSurvey == false) && (readingSurvey == false) && (noSurvey == false))
+                        {
+                            hearingSurvey = true;
+                            swipeToRestartSurvey = false;
+                            canRepeat = true;
+                        }
+
+                        if ((swipeToRestartSurvey == false) && (((hearingSurvey == true) && (answeredSurveyQuestion15 == true)) || ((readingSurvey == true) && (answeredSurveyQuestion15 == true)) || ((noSurvey == true) && (can_submit_survey == false))))
+                        {
+                            swipeToRestartSurvey = true;
+                            hearingSurvey = false;
+                            readingSurvey = false;
+                            noSurvey = false;
+                            canRepeat = true;
                         }
                     }
                 }
@@ -9627,7 +9913,7 @@ public class Player : MovingObject
                                 {
                                     consentCode = SystemInfo.deviceUniqueIdentifier.Substring(0, 6);
                                 }
-                                reportConsent(SystemInfo.deviceUniqueIdentifier);
+                                reportConsent(consentCode);
                             }, 1, null, true);
                         }
                         else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == false))
@@ -9683,231 +9969,18 @@ public class Player : MovingObject
 
                     if ((GameManager.instance.level == 11) && (survey_activated == true) && (survey_shown == true))
                     {
-                        if (hearingSurvey == true)
+                        if (((noSurvey == true) && (swipeToRestartSurvey == true)) || ((readingSurvey == true) && (swipeToRestartSurvey == true)) || ((hearingSurvey == true) && (swipeToRestartSurvey == true)))
                         {
-                            if ((answeredSurveyQuestion15 == false) && (answeredSurveyQuestion14 == true) && (surveyQuestion14 != ""))
-                            {
-                                surveyQuestion15 = "yes";
-                                answeredSurveyQuestion15 = true;
-                                finished_listening_survey = true;
-                                finished_questions_survey = true;
-                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33] };
-                                SoundManager.instance.PlayClips(clips, null, 0, () =>
-                                {
-                                    canRepeat = true;
-                                }, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion14 == false) && (answeredSurveyQuestion13 == true) && (surveyQuestion13 != ""))
-                            {
-                                surveyQuestion14 = "yes";
-                                answeredSurveyQuestion14 = true;
-								if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[32] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[31] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion13 == false) && (answeredSurveyQuestion12 == true) && (surveyQuestion12 != ""))
-                            {
-                                surveyQuestion13 = "yes";
-                                answeredSurveyQuestion13 = true;
-								if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[30] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[29] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion12 == false) && (answeredSurveyQuestion11 == true) && (surveyQuestion11 != ""))
-                            {
-                                surveyQuestion12 = "yes";
-                                answeredSurveyQuestion12 = true;
-								if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[28] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[27] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion11 == false) && (answeredSurveyQuestion10 == true) && (surveyQuestion10 != ""))
-                            {
-                                surveyQuestion11 = "yes";
-                                answeredSurveyQuestion11 = true;
-								if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[26] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[25] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion10 == false) && (answeredSurveyQuestion9 == true) && (surveyQuestion9 != ""))
-                            {
-                                surveyQuestion10 = "yes";
-                                answeredSurveyQuestion10 = true;
-								if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[24] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[23] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion9 == false) && (answeredSurveyQuestion8 == true) && (surveyQuestion8 != ""))
-                            {
-                                surveyQuestion9 = "yes";
-                                answeredSurveyQuestion9 = true;
-								if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[22] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[21] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion8 == false) && (answeredSurveyQuestion7 == true) && (surveyQuestion7 != ""))
-                            {
-                                surveyQuestion8 = "yes";
-                                answeredSurveyQuestion8 = true;
-								if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[20] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[19] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion7 == false) && (answeredSurveyQuestion6 == true) && (surveyQuestion6 != ""))
-                            {
-                                surveyQuestion7 = "yes";
-                                answeredSurveyQuestion7 = true;
-								if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[18] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[17] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion6 == false) && (answeredSurveyQuestion5 == true) && (surveyQuestion5 != ""))
-                            {
-                                surveyQuestion6 = "yes";
-                                answeredSurveyQuestion6 = true;
-								if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[16] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[15] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion5 == false) && (answeredSurveyQuestion4 == true) && (surveyQuestion4 != ""))
-                            {
-                                surveyQuestion5 = "yes";
-                                answeredSurveyQuestion5 = true;
-								if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[14] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[13] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion4 == false) && (answeredSurveyQuestion3 == true) && (surveyQuestion3 != ""))
-                            {
-                                surveyQuestion4 = "yes";
-                                answeredSurveyQuestion4 = true;
-								if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[12] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[11] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion3 == false) && (answeredSurveyQuestion2 == true) && (surveyQuestion2 != ""))
-                            {
-                                surveyQuestion3 = "yes";
-                                answeredSurveyQuestion3 = true;
-								if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[10] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[9] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if ((answeredSurveyQuestion2 == false) && (answeredSurveyQuestion1 == true) && (surveyQuestion1 != ""))
-                            {
-                                surveyQuestion2 = "yes";
-                                answeredSurveyQuestion2 = true;
-								if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[8] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[7] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                            if (answeredSurveyQuestion1 == false)
-                            {
-                                surveyQuestion1 = "yes";
-                                answeredSurveyQuestion1 = true;
-								if (GM_title.isUsingTalkback == true)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[6] };
-                                }
-                                else if (GM_title.isUsingTalkback == false)
-                                {
-                                    clips = new List<AudioClip>() { Database.surveyClips[5] };
-                                }
-                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
-                            }
-                        }
-
-                        if ((noConsent == true) || ((readingSurvey == true) && (finished_reading_survey == true)) || ((hearingSurvey == true) && (finished_listening_survey == true)) || ((hearingSurvey == false) && (readingSurvey == false) && (noSurvey == false)))
-                        {
-                            noConsent = false;
-							hearingSurvey = false;
-                            readingSurvey = true;
+                            noSurvey = false;
+                            hearingSurvey = false;
+                            readingSurvey = false;
                             android_window_displayed = false;
-                            if ((noConsent == true) || (readingSurvey == true) || (hearingSurvey == true))
-                            {
-                                can_display_window_survey = true;
-                            }
                             finished_reading_survey = false;
                             finished_listening_survey = false;
                             finished_questions_survey = false;
+                            can_display_window_survey = false;
+                            can_submit_survey = false;
+                            swipeToRestartSurvey = false;
                             surveyQuestion1 = "";
                             answeredSurveyQuestion1 = false;
                             surveyQuestion2 = "";
@@ -9968,7 +10041,243 @@ public class Player : MovingObject
                             visuallyImpairedFlag = false;
                             readHearingImpaired = false;
                             hearingImpairedFlag = false;
-                        }                     
+                            canRepeat = true;
+                        }
+
+                        if ((hearingSurvey == true) && (finished_questions_survey == false))
+                        {
+                            if ((answeredSurveyQuestion15 == false) && (answeredSurveyQuestion14 == true) && (surveyQuestion14 != ""))
+                            {
+                                surveyQuestion15 = "yes";
+                                answeredSurveyQuestion15 = true;
+                                canRepeat = true;
+                                finished_listening_survey = true;
+                                finished_questions_survey = true;
+                                can_submit_survey = false;
+                                swipeToRestartSurvey = false;
+                                if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33], Database.soundEffectClips[0], Database.surveyClips[35] };
+                                }
+                                if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33], Database.soundEffectClips[0], Database.surveyClips[34] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion14 == false) && (answeredSurveyQuestion13 == true) && (surveyQuestion13 != ""))
+                            {
+                                surveyQuestion14 = "yes";
+                                answeredSurveyQuestion14 = true;
+								if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[32] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[31] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion13 == false) && (answeredSurveyQuestion12 == true) && (surveyQuestion12 != ""))
+                            {
+                                surveyQuestion13 = "yes";
+                                answeredSurveyQuestion13 = true;
+								if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[30] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[29] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion12 == false) && (answeredSurveyQuestion11 == true) && (surveyQuestion11 != ""))
+                            {
+                                surveyQuestion12 = "yes";
+                                answeredSurveyQuestion12 = true;
+								if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[28] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[27] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion11 == false) && (answeredSurveyQuestion10 == true) && (surveyQuestion10 != ""))
+                            {
+                                surveyQuestion11 = "yes";
+                                answeredSurveyQuestion11 = true;
+								if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[26] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[25] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion10 == false) && (answeredSurveyQuestion9 == true) && (surveyQuestion9 != ""))
+                            {
+                                surveyQuestion10 = "yes";
+                                answeredSurveyQuestion10 = true;
+								if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[24] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[23] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion9 == false) && (answeredSurveyQuestion8 == true) && (surveyQuestion8 != ""))
+                            {
+                                surveyQuestion9 = "yes";
+                                answeredSurveyQuestion9 = true;
+								if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[22] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[21] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion8 == false) && (answeredSurveyQuestion7 == true) && (surveyQuestion7 != ""))
+                            {
+                                surveyQuestion8 = "yes";
+                                answeredSurveyQuestion8 = true;
+								if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[20] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[19] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion7 == false) && (answeredSurveyQuestion6 == true) && (surveyQuestion6 != ""))
+                            {
+                                surveyQuestion7 = "yes";
+                                answeredSurveyQuestion7 = true;
+								if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[18] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[17] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion6 == false) && (answeredSurveyQuestion5 == true) && (surveyQuestion5 != ""))
+                            {
+                                surveyQuestion6 = "yes";
+                                answeredSurveyQuestion6 = true;
+								if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[16] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[15] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion5 == false) && (answeredSurveyQuestion4 == true) && (surveyQuestion4 != ""))
+                            {
+                                surveyQuestion5 = "yes";
+                                answeredSurveyQuestion5 = true;
+								if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[14] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[13] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion4 == false) && (answeredSurveyQuestion3 == true) && (surveyQuestion3 != ""))
+                            {
+                                surveyQuestion4 = "yes";
+                                answeredSurveyQuestion4 = true;
+								if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[12] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[11] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion3 == false) && (answeredSurveyQuestion2 == true) && (surveyQuestion2 != ""))
+                            {
+                                surveyQuestion3 = "yes";
+                                answeredSurveyQuestion3 = true;
+								if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[10] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[9] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if ((answeredSurveyQuestion2 == false) && (answeredSurveyQuestion1 == true) && (surveyQuestion1 != ""))
+                            {
+                                surveyQuestion2 = "yes";
+                                answeredSurveyQuestion2 = true;
+								if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[8] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[7] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                            if (answeredSurveyQuestion1 == false)
+                            {
+                                surveyQuestion1 = "yes";
+                                answeredSurveyQuestion1 = true;
+								if (GM_title.isUsingTalkback == true)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[6] };
+                                }
+                                else if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[5] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
+                            }
+                        }                       
+
+                        if ((hearingSurvey == false) && (readingSurvey == false) && (noSurvey == false))
+                        {
+                            readingSurvey = true;
+                            swipeToRestartSurvey = false;
+                            canRepeat = true;
+                        }
+
+                        if ((swipeToRestartSurvey == false) && (((hearingSurvey == true) && (finished_questions_survey == true)) || ((readingSurvey == true) && (finished_questions_survey == true)) || ((noSurvey == true) && (can_submit_survey == false))))
+                        {
+                            swipeToRestartSurvey = true;
+                            hearingSurvey = false;
+                            readingSurvey = false;
+                            noSurvey = false;
+                            canRepeat = true;
+                        }
                     }
                 }
 
@@ -10316,26 +10625,42 @@ public class Player : MovingObject
 
                     if ((GameManager.instance.level == 11) && (survey_activated == true) && (survey_shown == true))
                     {
+                        if ((hearingSurvey == false) && (readingSurvey == false) && (noSurvey == false))
+                        {
+                            noSurvey = true;
+                            can_submit_survey = false;
+                            canRepeat = true;
+                        }
+
                         if (finished_questions_survey == true)
                         {
 							readingSurvey = false;
                             hearingSurvey = false;
-                            noConsent = true;
+                            noSurvey = true;
+                            can_submit_survey = false;
+                            canRepeat = true;
                         }
-
-                        if (hearingSurvey == true)
+                        
+                        if ((hearingSurvey == true) && (finished_questions_survey == false))
                         {
                             if ((answeredSurveyQuestion15 == false) && (answeredSurveyQuestion14 == true) && (surveyQuestion14 != ""))
                             {
                                 surveyQuestion15 = "na";
                                 answeredSurveyQuestion15 = true;
+                                canRepeat = true;
                                 finished_listening_survey = true;
                                 finished_questions_survey = true;
-                                clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33] };
-                                SoundManager.instance.PlayClips(clips, null, 0, () =>
+                                can_submit_survey = false;
+                                swipeToRestartSurvey = false;
+                                if (GM_title.isUsingTalkback == true)
                                 {
-                                    canRepeat = true;
-                                }, 0, null, true);
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33], Database.soundEffectClips[0], Database.surveyClips[35] };
+                                }
+                                if (GM_title.isUsingTalkback == false)
+                                {
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[33], Database.soundEffectClips[0], Database.surveyClips[34] };
+                                }
+                                SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
                             if ((answeredSurveyQuestion14 == false) && (answeredSurveyQuestion13 == true) && (surveyQuestion13 != ""))
                             {
@@ -10343,11 +10668,11 @@ public class Player : MovingObject
                                 answeredSurveyQuestion14 = true;
 								if (GM_title.isUsingTalkback == true)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[32] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[32] };
                                 }
                                 else if (GM_title.isUsingTalkback == false)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[31] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[31] };
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
@@ -10357,11 +10682,11 @@ public class Player : MovingObject
                                 answeredSurveyQuestion13 = true;
 								if (GM_title.isUsingTalkback == true)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[30] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[30] };
                                 }
                                 else if (GM_title.isUsingTalkback == false)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[29] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[29] };
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
@@ -10371,11 +10696,11 @@ public class Player : MovingObject
                                 answeredSurveyQuestion12 = true;
 								if (GM_title.isUsingTalkback == true)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[28] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[28] };
                                 }
                                 else if (GM_title.isUsingTalkback == false)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[27] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[27] };
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
@@ -10385,11 +10710,11 @@ public class Player : MovingObject
                                 answeredSurveyQuestion11 = true;
 								if (GM_title.isUsingTalkback == true)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[26] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[26] };
                                 }
                                 else if (GM_title.isUsingTalkback == false)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[25] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[25] };
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
@@ -10399,11 +10724,11 @@ public class Player : MovingObject
                                 answeredSurveyQuestion10 = true;
 								if (GM_title.isUsingTalkback == true)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[24] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[24] };
                                 }
                                 else if (GM_title.isUsingTalkback == false)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[23] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[23] };
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
@@ -10413,11 +10738,11 @@ public class Player : MovingObject
                                 answeredSurveyQuestion9 = true;
 								if (GM_title.isUsingTalkback == true)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[22] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[22] };
                                 }
                                 else if (GM_title.isUsingTalkback == false)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[21] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[21] };
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
@@ -10427,11 +10752,11 @@ public class Player : MovingObject
                                 answeredSurveyQuestion8 = true;
 								if (GM_title.isUsingTalkback == true)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[20] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[20] };
                                 }
                                 else if (GM_title.isUsingTalkback == false)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[19] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[19] };
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
@@ -10441,11 +10766,11 @@ public class Player : MovingObject
                                 answeredSurveyQuestion7 = true;
 								if (GM_title.isUsingTalkback == true)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[18] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[18] };
                                 }
                                 else if (GM_title.isUsingTalkback == false)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[17] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[17] };
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
@@ -10455,11 +10780,11 @@ public class Player : MovingObject
                                 answeredSurveyQuestion6 = true;
 								if (GM_title.isUsingTalkback == true)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[16] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[16] };
                                 }
                                 else if (GM_title.isUsingTalkback == false)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[15] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[15] };
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
@@ -10469,11 +10794,11 @@ public class Player : MovingObject
                                 answeredSurveyQuestion5 = true;
 								if (GM_title.isUsingTalkback == true)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[14] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[14] };
                                 }
                                 else if (GM_title.isUsingTalkback == false)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[13] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[13] };
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
@@ -10483,11 +10808,11 @@ public class Player : MovingObject
                                 answeredSurveyQuestion4 = true;
 								if (GM_title.isUsingTalkback == true)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[12] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[12] };
                                 }
                                 else if (GM_title.isUsingTalkback == false)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[11] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[11] };
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
@@ -10497,11 +10822,11 @@ public class Player : MovingObject
                                 answeredSurveyQuestion3 = true;
 								if (GM_title.isUsingTalkback == true)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[10] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[10] };
                                 }
                                 else if (GM_title.isUsingTalkback == false)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[9] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[9] };
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
@@ -10511,11 +10836,11 @@ public class Player : MovingObject
                                 answeredSurveyQuestion2 = true;
 								if (GM_title.isUsingTalkback == true)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[8] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[8] };
                                 }
                                 else if (GM_title.isUsingTalkback == false)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[7] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[7] };
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
@@ -10525,20 +10850,15 @@ public class Player : MovingObject
                                 answeredSurveyQuestion1 = true;
 								if (GM_title.isUsingTalkback == true)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[6] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[6] };
                                 }
                                 else if (GM_title.isUsingTalkback == false)
                                 {
-                                    clips = new List<AudioClip>() { Database.surveyClips[5] };
+                                    clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.surveyClips[5] };
                                 }
                                 SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true);
                             }
-                        }
-
-                        if ((hearingSurvey == false) && (readingSurvey == false) && (noSurvey == false))
-                        {
-                            noSurvey = true;
-                        }
+                        }                        
                     }
                 }
             }
@@ -11480,11 +11800,11 @@ public class Player : MovingObject
 #if UNITY_IOS && !UNITY_EDITOR && !UNITY_STANDALONE && !UNITY_WEBPLAYER
                     directoryEnd = Application.persistentDataPath.IndexOf("Documents") + 8;
 #endif
-                    print("Directory End: " + directoryEnd.ToString());
+                    // print("Directory End: " + directoryEnd.ToString());
                     string searchPath = Application.persistentDataPath.Substring(0, (directoryEnd + 1));
-                    print("Search Path: " + searchPath);
+                    // print("Search Path: " + searchPath);
                     string searchPattern = Application.productName + "storeddata";
-                    print("Search Pattern: " + searchPattern);
+                    // print("Search Pattern: " + searchPattern);
 
                     DirectoryInfo directory = new DirectoryInfo(searchPath);
                     FileInfo[] files = directory.GetFiles();
@@ -11497,7 +11817,7 @@ public class Player : MovingObject
                     {
                         if (file.Name.Contains("storeddata") == true)
                         {
-                            print("File: " + file.Name);
+                            // print("File: " + file.Name);
 
                             if (file.Name.Equals(tempFilepath) == true)
                             {
@@ -11505,14 +11825,14 @@ public class Player : MovingObject
                                 tempFilepath = tempTempFilepath;
                                 storedFilename = file.Name;
                                 sameFilepathIndex += 1;
-                                print("New Filepath: " + tempTempFilepath);
-                                print("Next Index: " + sameFilepathIndex.ToString());
+                                // print("New Filepath: " + tempTempFilepath);
+                                // print("Next Index: " + sameFilepathIndex.ToString());
                             }
                         }
                     }
 
                     storedFilepath = tempFilepath;
-                    print("Final Path: " + storedFilepath);
+                    // print("Final Path: " + storedFilepath);
 
                     string[] levelData = new string[12];
 
@@ -11602,11 +11922,11 @@ public class Player : MovingObject
 #if UNITY_IOS && !UNITY_EDITOR && !UNITY_STANDALONE && !UNITY_WEBPLAYER
                         directoryEnd = Application.persistentDataPath.IndexOf("Documents") + 8;
 #endif
-                        print("Directory End: " + directoryEnd.ToString());
+                        // print("Directory End: " + directoryEnd.ToString());
                         string searchPath = Application.persistentDataPath.Substring(0, (directoryEnd + 1));
-                        print("Search Path: " + searchPath);
+                        // print("Search Path: " + searchPath);
                         string searchPattern = Application.productName + "storeddata";
-                        print("Search Pattern: " + searchPattern);
+                        // print("Search Pattern: " + searchPattern);
 
                         DirectoryInfo directory = new DirectoryInfo(searchPath);
                         FileInfo[] files = directory.GetFiles();
@@ -11619,7 +11939,7 @@ public class Player : MovingObject
                         {
                             if (file.Name.Contains("storeddata") == true)
                             {
-                                print("File: " + file.Name);
+                                // print("File: " + file.Name);
 
                                 if (file.Name.Equals(tempFilepath) == true)
                                 {
@@ -11627,14 +11947,14 @@ public class Player : MovingObject
                                     tempFilepath = tempTempFilepath;
                                     storedFilename = file.Name;
                                     sameFilepathIndex += 1;
-                                    print("New Filepath: " + tempTempFilepath);
-                                    print("Next Index: " + sameFilepathIndex.ToString());
+                                    // print("New Filepath: " + tempTempFilepath);
+                                    // print("Next Index: " + sameFilepathIndex.ToString());
                                 }
                             }
                         }
 
                         storedFilepath = tempFilepath;
-                        print("Final Path: " + storedFilepath);
+                        // print("Final Path: " + storedFilepath);
 
                         string[] levelData = new string[12];
 
@@ -11685,11 +12005,11 @@ public class Player : MovingObject
 #if UNITY_IOS && !UNITY_EDITOR && !UNITY_STANDALONE && !UNITY_WEBPLAYER
         directoryEnd = Application.persistentDataPath.IndexOf("Documents") + 8;
 #endif
-        print("Directory End: " + directoryEnd.ToString());
+        // print("Directory End: " + directoryEnd.ToString());
         string searchPath = Application.persistentDataPath.Substring(0, (directoryEnd + 1));
-        print("Search Path: " + searchPath);
+        // print("Search Path: " + searchPath);
         string searchPattern = Application.productName + "storeddata";
-        print("Search Pattern: " + searchPattern);
+        // print("Search Pattern: " + searchPattern);
 
         DirectoryInfo directory = new DirectoryInfo(searchPath);
         FileInfo[] files = directory.GetFiles();
@@ -11698,7 +12018,7 @@ public class Player : MovingObject
         {
             if (file.Name.Contains("storeddata") == true)
             {
-                print("Stored Data File Found: " + file.Name);
+                // print("Stored Data File Found: " + file.Name);
 
                 // If the file exists.
                 if (System.IO.File.Exists(file.FullName))
@@ -11706,7 +12026,7 @@ public class Player : MovingObject
                     debugPlayerInfo += "Stored: " + file.Name + ", ";
 
                     // Read the lines of the file.
-                    print("Reading lines of stored data file.");
+                    // print("Reading lines of stored data file.");
                     string[] svdata_split = System.IO.File.ReadAllLines(file.FullName);
 
                     // Send the crash count data and level information to server
