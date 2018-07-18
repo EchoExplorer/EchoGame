@@ -2817,39 +2817,39 @@ public class Player : MovingObject
     {
         string echoEndpoint = "http://echolock.andrew.cmu.edu/cgi-bin/survey1.py";
 
-        WWWForm echoForm = new WWWForm();        
+        WWWForm echoForm = new WWWForm();
+        echoForm.AddField("userName", Utilities.encrypt(SystemInfo.deviceUniqueIdentifier));
         echoForm.AddField("surveyID", Utilities.encrypt(code));
-        echoForm.AddField("enjoy", Utilities.encrypt(surveyQuestion1));
-        echoForm.AddField("playmore", Utilities.encrypt(surveyQuestion2));
-        echoForm.AddField("easy", Utilities.encrypt(surveyQuestion3));
-        echoForm.AddField("lost", Utilities.encrypt(surveyQuestion4));
-        echoForm.AddField("understandecho", Utilities.encrypt(surveyQuestion5));
-        echoForm.AddField("frustrating", Utilities.encrypt(surveyQuestion6));
-        echoForm.AddField("tutorial", Utilities.encrypt(surveyQuestion7));
-        echoForm.AddField("tutorialhelp", Utilities.encrypt(surveyQuestion8));
-        echoForm.AddField("hints", Utilities.encrypt(surveyQuestion9));
-        echoForm.AddField("instructions", Utilities.encrypt(surveyQuestion10));
-        echoForm.AddField("controls", Utilities.encrypt(surveyQuestion11));
-        echoForm.AddField("look", Utilities.encrypt(surveyQuestion12));
-        echoForm.AddField("echonavigate", Utilities.encrypt(surveyQuestion13));                       
-        echoForm.AddField("visuallyimpaired", Utilities.encrypt(surveyQuestion14));
-        echoForm.AddField("hearingimpaired", Utilities.encrypt(surveyQuestion15));
+        echoForm.AddField("dateTimeStamp", Utilities.encrypt(System.DateTime.Now.ToString()));
         // the code is the first digit of device id
 
-        // Logging.Log(System.Text.Encoding.ASCII.GetString(echoForm.data), Logging.LogLevel.LOW_PRIORITY);
+        // Logging.Log(System.Text.Encoding.ASCII.GetString(echoForm2.data), Logging.LogLevel.LOW_PRIORITY);
 
         WWW www = new WWW(echoEndpoint, echoForm);
         StartCoroutine(Utilities.WaitForRequest(www));
 
         string echoEndpoint2 = "http://echolock.andrew.cmu.edu/cgi-bin/survey2.py";
-
-        WWWForm echoForm2 = new WWWForm();
-        echoForm2.AddField("userName", Utilities.encrypt(SystemInfo.deviceUniqueIdentifier));
+		
+		WWWForm echoForm2 = new WWWForm();        
         echoForm2.AddField("surveyID", Utilities.encrypt(code));
-        echoForm2.AddField("dateTimeStamp", Utilities.encrypt(System.DateTime.Now.ToString()));
+        echoForm2.AddField("enjoy", Utilities.encrypt(surveyQuestion1));
+        echoForm2.AddField("playmore", Utilities.encrypt(surveyQuestion2));
+        echoForm2.AddField("easy", Utilities.encrypt(surveyQuestion3));
+        echoForm2.AddField("lost", Utilities.encrypt(surveyQuestion4));
+        echoForm2.AddField("understandecho", Utilities.encrypt(surveyQuestion5));
+        echoForm2.AddField("frustrating", Utilities.encrypt(surveyQuestion6));
+        echoForm2.AddField("tutorial", Utilities.encrypt(surveyQuestion7));
+        echoForm2.AddField("tutorialhelp", Utilities.encrypt(surveyQuestion8));
+        echoForm2.AddField("hints", Utilities.encrypt(surveyQuestion9));
+        echoForm2.AddField("instructions", Utilities.encrypt(surveyQuestion10));
+        echoForm2.AddField("controls", Utilities.encrypt(surveyQuestion11));
+        echoForm2.AddField("look", Utilities.encrypt(surveyQuestion12));
+        echoForm2.AddField("echonavigate", Utilities.encrypt(surveyQuestion13));                       
+        echoForm2.AddField("visuallyimpaired", Utilities.encrypt(surveyQuestion14));
+        echoForm2.AddField("hearingimpaired", Utilities.encrypt(surveyQuestion15));
         // the code is the first digit of device id
 
-        // Logging.Log(System.Text.Encoding.ASCII.GetString(echoForm2.data), Logging.LogLevel.LOW_PRIORITY);
+        // Logging.Log(System.Text.Encoding.ASCII.GetString(echoForm.data), Logging.LogLevel.LOW_PRIORITY);      
 
         WWW www2 = new WWW(echoEndpoint2, echoForm2);
         StartCoroutine(Utilities.WaitForRequest(www2));
