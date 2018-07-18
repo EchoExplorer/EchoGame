@@ -323,6 +323,7 @@ public class Player : MovingObject
     private void init()
     {
         numCrashes = 0;
+        exitAttempts = 0;        
         numSteps = 0;
         crashLocs = "";
         Utilities.initEncrypt();
@@ -2768,7 +2769,7 @@ public class Player : MovingObject
         GameManager.instance.playersTurn = false;
 
         // Reset extra data.
-        resetData();
+        // resetData();
     }
 
     /// <summary>
