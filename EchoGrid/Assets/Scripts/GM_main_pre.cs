@@ -1145,6 +1145,7 @@ public class GM_main_pre : MonoBehaviour
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.                
                 at_confirm = true;
                 canRepeat = true;
+                firstConfirm = true;
                 repeatPregameClip = false;
                 selectMode = SelectMode.NONE;
                 break;

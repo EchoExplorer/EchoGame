@@ -46,7 +46,7 @@ public class Player : MovingObject
 
     bool is_freezed; // is player not allowed to do anything?  
     bool reportSent;
-    public int curLevel;          
+    public static int curLevel;          
 
     // private SpriteRenderer spriteRenderer;
 
@@ -154,7 +154,7 @@ public class Player : MovingObject
 
     public static bool loadingScene = true;
 
-    bool canDoGestureTutorial = false;
+    public static bool canDoGestureTutorial = false;
 
     bool haveTappedThreeTimes = false;
     bool haveSwipedThreeTimes = false;
@@ -6436,7 +6436,7 @@ public class Player : MovingObject
             if (ie.isTap == true)
             {
                 // If the player has not finished the tapping part of the tutorial.
-                if ((canDoGestureTutorial == true) && (curLevel == 1) && (finishedTappingInstruction == true))
+                if ((canDoGestureTutorial == true) && (curLevel == 1) && (finishedTappingInstruction == true) && (level1_remaining_taps > 0))
                 {
                     if (level1_remaining_taps > 0)
                     {
@@ -6522,14 +6522,14 @@ public class Player : MovingObject
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 }
 
-                else if ((canDoGestureTutorial == true) && (curLevel == 1) && (finishedMenuInstruction == true) && (level1_remaining_menus > 0))
+                else if ((canDoGestureTutorial == true) && (curLevel == 1) && (finishedMenuInstruction == true) && (level1_remaining_menus == 2))
                 {
                     debugPlayerInfo = "Incorrect gesture made. You should hold.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     SoundManager.instance.PlayVoice(Database.errorClips[20], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
 
-                else if ((canDoGestureTutorial == true) && (curLevel == 1) && (waitingForOpenMenuInstruction == true) && (level1_remaining_menus > 0))
+                else if ((canDoGestureTutorial == true) && (curLevel == 1) && (waitingForOpenMenuInstruction == false) && (level1_remaining_menus == 1) && (finishedMenuInstruction == true))
                 {
                     debugPlayerInfo = "Incorrect gesture made. You should hold.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
@@ -6764,14 +6764,14 @@ public class Player : MovingObject
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     }
 
-                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (finishedMenuInstruction == true) && (level1_remaining_menus > 0))
+                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (finishedMenuInstruction == true) && (level1_remaining_menus == 2))
                     {
                         debugPlayerInfo = "Incorrect gesture made. You should hold.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         SoundManager.instance.PlayVoice(Database.errorClips[20], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
 
-                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (waitingForOpenMenuInstruction == true) && (level1_remaining_menus > 0))
+                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (waitingForOpenMenuInstruction == false) && (level1_remaining_menus == 1) && (finishedMenuInstruction == true))
                     {
                         debugPlayerInfo = "Incorrect gesture made. You should hold.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
@@ -7310,14 +7310,14 @@ public class Player : MovingObject
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     }
 
-                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (finishedMenuInstruction == true) && (level1_remaining_menus > 0))
+                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (finishedMenuInstruction == true) && (level1_remaining_menus == 2))
                     {
                         debugPlayerInfo = "Incorrect gesture made. You should hold.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         SoundManager.instance.PlayVoice(Database.errorClips[20], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
 
-                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (waitingForOpenMenuInstruction == true) && (level1_remaining_menus > 0))
+                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (waitingForOpenMenuInstruction == false) && (level1_remaining_menus == 1) && (finishedMenuInstruction == true))
                     {
                         debugPlayerInfo = "Incorrect gesture made. You should hold.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
@@ -7913,14 +7913,14 @@ public class Player : MovingObject
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     }
 
-                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (finishedMenuInstruction == true) && (level1_remaining_menus > 0))
+                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (finishedMenuInstruction == true) && (level1_remaining_menus == 2))
                     {
                         debugPlayerInfo = "Incorrect gesture made. You should hold.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         SoundManager.instance.PlayVoice(Database.errorClips[20], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
 
-                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (waitingForOpenMenuInstruction == true) && (level1_remaining_menus > 0))
+                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (waitingForOpenMenuInstruction == false) && (level1_remaining_menus == 1) && (finishedMenuInstruction == true))
                     {
                         debugPlayerInfo = "Incorrect gesture made. You should hold.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
@@ -8068,14 +8068,14 @@ public class Player : MovingObject
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     }
 
-                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (finishedMenuInstruction == true) && (level1_remaining_menus > 0))
+                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (finishedMenuInstruction == true) && (level1_remaining_menus == 2))
                     {
                         debugPlayerInfo = "Incorrect gesture made. You should hold.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         SoundManager.instance.PlayVoice(Database.errorClips[20], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
 
-                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (waitingForOpenMenuInstruction == true) && (level1_remaining_menus > 0))
+                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (waitingForOpenMenuInstruction == false) && (level1_remaining_menus == 1) && (finishedMenuInstruction == true))
                     {
                         debugPlayerInfo = "Incorrect gesture made. You should hold.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
@@ -8458,13 +8458,14 @@ public class Player : MovingObject
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     }
 
-                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (waitingForOpenMenuInstruction == true) && (finishedSwipingInstruction == true))
+                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (finishedMenuInstruction == true) && (level1_remaining_menus == 2))
                     {
-                        debugPlayerInfo = "Please wait for the instructions to finish.";
+                        debugPlayerInfo = "Incorrect gesture made. You should hold.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                        SoundManager.instance.PlayVoice(Database.errorClips[20], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
 
-                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (finishedMenuInstruction == true) && (level1_remaining_menus > 0))
+                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (waitingForOpenMenuInstruction == false) && (level1_remaining_menus == 1) && (finishedMenuInstruction == true))
                     {
                         debugPlayerInfo = "Incorrect gesture made. You should hold.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
@@ -8624,14 +8625,14 @@ public class Player : MovingObject
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     }
 
-                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (finishedMenuInstruction == true) && (level1_remaining_menus > 0))
+                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (finishedMenuInstruction == true) && (level1_remaining_menus == 2))
                     {
                         debugPlayerInfo = "Incorrect gesture made. You should hold.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         SoundManager.instance.PlayVoice(Database.errorClips[20], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
 
-                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (waitingForOpenMenuInstruction == true) && (level1_remaining_menus > 0))
+                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (waitingForOpenMenuInstruction == false) && (level1_remaining_menus == 1) && (finishedMenuInstruction == true))
                     {
                         debugPlayerInfo = "Incorrect gesture made. You should hold.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
@@ -8892,7 +8893,7 @@ public class Player : MovingObject
             if (ie.isTap == true)
             {
                 // If the player has not finished the tapping part of the tutorial.
-                if ((canDoGestureTutorial == true) && (curLevel == 1) && (finishedTappingInstruction == true))
+                if ((canDoGestureTutorial == true) && (curLevel == 1) && (finishedTappingInstruction == true) && (level1_remaining_taps > 0))
                 {
                     if (level1_remaining_taps > 0)
                     {
@@ -8977,14 +8978,14 @@ public class Player : MovingObject
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 }
 
-                else if ((canDoGestureTutorial == true) && (curLevel == 1) && (finishedMenuInstruction == true) && (level1_remaining_menus > 0))
+                else if ((canDoGestureTutorial == true) && (curLevel == 1) && (finishedMenuInstruction == true) && (level1_remaining_menus == 2))
                 {
                     debugPlayerInfo = "Incorrect gesture made. You should hold.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     SoundManager.instance.PlayVoice(Database.errorClips[20], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                 }
 
-                else if ((canDoGestureTutorial == true) && (curLevel == 1) && (waitingForOpenMenuInstruction == true) && (level1_remaining_menus > 0))
+                else if ((canDoGestureTutorial == true) && (curLevel == 1) && (waitingForOpenMenuInstruction == false) && (level1_remaining_menus == 1) && (finishedMenuInstruction == true))
                 {
                     debugPlayerInfo = "Incorrect gesture made. You should hold.";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
@@ -9213,14 +9214,14 @@ public class Player : MovingObject
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     }
 
-                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (finishedMenuInstruction == true) && (level1_remaining_menus > 0))
+                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (finishedMenuInstruction == true) && (level1_remaining_menus == 2))
                     {
                         debugPlayerInfo = "Incorrect gesture made. You should hold.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         SoundManager.instance.PlayVoice(Database.errorClips[20], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
 
-                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (waitingForOpenMenuInstruction == true) && (level1_remaining_menus > 0))
+                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (waitingForOpenMenuInstruction == false) && (level1_remaining_menus == 1) && (finishedMenuInstruction == true))
                     {
                         debugPlayerInfo = "Incorrect gesture made. You should hold.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
@@ -9764,14 +9765,14 @@ public class Player : MovingObject
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     }
 
-                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (finishedMenuInstruction == true) && (level1_remaining_menus > 0))
+                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (finishedMenuInstruction == true) && (level1_remaining_menus == 2))
                     {
                         debugPlayerInfo = "Incorrect gesture made. You should hold.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         SoundManager.instance.PlayVoice(Database.errorClips[20], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
 
-                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (waitingForOpenMenuInstruction == true) && (level1_remaining_menus > 0))
+                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (waitingForOpenMenuInstruction == false) && (level1_remaining_menus == 1) && (finishedMenuInstruction == true))
                     {
                         debugPlayerInfo = "Incorrect gesture made. You should hold.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
@@ -10354,14 +10355,14 @@ public class Player : MovingObject
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     }
 
-                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (finishedMenuInstruction == true) && (level1_remaining_menus > 0))
+                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (finishedMenuInstruction == true) && (level1_remaining_menus == 2))
                     {
                         debugPlayerInfo = "Incorrect gesture made. You should hold.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         SoundManager.instance.PlayVoice(Database.errorClips[20], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
 
-                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (waitingForOpenMenuInstruction == true) && (level1_remaining_menus > 0))
+                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (waitingForOpenMenuInstruction == false) && (level1_remaining_menus == 1) && (finishedMenuInstruction == true))
                     {
                         debugPlayerInfo = "Incorrect gesture made. You should hold.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
@@ -10511,14 +10512,14 @@ public class Player : MovingObject
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     }
 
-                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (finishedMenuInstruction == true) && (level1_remaining_menus > 0))
+                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (finishedMenuInstruction == true) && (level1_remaining_menus == 2))
                     {
                         debugPlayerInfo = "Incorrect gesture made. You should hold.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         SoundManager.instance.PlayVoice(Database.errorClips[20], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
 
-                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (waitingForOpenMenuInstruction == true) && (level1_remaining_menus > 0))
+                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (waitingForOpenMenuInstruction == false) && (level1_remaining_menus == 1) && (finishedMenuInstruction == true))
                     {
                         debugPlayerInfo = "Incorrect gesture made. You should hold.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
@@ -10906,14 +10907,14 @@ public class Player : MovingObject
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     }
 
-                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (finishedMenuInstruction == true) && (level1_remaining_menus > 0))
+                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (finishedMenuInstruction == true) && (level1_remaining_menus == 2))
                     {
                         debugPlayerInfo = "Incorrect gesture made. You should hold.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         SoundManager.instance.PlayVoice(Database.errorClips[20], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
 
-                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (waitingForOpenMenuInstruction == true) && (level1_remaining_menus > 0))
+                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (waitingForOpenMenuInstruction == false) && (level1_remaining_menus == 1) && (finishedMenuInstruction == true))
                     {
                         debugPlayerInfo = "Incorrect gesture made. You should hold.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
@@ -11067,14 +11068,14 @@ public class Player : MovingObject
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     }
 
-                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (finishedMenuInstruction == true) && (level1_remaining_menus > 0))
+                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (finishedMenuInstruction == true) && (level1_remaining_menus == 2))
                     {
                         debugPlayerInfo = "Incorrect gesture made. You should hold.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                         SoundManager.instance.PlayVoice(Database.errorClips[20], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
 
-                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (waitingForOpenMenuInstruction == true) && (level1_remaining_menus > 0))
+                    else if ((canDoGestureTutorial == true) && (curLevel == 1) && (waitingForOpenMenuInstruction == false) && (level1_remaining_menus == 1) && (finishedMenuInstruction == true))
                     {
                         debugPlayerInfo = "Incorrect gesture made. You should hold.";
                         DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
@@ -11402,7 +11403,7 @@ public class Player : MovingObject
                 {
                     debugPlayerInfo = "Please wait for the instructions to finish.";
                 }
-                else if ((canDoGestureTutorial == true) && (curLevel == 1) && (finishedMenuInstruction == true) && (level1_remaining_menus > 0))
+                else if ((canDoGestureTutorial == true) && (curLevel == 1) && (finishedMenuInstruction == true) && (level1_remaining_menus == 2))
                 {
                     debugPlayerInfo = "Incorrect gesture made. You should hold.";
 
@@ -11437,7 +11438,7 @@ public class Player : MovingObject
                         SoundManager.instance.PlayVoice(Database.errorClips[17], true, 0.0f, 0.0f, 0.5f); // Play the appropriate clip.
                     }
                 }
-                else if ((canDoGestureTutorial == true) && (curLevel == 1) && (waitingForOpenMenuInstruction == true) && (level1_remaining_menus > 0))
+                else if ((canDoGestureTutorial == true) && (curLevel == 1) && (waitingForOpenMenuInstruction == false) && (level1_remaining_menus == 1) && (finishedMenuInstruction == true))
                 {
                     debugPlayerInfo = "Incorrect gesture made. You should hold.";
 

@@ -183,7 +183,7 @@ public class InputModule : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.RightArrow) == true)
         {
             // For swipe rights.
-            if (activeScene.name.Equals("Agreement") || activeScene.name.Equals("Main_pre") || activeScene.name.Equals("Title_Screen") || (activeScene.name.Equals("Main") && (Player.want_exit == true)) || (activeScene.name.Equals("Main") && (Player.want_exit == false) && (Player.hasStartedConsent == true) && (Player.hasFinishedConsentForm == false)) || (activeScene.name.Equals("Main") && (Player.want_exit == false) && (Player.survey_activated == true)))
+            if (activeScene.name.Equals("Agreement") || activeScene.name.Equals("Main_pre") || activeScene.name.Equals("Title_Screen") || (activeScene.name.Equals("Main") && (Player.want_exit == true)) || (activeScene.name.Equals("Main") && (Player.want_exit == false) && (Player.hasStartedConsent == true) && (Player.hasFinishedConsentForm == false)) || (activeScene.name.Equals("Main") && (Player.want_exit == false) && (Player.survey_activated == true)) || (activeScene.name.Equals("Main") && (Player.canDoGestureTutorial == true) && (Player.curLevel == 1)))
             {
                 ievent.isSwipe = true; // A swipe was registered.
                 ievent.isRight = true; // Register a right rotation.
@@ -205,7 +205,7 @@ public class InputModule : MonoBehaviour
         else if (Input.GetKeyUp(KeyCode.LeftArrow) == true)
         {
             // For swipe lefts.
-            if (activeScene.name.Equals("Agreement") || activeScene.name.Equals("Main_pre") || activeScene.name.Equals("Title_Screen") || (activeScene.name.Equals("Main") && (Player.want_exit == true)) || (activeScene.name.Equals("Main") && (Player.want_exit == false) && (Player.hasStartedConsent == true) && (Player.hasFinishedConsentForm == false)) || (activeScene.name.Equals("Main") && (Player.want_exit == false) && (Player.survey_activated == true)))
+            if (activeScene.name.Equals("Agreement") || activeScene.name.Equals("Main_pre") || activeScene.name.Equals("Title_Screen") || (activeScene.name.Equals("Main") && (Player.want_exit == true)) || (activeScene.name.Equals("Main") && (Player.want_exit == false) && (Player.hasStartedConsent == true) && (Player.hasFinishedConsentForm == false)) || (activeScene.name.Equals("Main") && (Player.want_exit == false) && (Player.survey_activated == true)) || (activeScene.name.Equals("Main") && (Player.canDoGestureTutorial == true) && (Player.curLevel == 1)))
             {
                 ievent.isSwipe = true; // A swipe was registered.
                 ievent.isLeft = true; // Register a left rotation.
