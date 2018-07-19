@@ -71,6 +71,10 @@ public class GM_title : MonoBehaviour
     /// </summary>
     void Start()
     {
+#if UNITY_IOS
+        determined_talkback = true;
+        isUsingTalkback = false;
+#endif
         titleText = GameObject.Find("ContactText").GetComponent<Text>();
         ad = GameObject.Find("GameManager").GetComponent<AndroidDialogue>();
         eh = new eventHandler(InputModule.instance);
