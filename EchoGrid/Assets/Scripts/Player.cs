@@ -2965,6 +2965,9 @@ public class Player : MovingObject
             {
                 if ((SoundManager.instance.finishedAllClips == true) || (canRepeat == true))
                 {
+                    debugPlayerInfo = "Finished consent form.";
+                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+
                     canRepeat = false;
                     if (GM_title.isUsingTalkback == true)
                     {
@@ -5270,6 +5273,7 @@ public class Player : MovingObject
                 android_window_displayed = false;
                 can_display_window = false;
                 finished_reading = true;
+                finished_questions = true;                
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, () => {
                     canRepeat = true;
@@ -5298,6 +5302,7 @@ public class Player : MovingObject
                 android_window_displayed = false;
                 can_display_window = false;
                 finished_reading = true;
+                finished_questions = true;
                 clips = new List<AudioClip>() { Database.soundEffectClips[7] };
                 SoundManager.instance.PlayClips(clips, null, 0, () => {
                     canRepeat = true;
@@ -6825,8 +6830,6 @@ public class Player : MovingObject
                     {
                         if ((noConsent == true) || (((readingConsentForm == true) || (hearingConsentForm == true)) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (finished_questions == true)))
                         {
-                            print("Restarting consent form.");
-
                             hearingConsentForm = true;
                             readingConsentForm = false;
                             noConsent = false;
@@ -6868,6 +6871,9 @@ public class Player : MovingObject
                             readParticipate = false;
                             participateFlag = false;
 
+                            debugPlayerInfo = "Restarting consent form.";
+                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+
                             clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[2], Database.soundEffectClips[0] };
                             SoundManager.instance.PlayClips(clips, null, 0, () => {
                                 finished_listening = true;
@@ -6888,6 +6894,7 @@ public class Player : MovingObject
                             {
                                 canRepeat = true;
                                 hasCheckedForConsent = true;
+                                hasFinishedConsentForm = false;
                             }, 1, null, true);
                         }
                         else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == false))
@@ -7382,8 +7389,6 @@ public class Player : MovingObject
                     {
                         if ((noConsent == true) || (((hearingConsentForm == true) || (readingConsentForm == true)) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (finished_questions == true)))
                         {
-                            print("Restarting consent form.");
-
                             hearingConsentForm = false;
                             readingConsentForm = true;
                             noConsent = false;
@@ -7426,6 +7431,7 @@ public class Player : MovingObject
                             {
                                 canRepeat = true;
                                 hasCheckedForConsent = true;
+                                hasFinishedConsentForm = false;
                                 if (SystemInfo.deviceUniqueIdentifier.Length <= 6)
                                 {
                                     consentCode = SystemInfo.deviceUniqueIdentifier;
@@ -9279,8 +9285,6 @@ public class Player : MovingObject
                     {        
                         if ((noConsent == true) || (((hearingConsentForm == true) || (readingConsentForm == true)) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (finished_questions == true)))
                         {
-                            print("Restarting consent form.");
-
                             hearingConsentForm = true;
                             readingConsentForm = false;
                             noConsent = false;
@@ -9322,6 +9326,9 @@ public class Player : MovingObject
                             readParticipate = false;
                             participateFlag = false;
 
+                            debugPlayerInfo = "Restarting consent form.";
+                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+
                             clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[2], Database.soundEffectClips[0] };
                             SoundManager.instance.PlayClips(clips, null, 0, () => {
                                 finished_listening = true;
@@ -9341,6 +9348,7 @@ public class Player : MovingObject
                             SoundManager.instance.PlayClips(clips, null, 0, () => {
                                 canRepeat = true;
                                 hasCheckedForConsent = true;
+                                hasFinishedConsentForm = false;
                             }, 1, null, true);
                         }
                         else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == false))
@@ -9841,8 +9849,6 @@ public class Player : MovingObject
                     {        
                         if ((noConsent == true) || (((hearingConsentForm == true) || (readingConsentForm == true)) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == true) && (finished_questions == true)))
                         {
-                            print("Restarting consent form.");
-
                             hearingConsentForm = false;
                             readingConsentForm = true;
                             noConsent = false;
@@ -9884,11 +9890,17 @@ public class Player : MovingObject
                             readParticipate = false;
                             participateFlag = false;
 
+                            debugPlayerInfo = "Restarting consent form.";
+                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+
                             clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[9] };
                             SoundManager.instance.PlayClips(clips, null, 0, () =>
                             {                               
                                 can_display_window = true;
                                 canRepeat = true;
+
+                                debugPlayerInfo = "Displaying consent form as dialogue boxes.";
+                                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                             }, 3, null, true);
                         }
                         else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == false))
@@ -9902,6 +9914,7 @@ public class Player : MovingObject
                             SoundManager.instance.PlayClips(clips, null, 0, () => {
                                 canRepeat = true;
                                 hasCheckedForConsent = true;
+                                hasFinishedConsentForm = false;
                                 if (SystemInfo.deviceUniqueIdentifier.Length <= 6)
                                 {
                                     consentCode = SystemInfo.deviceUniqueIdentifier;
