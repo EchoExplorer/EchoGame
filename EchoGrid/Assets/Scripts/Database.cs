@@ -58,7 +58,7 @@ public class Database : MonoBehaviour
 
     // Game environment settings clips
     [HideInInspector]
-    public static AudioClip[] settingsClips = new AudioClip[12];
+    public static AudioClip[] settingsClips = new AudioClip[13];
 
     // Main menu clips
     [HideInInspector]
@@ -211,6 +211,7 @@ public class Database : MonoBehaviour
         settingsClips[9] = Resources.Load("instructions/settings/environment_setup_talkback") as AudioClip;
         settingsClips[10] = Resources.Load("instructions/settings/using_voiceover") as AudioClip;
         settingsClips[11] = Resources.Load("instructions/settings/add_voiceover_hold") as AudioClip;
+        settingsClips[12] = Resources.Load("instructions/settings/headphones_ios") as AudioClip;
 
         // Main menu clips
         mainMenuClips[0] = Resources.Load("instructions/main_menu/welcome_to_echo_adventure") as AudioClip;

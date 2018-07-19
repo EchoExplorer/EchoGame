@@ -71,10 +71,6 @@ public class GM_title : MonoBehaviour
     /// </summary>
     void Start()
     {
-#if UNITY_IOS
-        determined_talkback = true;
-        isUsingTalkback = false;
-#endif
         titleText = GameObject.Find("ContactText").GetComponent<Text>();
         ad = GameObject.Find("GameManager").GetComponent<AndroidDialogue>();
         eh = new eventHandler(InputModule.instance);
@@ -148,9 +144,6 @@ public class GM_title : MonoBehaviour
 #if !UNITY_IOS
                         clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.settingsClips[1], Database.settingsClips[2] };
 #endif
-#if UNITY_IOS
-                        clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.settingsClips[1], Database.settingsClips[10] };
-#endif
                         SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
                     }
                     else if (repeatSetupClip == false)
@@ -160,7 +153,10 @@ public class GM_title : MonoBehaviour
                         clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.settingsClips[1], Database.settingsClips[2] };
 #endif
 #if UNITY_IOS
-                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.settingsClips[1], Database.settingsClips[10] };
+                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.settingsClips[1] };
+                        determined_talkback = true;
+                        isUsingTalkback = false;
+                        canRepeat = true;
 #endif
                         SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
                         repeatSetupClip = true;
@@ -209,8 +205,15 @@ public class GM_title : MonoBehaviour
                     else if (isUsingTalkback == false)
                     {
                         canRepeat = false;
+                        List<AudioClip> clips2;
+#if !UNITY_IOS
                         clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.settingsClips[4], Database.settingsClips[6] };
-                        List<AudioClip> clips2 = new List<AudioClip>() { Database.soundEffectClips[0], Database.settingsClips[4], Database.settingsClips[6] };
+                        clips2 = new List<AudioClip>() { Database.soundEffectClips[0], Database.settingsClips[4], Database.settingsClips[6] };
+#endif
+#if UNITY_IOS
+                        clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.settingsClips[4], Database.settingsClips[12] };
+                        clips2 = new List<AudioClip>() { Database.soundEffectClips[0], Database.settingsClips[4], Database.settingsClips[12] };
+#endif
                         if (repeatSetupClip == true)
                         {
                             repeatInterruptedClips = true;
@@ -1230,6 +1233,7 @@ public class GM_title : MonoBehaviour
             // If the player has not informed us if they are using Talkback or not.
             if ((GM_main_pre.hasGoneThroughSetup == false) && (orientation_correct == true) && (determined_talkback == false))
             {
+#if UNITY_ANDROID
                 // If a swipe was registered.
                 if (ie.isSwipe == true)
                 {
@@ -1355,6 +1359,7 @@ public class GM_title : MonoBehaviour
                     }
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                 }
+#endif
             }
             // If the player's game environment is set up properly.
             else if ((GM_main_pre.hasGoneThroughSetup == false) && (orientation_correct == true) && (determined_talkback == true) && (plugin_earphone == true) && (environment_setup == false))
