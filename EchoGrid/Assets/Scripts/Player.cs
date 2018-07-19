@@ -4696,7 +4696,7 @@ public class Player : MovingObject
         {
             canCheckForConsent = false;
 
-            PlayerPrefs.SetInt("Consented", -1);
+            // PlayerPrefs.SetInt("Consented", -1);
             int hasConsented = PlayerPrefs.GetInt("Consented", -1);
 
             if (hasConsented != -1)
@@ -4709,7 +4709,7 @@ public class Player : MovingObject
                 }
                 else if (hasConsented == 0)
                 {
-                    debugPlayerInfo = "Previously not consented to having their data collected. Can continue with level " + curLevel.ToString() + ".";
+                    debugPlayerInfo = "Previously did not consent to having their data collected. Can continue with level " + curLevel.ToString() + ".";
                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                     hasFinishedConsentForm = true;
                 }
@@ -6867,7 +6867,6 @@ public class Player : MovingObject
                             understandFlag = false;
                             readParticipate = false;
                             participateFlag = false;
-                            canRepeat = true;
 
                             clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[2], Database.soundEffectClips[0] };
                             SoundManager.instance.PlayClips(clips, null, 0, () => {
@@ -9322,7 +9321,6 @@ public class Player : MovingObject
                             understandFlag = false;
                             readParticipate = false;
                             participateFlag = false;
-                            canRepeat = true;
 
                             clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[2], Database.soundEffectClips[0] };
                             SoundManager.instance.PlayClips(clips, null, 0, () => {
@@ -9885,7 +9883,13 @@ public class Player : MovingObject
                             understandFlag = false;
                             readParticipate = false;
                             participateFlag = false;
-                            canRepeat = true;
+
+                            clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.consentClips[9] };
+                            SoundManager.instance.PlayClips(clips, null, 0, () =>
+                            {                               
+                                can_display_window = true;
+                                canRepeat = true;
+                            }, 3, null, true);
                         }
                         else if ((hearingConsentForm == true) && (answeredQuestion1 == true) && (answeredQuestion2 == true) && (answeredQuestion3 == false))
                         {
