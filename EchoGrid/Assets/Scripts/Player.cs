@@ -46,7 +46,8 @@ public class Player : MovingObject
 
     bool is_freezed; // is player not allowed to do anything?  
     bool reportSent;
-    public static int curLevel;          
+    public static int curLevel;  
+
 
     // private SpriteRenderer spriteRenderer;
 
@@ -71,6 +72,7 @@ public class Player : MovingObject
     bool yesPressed = false;
     bool noPressed = false;
     bool naPressed = false;
+    float currentSessionTime = 0.0f;
 
     public void switchYes(string yes)
     {
@@ -333,7 +335,7 @@ public class Player : MovingObject
         stopWatch = new Stopwatch();
         stopWatch.Start();
         startTime = System.DateTime.Now;
-
+        currentSessionTime = 0.0f;
         want_exit = false;
         at_pause_menu = false;
         reportSent = false;
@@ -2710,10 +2712,9 @@ public class Player : MovingObject
     {
         stopWatch.Stop();
         endTime = System.DateTime.Now;
-
-        float accurateElapsed = stopWatch.ElapsedMilliseconds / 1000;
+        float accurateElapsed = (stopWatch.ElapsedMilliseconds  + currentSessionTime)/1000;
         int timeElapsed = unchecked((int)(accurateElapsed));
-
+        print(timeElapsed.ToString());
         // Calculate the points for the game level
         // Score based on: time taken, num crashes, steps taken, trying(num echoes played on same spot)
         // Finish in less than 15 seconds => full score
@@ -4345,6 +4346,12 @@ public class Player : MovingObject
 
     void Update()
     {
+        if (stopWatch.ElapsedMilliseconds >= 60000)
+        {
+            currentSessionTime += stopWatch.ElapsedMilliseconds;
+            print("current = " + currentSessionTime.ToString());
+            stopWatch.Stop();
+        }
         if ((curLevel == 1) && (BoardManager.player_idx.x == 1) && (BoardManager.player_idx.y == 1) && (canDoGestureTutorial == false) && (BoardManager.finishedTutorialLevel1 == false))
         {
             // print("Can do gesture tutorial level 1");
@@ -6445,6 +6452,15 @@ public class Player : MovingObject
 
             Vector2 playerPos = BoardManager.player_idx;
 
+            if ((ie.isTap == true) || (ie.isSwipe == true) || (ie.isHold == true) || (ie.isRotate == true) || (ie.isUnrecognized == true))
+            {
+                if (stopWatch.IsRunning == false)
+                {
+                    stopWatch.Start();
+                    print("Started Stopwatch");
+                }
+            }
+                
             // Do something based on this event info.
             // If a tap was registered.
             if (ie.isTap == true)
@@ -8897,6 +8913,15 @@ public class Player : MovingObject
             InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
 
             Vector2 playerPos = BoardManager.player_idx;
+
+            if ((ie.isTap == true) || (ie.isSwipe == true) || (ie.isHold == true) || (ie.isRotate == true) || (ie.isUnrecognized == true))
+            {
+                if (stopWatch.IsRunning == false)
+                {
+                    stopWatch.Start();
+                    print("Started Stopwatch");
+                }
+            }
 
             // If a tap is registered.
             if (ie.isTap == true)
