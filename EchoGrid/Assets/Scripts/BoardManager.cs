@@ -612,10 +612,21 @@ public class BoardManager : MonoBehaviour
 
         // Deadend.
         if (path_count == 3)            
-        {           
+        {
             if (junctionIndexes[junctionIndex] == "")
             {
-                junctionIndexes[junctionIndex] = "Deadend";
+                if ((pos.x == start_idx.x) && (pos.y == start_idx.y))
+                {
+                    junctionIndexes[junctionIndex] = "Start";
+                }
+                else if ((pos.x == exit_idx.x) && (pos.y == exit_idx.y))
+                {
+                    junctionIndexes[junctionIndex] = "Exit";
+                }
+                else
+                {
+                    junctionIndexes[junctionIndex] = "Deadend";
+                }
             }           
 
             return junctionIndexes[junctionIndex];
