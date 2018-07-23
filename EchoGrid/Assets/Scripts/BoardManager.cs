@@ -30,16 +30,6 @@ public class BoardManager : MonoBehaviour
         OTHER,
     }
 
-    public enum JunctionType
-    {
-        INVALID,
-        DEADEND,
-        T,
-        LL,
-        RL,
-        CROSS,
-    }
-
     // FIXME: I think this should not be public
     public string asciiLevelRep;
     // should probably make a different type choice here. I don't know what would be better
@@ -62,6 +52,7 @@ public class BoardManager : MonoBehaviour
     private List<int> wallIdxes = new List<int>();
     public List<Vector3> wallPositions = new List<Vector3>();
     private List<Vector3> startPositions = new List<Vector3>();
+    public string[] junctionIndexes = new string[81];
     public string mazeSolution = "";
     public static Vector3 exitPos;
     public static Vector3 startDir;
@@ -258,6 +249,11 @@ public class BoardManager : MonoBehaviour
         wallPositions = new List<Vector3>();
         wallIdxes = new List<int>();
         startPositions = new List<Vector3>();
+        
+        for (int i = 0; i < 81; i++)
+        {
+            junctionIndexes[i] = "";
+        }
 
         if (level <= 2)
         {
@@ -437,62 +433,236 @@ public class BoardManager : MonoBehaviour
     /// <summary>
     /// Finds the type of junction present at an intersection.
     /// </summary>
-    public JunctionType getJunctionType(Vector2 pos, Vector2 entrance)
+    public string getJunctionType(Vector2 pos)
     {
         if ((pos.x <= 0) || (pos.x >= columns + 1) || (pos.y <= 0) || (pos.y >= rows + 1))
-            return JunctionType.INVALID;
-
-        float threshhold = 0.1f;
-
-        if ((pos - entrance).magnitude <= threshhold)
-            return JunctionType.DEADEND;
+        {
+            return "Invalid";
+        }
 
         int path_count = 0;
-        bool entranceX = true;
-        if (Mathf.Abs(pos.x - entrance.x) < threshhold)
-            entranceX = false;
-        bool xrf = false, xlf = false, ytf = false, ydf = false;
+        bool front = false, back = false, left = false, right = false;
 
-        if (!_searchWallIdxes(new Vector2(pos.x + 1, pos.y)))
+        for (int i = 0; i < wallIdxes.Count; i += 2)
         {
-            xrf = true;
+            if ((wallIdxes[i] == (pos.x + 1)) && (wallIdxes[i + 1] == pos.y))
+            {
+                if (get_player_dir_world() == Direction.FRONT)
+                {
+                    right = true;
+                }
+                else if (get_player_dir_world() == Direction.BACK)
+                {
+                    left = true;
+                }
+                else if (get_player_dir_world() == Direction.LEFT)
+                {
+                    back = true;
+                }
+                else if (get_player_dir_world() == Direction.RIGHT)
+                {
+                    front = true;
+                }
+                path_count += 1;
+            }
+            else if ((wallIdxes[i] == (pos.x - 1)) && (wallIdxes[i + 1] == pos.y))
+            {
+                if (get_player_dir_world() == Direction.FRONT)
+                {
+                    left = true;
+                }
+                else if (get_player_dir_world() == Direction.BACK)
+                {
+                    right = true;
+                }
+                else if (get_player_dir_world() == Direction.LEFT)
+                {
+                    front = true;
+                }
+                else if (get_player_dir_world() == Direction.RIGHT)
+                {
+                    back = true;
+                }
+                path_count += 1;
+            }
+            else if ((wallIdxes[i] == pos.x) && (wallIdxes[i + 1] == (pos.y + 1)))
+            {
+                if (get_player_dir_world() == Direction.FRONT)
+                {
+                    front = true;
+                }
+                else if (get_player_dir_world() == Direction.BACK)
+                {
+                    back = true;
+                }
+                else if (get_player_dir_world() == Direction.LEFT)
+                {
+                    right = true;
+                }
+                else if (get_player_dir_world() == Direction.RIGHT)
+                {
+                    left = true;
+                }
+                path_count += 1;
+            }
+            else if ((wallIdxes[i] == pos.x) && (wallIdxes[i + 1] == (pos.y - 1)))
+            {
+                if (get_player_dir_world() == Direction.FRONT)
+                {
+                    back = true;
+                }
+                else if (get_player_dir_world() == Direction.BACK)
+                {
+                    front = true;
+                }
+                else if (get_player_dir_world() == Direction.LEFT)
+                {
+                    left = true;
+                }
+                else if (get_player_dir_world() == Direction.RIGHT)
+                {
+                    right = true;
+                }
+                path_count += 1;
+            }
+        }
+
+        if (pos.x == 1)
+        {
+            if (get_player_dir_world() == Direction.FRONT)
+            {
+                left = true;
+            }
+            else if (get_player_dir_world() == Direction.BACK)
+            {
+                right = true;
+            }
+            else if (get_player_dir_world() == Direction.LEFT)
+            {
+                front = true;
+            }
+            else if (get_player_dir_world() == Direction.RIGHT)
+            {
+                back = true;
+            }
             path_count += 1;
         }
-        if (!_searchWallIdxes(new Vector2(pos.x - 1, pos.y)))
+        if (pos.x == 9)
         {
-            xlf = true;
+            if (get_player_dir_world() == Direction.FRONT)
+            {
+                right = true;
+            }
+            else if (get_player_dir_world() == Direction.BACK)
+            {
+                left = true;
+            }
+            else if (get_player_dir_world() == Direction.LEFT)
+            {
+                back = true;
+            }
+            else if (get_player_dir_world() == Direction.RIGHT)
+            {
+                front = true;
+            }
             path_count += 1;
         }
-        if (!_searchWallIdxes(new Vector2(pos.x, pos.y + 1)))
+        if (pos.y == 1)
         {
-            ytf = true;
+            if (get_player_dir_world() == Direction.FRONT)
+            {
+                back = true;
+            }
+            else if (get_player_dir_world() == Direction.BACK)
+            {
+                front = true;
+            }
+            else if (get_player_dir_world() == Direction.LEFT)
+            {
+                left = true;
+            }
+            else if (get_player_dir_world() == Direction.RIGHT)
+            {
+                right = true;
+            }
             path_count += 1;
         }
-        if (!_searchWallIdxes(new Vector2(pos.x, pos.y - 1)))
+        if (pos.y == 9)
         {
-            ydf = true;
+            if (get_player_dir_world() == Direction.FRONT)
+            {
+                front = true;
+            }
+            else if (get_player_dir_world() == Direction.BACK)
+            {
+                back = true;
+            }
+            else if (get_player_dir_world() == Direction.LEFT)
+            {
+                left = true;
+            }
+            else if (get_player_dir_world() == Direction.RIGHT)
+            {
+                right = true;
+            }
             path_count += 1;
         }
 
-        if (path_count <= 1)
-            return JunctionType.DEADEND;
-        else if (path_count == 3)
-            return JunctionType.T;
-        else if (path_count == 4)//not possible, but I leave it here
-            return JunctionType.CROSS;
+        int junctionIndex = (int)(((pos.y - 1) * 9) + (pos.x - 1));
+
+        // Deadend.
+        if (path_count == 3)            
+        {           
+            if (junctionIndexes[junctionIndex] == "")
+            {
+                junctionIndexes[junctionIndex] = "Deadend";
+            }           
+
+            return junctionIndexes[junctionIndex];
+        }
+        // Straight/Left turn/Right turn.
         else if (path_count == 2)
         {
-            if ((xrf == ytf) && entranceX)
-                return JunctionType.RL;
-            else if ((xrf == ytf) && !entranceX)
-                return JunctionType.LL;
-            else if ((xrf != ytf) && entranceX)
-                return JunctionType.LL;
-            else if ((xrf != ytf) && !entranceX)
-                return JunctionType.RL;
-        }
+            if (junctionIndexes[junctionIndex] == "")
+            {                
+                if (((front == false) && (back == false) && (left == true) && (right == true)) || ((front == true) && (back == true) && (left == false) && (right == false)))
+                {
+                    junctionIndexes[junctionIndex] = "Straight";
+                }
+                else if ((front == true) && (back == false) && (left == false) && (right == true))
+                {
+                    junctionIndexes[junctionIndex] = "Left Turn";
+                }
+                else if ((front == true) && (back == false) && (left == true) && (right == false))
+                {
+                    junctionIndexes[junctionIndex] = "Right Turn";
+                }
+            }
 
-        return JunctionType.INVALID;
+            return junctionIndexes[junctionIndex];
+        }
+        // T intersection.
+        else if (path_count == 1)
+        {
+            if (junctionIndexes[junctionIndex] == "")
+            {
+                junctionIndexes[junctionIndex] = "T";
+            }
+
+            return junctionIndexes[junctionIndex];
+        }
+        // Cross intersection.
+        else if (path_count == 0)
+        {
+            if (junctionIndexes[junctionIndex] == "")
+            {
+                junctionIndexes[junctionIndex] = "Cross";
+            }
+
+            return junctionIndexes[junctionIndex];
+        }        
+
+        return "Error";
     }
 
     /// <summary>

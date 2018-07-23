@@ -2193,6 +2193,7 @@ public class Player : MovingObject
         Vector2 idx_location = GameManager.instance.boardScript.get_idx_from_pos(transform.position);
         string location = "(" + idx_location.x.ToString() + "," + idx_location.y.ToString() + ")";
         correct_post_act = "";
+        string junctionType = "";
         // manually setup, TODO: warp it into a function
         GameManager.instance.boardScript.sol = "";
         for (int i = 0; i < GameManager.instance.boardScript.searched_temp.Length; ++i)
@@ -2253,13 +2254,24 @@ public class Player : MovingObject
             correct_post_act = "Exit";
         }
 
+        junctionType = GameManager.instance.boardScript.getJunctionType(BoardManager.player_idx);
+        
         WWWForm echoForm = new WWWForm();
         echoForm.AddField("userName", Utilities.encrypt(SystemInfo.deviceUniqueIdentifier));
         echoForm.AddField("currentLevel", Utilities.encrypt(curLevel.ToString()));
         echoForm.AddField("trackCount", Utilities.encrypt(GameManager.instance.boardScript.local_stats[curLevel].ToString()));
         echoForm.AddField("echoLocation", Utilities.encrypt(location));
+        echoForm.AddField("locationType", Utilities.encrypt(junctionType));
         echoForm.AddField("postEchoAction", Utilities.encrypt(post_act));
         echoForm.AddField("correctAction", Utilities.encrypt(correct_post_act));
+        if ((GM_title.usingHRTFEchoes == true) && (GM_title.usingOdeonEchoes == false))
+        {
+            echoForm.AddField("echoFile", Utilities.encrypt("TomClick_norm.wav"));
+        }
+        else if ((GM_title.usingHRTFEchoes == false) && (GM_title.usingOdeonEchoes == true))
+        {
+            echoForm.AddField("echoFile", Utilities.encrypt("00-0_F-0.75-D_B-w-D_L-w-D_R-w-D_fadeout.wav"));
+        }
         echoForm.AddField("dateTimeStamp", Utilities.encrypt(System.DateTime.Now.ToString()));
 
         // Logging.Log(System.Text.Encoding.ASCII.GetString(echoForm.data), Logging.LogLevel.LOW_PRIORITY);
