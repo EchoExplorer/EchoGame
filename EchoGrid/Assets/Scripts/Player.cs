@@ -95,6 +95,7 @@ public class Player : MovingObject
     public static bool want_exit = false;
     bool at_pause_menu = false; // indicating if the player activated pause menu
     bool localRecordWritten = false;
+    string junctionType = "";
     // int score;
     eventHandler eh;
 
@@ -2194,8 +2195,7 @@ public class Player : MovingObject
 
         Vector2 idx_location = GameManager.instance.boardScript.get_idx_from_pos(transform.position);
         string location = "(" + idx_location.x.ToString() + "," + idx_location.y.ToString() + ")";
-        correct_post_act = "";
-        string junctionType = "";
+        correct_post_act = "";        
         // manually setup, TODO: warp it into a function
         GameManager.instance.boardScript.sol = "";
         for (int i = 0; i < GameManager.instance.boardScript.searched_temp.Length; ++i)
@@ -2254,9 +2254,7 @@ public class Player : MovingObject
         else
         {
             correct_post_act = "Exit";
-        }
-
-        junctionType = GameManager.instance.boardScript.getJunctionType(BoardManager.player_idx);
+        }      
         
         WWWForm echoForm = new WWWForm();
         echoForm.AddField("userName", Utilities.encrypt(SystemInfo.deviceUniqueIdentifier));
@@ -2437,6 +2435,7 @@ public class Player : MovingObject
     /// </summary>
 	private void calculateMove(Vector3 dir)
     {
+        junctionType = GameManager.instance.boardScript.getJunctionType(BoardManager.player_idx);
         old_dir = get_player_dir("FRONT");
 
         if (dir.magnitude == 0)
@@ -2714,7 +2713,7 @@ public class Player : MovingObject
         endTime = System.DateTime.Now;
         float accurateElapsed = (stopWatch.ElapsedMilliseconds  + currentSessionTime)/1000;
         int timeElapsed = unchecked((int)(accurateElapsed));
-        print(timeElapsed.ToString());
+        print("Time Elapsed: " + timeElapsed.ToString());
         // Calculate the points for the game level
         // Score based on: time taken, num crashes, steps taken, trying(num echoes played on same spot)
         // Finish in less than 15 seconds => full score
@@ -4346,12 +4345,16 @@ public class Player : MovingObject
 
     void Update()
     {
-        if (stopWatch.ElapsedMilliseconds >= 60000)
+        if (stopWatch.IsRunning == true)
         {
-            currentSessionTime += stopWatch.ElapsedMilliseconds;
-            print("current = " + currentSessionTime.ToString());
-            stopWatch.Stop();
+            if (stopWatch.ElapsedMilliseconds >= 60000)
+            {
+                currentSessionTime += stopWatch.ElapsedMilliseconds;
+                print("One minute elapsed. Stopping stopwatch. Current Session Time: " + currentSessionTime.ToString());
+                stopWatch.Stop();
+            }
         }
+
         if ((curLevel == 1) && (BoardManager.player_idx.x == 1) && (BoardManager.player_idx.y == 1) && (canDoGestureTutorial == false) && (BoardManager.finishedTutorialLevel1 == false))
         {
             // print("Can do gesture tutorial level 1");
@@ -6454,10 +6457,21 @@ public class Player : MovingObject
 
             if ((ie.isTap == true) || (ie.isSwipe == true) || (ie.isHold == true) || (ie.isRotate == true) || (ie.isUnrecognized == true))
             {
-                if (stopWatch.IsRunning == false)
+                if (stopWatch.IsRunning == true)
                 {
+                    if (stopWatch.ElapsedMilliseconds < 60000)
+                    {
+                        currentSessionTime += stopWatch.ElapsedMilliseconds;
+                        print("Reset stopwatch. Current Session Time: " + currentSessionTime.ToString());
+                    }
+
+                    stopWatch.Reset();
+                }
+                if (stopWatch.IsRunning == false)
+                {                   
+                    stopWatch.Reset();
                     stopWatch.Start();
-                    print("Started Stopwatch");
+                    print("Started stopwatch again. Current Session Time: " + currentSessionTime.ToString());
                 }
             }
                 
@@ -8916,10 +8930,21 @@ public class Player : MovingObject
 
             if ((ie.isTap == true) || (ie.isSwipe == true) || (ie.isHold == true) || (ie.isRotate == true) || (ie.isUnrecognized == true))
             {
+                if (stopWatch.IsRunning == true)
+                {
+                    if (stopWatch.ElapsedMilliseconds < 60000)
+                    {
+                        currentSessionTime += stopWatch.ElapsedMilliseconds;
+                        print("Reset stopwatch. Current Session Time: " + currentSessionTime.ToString());
+                    }
+
+                    stopWatch.Reset();
+                }
                 if (stopWatch.IsRunning == false)
                 {
+                    stopWatch.Reset();
                     stopWatch.Start();
-                    print("Started Stopwatch");
+                    print("Started stopwatch again. Current Session Time: " + currentSessionTime.ToString());
                 }
             }
 
