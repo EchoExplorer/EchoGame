@@ -406,7 +406,14 @@ public class Player : MovingObject
     /// </summary>
     private void PlayEcho(bool real = true)
     {
-        attenuatedClick = Database.attenuatedClick;
+        if ((GM_title.usingHRTFEchoes == true) && (GM_title.usingOdeonEchoes == false))
+        {
+            attenuatedClick = Database.attenuatedClick;
+        }
+        else if ((GM_title.usingOdeonEchoes == true) && (GM_title.usingHRTFEchoes == false))
+        {
+            attenuatedClick = Database.attenuatedaround_odeon;
+        }
         echofront = Database.hrtf_front;
         echoleft = Database.hrtf_left_leftspeaker;
         echoleft_right = Database.hrtf_left_rightspeaker;

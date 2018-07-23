@@ -30,6 +30,16 @@ public class BoardManager : MonoBehaviour
         OTHER,
     }
 
+    public enum JunctionType
+    {
+        INVALID,
+        DEADEND,
+        T,
+        LL,
+        RL,
+        CROSS,
+    }
+
     // FIXME: I think this should not be public
     public string asciiLevelRep;
     // should probably make a different type choice here. I don't know what would be better
@@ -422,6 +432,67 @@ public class BoardManager : MonoBehaviour
 
         Vector2 result = new Vector2(x_idx, y_idx);
         return result;
+    }
+
+    /// <summary>
+    /// Finds the type of junction present at an intersection.
+    /// </summary>
+    public JunctionType getJunctionType(Vector2 pos, Vector2 entrance)
+    {
+        if ((pos.x <= 0) || (pos.x >= columns + 1) || (pos.y <= 0) || (pos.y >= rows + 1))
+            return JunctionType.INVALID;
+
+        float threshhold = 0.1f;
+
+        if ((pos - entrance).magnitude <= threshhold)
+            return JunctionType.DEADEND;
+
+        int path_count = 0;
+        bool entranceX = true;
+        if (Mathf.Abs(pos.x - entrance.x) < threshhold)
+            entranceX = false;
+        bool xrf = false, xlf = false, ytf = false, ydf = false;
+
+        if (!_searchWallIdxes(new Vector2(pos.x + 1, pos.y)))
+        {
+            xrf = true;
+            path_count += 1;
+        }
+        if (!_searchWallIdxes(new Vector2(pos.x - 1, pos.y)))
+        {
+            xlf = true;
+            path_count += 1;
+        }
+        if (!_searchWallIdxes(new Vector2(pos.x, pos.y + 1)))
+        {
+            ytf = true;
+            path_count += 1;
+        }
+        if (!_searchWallIdxes(new Vector2(pos.x, pos.y - 1)))
+        {
+            ydf = true;
+            path_count += 1;
+        }
+
+        if (path_count <= 1)
+            return JunctionType.DEADEND;
+        else if (path_count == 3)
+            return JunctionType.T;
+        else if (path_count == 4)//not possible, but I leave it here
+            return JunctionType.CROSS;
+        else if (path_count == 2)
+        {
+            if ((xrf == ytf) && entranceX)
+                return JunctionType.RL;
+            else if ((xrf == ytf) && !entranceX)
+                return JunctionType.LL;
+            else if ((xrf != ytf) && entranceX)
+                return JunctionType.LL;
+            else if ((xrf != ytf) && !entranceX)
+                return JunctionType.RL;
+        }
+
+        return JunctionType.INVALID;
     }
 
     /// <summary>

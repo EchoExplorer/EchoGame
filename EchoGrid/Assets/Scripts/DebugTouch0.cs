@@ -26,7 +26,7 @@ public class DebugTouch0 : MonoBehaviour
     {
         debugTouch0Text = GetComponent<Text>();
         touch0Text = "Touch0";
-        //instance.gameObject.SetActive(false);
+        // instance.gameObject.SetActive(false);
     }
 	
 	// Update is called once per frame
