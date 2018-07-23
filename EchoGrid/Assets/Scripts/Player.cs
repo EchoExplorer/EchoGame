@@ -72,7 +72,9 @@ public class Player : MovingObject
     bool yesPressed = false;
     bool noPressed = false;
     bool naPressed = false;
+    private int echoNum = 0;
     float currentSessionTime = 0.0f;
+    string password = "";
 
     public void switchYes(string yes)
     {
@@ -89,7 +91,10 @@ public class Player : MovingObject
         naPressed = true;
     }
 
-    private int echoNum = 0;
+    public void setPassword(string pwd)
+    {
+        password = pwd;
+    }
 
     // Usage data to keep track of
     public static bool want_exit = false;

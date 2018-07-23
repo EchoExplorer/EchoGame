@@ -2,17 +2,22 @@
 #import "IOSNativePopUpsManager.h"
 @implementation IOSNativePopUpsManager
 
-+(void)showOneText: (NSString *) title message: (NSString*) msg okTitle:(NSString*) b1 fromVar:(NSString*) b2{
++(void)showTwoText: (NSString *) title message: (NSString*) msg okTitle:(NSString*) b1 fromVar:(NSString*) b2{
     
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:title message:msg preferredStyle:UIAlertControllerStyleAlert];
     
     [alertController addTextFieldWithConfigurationHandler:^(UITextField *textField) {}];
     
-    UIAlertAction *okAction = [UIAlertAction actionWithTitle:b1 style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    UIAlertAction *noAction = [UIAlertAction actionWithTitle:b2 style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         [alertController dismissViewControllerAnimated:NO completion:nil];
-        UnitySendMessage("Player", "setReply", [DataConverter NSStringToChar:[b2 stringByAppendingString:[[alertController textFields][0] text]]]);
     }];
     
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:b1 style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [alertController dismissViewControllerAnimated:NO completion:nil];
+        UnitySendMessage("Player", "setPassword", [DataConverter NSStringToChar:[b2 stringByAppendingString:[[alertController textFields][0] text]]]);
+    }];
+    
+    [alertController addAction:noAction];
     [alertController addAction:okAction];
     
     UIViewController *viewController = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
@@ -142,7 +147,7 @@
 
 extern "C" {
     // Unity Call
-    void _ex_ShowOneText(char* title, char* message, char* ok, char* to) {
+    void _ex_ShowTwoText(char* title, char* message, char* ok, char* to) {
         [IOSNativePopUpsManager showOneText:[DataConverter charToNSString:title] message:[DataConverter charToNSString:message] okTitle:[DataConverter charToNSString:ok] fromVar:[DataConverter charToNSString:to]];
     }
     
