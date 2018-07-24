@@ -10715,7 +10715,6 @@ public class Player : MovingObject
                                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                                     GameManager.instance.HideLevelImage(); // Turn off the map.
                                     GameManager.instance.boardScript.gamerecord += "S_OFF"; // Record the switch off.
-
                                 }
                                 // If the visual map for debugging is off, turn it on.
                                 else
@@ -10724,7 +10723,6 @@ public class Player : MovingObject
                                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                                     GameManager.instance.UnHideLevelImage(); // Turn on the map.
                                     GameManager.instance.boardScript.gamerecord += "S_ON"; // Record the switch.
-
                                 }
                             }
 
