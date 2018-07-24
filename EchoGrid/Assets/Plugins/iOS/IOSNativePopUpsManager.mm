@@ -6,15 +6,19 @@
     
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:title message:msg preferredStyle:UIAlertControllerStyleAlert];
     
-    [alertController addTextFieldWithConfigurationHandler:^(UITextField *textField) {}];
+    [alertController addTextFieldWithConfigurationHandler:^(UITextField *textField) {
+        textField.secureTextEntry = YES;
+    }];
     
     UIAlertAction *noAction = [UIAlertAction actionWithTitle:b2 style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         [alertController dismissViewControllerAnimated:NO completion:nil];
+        UnitySendMessage("Player", "switchNo", [DataConverter NSIntToChar:0]);
     }];
     
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:b1 style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         [alertController dismissViewControllerAnimated:NO completion:nil];
-        UnitySendMessage("Player", "setPassword", [DataConverter NSStringToChar:[b2 stringByAppendingString:[[alertController textFields][0] text]]]);
+        UnitySendMessage("Player", "setPassword", [DataConverter NSStringToChar:[[alertController textFields][0] text]]);
+        UnitySendMessage("Player", "switchYes", [DataConverter NSIntToChar:0]);
     }];
     
     [alertController addAction:noAction];
@@ -148,7 +152,7 @@
 extern "C" {
     // Unity Call
     void _ex_ShowTwoText(char* title, char* message, char* ok, char* to) {
-        [IOSNativePopUpsManager showOneText:[DataConverter charToNSString:title] message:[DataConverter charToNSString:message] okTitle:[DataConverter charToNSString:ok] fromVar:[DataConverter charToNSString:to]];
+        [IOSNativePopUpsManager showTwoText:[DataConverter charToNSString:title] message:[DataConverter charToNSString:message] okTitle:[DataConverter charToNSString:ok] fromVar:[DataConverter charToNSString:to]];
     }
     
     void _ex_ShowThree(char* title, char* message, char* yes, char* no, char* na) {

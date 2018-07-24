@@ -101,7 +101,7 @@ public class Player : MovingObject
     bool at_pause_menu = false; // indicating if the player activated pause menu
     bool localRecordWritten = false;
     string junctionType = "";
-    int inputCorrectPassword = PlayerPrefs.GetInt("CorrectPassword", 0);
+    int inputCorrectPassword = 0;
     // int score;
     eventHandler eh;
 
@@ -346,7 +346,7 @@ public class Player : MovingObject
         want_exit = false;
         at_pause_menu = false;
         reportSent = false;
-        inputCorrectPassword = PlayerPrefs.GetInt("CorrectPassword", 0);
+        password = "";
         ad = GetComponent<AndroidDialogue>();
 
         endingLevel = false;
@@ -6324,7 +6324,14 @@ public class Player : MovingObject
             password = "";
             debugPlayerInfo = "Did not put in password.";
             DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-            PlayerPrefs.SetInt("CorrectPassword", 0);
+            inputCorrectPassword = 0;
+
+#if UNITY_IOS
+            noPressed = false;
+#endif
+#if UNITY_ANDROID
+                ad.clearflag();
+#endif
             android_window_displayed = false;
         }
 
@@ -6340,8 +6347,15 @@ public class Player : MovingObject
             {
                 debugPlayerInfo = "Input correct password.";
                 DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                PlayerPrefs.SetInt("CorrectPassword", 1);
+                inputCorrectPassword = 1;
             }
+
+#if UNITY_IOS
+            yesPressed = false;
+#endif
+#if UNITY_ANDROID
+            ad.clearflag();
+#endif
             android_window_displayed = false;
         }        
 
@@ -10680,10 +10694,6 @@ public class Player : MovingObject
                         // If the player is in the pause menu.
                         else if ((at_pause_menu == true) && (loadingScene == false))
                         {
-                            inputCorrectPassword = PlayerPrefs.GetInt("CorrectPassword", 0);
-                            debugPlayerInfo = "InputCorrectPassword: " + inputCorrectPassword.ToString();
-                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-
                             if ((inputCorrectPassword == 0) && (android_window_displayed == false))
                             {
                                 android_window_displayed = true;
@@ -10696,7 +10706,6 @@ public class Player : MovingObject
                                 ad.DisplayAndroidWindow(title, message, AndroidDialogue.DialogueType.INPUT, "Submit", "Cancel");
 #endif
                             }
-
                             else if ((inputCorrectPassword == 1))
                             {
                                 // If the visual map for debugging is on, turn it off.
@@ -10706,6 +10715,7 @@ public class Player : MovingObject
                                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                                     GameManager.instance.HideLevelImage(); // Turn off the map.
                                     GameManager.instance.boardScript.gamerecord += "S_OFF"; // Record the switch off.
+
                                 }
                                 // If the visual map for debugging is off, turn it on.
                                 else
@@ -10714,8 +10724,10 @@ public class Player : MovingObject
                                     DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
                                     GameManager.instance.UnHideLevelImage(); // Turn on the map.
                                     GameManager.instance.boardScript.gamerecord += "S_ON"; // Record the switch.
+
                                 }
                             }
+
                         }
                     }
 
