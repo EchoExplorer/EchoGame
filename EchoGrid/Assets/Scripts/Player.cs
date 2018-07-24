@@ -101,6 +101,7 @@ public class Player : MovingObject
     bool at_pause_menu = false; // indicating if the player activated pause menu
     bool localRecordWritten = false;
     string junctionType = "";
+    int inputCorrectPassword = PlayerPrefs.GetInt("CorrectPassword", 0);
     // int score;
     eventHandler eh;
 
@@ -345,6 +346,7 @@ public class Player : MovingObject
         want_exit = false;
         at_pause_menu = false;
         reportSent = false;
+        inputCorrectPassword = PlayerPrefs.GetInt("CorrectPassword", 0);
         ad = GetComponent<AndroidDialogue>();
 
         endingLevel = false;
@@ -6317,6 +6319,32 @@ public class Player : MovingObject
         }
 #endif
 
+        if (((want_exit == true) || (at_pause_menu == true)) && (loadingScene == false) && (android_window_displayed == true) && ((ad.noclicked() == true) || (noPressed == true)))
+        {
+            password = "";
+            debugPlayerInfo = "Did not put in password.";
+            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+            PlayerPrefs.SetInt("CorrectPassword", 0);
+            android_window_displayed = false;
+        }
+
+        if (((want_exit == true) || (at_pause_menu == true)) && (loadingScene == false) && (android_window_displayed == true) && ((ad.yesclicked() == true) || (yesPressed == true)))
+        {
+#if UNITY_ANDROID
+            password = ad.getInputStr();
+#endif
+            debugPlayerInfo = "Password Input: " + password.ToString();
+            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+
+            if (password == "3246")
+            {
+                debugPlayerInfo = "Input correct password.";
+                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                PlayerPrefs.SetInt("CorrectPassword", 1);
+            }
+            android_window_displayed = false;
+        }        
+
         if ((curLevel == 3) && (BoardManager.finishedTutorialLevel3 == false) && (canDoGestureTutorial == false) && (finishedCornerInstruction == true) && (hasTappedAtCorner == false) && (BoardManager.player_idx.x == 9) && (BoardManager.player_idx.y == 9) && (finishedEcho == true))
         {
             hasTappedAtCorner = true;
@@ -8924,10 +8952,10 @@ public class Player : MovingObject
         }
 #endif
 
-        // Check if we are running on iOS or Android
+                            // Check if we are running on iOS or Android
 #if UNITY_IOS || UNITY_ANDROID
-        // process input
-        if (eh.isActivate() && ((hasFinishedConsentForm == false) || ((hasFinishedConsentForm == true) && (canMakeGestures == true))))
+                            // process input
+                            if (eh.isActivate() && ((hasFinishedConsentForm == false) || ((hasFinishedConsentForm == true) && (canMakeGestures == true))))
         {
             InputEvent ie = eh.getEventData(); // Get input event data from InputModule.cs.
 
@@ -10652,21 +10680,41 @@ public class Player : MovingObject
                         // If the player is in the pause menu.
                         else if ((at_pause_menu == true) && (loadingScene == false))
                         {
-                            // If the visual map for debugging is on, turn it off.
-                            if (GameManager.levelImageActive)
+                            inputCorrectPassword = PlayerPrefs.GetInt("CorrectPassword", 0);
+                            debugPlayerInfo = "InputCorrectPassword: " + inputCorrectPassword.ToString();
+                            DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+
+                            if ((inputCorrectPassword == 0) && (android_window_displayed == false))
                             {
-                                debugPlayerInfo = "Swiped down. Turning off visual map for debugging.";
-                                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                                GameManager.instance.HideLevelImage(); // Turn off the map.
-                                GameManager.instance.boardScript.gamerecord += "S_OFF"; // Record the switch off.
+                                android_window_displayed = true;
+                                string title = "Visual Map Password";
+                                string message = "Please input the developer password to unlock the ability to see a visual map of the level.";
+#if UNITY_IOS
+                                IOSNative.ShowTwoText(title, message, "Submit", "Cancel");
+#endif
+#if UNITY_ANDROID
+                                ad.DisplayAndroidWindow(title, message, AndroidDialogue.DialogueType.INPUT, "Submit", "Cancel");
+#endif
                             }
-                            // If the visual map for debugging is off, turn it on.
-                            else
+
+                            else if ((inputCorrectPassword == 1))
                             {
-                                debugPlayerInfo = "Swiped down. Turning on visual map for debugging.";
-                                DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
-                                GameManager.instance.UnHideLevelImage(); // Turn on the map.
-                                GameManager.instance.boardScript.gamerecord += "S_ON"; // Record the switch.
+                                // If the visual map for debugging is on, turn it off.
+                                if (GameManager.levelImageActive)
+                                {
+                                    debugPlayerInfo = "Swiped down. Turning off visual map for debugging.";
+                                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                                    GameManager.instance.HideLevelImage(); // Turn off the map.
+                                    GameManager.instance.boardScript.gamerecord += "S_OFF"; // Record the switch off.
+                                }
+                                // If the visual map for debugging is off, turn it on.
+                                else
+                                {
+                                    debugPlayerInfo = "Swiped down. Turning on visual map for debugging.";
+                                    DebugPlayer.instance.ChangeDebugPlayerText(debugPlayerInfo); // Update the debug textbox.
+                                    GameManager.instance.UnHideLevelImage(); // Turn on the map.
+                                    GameManager.instance.boardScript.gamerecord += "S_ON"; // Record the switch.
+                                }
                             }
                         }
                     }

@@ -240,6 +240,7 @@ public class AndroidDialogue : MonoBehaviour
                 case DialogueType.INPUT:
                     alertDialogBuilder.Call<AndroidJavaObject>("setView", InputTextField);
                     alertDialogBuilder.Call<AndroidJavaObject>("setPositiveButton", yesText, new InputTextFieldListner(this, InputTextField));
+                    alertDialogBuilder.Call<AndroidJavaObject>("setNegativeButton", noText, new InputTextFieldListner(this, InputTextField));
                     break;
                 case DialogueType.SURVEY:
                     alertDialogBuilder.Call<AndroidJavaObject>("setPositiveButton", yesText, new PositiveButtonListner(this));
