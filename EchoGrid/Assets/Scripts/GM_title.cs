@@ -111,12 +111,12 @@ public class GM_title : MonoBehaviour
                         canRepeat = false;
                         if (repeatSetupClip == true)
                         {
-                            clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.settingsClips[0] };
+                            clips = new List<AudioClip>() { Database.soundEffectClips[0], Database.mainMenuClips[27], Database.settingsClips[0] };
                             SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
                         }
                         else if (repeatSetupClip == false)
                         {
-                            clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.settingsClips[0] };
+                            clips = new List<AudioClip>() { Database.soundEffectClips[7], Database.soundEffectClips[0], Database.mainMenuClips[27], Database.settingsClips[0] };
                             SoundManager.instance.PlayClips(clips, null, 0, null, 0, null, true); // Play the appropriate clips.
                             repeatSetupClip = true;
                         }

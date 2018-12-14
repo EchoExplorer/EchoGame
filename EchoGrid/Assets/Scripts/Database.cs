@@ -62,7 +62,7 @@ public class Database : MonoBehaviour
 
     // Main menu clips
     [HideInInspector]
-    public static AudioClip[] mainMenuClips = new AudioClip[27];
+    public static AudioClip[] mainMenuClips = new AudioClip[28];
 
     // Pregame menu clips
     [HideInInspector]
@@ -241,6 +241,7 @@ public class Database : MonoBehaviour
         mainMenuClips[24] = Resources.Load("instructions/main_menu/options_menu_consent_normal") as AudioClip;
         mainMenuClips[25] = Resources.Load("instructions/main_menu/options_menu_consent_talkback") as AudioClip;
         mainMenuClips[26] = Resources.Load("instructions/main_menu/closed_options_menu") as AudioClip;
+        mainMenuClips[27] = Resources.Load("instructions/main_menu/deactivate_lock") as AudioClip;
 
         // Pregame menu clips
         preGameMenuClips[0] = Resources.Load("instructions/pregame_menu/tutorial_swipe_left_normal") as AudioClip;
